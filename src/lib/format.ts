@@ -169,3 +169,11 @@ export const RESERVED_SLUGS = new Set([
   "giris",
   "kayit",
 ]);
+
+/** Masks the local part of an address for logs: `de***@example.com`. */
+export function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return email;
+  const visible = local.slice(0, 2);
+  return `${visible}${"*".repeat(Math.max(2, Math.min(6, local.length - 2)))}@${domain}`;
+}

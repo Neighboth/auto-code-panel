@@ -26,6 +26,8 @@ export function BrandLogo({
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
+                    loading="lazy"
+                    decoding="async"
         src={logoUrl}
         alt=""
         width={size}

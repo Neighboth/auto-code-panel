@@ -23,6 +23,7 @@ export function Flag({ flag, size = 20 }: { flag: string; size?: number }) {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={flagUrl(flag, size > 24 ? "w40" : "w20")}
+      decoding="async"
       alt=""
       width={Math.round(size * 1.4)}
       height={size}

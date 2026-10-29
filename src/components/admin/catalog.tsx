@@ -23,6 +23,8 @@ import {
   deleteGame,
   saveAccount,
   saveGame,
+  importAccountsCsv,
+  importProductsCsv,
   setAccountStatus,
   steamLookup,
   syncSteamNow,
@@ -30,6 +32,7 @@ import {
   type AccessCodeTest,
 } from "@/app/actions/store-admin";
 import { Modal } from "@/components/modal";
+import { CsvImportButton } from "@/components/admin/csv-import";
 import { Field } from "@/components/ui";
 import {
   GUARD_OPTIONS,
@@ -286,6 +289,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
             {pending ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
             Steam senkronize et
           </button>
+          <CsvImportButton kind="products" action={(csv) => importProductsCsv(slug, csv)} />
           <button type="button" className="btn btn-dark btn-sm" onClick={openCreate}>
             <Plus size={13} />
             Yeni ürün
@@ -356,7 +360,9 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
                       <span className="h-9 w-16 shrink-0 overflow-hidden rounded-md" style={{ background: "var(--bg)" }}>
                         {game.coverImage ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={game.coverImage} alt={game.title} className="h-full w-full object-cover" />
+                          <img
+                    loading="lazy"
+                    decoding="async" src={game.coverImage} alt={game.title} className="h-full w-full object-cover" />
                         ) : null}
                       </span>
                       <div className="min-w-0">
@@ -830,16 +836,19 @@ export function AccountManager({
             Secret anahtarları şifreli saklanır.
           </p>
         </div>
-        <button
-          type="button"
-          className="btn btn-dark btn-sm"
-          onClick={openCreate}
-          disabled={quota.reached}
-          title={quota.reached ? "Hesap limiti dolu" : undefined}
-        >
-          <Plus size={13} />
-          Yeni hesap
-        </button>
+        <div className="flex items-center gap-2">
+          <CsvImportButton kind="accounts" action={(csv) => importAccountsCsv(slug, csv)} />
+          <button
+            type="button"
+            className="btn btn-dark btn-sm"
+            onClick={openCreate}
+            disabled={quota.reached}
+            title={quota.reached ? "Hesap limiti dolu" : undefined}
+          >
+            <Plus size={13} />
+            Yeni hesap
+          </button>
+        </div>
       </div>
 
       {quota.reached ? (

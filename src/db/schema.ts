@@ -315,6 +315,30 @@ export const auditLogs = sqliteTable(
   ],
 );
 
+/**
+ * Per-recipient e-mail preferences (GDPR/KVKK).
+ *
+ * Absence of a row means "everything on" so existing addresses keep receiving
+ * transactional mail until they explicitly opt out from the profile page or from
+ * the one-click unsubscribe link at the bottom of every message.
+ */
+export const mailPreferences = sqliteTable(
+  "mail_preferences",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    audience: text("audience").notNull(),
+    subjectId: integer("subject_id").notNull(),
+    storeId: integer("store_id"),
+    email: text("email").notNull().default(""),
+    announcements: bool("announcements").notNull().default(true),
+    delivery: bool("delivery").notNull().default(true),
+    license: bool("license").notNull().default(true),
+    security: bool("security").notNull().default(true),
+    updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [uniqueIndex("mail_preferences_subject_uq").on(table.audience, table.subjectId)],
+);
+
 export type Store = typeof stores.$inferSelect;
 export type Game = typeof games.$inferSelect;
 export type Account = typeof accounts.$inferSelect;
@@ -327,3 +351,4 @@ export type PlatformPost = typeof platformPosts.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type EmailVerification = typeof emailVerifications.$inferSelect;
 export type MailEvent = typeof mailEvents.$inferSelect;
+export type MailPreference = typeof mailPreferences.$inferSelect;

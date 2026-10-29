@@ -19,25 +19,41 @@ export type StoreGameCard = {
   coverImage: string;
 };
 
+const PAGE_SIZE = 24;
+
+/**
+ * Product grid.
+ *
+ * Large catalogues used to render every card (and every cover image) at once,
+ * which is what made scrolling feel heavy. Now the first 24 cards render, the
+ * rest are appended on demand and each card uses `content-visibility: auto` so
+ * offscreen work is skipped by the browser.
+ */
 export function GameGrid({ games }: { games: StoreGameCard[] }) {
   const [active, setActive] = useState<StoreGameCard | null>(null);
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const shown = games.slice(0, visible);
 
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {games.map((game) => {
+        {shown.map((game) => {
           const discount =
             game.originalCurrency === game.currency
               ? discountPercent(game.originalPrice, game.ourPrice)
               : null;
           return (
-            <article key={game.id} className="card group overflow-hidden">
+            <article key={game.id} className="card group overflow-hidden cv-auto">
               <div className="relative aspect-[460/215] overflow-hidden" style={{ background: "var(--bg)" }}>
                 {game.coverImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={game.coverImage}
                     alt={game.title}
+                    loading="lazy"
+                    decoding="async"
+                    width={460}
+                    height={215}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                   />
                 ) : (
@@ -118,7 +134,9 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
           <div className="space-y-4">
             {active.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={active.coverImage} alt={active.title} className="w-full rounded-lg border object-cover hairline" />
+              <img
+                    loading="lazy"
+                    decoding="async" src={active.coverImage} alt={active.title} className="w-full rounded-lg border object-cover hairline" />
             ) : null}
             <div className="grid grid-cols-3 divide-x rounded-lg border hairline">
               <div className="p-3">

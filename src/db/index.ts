@@ -249,6 +249,30 @@ const DDL = [
   `create index if not exists audit_logs_created_idx on audit_logs (created_at)`,
   `create index if not exists audit_logs_store_idx on audit_logs (store_id, created_at)`,
   `create index if not exists audit_logs_action_idx on audit_logs (action)`,
+  `create table if not exists mail_preferences (
+    id integer primary key autoincrement,
+    audience text not null,
+    subject_id integer not null,
+    store_id integer,
+    email text not null default '',
+    announcements integer not null default 1,
+    delivery integer not null default 1,
+    license integer not null default 1,
+    security integer not null default 1,
+    updated_at integer not null
+  )`,
+  `create unique index if not exists mail_preferences_subject_uq on mail_preferences (audience, subject_id)`,
+  /* Hot-path indexes: storefront listings, redemption lookups and dashboards. */
+  `create index if not exists games_store_idx on games (store_id)`,
+  `create index if not exists games_store_active_idx on games (store_id, created_at desc)`,
+  `create index if not exists accounts_store_idx on accounts (store_id, status)`,
+  `create index if not exists codes_store_idx on codes (store_id, created_at desc)`,
+  `create index if not exists codes_store_redeemed_idx on codes (store_id, redeemed_at)`,
+  `create index if not exists customers_store_idx on customers (store_id)`,
+  `create unique index if not exists customers_store_username_uq on customers (store_id, username)`,
+  `create index if not exists entitlements_store_idx on entitlements (store_id, customer_id)`,
+  `create index if not exists redemptions_store_idx on redemptions (store_id)`,
+  `create index if not exists store_admins_store_idx on store_admins (store_id)`,
 ];
 
 async function bootstrap(): Promise<void> {

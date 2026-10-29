@@ -99,6 +99,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             NODE_IMAGE=node:22-bookworm-slim
+            GIT_COMMIT=${{ github.sha }}
 
       - name: Summary
         run: |

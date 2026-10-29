@@ -55,6 +55,8 @@ export function StoreNav({
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
+                    loading="lazy"
+                    decoding="async"
                 src={logoUrl}
                 alt={storeName}
                 className="h-7 w-7 shrink-0 rounded-md object-cover"
@@ -70,13 +72,14 @@ export function StoreNav({
             <span className="truncate text-[14px] font-semibold tracking-[-0.01em]">{storeName}</span>
           </Link>
 
-          <nav className="hidden items-center gap-5 lg:flex">
+          <nav aria-label="Mağaza menüsü" className="hidden items-center gap-5 lg:flex">
             {links.map((link) => {
               const active = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  aria-current={active ? "page" : undefined}
                   className="text-[13px] font-medium transition hover:opacity-70"
                   style={{ color: active ? "var(--fg)" : "var(--fg-muted)" }}
                 >

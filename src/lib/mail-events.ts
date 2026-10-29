@@ -11,6 +11,7 @@ import {
   welcomeTemplate,
 } from "@/lib/mail-templates";
 import { logAudit } from "@/lib/audit";
+import { allowsMail, unsubscribeUrl } from "@/lib/mail-prefs";
 import { remainingLabel } from "@/lib/format";
 
 /**
@@ -23,7 +24,7 @@ import { remainingLabel } from "@/lib/format";
  */
 
 /** 1. Store created (reseller activation). */
-export async function sendWelcomeMail(store: Store, admin: { email: string; username: string }) {
+export async function sendWelcomeMail(store: Store, admin: { id: number; email: string; username: string }) {
   if (!admin.email) return;
   const template = welcomeTemplate({
     storeName: store.name,
@@ -38,6 +39,7 @@ export async function sendWelcomeMail(store: Store, admin: { email: string; user
     kind: "welcome",
     dedupeRef: `welcome:${store.id}`,
     storeId: store.id,
+    unsubscribeUrl: unsubscribeUrl("store_admin", admin.id),
   });
 }
 
@@ -62,6 +64,10 @@ export async function sendAnnouncementMails(post: PlatformPost): Promise<{ sent:
       skipped += 1;
       continue;
     }
+    if (!(await allowsMail("store_admin", admin.id, "announcements"))) {
+      skipped += 1;
+      continue;
+    }
     const template = announcementTemplate({
       storeName: store.name,
       adminUsername: admin.username,
@@ -77,6 +83,7 @@ export async function sendAnnouncementMails(post: PlatformPost): Promise<{ sent:
       kind: "announcement",
       dedupeRef: `post:${post.id}:admin:${admin.id}`,
       storeId: store.id,
+      unsubscribeUrl: unsubscribeUrl("store_admin", admin.id),
     });
     if (result.status === "sent" || result.status === "skipped") sent += 1;
     else skipped += 1;
@@ -106,6 +113,7 @@ export async function sendLicenseReminders(): Promise<{ sent: number; checked: n
   let checked = 0;
   for (const { store, admin } of rows) {
     if (!store.expiresAt || !admin.email) continue;
+    if (!(await allowsMail("store_admin", admin.id, "license"))) continue;
     const expiresAt = new Date(store.expiresAt);
     const msLeft = expiresAt.getTime() - Date.now();
     if (msLeft <= 0) continue;
@@ -127,6 +135,7 @@ export async function sendLicenseReminders(): Promise<{ sent: number; checked: n
       kind: "license",
       dedupeRef: `license:${store.id}:${bucket}:${expiresAt.toISOString().slice(0, 10)}`,
       storeId: store.id,
+      unsubscribeUrl: unsubscribeUrl("store_admin", admin.id),
     });
     if (result.status === "sent") sent += 1;
   }
@@ -141,6 +150,7 @@ export async function sendDeliveryReceipt(options: {
   items: { title: string; platformLabel?: string }[];
 }) {
   if (!options.customerId) return;
+  if (!(await allowsMail("customer", options.customerId, "delivery"))) return;
   const rows = await db
     .select({ email: customers.email, username: customers.username })
     .from(customers)
@@ -162,6 +172,7 @@ export async function sendDeliveryReceipt(options: {
     kind: "delivery",
     dedupeRef: `delivery:${options.store.id}:${options.code}`,
     storeId: options.store.id,
+    unsubscribeUrl: unsubscribeUrl("customer", options.customerId),
   });
 }
 

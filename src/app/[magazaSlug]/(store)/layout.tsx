@@ -84,14 +84,21 @@ export default async function StorefrontLayout({
         customer={customerName}
         locale={locale.code}
       />
-      <main className="flex-1">{children}</main>
+      <a href="#main" className="skip-link">
+        İçeriğe geç
+      </a>
+      <main id="main" tabIndex={-1} className="flex-1">
+        {children}
+      </main>
       <footer className="mt-12 border-t hairline">
         <div className="mx-auto grid w-full max-w-6xl gap-6 px-5 py-9 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
               {store.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={store.logoUrl} alt={store.name} className="h-7 w-7 rounded-md object-cover" />
+                <img
+                    loading="lazy"
+                    decoding="async" src={store.logoUrl} alt={store.name} className="h-7 w-7 rounded-md object-cover" />
               ) : (
                 <span
                   className="flex h-7 w-7 items-center justify-center rounded-md text-[13px] font-bold text-white"

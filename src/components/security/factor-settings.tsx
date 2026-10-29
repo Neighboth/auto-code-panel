@@ -252,7 +252,9 @@ export function FactorSettings({
             <form onSubmit={confirmTotp} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
               {totpSetup.qr ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={totpSetup.qr} alt="2FA QR kodu" className="h-28 w-28 rounded-md border hairline" />
+                <img
+                    loading="lazy"
+                    decoding="async" src={totpSetup.qr} alt="2FA QR kodu" className="h-28 w-28 rounded-md border hairline" />
               ) : (
                 <span className="flex h-28 w-28 items-center justify-center rounded-md border hairline">
                   <QrCode size={40} className="opacity-20" />
