@@ -14,6 +14,8 @@ export type SteamPreview = {
   shortDescription: string;
   originalPrice: number | null;
   currency: string;
+  sourceCurrency?: string;
+  sourcePrice?: number | null;
 };
 
 export type AssignableGame = {
@@ -58,11 +60,13 @@ export type DeliveredItem = {
   notes: string;
   expiresAt: string | null;
   coverImage: string;
+  accessToken?: string;
 };
 
 export type RedeemResult = {
   code: string;
   expiresAt: string | null;
   guest: boolean;
+  guestToken: string | null;
   items: DeliveredItem[];
 };

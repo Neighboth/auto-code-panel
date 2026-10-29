@@ -7,16 +7,39 @@ export function parsePrice(value: FormDataEntryValue | null | undefined): string
   return num.toFixed(2);
 }
 
-export function formatMoney(value: string | number | null | undefined, currency = "TRY"): string {
+export function formatMoney(
+  value: string | number | null | undefined,
+  currency = "TRY",
+  locale = "tr-TR",
+): string {
   if (value === null || value === undefined || value === "") return "—";
   const num = Number(value);
   if (!Number.isFinite(num)) return "—";
-  const symbols: Record<string, string> = { TRY: "₺", USD: "$", EUR: "€" };
-  const symbol = symbols[currency] ?? `${currency} `;
-  return `${symbol}${num.toLocaleString("tr-TR", {
+  const symbols: Record<string, string> = {
+    TRY: "₺",
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    RUB: "₽",
+    AED: "د.إ",
+    SAR: "﷼",
+    AZN: "₼",
+    PLN: "zł",
+    CHF: "CHF ",
+    CAD: "C$",
+    AUD: "A$",
+    JPY: "¥",
+    INR: "₹",
+    BRL: "R$",
+    UAH: "₴",
+    KZT: "₸",
+  };
+  const symbol = symbols[(currency || "TRY").toUpperCase()] ?? `${currency} `;
+  const formatted = num.toLocaleString(locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })}`;
+  });
+  return symbol.endsWith(" ") ? `${symbol}${formatted}` : `${symbol}${formatted}`;
 }
 
 export function convertPrice(
@@ -27,7 +50,11 @@ export function convertPrice(
   if (value === null || value === undefined || value === "") return null;
   const num = Number(value);
   if (!Number.isFinite(num)) return null;
-  const ratesToUsd: Record<string, number> = { USD: 1, EUR: 0.91, TRY: 34.5 };
+  // Static snapshot kept for synchronous rendering paths. Server actions use
+  // `convertAmount` from "@/lib/currency" which pulls live rates.
+  const ratesToUsd: Record<string, number> = {
+    USD: 1, EUR: 0.92, TRY: 42.4, GBP: 0.79, RUB: 92.5, AZN: 1.7,
+  };
   const fromRate = ratesToUsd[(from || "USD").toUpperCase()] ?? 1;
   const toRate = ratesToUsd[(to || "USD").toUpperCase()] ?? 1;
   const converted = (num * fromRate) / toRate;
@@ -89,10 +116,27 @@ export function remainingLabel(target: Date | string | null | undefined): string
   const hours = Math.floor((totalSeconds % 86_400) / 3_600);
   const minutes = Math.floor((totalSeconds % 3_600) / 60);
   const seconds = totalSeconds % 60;
-  if (days > 0) return `${days} gün ${hours} saat`;
+  // Minutes are always part of the label: "2 gün 3 saat 14 dk" reads better than
+  // a bare "2 gün 3 saat" and matches the "kalan süre" expectations.
+  if (days > 0) return `${days} gün ${hours} saat ${minutes} dk`;
   if (hours > 0) return `${hours} saat ${minutes} dk ${seconds} sn`;
   if (minutes > 0) return `${minutes} dk ${seconds} sn`;
   return `${seconds} sn`;
+}
+
+/** Compact variant used in dense UI (badges, sidebars). */
+export function remainingShort(target: Date | string | null | undefined): string {
+  if (!target) return "Sınırsız";
+  const date = typeof target === "string" ? new Date(target) : target;
+  const diff = date.getTime() - Date.now();
+  if (diff <= 0) return "Süresi doldu";
+  const totalMinutes = Math.floor(diff / 60_000);
+  const days = Math.floor(totalMinutes / 1_440);
+  const hours = Math.floor((totalMinutes % 1_440) / 60);
+  const minutes = totalMinutes % 60;
+  if (days > 0) return `${days}g ${hours}s ${minutes}dk`;
+  if (hours > 0) return `${hours}s ${minutes}dk`;
+  return `${minutes} dk`;
 }
 
 export function accessExpired(expiresAt: Date | string | null): boolean {

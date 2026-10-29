@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db, ensureDatabase } from "@/db";
 import { accounts, customers, entitlements, platformSettings, storeAdmins, stores, type Store } from "@/db/schema";
@@ -49,6 +49,20 @@ export async function getStoreBasePath(
   return host && storeUsesHost(store, host) ? "" : `/${store.slug}`;
 }
 
+/** Resolves the store that owns an incoming Host header (verified custom domain). */
+export async function findStoreByHost(host: string): Promise<Store | null> {
+  const normalized = normalizeHost(host);
+  if (!normalized) return null;
+  const rows = await db
+    .select()
+    .from(stores)
+    .where(sql`lower(${stores.customDomain}) = ${normalized}`)
+    .limit(1);
+  const store = rows[0] ?? null;
+  if (!store || !store.customDomainVerifiedAt) return null;
+  return store;
+}
+
 export async function getStoreState(slug: string): Promise<StoreState | null> {
   const store = await findStoreBySlug(slug);
   if (!store) return null;
@@ -63,12 +77,14 @@ export async function requireStoreAdmin(slug: string): Promise<{
   const state = await getStoreState(slug);
   if (!session || !state) return null;
   if (session.storeId !== state.store.id) return null;
+  // Store managers are never suspended individually (only the whole store can be
+  // suspended). We still verify the account exists to invalidate stale sessions.
   const adminRows = await db
-    .select({ status: storeAdmins.status })
+    .select({ id: storeAdmins.id })
     .from(storeAdmins)
     .where(and(eq(storeAdmins.id, session.adminId), eq(storeAdmins.storeId, session.storeId)))
     .limit(1);
-  if (!adminRows[0] || adminRows[0].status === "banned") return null;
+  if (!adminRows[0]) return null;
   return { state, session };
 }
 

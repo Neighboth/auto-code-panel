@@ -17,17 +17,11 @@ import {
 import { slugify } from "@/lib/format";
 import { Field } from "@/components/ui";
 import { TwoFactorPrompt } from "@/components/security/two-factor-prompt";
+import { createTranslator } from "@/lib/i18n/translate";
 
 function ErrorBox({ message }: { message: string | null }) {
   if (!message) return null;
-  return (
-    <div
-      className="rounded-lg border px-3 py-2 text-[12.5px]"
-      style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#b91c1c" }}
-    >
-      {message}
-    </div>
-  );
+  return <div className="note note-danger text-[12.5px]">{message}</div>;
 }
 
 type TwoFaState = {
@@ -260,12 +254,15 @@ export function StoreAdminLoginForm({
   slug,
   storeName,
   basePath,
+  locale = "tr",
 }: {
   slug: string;
   storeName: string;
   basePath: string;
+  locale?: string;
 }) {
   const router = useRouter();
+  const t = createTranslator(locale);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
@@ -290,17 +287,17 @@ export function StoreAdminLoginForm({
       });
       return;
     }
-    toast.success(`${storeName} paneline giriş yapıldı`);
+    toast.success(`${storeName} ${t("auth.storeLoginSuccess")}`);
     router.push(localizeStorePath(result.redirectTo, slug, basePath, fallback));
     router.refresh();
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <Field label="Yönetici kullanıcı adı veya e-posta" htmlFor="username">
+      <Field label={t("auth.managerUsername")} htmlFor="username">
         <input id="username" name="username" required className="input" autoComplete="username" />
       </Field>
-      <Field label="Şifre" htmlFor="password">
+      <Field label={t("auth.password")} htmlFor="password">
         <input
           id="password"
           name="password"
@@ -311,9 +308,9 @@ export function StoreAdminLoginForm({
         />
       </Field>
       <ErrorBox message={error} />
-      <button type="submit" className="btn btn-gray w-full" disabled={pending}>
+      <button type="submit" className="btn btn-primary w-full" disabled={pending}>
         {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-        Mağaza paneline giriş
+        {t("auth.managerLogin")}
       </button>
       {twoFa ? (
         <TwoFactorPrompt
@@ -333,16 +330,20 @@ export function CustomerAuthForm({
   mode,
   autoMessage,
   basePath,
+  locale = "tr",
 }: {
   slug: string;
   mode: "login" | "register";
   autoMessage?: string;
   basePath: string;
+  locale?: string;
 }) {
   const router = useRouter();
+  const t = createTranslator(locale);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
+  const [showPassword, setShowPassword] = useState(false);
   const fallback = `${basePath}/kutuphane`;
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -377,7 +378,7 @@ export function CustomerAuthForm({
           {autoMessage}
         </p>
       ) : null}
-      <Field label="Kullanıcı Adı" htmlFor="username" hint="3-24 karakter; harf, rakam, nokta, tire.">
+      <Field label={t("auth.username")} htmlFor="username" hint={t("auth.usernameHint")}>
         <input
           id="username"
           name="username"
@@ -390,33 +391,42 @@ export function CustomerAuthForm({
       </Field>
       {mode === "register" ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Görünen Ad (opsiyonel)" htmlFor="displayName">
+          <Field label={t("auth.displayNameOptional")} htmlFor="displayName">
             <input id="displayName" name="displayName" className="input" />
           </Field>
-          <Field label="E-posta (opsiyonel)" htmlFor="email">
+          <Field label={t("auth.emailOptional")} htmlFor="email">
             <input id="email" name="email" type="email" className="input" autoComplete="email" />
           </Field>
         </div>
       ) : null}
       <Field
-        label="Şifre"
+        label={t("auth.password")}
         htmlFor="password"
-        hint={mode === "register" ? "En az 6 karakter." : undefined}
+        hint={mode === "register" ? t("auth.passwordHint") : undefined}
       >
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          minLength={6}
-          className="input"
-          autoComplete={mode === "register" ? "new-password" : "current-password"}
-        />
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            minLength={6}
+            className="input pr-16"
+            autoComplete={mode === "register" ? "new-password" : "current-password"}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((value) => !value)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
+          >
+            {showPassword ? t("auth.hide") : t("auth.show")}
+          </button>
+        </div>
       </Field>
       <ErrorBox message={error} />
-      <button type="submit" className="btn btn-gray w-full" disabled={pending}>
+      <button type="submit" className="btn btn-primary w-full" disabled={pending}>
         {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-        {mode === "register" ? "Hesap oluştur" : "Giriş yap"}
+        {mode === "register" ? t("auth.createAccount") : t("auth.login")}
       </button>
       {twoFa ? (
         <TwoFactorPrompt
@@ -428,6 +438,67 @@ export function CustomerAuthForm({
         />
       ) : null}
     </form>
+  );
+}
+
+/**
+ * Storefront entry point with two tabs: customers and the store's own manager.
+ * Shop owners can sign in from their storefront without hunting for /admin.
+ */
+export function StoreLoginTabs({
+  slug,
+  storeName,
+  basePath,
+  initialTab = "customer",
+  locale = "tr",
+}: {
+  slug: string;
+  storeName: string;
+  basePath: string;
+  initialTab?: "customer" | "manager";
+  locale?: string;
+}) {
+  const [tab, setTab] = useState<"customer" | "manager">(initialTab);
+  const t = createTranslator(locale);
+
+  return (
+    <div>
+      <div className="flex items-center gap-1 rounded-xl border p-1 hairline" role="tablist">
+        {(["customer", "manager"] as const).map((item) => (
+          <button
+            key={item}
+            type="button"
+            role="tab"
+            aria-selected={tab === item}
+            onClick={() => setTab(item)}
+            className="flex-1 rounded-lg px-3 py-2 text-[12.5px] font-medium transition"
+            style={{
+              background: tab === item ? "var(--store-primary)" : "transparent",
+              color: tab === item ? "#fff" : "var(--fg-muted)",
+            }}
+          >
+            {item === "customer" ? t("auth.customerTab") : t("auth.managerTab")}
+          </button>
+        ))}
+      </div>
+      <div className="mt-5">
+        {tab === "customer" ? (
+          <CustomerAuthForm slug={slug} mode="login" basePath={basePath} locale={locale} />
+        ) : (
+          <div className="space-y-3">
+            <p className="text-[12px] leading-relaxed muted">
+              {storeName} {t("auth.managerNote")}
+            </p>
+            <StoreAdminLoginForm
+              slug={slug}
+              storeName={storeName}
+              basePath={basePath}
+              locale={locale}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

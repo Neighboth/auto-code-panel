@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AlertTriangle, ArrowRight, Check, KeyRound, Loader2, Lock, ShieldAlert } from "lucide-react";
 import { previewCode, redeemCode } from "@/app/actions/storefront";
-import { CopyButton } from "@/components/copy-button";
-import { Markdown } from "@/components/markdown";
+import { CredentialsModal } from "@/components/store/credentials-modal";
 import { Modal } from "@/components/modal";
 import { Field } from "@/components/ui";
 import type { CodePreview, RedeemResult } from "@/lib/types";
@@ -38,6 +37,8 @@ export function RedeemFlow({
   const [password, setPassword] = useState("");
   const [result, setResult] = useState<RedeemResult | null>(null);
   const [loggedIn, setLoggedIn] = useState(Boolean(customerName));
+  const [detailIndex, setDetailIndex] = useState<number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!initialCode) return;
@@ -164,10 +165,7 @@ export function RedeemFlow({
       </ol>
 
       {error ? (
-        <div
-          className="mb-4 rounded-lg border px-3 py-2.5 text-[12.5px]"
-          style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#b91c1c" }}
-        >
+        <div className="note note-danger mb-4 text-[12.5px]">
           {error}
         </div>
       ) : null}
@@ -306,13 +304,22 @@ export function RedeemFlow({
               />
             </Field>
             <Field label="Şifre" hint="En az 6 karakter.">
-              <input
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                type="password"
-                className="input"
-                autoComplete={authMode === "register" ? "new-password" : "current-password"}
-              />
+              <div className="relative">
+                <input
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  className="input pr-14"
+                  autoComplete={authMode === "register" ? "new-password" : "current-password"}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
+                >
+                  {showPassword ? "Gizle" : "Göster"}
+                </button>
+              </div>
             </Field>
           </div>
 
@@ -321,7 +328,6 @@ export function RedeemFlow({
               type="button"
               onClick={() => setGuestWarning(true)}
               className="btn btn-outline"
-              style={{ borderColor: "#fca5a5", color: "#b91c1c" }}
             >
               Üye olmadan es geç
             </button>
@@ -346,7 +352,8 @@ export function RedeemFlow({
         <div className="card p-6">
           <h1 className="text-[21px] font-semibold tracking-[-0.02em]">Teslimatı onayla</h1>
           <p className="mt-1.5 text-[12.5px] muted">
-            Kod kullanıldığı anda {preview.durationLabel.toLowerCase()} başlar.
+            Paylaşımlı hesap teslimatı: kod kullanıldığında erişim sınırsız süreyle açılır ve
+            kütüphanenize eklenir.
           </p>
           <div className="mt-4 divide-y rounded-lg border hairline">
             {preview.items.map((item) => (
@@ -360,7 +367,7 @@ export function RedeemFlow({
             ))}
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-            <span className="badge badge-blue">Erişim: {durationText}</span>
+            <span className="badge badge-blue">Erişim: Sınırsız</span>
             <div className="flex items-center gap-2">
               <button type="button" className="btn btn-outline" onClick={() => setStep("entry")}>
                 Vazgeç
@@ -393,7 +400,6 @@ export function RedeemFlow({
             {result.guest ? (
               <div
                 className="mt-4 flex items-start gap-2 rounded-lg border px-3.5 py-3"
-                style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}
               >
                 <ShieldAlert size={16} className="mt-0.5 shrink-0" />
                 <p className="text-[12px] font-medium leading-relaxed">
@@ -405,7 +411,7 @@ export function RedeemFlow({
             ) : null}
           </div>
 
-          {result.items.map((item) => (
+          {result.items.map((item, index) => (
             <div key={item.entitlementId} className="card overflow-hidden">
               <div className="flex items-start justify-between gap-3 border-b px-4 py-3 hairline">
                 <div>
@@ -414,27 +420,20 @@ export function RedeemFlow({
                     {item.platformLabel} · {item.subtitle}
                   </p>
                 </div>
-                <span className="badge">{item.kind === "game" ? "Oyun" : "Hesap"}</span>
+                <span className="badge">{item.kind === "game" ? "Ürün" : "Hesap"}</span>
               </div>
-              <div className="space-y-2.5 px-4 py-4">
-                {item.username || item.email ? (
-                  <CredentialRow label="Kullanıcı adı / E-posta" value={item.username || item.email || ""} />
-                ) : null}
-                {item.password ? <CredentialRow label="Şifre" value={item.password} mono /> : null}
-                {item.mailEmail ? <CredentialRow label="Bağlı e-posta" value={item.mailEmail} /> : null}
-                {item.mailPassword ? <CredentialRow label="E-posta şifresi" value={item.mailPassword} mono /> : null}
-                {item.notes ? (
-                  <div className="rounded-lg border px-3 py-2.5 hairline">
-                    <p className="mb-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">Notlar</p>
-                    <Markdown content={item.notes} />
-                  </div>
-                ) : null}
-                {item.guardType !== "none" ? (
-                  <p className="text-[11px] muted">
-                    {item.guardType === "steam_guard" ? "Steam Guard" : "2FA"} aktif. Kod üretimi
-                    güvenlik gereği yalnızca hesabınıza giriş yaptığınızda kütüphanede çalışır.
-                  </p>
-                ) : null}
+              <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3.5">
+                <p className="text-[11.5px] muted">
+                  Kullanıcı adı, şifre, notlar ve canlı kod sırayla gösterilir.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setDetailIndex(index)}
+                >
+                  Hesap bilgilerini al
+                  <ArrowRight size={12} />
+                </button>
               </div>
             </div>
           ))}
@@ -491,7 +490,6 @@ export function RedeemFlow({
       >
         <div
           className="flex items-start gap-3 rounded-lg border p-3.5"
-          style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}
         >
           <AlertTriangle size={20} className="mt-0.5 shrink-0" />
           <p className="text-[12.5px] font-medium leading-relaxed">
@@ -501,18 +499,28 @@ export function RedeemFlow({
           </p>
         </div>
       </Modal>
-    </div>
-  );
-}
 
-function CredentialRow({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2 hairline">
-      <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] muted">{label}</p>
-        <p className={`mt-0.5 truncate text-[12.5px] font-medium ${mono ? "mono" : ""}`}>{value}</p>
-      </div>
-      <CopyButton value={value} />
+      {result && detailIndex !== null && result.items[detailIndex] ? (
+        <CredentialsModal
+          open
+          onClose={() => setDetailIndex(null)}
+          slug={slug}
+          item={{
+            entitlementId: result.items[detailIndex].entitlementId,
+            title: result.items[detailIndex].title,
+            subtitle: result.items[detailIndex].subtitle,
+            platformLabel: result.items[detailIndex].platformLabel,
+            guardType: result.items[detailIndex].guardType,
+            username: result.items[detailIndex].username,
+            email: result.items[detailIndex].email,
+            password: result.items[detailIndex].password,
+            mailEmail: result.items[detailIndex].mailEmail,
+            mailPassword: result.items[detailIndex].mailPassword,
+            notes: result.items[detailIndex].notes,
+            accessToken: result.guestToken,
+          }}
+        />
+      ) : null}
     </div>
   );
 }

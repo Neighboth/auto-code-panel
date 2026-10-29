@@ -1,8 +1,10 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import { googleFontHref } from "@/lib/fonts";
 import { getStoreState } from "@/lib/tenant";
+import { normalizeDomain, normalizeHost } from "@/lib/domain";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +30,25 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
   const state = await getStoreState(magazaSlug);
   if (!state) notFound();
   const { store } = state;
+
+  /*
+   * Verified custom domain wins: the slug stays in the database (and keeps
+   * working while the domain is unverified) but visitors landing on
+   * /<slug> are forwarded to the branded domain.
+   */
+  if (store.customDomain && store.customDomainVerifiedAt) {
+    const headerStore = await headers();
+    const host = normalizeHost(
+      headerStore.get("host") ?? headerStore.get("x-forwarded-host") ?? "",
+    );
+    const domain = normalizeDomain(store.customDomain);
+    const isLocal = !host || host === "localhost" || host.endsWith(".localhost") || /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+    if (host && host !== domain && !isLocal) {
+      const path = headerStore.get("x-pathname") ?? "";
+      redirect(`https://${domain}${path && path.startsWith(`/${store.slug}`) ? path.slice(store.slug.length + 1) : ""}`);
+    }
+  }
+
   const fontHref = googleFontHref([store.fontFamily]);
 
   const style = {

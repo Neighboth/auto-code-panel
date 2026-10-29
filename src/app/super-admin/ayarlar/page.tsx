@@ -4,6 +4,7 @@ import { Database, Globe2, KeyRound } from "lucide-react";
 import { getSuperSession } from "@/lib/session";
 import { getPlatformSettings } from "@/lib/tenant";
 import { brand } from "@/lib/brand";
+import { env } from "@/lib/env";
 import { PlatformSettingsForm } from "@/components/super-admin/panels";
 import { FactorSettings } from "@/components/security/factor-settings";
 
@@ -26,9 +27,11 @@ export default async function SystemSettingsPage() {
       </div>
 
       <PlatformSettingsForm
-        renewalUrl={settings.renewalUrl}
-        supportEmail={settings.supportEmail}
+        renewalUrl={env.renewalUrl}
+        supportEmail={env.supportEmail}
         defaultPlanNote={settings.defaultPlanNote}
+        envRenewalUrl={env.renewalUrl}
+        envSupportEmail={env.supportEmail}
       />
 
       <FactorSettings slug="" subjectType="super" rpName={brand.name} />

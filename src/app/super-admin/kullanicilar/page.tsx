@@ -8,15 +8,22 @@ import { UserTabs } from "./tabs-client";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Kullanıcılar" };
 
-export default async function SuperUsersPage() {
+export default async function SuperUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const session = await getSuperSession();
   if (!session) redirect("/super-admin");
+  const { tab } = await searchParams;
 
   const resellerRows = await db
     .select({
       admin: storeAdmins,
       storeName: stores.name,
       storeSlug: stores.slug,
+      storeStatus: stores.status,
+      storeExpiresAt: stores.expiresAt,
     })
     .from(storeAdmins)
     .innerJoin(stores, eq(stores.id, storeAdmins.storeId))
@@ -53,7 +60,10 @@ export default async function SuperUsersPage() {
           createdAt: new Date(row.admin.createdAt).toISOString(),
           storeName: row.storeName,
           storeSlug: row.storeSlug,
+          storeStatus: row.storeStatus,
+          storeExpiresAt: row.storeExpiresAt ? new Date(row.storeExpiresAt).toISOString() : null,
         }))}
+        initialTab={tab === "customers" ? "customers" : "resellers"}
         customers={customerRows.map((row) => ({
           key: row.customer.id,
           id: row.customer.id,

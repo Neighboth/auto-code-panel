@@ -7,6 +7,8 @@ import { accounts, platformPosts, platformSettings, resellerKeys, storeAdmins, s
 import { generateResellerKey } from "@/lib/crypto";
 import { decryptData } from "@/lib/secret-crypto";
 import { getSuperSession } from "@/lib/session";
+import { env } from "@/lib/env";
+import { managerIdentifierError } from "@/lib/admin-guard";
 import type { ActionResult } from "@/lib/types";
 
 export type StoreAccountView = {
@@ -159,17 +161,16 @@ export async function extendStoreLicense(formData: FormData): Promise<ActionResu
   return { ok: true, message: "Bayi lisansı güncellendi." };
 }
 
-export async function setResellerBan(adminId: number, banned: boolean): Promise<ActionResult> {
+/**
+ * Store managers are intentionally NOT individually suspendable: the store is
+ * the licensing unit. Suspending a manager used to lock the account out of the
+ * panel and produced an infinite redirect loop. Only `setStoreSuspension` exists.
+ */
+export async function getStoreSuspensionInfo(storeId: number): Promise<ActionResult<{ suspended: boolean }>> {
   if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
-  const rows = await db.select().from(storeAdmins).where(eq(storeAdmins.id, adminId)).limit(1);
-  if (rows.length === 0) return { ok: false, message: "Bayi hesabı bulunamadı." };
-  await db
-    .update(storeAdmins)
-    .set({ status: banned ? "banned" : "active" })
-    .where(eq(storeAdmins.id, adminId));
-  revalidatePath("/super-admin");
-  revalidatePath("/super-admin/kullanicilar");
-  return { ok: true, message: banned ? "Bayi hesabı askıya alındı." : "Bayi hesabı aktifleştirildi." };
+  const rows = await db.select({ status: stores.status }).from(stores).where(eq(stores.id, storeId)).limit(1);
+  if (!rows[0]) return { ok: false, message: "Mağaza bulunamadı." };
+  return { ok: true, data: { suspended: rows[0].status === "suspended" } };
 }
 
 export async function setStoreSuspension(formData: FormData): Promise<ActionResult> {
@@ -266,30 +267,35 @@ export async function setPlatformPostPinned(formData: FormData): Promise<ActionR
   return { ok: true, message: pinned ? "Kayıt sabitlendi." : "Sabitleme kaldırıldı." };
 }
 
+/**
+ * Renewal link and support e-mail come from environment variables
+ * (`RENEWAL_URL`, `SUPPORT_EMAIL`) and are intentionally not editable from the
+ * dashboard: a compromised super-admin session must not be able to redirect
+ * payment flows.
+ */
 export async function updatePlatformSettings(formData: FormData): Promise<ActionResult> {
   if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
-  const renewalUrl = String(formData.get("renewalUrl") ?? "").trim();
-  const supportEmail = String(formData.get("supportEmail") ?? "").trim();
   const defaultPlanNote = String(formData.get("defaultPlanNote") ?? "").trim();
-
-  if (!/^https?:\/\//i.test(renewalUrl)) {
-    return { ok: false, message: "Global süre uzatma linki http(s) ile başlamalıdır." };
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(supportEmail)) {
-    return { ok: false, message: "Geçerli bir destek e-postası girin." };
+  if (defaultPlanNote.length > 2000) {
+    return { ok: false, message: "Bilgilendirme metni en fazla 2000 karakter olabilir." };
   }
 
   await db
     .insert(platformSettings)
-    .values({ id: 1, renewalUrl, supportEmail, defaultPlanNote, updatedAt: new Date() })
+    .values({
+      id: 1,
+      renewalUrl: env.renewalUrl,
+      supportEmail: env.supportEmail,
+      defaultPlanNote,
+      updatedAt: new Date(),
+    })
     .onConflictDoUpdate({
       target: platformSettings.id,
-      set: { renewalUrl, supportEmail, defaultPlanNote, updatedAt: new Date() },
+      set: { renewalUrl: env.renewalUrl, supportEmail: env.supportEmail, defaultPlanNote, updatedAt: new Date() },
     });
 
-  await db.update(stores).set({ renewalUrl: null }).where(eq(stores.renewalUrl, ""));
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/ayarlar");
   revalidatePath("/", "layout");
-  return { ok: true, message: "Sistem ayarları kaydedildi." };
+  return { ok: true, message: "Sistem ayarları kaydedildi. Süre uzatma linki ve destek e-postası .env dosyasından okunur." };
 }

@@ -22,12 +22,14 @@ export function CustomerDetailActions({
   customerId,
   banned,
   games,
+  listHref,
 }: {
   slug: string;
   basePath: string;
   customerId: number;
   banned: boolean;
   games: { id: number; title: string }[];
+  listHref?: string;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -113,7 +115,7 @@ export function CustomerDetailActions({
                 onClick={() =>
                   run(() => deleteCustomer(slug, customerId), "Silindi", () => {
                     setDeleteOpen(false);
-                    router.push(`${basePath}/admin/kullanicilar`);
+                    router.push(listHref ?? `${basePath}/admin/kullanicilar`);
                   })
                 }
               >

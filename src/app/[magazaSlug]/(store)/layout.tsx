@@ -7,6 +7,8 @@ import { getPlatformSettings, getStoreBasePath, getStoreState } from "@/lib/tena
 import { StoreNav } from "@/components/store/shell";
 import { BrandMark } from "@/components/brand";
 import { brand } from "@/lib/brand";
+import { getLocale } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translate";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,8 @@ export default async function StorefrontLayout({
   const customerName =
     customerSession && customerSession.storeId === store.id ? customerSession.username : null;
   const basePath = await getStoreBasePath(store);
+  const locale = await getLocale();
+  const t = createTranslator(locale.code);
 
   if (!active) {
     const renewalUrl = store.renewalUrl || settings.renewalUrl;
@@ -78,6 +82,7 @@ export default async function StorefrontLayout({
         storeName={store.name}
         logoUrl={store.logoUrl}
         customer={customerName}
+        locale={locale.code}
       />
       <main className="flex-1">{children}</main>
       <footer className="mt-12 border-t hairline">
@@ -102,26 +107,32 @@ export default async function StorefrontLayout({
             </p>
           </div>
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">Mağaza</p>
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">
+              {t("store.footerStore")}
+            </p>
             <div className="mt-2 flex flex-col gap-1.5 text-[12px]">
               <Link href={basePath || "/"} className="hover:opacity-70">
-                Anasayfa
+                {t("nav.home")}
               </Link>
               <Link href={`${basePath}/oyunlar`} className="hover:opacity-70">
-                Oyunlar
+                {t("nav.products")}
               </Link>
               <Link href={`${basePath}/kod-gir`} className="hover:opacity-70">
-                Kod gir
+                {t("nav.redeem")}
               </Link>
               <Link href={`${basePath}/kutuphane`} className="hover:opacity-70">
-                Kütüphanem
+                {t("nav.library")}
               </Link>
             </div>
           </div>
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">İletişim</p>
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">
+              {t("store.footerContact")}
+            </p>
             <div className="mt-2 flex flex-col gap-1.5 text-[12px]">
-              {store.contactLinks.length === 0 ? <span className="muted">Link eklenmedi</span> : null}
+              {store.contactLinks.length === 0 ? (
+                <span className="muted">{t("store.footerNoLinks")}</span>
+              ) : null}
               {store.contactLinks.map((link) => (
                 <a
                   key={`${link.label}-${link.url}`}
@@ -136,10 +147,11 @@ export default async function StorefrontLayout({
             </div>
           </div>
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">Güvenlik</p>
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">
+              {t("store.footerSecurity")}
+            </p>
             <p className="mt-2 text-[11.5px] leading-relaxed muted">
-              2FA ve Steam Guard kodları sunucu tarafında üretilir. Secret anahtarları tarayıcıya
-              gönderilmez.
+              {t("store.footerSecurityText")}
             </p>
             <p className="mt-2 text-[10.5px] muted">Powered by {brand.name}</p>
           </div>

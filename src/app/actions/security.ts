@@ -267,7 +267,7 @@ function finalizeSession(subject: PendingSubject): { redirectTo: string; apply: 
         await clearSessionCookie(SUPER_COOKIE);
         await setSessionCookie(STORE_COOKIE, {
           kind: "store",
-          storeId: subject.id,
+          storeId: subject.storeId,
           adminId: subject.id,
           username: subject.username,
           slug: subject.slug,
@@ -280,7 +280,7 @@ function finalizeSession(subject: PendingSubject): { redirectTo: string; apply: 
     apply: async () => {
       await setSessionCookie(CUSTOMER_COOKIE, {
         kind: "customer",
-        storeId: subject.id,
+        storeId: subject.storeId,
         customerId: subject.id,
         username: subject.username,
       });

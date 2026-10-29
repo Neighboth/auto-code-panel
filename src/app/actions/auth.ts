@@ -7,6 +7,7 @@ import { customers, resellerKeys, securityFactors, storeAdmins, stores } from "@
 import { hashPassword, safeEqual, verifyPassword } from "@/lib/crypto";
 import { env } from "@/lib/env";
 import { RESERVED_SLUGS, slugify } from "@/lib/format";
+import { managerIdentifierError } from "@/lib/admin-guard";
 import { hitRateLimit, recordSuccess } from "@/lib/rate-limit";
 import {
   CUSTOMER_COOKIE,
@@ -54,8 +55,8 @@ async function factorMethods(
 
 type PendingInput =
   | { t: "super"; id: number; username: string }
-  | { t: "store"; id: number; slug: string; username: string }
-  | { t: "customer"; id: number; slug: string; username: string };
+  | { t: "store"; id: number; storeId: number; slug: string; username: string }
+  | { t: "customer"; id: number; storeId: number; slug: string; username: string };
 
 async function startPendingOrSession(subject: PendingInput, redirectTo: string): Promise<ActionResult> {
   const methods = await factorMethods(subject.t, subject.id);
@@ -77,7 +78,7 @@ async function startPendingOrSession(subject: PendingInput, redirectTo: string):
     } else if (subject.t === "customer" && subject.slug) {
       await setSessionCookie(CUSTOMER_COOKIE, {
         kind: "customer",
-        storeId: subject.id,
+        storeId: subject.storeId,
         customerId: subject.id,
         username: subject.username,
       });
@@ -152,12 +153,9 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
   }
 
   const { admin, store } = matches[0];
-  if (admin.status === "banned") {
-    return { ok: false, message: "Hesabınız platform yöneticisi tarafından askıya alındı." };
-  }
   recordSuccess(`mgr:${identifier}`);
   return startPendingOrSession(
-    { t: "store", id: admin.id, slug: store.slug, username: admin.username },
+    { t: "store", id: admin.id, storeId: store.id, slug: store.slug, username: admin.username },
     `/${store.slug}/admin`,
   );
 }
@@ -192,6 +190,8 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
   if (!EMAIL_RE.test(adminEmail)) {
     return { ok: false, message: "Geçerli bir yönetici e-postası girin." };
   }
+  const reserved = managerIdentifierError(adminUsername, adminEmail);
+  if (reserved) return { ok: false, message: reserved };
   if (adminPassword.length < 6) {
     return { ok: false, message: "Şifre en az 6 karakter olmalıdır." };
   }
@@ -325,12 +325,9 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
   if (!admin) {
     return { ok: false, message: "Kullanıcı adı veya şifre hatalı." };
   }
-  if (admin.status === "banned") {
-    return { ok: false, message: "Hesabınız platform yöneticisi tarafından askıya alındı." };
-  }
   recordSuccess(`st:${slug}:${identifier}`);
   return startPendingOrSession(
-    { t: "store", id: admin.id, slug: store.slug, username: admin.username },
+    { t: "store", id: admin.id, storeId: store.id, slug: store.slug, username: admin.username },
     `/${store.slug}/admin`,
   );
 }
@@ -436,7 +433,7 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
   }
   recordSuccess(`cu:${slug}:${username.toLowerCase()}`);
   return startPendingOrSession(
-    { t: "customer", id: customer.id, slug: store.slug, username: customer.username },
+    { t: "customer", id: customer.id, storeId: store.id, slug: store.slug, username: customer.username },
     `/${store.slug}/kutuphane`,
   );
 }

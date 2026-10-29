@@ -1,23 +1,46 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Boxes,
   CloudDownload,
+  Fingerprint,
   Loader2,
+  Mail,
   Pencil,
   Plus,
   RefreshCw,
+  ShieldCheck,
   Sparkles,
   Trash2,
 } from "lucide-react";
-import { deleteAccount, deleteGame, saveAccount, saveGame, setAccountStatus, steamLookup, syncSteamNow } from "@/app/actions/store-admin";
+import {
+  deleteAccount,
+  deleteGame,
+  saveAccount,
+  saveGame,
+  setAccountStatus,
+  steamLookup,
+  syncSteamNow,
+  testAccessCode,
+  type AccessCodeTest,
+} from "@/app/actions/store-admin";
 import { Modal } from "@/components/modal";
 import { Field } from "@/components/ui";
-import { PLATFORM_PRESETS } from "@/lib/fonts";
-import { formatDateTime, formatMoney, convertPrice } from "@/lib/format";
+import {
+  GUARD_OPTIONS,
+  PLATFORM_GROUPS,
+  PLATFORM_PRESETS,
+  guardHasEmail,
+  guardHasSteam,
+  guardHasTotp,
+} from "@/lib/fonts";
+import { formatDateTime, formatMoney, remainingShort } from "@/lib/format";
+import { CURRENCY_OPTIONS } from "@/lib/currency";
+import { MAIL_PRESETS } from "@/lib/mail-presets";
+import { convertLocal, fetchRates, type RateTable } from "@/lib/fx-client";
 
 export type AdminGame = {
   id: number;
@@ -49,45 +72,49 @@ export type AdminAccount = {
   hasTotpSecret: boolean;
   mailEmail: string | null;
   mailPassword: string | null;
+  mailProvider: string;
+  mailHost: string | null;
+  mailPort: number | null;
+  mailSenderFilter: string;
   notes: string;
   status: string;
 };
 
 function ErrorLine({ message }: { message: string | null }) {
   if (!message) return null;
-  return (
-    <p className="rounded-md px-2.5 py-1.5 text-[11.5px]" style={{ background: "#fef2f2", color: "#b91c1c" }}>
-      {message}
-    </p>
-  );
+  return <p className="note note-danger">{message}</p>;
 }
 
-/* ------------------------------- Games ------------------------------- */
+function useFxRates(): RateTable {
+  const [rates, setRates] = useState<RateTable>({});
+  // Snapshot of "now" so the render stays pure.
+  const [now] = useState(() => Date.now());
+  useEffect(() => {
+    let cancelled = false;
+    void fetchRates().then((table) => {
+      if (!cancelled) setRates(table);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return rates;
+}
+
+/* ------------------------------- Products ------------------------------- */
 
 export function GameManager({ slug, games }: { slug: string; games: AdminGame[] }) {
   const router = useRouter();
+  const rates = useFxRates();
   const [editing, setEditing] = useState<AdminGame | null>(null);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [lookupPending, setLookupPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<AdminGame | null>(null);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    salesUrl: "",
-    steamUrl: "",
-    originalPrice: "",
-    originalCurrency: "TRY",
-    ourPrice: "",
-    coverImage: "",
-    autoSync: true,
-    currency: "TRY",
-  });
 
-  function openCreate() {
-    setEditing(null);
-    setForm({
+  const emptyForm = useMemo(
+    () => ({
       title: "",
       description: "",
       salesUrl: "",
@@ -98,7 +125,14 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
       coverImage: "",
       autoSync: true,
       currency: "TRY",
-    });
+    }),
+    [],
+  );
+  const [form, setForm] = useState(emptyForm);
+
+  function openCreate() {
+    setEditing(null);
+    setForm(emptyForm);
     setError(null);
     setOpen(true);
   }
@@ -121,16 +155,19 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
     setOpen(true);
   }
 
+  /** Changing the currency converts every price box immediately. */
   function onCurrencyChange(event: ChangeEvent<HTMLSelectElement>) {
     const next = event.target.value;
     setForm((current) => ({
       ...current,
       currency: next,
       originalPrice: current.originalPrice
-        ? (convertPrice(current.originalPrice, current.originalCurrency, next) ?? current.originalPrice)
+        ? convertLocal(current.originalPrice, current.originalCurrency, next, rates)
         : current.originalPrice,
+      ourPrice: current.ourPrice
+        ? convertLocal(current.ourPrice, current.currency, next, rates)
+        : current.ourPrice,
       originalCurrency: next,
-      ourPrice: current.ourPrice ? (convertPrice(current.ourPrice, current.currency, next) ?? current.ourPrice) : current.ourPrice,
     }));
   }
 
@@ -141,27 +178,23 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
     }
     setLookupPending(true);
     setError(null);
-    const result = await steamLookup(form.steamUrl);
+    const result = await steamLookup(form.steamUrl, form.currency);
     setLookupPending(false);
     if (!result.ok || !result.data) {
       setError(result.message ?? "Steam bilgisi alınamadı.");
       return;
     }
-    setForm((current) => {
-      const selectedCurrency = current.currency || "TRY";
-      return {
-        ...current,
-        title: result.data!.title || current.title,
-        description: current.description || result.data!.shortDescription,
-        coverImage: result.data!.headerImage || current.coverImage,
-        originalPrice:
-          result.data!.originalPrice !== null
-            ? (convertPrice(result.data!.originalPrice, result.data!.currency || "USD", selectedCurrency) ?? current.originalPrice)
-            : current.originalPrice,
-        originalCurrency: selectedCurrency,
-      };
-    });
-    toast.success("Steam bilgileri dolduruldu");
+    const data = result.data;
+    setForm((current) => ({
+      ...current,
+      title: data.title || current.title,
+      description: current.description || data.shortDescription,
+      coverImage: data.headerImage || current.coverImage,
+      originalPrice:
+        data.originalPrice !== null ? String(data.originalPrice) : current.originalPrice,
+      originalCurrency: current.currency,
+    }));
+    toast.success(result.message ?? "Steam bilgileri dolduruldu");
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -219,9 +252,10 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Vitrin yönetimi</p>
-          <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">Oyunlar & ürünler</h1>
+          <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">Ürünler & oyunlar</h1>
           <p className="mt-1 text-[12.5px] muted">
-            {games.length} ürün · Steam linki girildiğinde başlık, kapak ve resmi fiyat otomatik çekilir.
+            {games.length} ürün · Oyun, abonelik veya dijital ürün ekleyin. Steam linki girildiğinde
+            başlık, kapak ve resmi fiyat otomatik çekilip seçili para birimine çevrilir.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -255,7 +289,9 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
                   <td colSpan={6} className="py-12 text-center">
                     <Boxes size={22} className="mx-auto muted" />
                     <p className="mt-2 text-[12.5px] font-medium">Henüz ürün yok</p>
-                    <p className="mt-1 text-[11.5px] muted">Steam linki yapıştırarak saniyeler içinde ekleyin.</p>
+                    <p className="mt-1 text-[11.5px] muted">
+                      Steam linki veya manuel giriş ile ilk ürününüzü ekleyin.
+                    </p>
                   </td>
                 </tr>
               ) : null}
@@ -272,7 +308,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
                       <div className="min-w-0">
                         <p className="truncate text-[12.5px] font-medium">{game.title}</p>
                         <p className="truncate text-[10.5px] muted">
-                          {game.steamAppId ? `AppID ${game.steamAppId}` : "Manuel ürün"}
+                          {game.steamAppId ? `Steam AppID ${game.steamAppId}` : "Manuel ürün"}
                         </p>
                       </div>
                     </div>
@@ -312,7 +348,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
         open={open}
         onClose={() => setOpen(false)}
         title={editing ? "Ürünü düzenle" : "Yeni ürün ekle"}
-        description="Steam linki girip 'Steam'den çek' butonunu kullanarak alanları otomatik doldurabilirsiniz."
+        description="Oyun, abonelik veya dijital ürün. Steam linki opsiyoneldir; fiyatlar seçili para birimine dönüştürülür."
         size="lg"
       >
         <form onSubmit={onSubmit} className="space-y-3.5">
@@ -322,21 +358,27 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
                 name="steamUrl"
                 value={form.steamUrl}
                 onChange={(event) => setForm((current) => ({ ...current, steamUrl: event.target.value }))}
-                placeholder="https://store.steampowered.com/app/1091500/cyberpunk_2077/"
+                placeholder="https://store.steampowered.com/app/1091500/"
                 className="input mono text-[12px]"
               />
-              <button type="button" className="btn btn-outline shrink-0" onClick={onSteamLookup} disabled={lookupPending}>
+              <button
+                type="button"
+                className="btn btn-outline shrink-0"
+                onClick={onSteamLookup}
+                disabled={lookupPending}
+              >
                 {lookupPending ? <Loader2 size={13} className="animate-spin" /> : <CloudDownload size={13} />}
-Steam&apos;den çek
+                Steam&apos;den çek
               </button>
             </div>
           </Field>
-          <Field label="Başlık">
+          <Field label="Ürün adı">
             <input
               name="title"
               value={form.title}
               onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
               className="input"
+              placeholder="Örn. Cyberpunk 2077 veya ChatGPT Plus"
               required
             />
           </Field>
@@ -347,10 +389,11 @@ Steam&apos;den çek
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
               className="textarea"
               rows={3}
+              placeholder="Ürün hakkında kısa bilgi, teslim şekli, kullanım notları…"
             />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Satış İlan Linki" hint="Itemsatış vb. dış ilan adresi.">
+            <Field label="Satış İlan Linki" hint="Itemsatış vb. dış ilan adresi (opsiyonel).">
               <input
                 name="salesUrl"
                 value={form.salesUrl}
@@ -359,7 +402,7 @@ Steam&apos;den çek
                 placeholder="https://www.itemsatis.com/..."
               />
             </Field>
-            <Field label="Kapak Görseli URL">
+            <Field label="Kapak görseli URL">
               <input
                 name="coverImage"
                 value={form.coverImage}
@@ -371,16 +414,17 @@ Steam&apos;den çek
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <input type="hidden" name="originalCurrency" value={form.originalCurrency} />
-            <Field label="Orijinal Fiyat">
+            <Field label="Orijinal fiyat">
               <input
                 name="originalPrice"
                 value={form.originalPrice}
                 onChange={(event) => setForm((current) => ({ ...current, originalPrice: event.target.value }))}
                 className="input"
                 placeholder="1999.00"
+                inputMode="decimal"
               />
             </Field>
-            <Field label="Bizim Fiyatımız">
+            <Field label="Bizim fiyatımız">
               <input
                 name="ourPrice"
                 value={form.ourPrice}
@@ -388,21 +432,23 @@ Steam&apos;den çek
                 className="input"
                 placeholder="349.90"
                 required
+                inputMode="decimal"
               />
             </Field>
-            <Field label="Para Birimi">
-              <select
-                name="currency"
-                value={form.currency}
-                onChange={onCurrencyChange}
-                className="select"
-              >
-                <option value="TRY">TRY ₺</option>
-                <option value="USD">USD $</option>
-                <option value="EUR">EUR €</option>
+            <Field label="Para birimi">
+              <select name="currency" value={form.currency} onChange={onCurrencyChange} className="select">
+                {CURRENCY_OPTIONS.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.code} {option.symbol}
+                  </option>
+                ))}
               </select>
             </Field>
           </div>
+          <p className="text-[11px] muted">
+            Para birimini değiştirdiğinizde fiyat kutuları güncel kurla otomatik dönüştürülür. Steam
+            fiyatı her zaman seçili birime çevrilerek kaydedilir.
+          </p>
           <label className="flex items-start gap-2 rounded-lg border px-3 py-2.5 text-[12px] hairline">
             <input
               type="checkbox"
@@ -447,8 +493,8 @@ Steam&apos;den çek
         }
       >
         <p className="text-[13px]">
-          <strong>{deleting?.title}</strong> ürününü silmek istediğinize emin misiniz? Bağlı kodlar varsa
-          silme işlemi engellenir.
+          <strong>{deleting?.title}</strong> ürününü silmek istediğinize emin misiniz? Bağlı kodlar
+          varsa silme işlemi engellenir.
         </p>
       </Modal>
     </div>
@@ -457,7 +503,27 @@ Steam&apos;den çek
 
 /* ------------------------------ Accounts ----------------------------- */
 
-const emptyAccount = {
+type AccountForm = {
+  platform: string;
+  platformLabel: string;
+  username: string;
+  email: string;
+  password: string;
+  productLabel: string;
+  guardType: string;
+  steamSecret: string;
+  totpSecret: string;
+  mailProvider: string;
+  mailEmail: string;
+  mailPassword: string;
+  mailHost: string;
+  mailPort: string;
+  mailSenderFilter: string;
+  notes: string;
+  linkedGameIds: number[];
+};
+
+const emptyAccount: AccountForm = {
   platform: "steam",
   platformLabel: "",
   username: "",
@@ -467,10 +533,14 @@ const emptyAccount = {
   guardType: "steam_guard",
   steamSecret: "",
   totpSecret: "",
+  mailProvider: "gmail",
   mailEmail: "",
   mailPassword: "",
+  mailHost: "imap.gmail.com",
+  mailPort: "993",
+  mailSenderFilter: "steam",
   notes: "",
-  linkedGameIds: [] as number[],
+  linkedGameIds: [],
 };
 
 export function AccountManager({
@@ -487,17 +557,31 @@ export function AccountManager({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<AdminAccount | null>(null);
-  const [form, setForm] = useState(emptyAccount);
+  const [form, setForm] = useState<AccountForm>(emptyAccount);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<AdminAccount | null>(null);
+  const [testing, setTesting] = useState(false);
+  const [testResults, setTestResults] = useState<AccessCodeTest[] | null>(null);
+  // Snapshot of "now" so the render stays pure.
+  const [now] = useState(() => Date.now());
 
-  const isSteam = form.platform === "steam";
+  const preset = PLATFORM_PRESETS.find((item) => item.id === form.platform);
+  const isSteam = preset?.kind === "steam";
+  const guardOptions = useMemo(
+    () =>
+      GUARD_OPTIONS.filter((option) => {
+        if (isSteam) return !option.id.startsWith("totp");
+        return !option.id.startsWith("steam_guard");
+      }),
+    [isSteam],
+  );
 
   function openCreate() {
     setEditing(null);
     setForm({ ...emptyAccount });
     setError(null);
+    setTestResults(null);
     setOpen(true);
   }
 
@@ -513,13 +597,67 @@ export function AccountManager({
       guardType: account.guardType,
       steamSecret: "",
       totpSecret: "",
+      mailProvider: account.mailProvider || "gmail",
       mailEmail: account.mailEmail ?? "",
-      mailPassword: account.mailPassword ?? "",
+      mailPassword: "",
+      mailHost: account.mailHost ?? "",
+      mailPort: account.mailPort ? String(account.mailPort) : "993",
+      mailSenderFilter: account.mailSenderFilter || "steam",
       notes: account.notes,
       linkedGameIds: account.linkedGameIds,
     });
     setError(null);
+    setTestResults(null);
     setOpen(true);
+  }
+
+  function patch(values: Partial<AccountForm>) {
+    setForm((current) => ({ ...current, ...values }));
+  }
+
+  function onPlatformChange(platform: string) {
+    const nextPreset = PLATFORM_PRESETS.find((item) => item.id === platform);
+    const nextSteam = nextPreset?.kind === "steam";
+    setForm((current) => ({
+      ...current,
+      platform,
+      guardType: nextSteam ? "steam_guard" : "totp",
+      platformLabel: platform === "custom" ? current.platformLabel : nextPreset?.label ?? "",
+      mailSenderFilter: nextSteam ? "steam" : current.mailSenderFilter,
+    }));
+  }
+
+  function onMailProvider(providerId: string) {
+    const provider = MAIL_PRESETS.find((item) => item.id === providerId);
+    patch({
+      mailProvider: providerId,
+      mailHost: provider?.host ?? "",
+      mailPort: provider ? String(provider.port) : "993",
+    });
+  }
+
+  async function onTest() {
+    setTesting(true);
+    setError(null);
+    setTestResults(null);
+    const result = await testAccessCode(slug, editing?.id ?? null, {
+      guardType: form.guardType,
+      steamSecret: form.steamSecret || undefined,
+      totpSecret: form.totpSecret || undefined,
+      mailEmail: form.mailEmail || undefined,
+      mailPassword: form.mailPassword || undefined,
+      mailProvider: form.mailProvider,
+      mailHost: form.mailHost || undefined,
+      mailPort: form.mailPort ? Number(form.mailPort) : null,
+      mailSenderFilter: form.mailSenderFilter,
+    });
+    setTesting(false);
+    if (!result.ok || !result.data) {
+      setError(result.message ?? "Kod üretilemedi.");
+      return;
+    }
+    setTestResults(result.data.results);
+    toast.success("Kod üretildi, kontrol edebilirsiniz");
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -531,6 +669,8 @@ export function AccountManager({
     formData.set("guardType", form.guardType);
     formData.set("platform", form.platform);
     formData.set("linkedGameIds", JSON.stringify(form.linkedGameIds));
+    formData.set("mailProvider", form.mailProvider);
+    formData.set("mailPort", form.mailPort);
     if (editing) formData.set("id", String(editing.id));
     const result = await saveAccount(formData);
     setPending(false);
@@ -581,8 +721,8 @@ export function AccountManager({
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Envanter</p>
           <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">Hesaplar & 2FA / Guard</h1>
           <p className="mt-1 text-[12.5px] muted">
-            {quota.used} / {quota.max ?? "sınırsız"} hesap kullanılıyor. Secret anahtarları şifreli
-            saklanır ve panele gönderilmez.
+            {quota.used} / {quota.max ?? "sınırsız"} hesap · Paylaşımlı hesaplar süresiz teslim edilir.
+            Secret anahtarları şifreli saklanır.
           </p>
         </div>
         <button
@@ -598,7 +738,7 @@ export function AccountManager({
       </div>
 
       {quota.reached ? (
-        <div className="rounded-lg border px-3.5 py-2.5 text-[12px]" style={{ borderColor: "#fde68a", background: "#fffbeb", color: "#92400e" }}>
+        <div className="note note-warn">
           Bayilik paketinizin hesap limiti doldu. Yeni hesap eklemek için paketinizi yükseltin.
         </div>
       ) : null}
@@ -609,7 +749,7 @@ export function AccountManager({
             <thead>
               <tr>
                 <th>Platform / hesap</th>
-                <th>Bağlı oyun</th>
+                <th>Bağlı ürün</th>
                 <th>Koruma</th>
                 <th>Durum</th>
                 <th className="text-right">İşlem</th>
@@ -621,7 +761,9 @@ export function AccountManager({
                   <td colSpan={5} className="py-12 text-center">
                     <Sparkles size={20} className="mx-auto muted" />
                     <p className="mt-2 text-[12.5px] font-medium">Envanter boş</p>
-                    <p className="mt-1 text-[11.5px] muted">Steam veya diğer platform hesaplarını ekleyin.</p>
+                    <p className="mt-1 text-[11.5px] muted">
+                      Steam, ChatGPT, Netflix veya herhangi bir platformdan hesap ekleyin.
+                    </p>
                   </td>
                 </tr>
               ) : null}
@@ -630,9 +772,7 @@ export function AccountManager({
                 return (
                   <tr key={account.id}>
                     <td>
-                      <p className="text-[12.5px] font-medium">
-                        {account.username || account.email || "—"}
-                      </p>
+                      <p className="text-[12.5px] font-medium">{account.username || account.email || "—"}</p>
                       <p className="text-[10.5px] muted">
                         {account.platformLabel}
                         {account.productLabel ? ` · ${account.productLabel}` : ""}
@@ -654,20 +794,12 @@ export function AccountManager({
                     </td>
                     <td>
                       <span className={`badge ${account.guardType === "none" ? "" : "badge-blue"}`}>
-                        {account.guardType === "steam_guard"
-                          ? "Steam Guard"
-                          : account.guardType === "totp"
-                            ? "TOTP 2FA"
-                            : "2FA yok"}
+                        {GUARD_OPTIONS.find((option) => option.id === account.guardType)?.label ?? "2FA yok"}
                       </span>
                     </td>
                     <td>
-                      <span
-                        className={`badge ${
-                          account.status === "available" ? "badge-green" : account.status === "assigned" ? "badge-amber" : ""
-                        }`}
-                      >
-                        {account.status === "available" ? "Müsait" : account.status === "assigned" ? "Teslim edildi" : "Pasif"}
+                      <span className={`badge ${account.status === "available" ? "badge-green" : ""}`}>
+                        {account.status === "available" ? "Aktif" : "Pasif"}
                       </span>
                     </td>
                     <td>
@@ -701,7 +833,7 @@ export function AccountManager({
         open={open}
         onClose={() => setOpen(false)}
         title={editing ? "Hesabı düzenle" : "Yeni hesap ekle"}
-        description="Platforma göre form alanları dinamik olarak değişir."
+        description="Platform, koruma yöntemi ve (varsa) mail kutusunu seçin. Kaydetmeden önce kodu test edebilirsiniz."
         size="lg"
       >
         <form onSubmit={onSubmit} className="space-y-3.5">
@@ -709,76 +841,74 @@ export function AccountManager({
             <Field label="Platform">
               <select
                 value={form.platform}
-                onChange={(event) => {
-                  const platform = event.target.value;
-                  setForm((current) => ({
-                    ...current,
-                    platform,
-                    guardType: platform === "steam" ? "steam_guard" : "totp",
-                  }));
-                }}
+                onChange={(event) => onPlatformChange(event.target.value)}
                 className="select"
               >
-                {PLATFORM_PRESETS.map((preset) => (
-                  <option key={preset.id} value={preset.id}>
-                    {preset.label}
-                  </option>
+                {PLATFORM_GROUPS.map((group) => (
+                  <optgroup key={group} label={group}>
+                    {PLATFORM_PRESETS.filter((item) => item.group === group).map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             </Field>
             {form.platform === "custom" ? (
-              <Field label="Platform Adı">
+              <Field label="Platform adı">
                 <input
                   name="platformLabel"
                   value={form.platformLabel}
-                  onChange={(event) => setForm((current) => ({ ...current, platformLabel: event.target.value }))}
+                  onChange={(event) => patch({ platformLabel: event.target.value })}
                   className="input"
                   placeholder="Örn. Disney+"
                   required
                 />
               </Field>
             ) : (
-              <Field label={isSteam ? "Steam Kullanıcı Adı" : "Kullanıcı Adı / E-posta"}>
+              <Field label={isSteam ? "Steam kullanıcı adı" : "Kullanıcı adı / e-posta"}>
                 <input
                   name="username"
                   value={form.username}
-                  onChange={(event) => setForm((current) => ({ ...current, username: event.target.value }))}
+                  onChange={(event) => patch({ username: event.target.value })}
                   className="input"
                   required={isSteam}
-                  placeholder={isSteam ? "steam_kullanici" : "kullanıcı adı veya e-posta"}
+                  placeholder={isSteam ? "steam_kullanici" : "kullanıcı adı"}
                 />
               </Field>
             )}
           </div>
 
           {form.platform === "custom" ? (
-            <Field label="Kullanıcı Adı">
+            <Field label="Kullanıcı adı">
               <input
                 name="username"
                 value={form.username}
-                onChange={(event) => setForm((current) => ({ ...current, username: event.target.value }))}
+                onChange={(event) => patch({ username: event.target.value })}
                 className="input"
               />
             </Field>
           ) : null}
 
           <div className="grid gap-3 sm:grid-cols-2">
-            {!isSteam ? (
-              <Field label="E-posta" hint="Kullanıcı adı veya e-postadan en az biri zorunludur.">
-                <input
-                  name="email"
-                  value={form.email}
-                  onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
-                  className="input"
-                  type="email"
-                />
-              </Field>
-            ) : null}
+            <Field
+              label={isSteam ? "Hesaba bağlı e-posta (opsiyonel)" : "E-posta"}
+              hint="Kullanıcı adı veya e-postadan en az biri zorunludur."
+            >
+              <input
+                name="email"
+                value={form.email}
+                onChange={(event) => patch({ email: event.target.value })}
+                className="input"
+                type="email"
+              />
+            </Field>
             <Field label="Şifre">
               <input
                 name="password"
                 value={form.password}
-                onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                onChange={(event) => patch({ password: event.target.value })}
                 className="input mono"
                 required
                 autoComplete="off"
@@ -786,88 +916,78 @@ export function AccountManager({
             </Field>
           </div>
 
-          {isSteam ? (
-            <Field label="Bağlı Oyunlar" hint="Bu Steam hesabında bulunan oyunları seçin (çoklu seçim).">
-              <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border p-2 hairline scroll-thin">
-                {games.length === 0 ? (
-                  <p className="px-1 py-2 text-[11.5px] muted">Önce Oyunlar sekmesinden ürün ekleyin.</p>
-                ) : null}
-                {games.map((game) => {
-                  const checked = form.linkedGameIds.includes(game.id);
-                  return (
-                    <label key={game.id} className="flex items-center gap-2 rounded-md px-1.5 py-1 text-[12px] hover:opacity-80">
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() =>
-                          setForm((current) => ({
-                            ...current,
-                            linkedGameIds: checked
-                              ? current.linkedGameIds.filter((id) => id !== game.id)
-                              : [...current.linkedGameIds, game.id],
-                          }))
-                        }
-                      />
-                      {game.title}
-                    </label>
-                  );
-                })}
-              </div>
-            </Field>
-          ) : (
-            <Field label="Bağlı Ürün / Kategori">
-              <input
-                name="productLabel"
-                value={form.productLabel}
-                onChange={(event) => setForm((current) => ({ ...current, productLabel: event.target.value }))}
-                className="input"
-                placeholder="Örn. ChatGPT Plus"
-              />
-            </Field>
-          )}
-
-          <Field label={isSteam ? "2FA / Koruma Türü" : "2FA Durumu"}>
-            <select
-              name="guardType"
-              value={form.guardType}
-              onChange={(event) => setForm((current) => ({ ...current, guardType: event.target.value }))}
-              className="select"
-            >
-              {isSteam ? (
-                <>
-                  <option value="steam_guard">Steam Guard Aktif</option>
-                  <option value="none">2FA Yok (Korumasız)</option>
-                </>
-              ) : (
-                <>
-                  <option value="totp">Standart 2FA (TOTP)</option>
-                  <option value="none">2FA Yok</option>
-                </>
-              )}
-            </select>
+          <Field
+            label="Bağlı ürünler"
+            hint="Opsiyonel. Hesabın hangi ürünlerle teslim edileceğini seçin (Steam oyunları, ChatGPT Plus vb.)."
+          >
+            <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border p-2 hairline scroll-thin">
+              {games.length === 0 ? (
+                <p className="px-1 py-2 text-[11.5px] muted">
+                  Önce Ürünler sekmesinden ürün ekleyin.
+                </p>
+              ) : null}
+              {games.map((game) => {
+                const checked = form.linkedGameIds.includes(game.id);
+                return (
+                  <label
+                    key={game.id}
+                    className="flex items-center gap-2 rounded-md px-1.5 py-1 text-[12px] hover:opacity-80"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() =>
+                        patch({
+                          linkedGameIds: checked
+                            ? form.linkedGameIds.filter((id) => id !== game.id)
+                            : [...form.linkedGameIds, game.id],
+                        })
+                      }
+                    />
+                    {game.title}
+                  </label>
+                );
+              })}
+            </div>
           </Field>
 
-          {isSteam && form.guardType === "steam_guard" ? (
+          <Field label="Koruma türü">
+            <select
+              value={form.guardType}
+              onChange={(event) => patch({ guardType: event.target.value })}
+              className="select"
+            >
+              {guardOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <p className="-mt-2 text-[11px] muted">
+            {GUARD_OPTIONS.find((option) => option.id === form.guardType)?.hint}
+          </p>
+
+          {guardHasSteam(form.guardType) ? (
             <Field
               label="Steam Guard Shared Secret (base64)"
               hint={
                 editing?.hasSteamSecret
                   ? "Mevcut secret kayıtlı. Değiştirmek istemiyorsanız boş bırakın."
-                  : "Steam Desktop Authenticator'daki shared_secret değeri. Secret hiçbir zaman tarayıcıya geri dönmez."
+                  : "Steam Desktop Authenticator'daki shared_secret. Secret tarayıcıya geri dönmez."
               }
             >
               <input
                 name="steamSecret"
                 value={form.steamSecret}
-                onChange={(event) => setForm((current) => ({ ...current, steamSecret: event.target.value }))}
+                onChange={(event) => patch({ steamSecret: event.target.value })}
                 className="input mono text-[12px]"
                 placeholder="base64 shared_secret"
-                required={!editing?.hasSteamSecret}
               />
             </Field>
           ) : null}
 
-          {!isSteam && form.guardType === "totp" ? (
+          {guardHasTotp(form.guardType) ? (
             <Field
               label="2FA Secret Key (base32)"
               hint={
@@ -879,41 +999,130 @@ export function AccountManager({
               <input
                 name="totpSecret"
                 value={form.totpSecret}
-                onChange={(event) => setForm((current) => ({ ...current, totpSecret: event.target.value }))}
+                onChange={(event) => patch({ totpSecret: event.target.value })}
                 className="input mono text-[12px] uppercase"
                 placeholder="JBSWY3DPEHPK3PXP"
-                required={!editing?.hasTotpSecret}
               />
             </Field>
           ) : null}
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Bağlı Mail (opsiyonel)">
-              <input
-                name="mailEmail"
-                value={form.mailEmail}
-                onChange={(event) => setForm((current) => ({ ...current, mailEmail: event.target.value }))}
-                className="input"
-                type="email"
-                placeholder="mail@ornek.com"
-              />
-            </Field>
-            <Field label="Mail Şifresi (opsiyonel)">
-              <input
-                name="mailPassword"
-                value={form.mailPassword}
-                onChange={(event) => setForm((current) => ({ ...current, mailPassword: event.target.value }))}
-                className="input mono"
-                autoComplete="off"
-              />
-            </Field>
-          </div>
+          {guardHasEmail(form.guardType) ? (
+            <div className="rounded-xl border p-3 hairline">
+              <div className="flex items-center gap-2">
+                <Mail size={14} />
+                <p className="text-[12.5px] font-semibold">E-posta doğrulama (IMAP)</p>
+              </div>
+              <p className="mt-1 text-[11px] muted">
+                Steam Guard e-postası veya servis doğrulama kodları bağlı mailbox üzerinden okunur.
+                Kod, yalnızca gönderen filtresiyle eşleşen en yeni mailden alınır.
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Field label="Sağlayıcı">
+                  <select
+                    value={form.mailProvider}
+                    onChange={(event) => onMailProvider(event.target.value)}
+                    className="select"
+                  >
+                    {MAIL_PRESETS.map((provider) => (
+                      <option key={provider.id} value={provider.id}>
+                        {provider.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Mail adresi">
+                  <input
+                    name="mailEmail"
+                    value={form.mailEmail}
+                    onChange={(event) => patch({ mailEmail: event.target.value })}
+                    className="input"
+                    type="email"
+                    placeholder="hesap@ornek.com"
+                  />
+                </Field>
+                <Field label="Uygulama şifresi" hint="Gmail için uygulama şifresi gerekir.">
+                  <input
+                    name="mailPassword"
+                    value={form.mailPassword}
+                    onChange={(event) => patch({ mailPassword: event.target.value })}
+                    className="input mono"
+                    autoComplete="off"
+                    placeholder={editing?.mailPassword ? "kayıtlı (boş bırakılabilir)" : ""}
+                  />
+                </Field>
+                <Field label="Gönderen filtresi" hint="Örn. steam, noreply, support.">
+                  <input
+                    name="mailSenderFilter"
+                    value={form.mailSenderFilter}
+                    onChange={(event) => patch({ mailSenderFilter: event.target.value })}
+                    className="input"
+                  />
+                </Field>
+                <Field label="IMAP sunucusu">
+                  <input
+                    name="mailHost"
+                    value={form.mailHost}
+                    onChange={(event) => patch({ mailHost: event.target.value })}
+                    className="input mono text-[12px]"
+                    placeholder="imap.gmail.com"
+                  />
+                </Field>
+                <Field label="Port">
+                  <input
+                    name="mailPort"
+                    value={form.mailPort}
+                    onChange={(event) => patch({ mailPort: event.target.value })}
+                    className="input mono text-[12px]"
+                    placeholder="993"
+                    inputMode="numeric"
+                  />
+                </Field>
+              </div>
+            </div>
+          ) : null}
 
-          <Field label="Ek Notlar (Markdown destekli)" hint="Liste, kalın metin ve satır sonları desteklenir.">
+          <div className="flex flex-wrap items-center gap-2 rounded-lg border px-3 py-2.5 hairline">
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={onTest}
+              disabled={testing || form.guardType === "none"}
+            >
+              {testing ? <Loader2 size={12} className="animate-spin" /> : <ShieldCheck size={12} />}
+              Kodu test et
+            </button>
+            <p className="text-[11px] muted">
+              Kaydetmeden önce üretilen kodu görün. Mail kodları IMAP üzerinden canlı okunur.
+            </p>
+          </div>
+          {testResults ? (
+            <div className="rounded-lg border p-3 hairline">
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">
+                Üretilen kodlar
+              </p>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                {testResults.map((item) => (
+                  <div key={item.label} className="rounded-lg border px-3 py-2 hairline">
+                    <p className="text-[10.5px] muted">{item.label}</p>
+                    <p className="mono mt-1 text-[18px] font-semibold tracking-[0.08em]">{item.code}</p>
+                    {item.secondsRemaining > 0 ? (
+                      <p className="mt-0.5 text-[10.5px] muted">
+                        {remainingShort(new Date(now + item.secondsRemaining * 1000))} geçerli
+                      </p>
+                    ) : (
+                      <p className="mt-0.5 text-[10.5px] muted">E-postadan alındı</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <Field label="Ek notlar (Markdown destekli)" hint="Müşteri bu notu teslimat ekranında görür.">
             <textarea
               name="notes"
               value={form.notes}
-              onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
+              onChange={(event) => patch({ notes: event.target.value })}
               className="textarea"
               rows={4}
               placeholder={"Lütfen oyuna girince **Çevrimdışı (Offline)** moda alın.\n\n- Steam > Arkadaşlar > Çevrimdışı"}
@@ -921,14 +1130,20 @@ export function AccountManager({
           </Field>
 
           <ErrorLine message={error} />
-          <div className="flex justify-end gap-2 pt-1">
-            <button type="button" className="btn btn-outline" onClick={() => setOpen(false)}>
-              Vazgeç
-            </button>
-            <button type="submit" className="btn btn-dark" disabled={pending}>
-              {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-              {editing ? "Güncelle" : "Hesabı ekle"}
-            </button>
+          <div className="flex items-center justify-between gap-2 pt-1">
+            <span className="flex items-center gap-1.5 text-[11px] muted">
+              <Fingerprint size={12} />
+              Kodlar sunucuda üretilir
+            </span>
+            <div className="flex gap-2">
+              <button type="button" className="btn btn-outline" onClick={() => setOpen(false)}>
+                Vazgeç
+              </button>
+              <button type="submit" className="btn btn-dark" disabled={pending}>
+                {pending ? <Loader2 size={14} className="animate-spin" /> : null}
+                {editing ? "Güncelle" : "Hesabı ekle"}
+              </button>
+            </div>
           </div>
         </form>
       </Modal>
@@ -950,8 +1165,8 @@ export function AccountManager({
         }
       >
         <p className="text-[13px]">
-          <strong>{deleting?.username || deleting?.email}</strong> hesabını silmek istediğinize emin misiniz?
-          Aktif teslimatı olan hesaplar silinemez.
+          <strong>{deleting?.username || deleting?.email}</strong> hesabını silmek istediğinize emin
+          misiniz? Paylaşımlı teslimatlar hesabı kullanmaya devam edemez.
         </p>
       </Modal>
     </div>

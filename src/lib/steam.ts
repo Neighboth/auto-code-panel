@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { games } from "@/db/schema";
-import { convertPrice } from "@/lib/format";
+import { convertAmount } from "@/lib/currency";
 
 export type SteamPriceInfo = {
   currency: string;
@@ -103,6 +103,12 @@ export async function syncSteamGames(storeId?: number, limit = 40): Promise<Stea
       if (result.errors.length < 5) result.errors.push(`${game.title}: Steam yanıtı alınamadı`);
       continue;
     }
+    // Steam may answer in a different currency than the store prices in
+    // (usually TRY). Convert with live FX rates instead of copying the number.
+    const convertedPrice =
+      details.originalPrice !== null
+        ? await convertAmount(details.originalPrice, details.currency, game.currency)
+        : null;
     await db
       .update(games)
       .set({
@@ -111,11 +117,12 @@ export async function syncSteamGames(storeId?: number, limit = 40): Promise<Stea
         steamAppId: appId,
         originalPrice:
           details.originalPrice !== null
-            ? convertPrice(details.originalPrice, details.currency, game.currency)
+            ? convertedPrice
             : details.isFree
               ? "0.00"
               : game.originalPrice,
-        originalCurrency: details.originalPrice !== null ? game.currency : details.currency,
+        originalCurrency:
+          details.originalPrice !== null ? game.currency : game.originalCurrency,
         description: game.description || details.shortDescription,
         lastSyncedAt: new Date(),
         updatedAt: new Date(),
