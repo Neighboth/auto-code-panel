@@ -56,7 +56,7 @@ function PostBox({
   emptyText: string;
 }) {
   return (
-    <section className="card flex min-h-[320px] flex-col overflow-hidden">
+    <section className="card flex min-h-[220px] flex-col overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b px-5 py-4 hairline">
         <div className="flex items-center gap-3">
           <span
@@ -72,9 +72,9 @@ function PostBox({
         </div>
         <span className="badge">{posts.length} kayıt</span>
       </div>
-      <div className="max-h-[260px] flex-1 space-y-3 overflow-y-auto p-4 scroll-thin">
+      <div className="max-h-[130px] flex-1 space-y-3 overflow-y-auto p-4 scroll-thin">
         {posts.length === 0 ? (
-          <div className="flex h-full min-h-[220px] flex-col items-center justify-center rounded-xl border border-dashed px-5 py-10 text-center hairline">
+          <div className="flex h-full min-h-[150px] flex-col items-center justify-center rounded-xl border border-dashed px-5 py-8 text-center hairline">
             <Sparkles size={20} className="muted" />
             <p className="mt-2 text-[12.5px] font-medium">{emptyText}</p>
             <p className="mt-1 text-[11px] muted">Platform yönetimi yeni bir kayıt yayınladığında burada görünür.</p>

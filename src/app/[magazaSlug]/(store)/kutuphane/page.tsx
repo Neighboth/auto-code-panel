@@ -1,9 +1,10 @@
 import { notFound, redirect } from "next/navigation";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { accounts, entitlements, games } from "@/db/schema";
 import { getCustomerSession } from "@/lib/session";
-import { getStoreState, getStoreBasePath, sweepExpiredEntitlements } from "@/lib/tenant";
+import { getStoreState, getStoreBasePath } from "@/lib/tenant";
+import { getLocale } from "@/lib/i18n/server";
 import { decryptData } from "@/lib/secret-crypto";
 import { LibraryView, type LibraryItem } from "@/components/store/library-view";
 
@@ -20,8 +21,6 @@ export default async function LibraryPage({ params }: { params: Promise<{ magaza
     redirect(`${basePath}/giris`);
   }
 
-  await sweepExpiredEntitlements(state.store.id);
-
   const rows = await db
     .select({ entitlement: entitlements, game: games, account: accounts })
     .from(entitlements)
@@ -31,7 +30,6 @@ export default async function LibraryPage({ params }: { params: Promise<{ magaza
       and(
         eq(entitlements.storeId, state.store.id),
         eq(entitlements.customerId, session.customerId),
-        sql`(${entitlements.expiresAt} is null or ${entitlements.expiresAt} > (unixepoch('now') * 1000))`,
       ),
     )
     .orderBy(desc(entitlements.grantedAt));
@@ -51,10 +49,11 @@ export default async function LibraryPage({ params }: { params: Promise<{ magaza
     email: account?.email ?? null,
     password: account ? decryptData(account.password) : null,
     mailEmail: account?.mailEmail ?? null,
-    mailPassword: account?.mailPassword ?? null,
+    mailPassword: account?.mailPassword ? decryptData(account.mailPassword) : null,
     notes: account?.notes ?? "",
     expiresAt: entitlement.expiresAt ? new Date(entitlement.expiresAt).toISOString() : null,
   }));
 
-  return <LibraryView slug={state.store.slug} basePath={basePath} items={items} />;
+  const locale = await getLocale();
+  return <LibraryView slug={state.store.slug} basePath={basePath} items={items} locale={locale.code} />;
 }

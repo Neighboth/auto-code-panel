@@ -79,6 +79,45 @@ Bağlama adımları:
 TXT doğrulaması, alan adının gerçekten mağaza sahibine ait olduğunu kanıtlar; doğrulanmamış alan adları
 sunucu tarafından mağazaya yönlendirilmez. Aynı alan adı yalnızca tek mağazaya bağlanabilir.
 
+Davranış özeti:
+
+- Alan adı kaydedildiğinde mağaza **slug'ı asla silinmez**; `magaza` adresi veritabanında kalır.
+- Alan adı **doğrulandıktan** sonra `magazadi.com/kod-gir` gibi adresler doğrudan kullanılır ve
+  eski `/:magazaSlug` bağlantıları otomatik olarak alan adına yönlendirilir.
+- Alan adı **doğrulanmamışsa** slug çalışmaya devam eder; kesinti olmaz.
+
+## Dil, tema ve para birimi
+
+- **Dil:** Arayüz ~80 dilde sunulur. Varsayılan dil, tarayıcının `Accept-Language` başlığından
+  otomatik seçilir; kullanıcı sağ üstteki bayrak menüsünden değiştirebilir (`locale` çerezi 1 yıl
+  saklanır). Çeviriler `src/lib/i18n/dictionaries.ts` içindedir; eksik anahtarlar İngilizceye,
+  ardından Türkçeye düşer. Yeni bir dil eklemek için `config.ts` listesine girdi ve sözlüğe
+  çeviri bloğu eklemek yeterlidir.
+- **Bayraklar:** Emoji değil, PNG bayrak görselleri (`flagcdn.com`, `flagUrl()` yardımcısı) kullanılır.
+  Liste Türkçe ve İngilizce ile başlar, kalan diller kendi adlarıyla alfabetik sıralanır.
+- **Tema:** Varsayılan her zaman **açık temadır**. Koyu tema yalnızca elle açılır (`<html data-theme>`
+  + `localStorage`), sunucu ve istemci aynı temayı üretir; sayfa ilk boyamada titremez.
+- **Para birimi:** Steam'den gelen fiyat, mağazanın seçili para birimine **canlı kurdan** çevrilir
+  (`/api/fx`, 30 dakika önbellek, 6 saatlik sunucu önbelleği). Kur servisi erişilemezse statik
+  yedek tablo kullanılır; 59 USD asla 59 TRY olarak gösterilmez. Para birimi değiştirildiğinde
+  formdaki tutarlar da otomatik olarak çevrilir.
+
+## Teslimat modeli
+
+Paylaşımlı hesap modeli kullanılır: bir kod kullanıldığında erişim **süresiz** açılır ve hesap
+"teslim edildi / durdu" durumuna geçmez. Kütüphanedeki "Hesap bilgilerini al" akışı üç adımdır:
+hesap bilgileri → ek notlar → canlı 2FA/Steam Guard kodu. Bu akış hem `/kod-gir` sonucunda hem
+kütüphanede aynı popup ile açılır.
+
+## Mail üzerinden kod (IMAP)
+
+Hesap eklerken Steam Guard yerine veya yanında **mail ile kod** alınabilir. Gmail, Outlook,
+Yandex, iCloud, Zoho, Proton Bridge ve özel IMAP sunucuları desteklenir. Kod yalnızca mağaza
+sahibinin belirlediği gönderici filtresine (varsayılan `steam`) uyan en yeni iletiden okunur.
+Varsayılan desen `>(?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*\d)[A-Z0-9]{5,6}<`; eşleşme yoksa bilinen
+alternatif desenler denenir. "Kodu test et" düğmesi kaydetmeden önce Guard/TOTP/mail kodunu
+gösterir.
+
 ## Duyurular ve güncelleme notları
 
 Platform sahibi `/super-admin/duyurular` sayfasından duyuru veya güncelleme notu yayınlayabilir.
@@ -111,6 +150,21 @@ Bu işlem onay istedikten sonra tüm `.env` dosyalarını (`.env.example` hariç
 dosyalarını (`*.db`, `-wal`, `-shm`, `-journal`) siler. Bir sonraki `start.bat` / `start.sh`
 çalıştırmasında `.env` ve veritabanı ilk günkü haliyle yeniden oluşturulur. Onay sormadan
 çalıştırmak için `reset.bat -y` veya `./reset.sh -y` kullanılabilir.
+
+## GitHub Actions ve konteyner imajı
+
+`.github/workflows/docker-publish.yml` iki iş çalıştırır:
+
+1. **verify:** bağımlılıkları kurar, `npm run typecheck`, `npm run lint` ve `npm run build` çalıştırır.
+2. **publish:** `main` dalına yapılan her push'ta (veya **Actions > Run workflow** ile elle)
+   çok mimarili (`linux/amd64`, `linux/arm64`) imajı derleyip GHCR'ye gönderir:
+   `ghcr.io/<kullanici>/<repo>:latest`, `:sha-<kısa>`, `:main`.
+
+Dockerfile Alpine yerine projenin kendi Node.js tabanını (`node:22-bookworm-slim`) kullanır;
+`docker-compose.yml` varsayılan olarak GHCR imajını çeker, yerel derleme için
+`docker compose up -d --build` yeterlidir. Sandbox/ağ kısıtlaması olan ortamlarda imaj derlemesi
+GitHub Actions üzerinde yapılabilir; sunucuda yalnızca `docker compose pull && docker compose up -d`
+çalıştırmak gerekir.
 
 ## Docker / CasaOS
 

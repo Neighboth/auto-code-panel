@@ -20,12 +20,23 @@ import {
   isValidDomain,
   normalizeDomain,
 } from "@/lib/domain";
-import { PLATFORM_PRESETS, FONT_OPTIONS } from "@/lib/fonts";
-import { parsePrice, RESERVED_SLUGS, slugify, convertPrice } from "@/lib/format";
+import {
+  FONT_OPTIONS,
+  PLATFORM_PRESETS,
+  guardHasEmail,
+  guardHasSteam,
+  guardHasTotp,
+  GUARD_OPTIONS,
+} from "@/lib/fonts";
+import { parsePrice, RESERVED_SLUGS, slugify } from "@/lib/format";
+import { convertAmount, convertWithRates, getUsdRates } from "@/lib/currency";
+import { MAIL_PRESETS, resolveMailPreset } from "@/lib/imap";
+import { managerIdentifierError } from "@/lib/admin-guard";
 import { fetchSteamAppDetails, parseSteamAppId, syncSteamGames } from "@/lib/steam";
 import { hitRateLimit } from "@/lib/rate-limit";
 import { accountQuota, requireStoreAdmin } from "@/lib/tenant";
-import { isValidSteamSecret, isValidTotpSecret } from "@/lib/totp";
+import { generateSteamGuardCode, generateTotpCode, isValidSteamSecret, isValidTotpSecret, secondsRemaining } from "@/lib/totp";
+import { fetchLatestMailCode } from "@/lib/imap";
 import type { ActionResult, SteamPreview } from "@/lib/types";
 
 function str(formData: FormData, key: string): string {
@@ -55,7 +66,10 @@ function refreshStore(slug: string) {
 
 /* ------------------------------- Steam ------------------------------- */
 
-export async function steamLookup(url: string): Promise<ActionResult<SteamPreview>> {
+export async function steamLookup(
+  url: string,
+  targetCurrency = "TRY",
+): Promise<ActionResult<SteamPreview>> {
   const appId = parseSteamAppId(url);
   if (!appId) {
     return {
@@ -71,16 +85,25 @@ export async function steamLookup(url: string): Promise<ActionResult<SteamPrevie
         "Steam Store API yanıt vermedi. Başlık, kapak ve fiyatı manuel girebilirsiniz; otomatik senkronizasyon daha sonra tekrar denenecek.",
     };
   }
+  const converted =
+    details.originalPrice === null
+      ? null
+      : await convertAmount(details.originalPrice, details.currency, targetCurrency);
   return {
     ok: true,
-    message: "Steam bilgileri alındı.",
+    message:
+      details.currency.toUpperCase() === targetCurrency.toUpperCase()
+        ? "Steam bilgileri alındı."
+        : `Steam bilgileri alındı · ${details.currency} → ${targetCurrency} dönüştürüldü.`,
     data: {
       appId,
       title: details.title,
       headerImage: details.headerImage,
       shortDescription: details.shortDescription,
-      originalPrice: details.originalPrice,
-      currency: details.currency,
+      originalPrice: converted !== null ? Number(converted) : null,
+      currency: targetCurrency,
+      sourceCurrency: details.currency,
+      sourcePrice: details.originalPrice,
     },
   };
 }
@@ -112,13 +135,22 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
     if (details) {
       title = title || details.title;
       coverImage = coverImage || details.headerImage;
-      originalPrice =
-        originalPrice ?? (details.originalPrice !== null ? convertPrice(details.originalPrice, details.currency, currency) : null);
-      originalCurrency = details.originalPrice !== null ? currency : details.currency;
+      if (originalPrice === null && details.originalPrice !== null) {
+        const converted = await convertAmount(details.originalPrice, details.currency, currency);
+        originalPrice = converted ?? details.originalPrice.toFixed(2);
+        originalCurrency = currency;
+      }
       description = description || details.shortDescription;
       steamAppId = details.appId;
     }
   }
+
+  // Whatever currency the price arrived in, it is stored in the store currency.
+  if (originalPrice !== null) {
+    const normalized = await convertAmount(originalPrice, originalCurrency, currency);
+    if (normalized !== null) originalPrice = normalized;
+  }
+  originalCurrency = currency;
 
   if (!title) return { ok: false, message: "Ürün başlığı zorunludur (veya Steam linki girin)." };
   if (salesUrl && !/^https?:\/\//i.test(salesUrl)) {
@@ -224,6 +256,9 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
   const password = str(formData, "password");
   const productLabel = str(formData, "productLabel");
   const guardType = str(formData, "guardType") || "none";
+  if (!GUARD_OPTIONS.some((option) => option.id === guardType)) {
+    return { ok: false, message: "Geçersiz koruma türü seçildi." };
+  }
 
   let existingAccount: typeof accounts.$inferSelect | null = null;
   if (id) {
@@ -235,43 +270,54 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
     existingAccount = rows[0] ?? null;
     if (!existingAccount) return { ok: false, message: "Hesap bulunamadı." };
   }
+
   // Blank secret fields on edit keep the previously stored secret intact.
   const steamSecret = str(formData, "steamSecret") || existingAccount?.steamSecret || "";
   const totpSecret = str(formData, "totpSecret") || existingAccount?.totpSecret || "";
   const mailEmail = str(formData, "mailEmail");
-  const mailPassword = str(formData, "mailPassword");
+  const mailPassword = str(formData, "mailPassword") || existingAccount?.mailPassword || "";
+  const mailProvider = str(formData, "mailProvider") || existingAccount?.mailProvider || "gmail";
+  const mailHost = str(formData, "mailHost") || existingAccount?.mailHost || "";
+  const mailPort = intOrNull(str(formData, "mailPort")) ?? existingAccount?.mailPort ?? null;
+  const mailSenderFilter =
+    str(formData, "mailSenderFilter") || existingAccount?.mailSenderFilter || "steam";
   const notes = str(formData, "notes");
   const linkedGameIdsRaw = parseIdList(str(formData, "linkedGameIds"));
 
   if (!password) return { ok: false, message: "Şifre zorunludur." };
+  if (!username && !email) {
+    return { ok: false, message: "Kullanıcı adı veya e-posta adresinden en az biri zorunludur." };
+  }
+  if (preset.kind === "steam" && !username) {
+    return { ok: false, message: "Steam hesabı için kullanıcı adı zorunludur." };
+  }
 
-  if (platform === "steam") {
-    if (!username) return { ok: false, message: "Steam hesabı için kullanıcı adı zorunludur." };
-    if (!["steam_guard", "none"].includes(guardType)) {
-      return { ok: false, message: "Steam için geçersiz Guard türü." };
-    }
-    if (guardType === "steam_guard" && !steamSecret) {
-      return { ok: false, message: "Steam Guard aktif ise shared_secret zorunludur." };
-    }
-    if (guardType === "steam_guard" && !isValidSteamSecret(steamSecret)) {
+  if (guardHasSteam(guardType)) {
+    if (!steamSecret) return { ok: false, message: "Steam Guard seçildiği için shared_secret zorunludur." };
+    if (!isValidSteamSecret(steamSecret)) {
       return {
         ok: false,
         message:
           "Steam Guard shared_secret geçersiz. Steam Desktop Authenticator'daki base64 shared_secret değerini girin.",
       };
     }
-  } else {
-    if (!username && !email) {
-      return { ok: false, message: "Kullanıcı adı veya e-posta adresinden en az biri zorunludur." };
+  }
+  if (guardHasTotp(guardType)) {
+    if (!totpSecret) return { ok: false, message: "2FA (TOTP) seçildiği için secret key zorunludur." };
+    if (!isValidTotpSecret(totpSecret)) {
+      return { ok: false, message: "2FA secret key geçersiz. Base32 formatında olmalıdır." };
     }
-    if (!["totp", "none"].includes(guardType)) {
-      return { ok: false, message: "Geçersiz 2FA türü." };
+  }
+  if (guardHasEmail(guardType)) {
+    if (!mailEmail) return { ok: false, message: "E-posta doğrulaması için mail adresi zorunludur." };
+    if (!mailPassword) {
+      return {
+        ok: false,
+        message: "E-posta doğrulaması için uygulama şifresi (IMAP) zorunludur.",
+      };
     }
-    if (guardType === "totp") {
-      if (!totpSecret) return { ok: false, message: "2FA secret key zorunludur." };
-      if (!isValidTotpSecret(totpSecret)) {
-        return { ok: false, message: "2FA secret key geçersiz. Base32 formatında olmalıdır." };
-      }
+    if (!MAIL_PRESETS.some((mail) => mail.id === mailProvider)) {
+      return { ok: false, message: "Geçersiz mail sağlayıcısı seçildi." };
     }
   }
 
@@ -281,13 +327,6 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
     .where(eq(games.storeId, store.id));
   const validGameIds = new Set(storeGames.map((game) => game.id));
   const linkedGameIds = linkedGameIdsRaw.filter((gameId) => validGameIds.has(gameId));
-
-  if (platform === "steam" && linkedGameIds.length === 0) {
-    return {
-      ok: false,
-      message: "Steam hesabına en az bir oyun bağlamalısınız (oyunlar önce eklenmelidir).",
-    };
-  }
 
   // Secrets are stored AES-GCM encrypted; decryptData/encryptData are idempotent for legacy rows.
   const payload = {
@@ -299,10 +338,14 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
     productLabel,
     linkedGameIds,
     guardType,
-    steamSecret: guardType === "steam_guard" ? encryptData(steamSecret) : null,
-    totpSecret: guardType === "totp" ? encryptData(totpSecret.toUpperCase()) : null,
+    steamSecret: guardHasSteam(guardType) ? encryptData(steamSecret) : null,
+    totpSecret: guardHasTotp(guardType) ? encryptData(totpSecret.toUpperCase()) : null,
     mailEmail: mailEmail || null,
-    mailPassword: mailPassword ? encryptData(mailPassword) : null,
+    mailPassword: mailEmail && mailPassword ? encryptData(mailPassword) : null,
+    mailProvider,
+    mailHost: mailHost || null,
+    mailPort,
+    mailSenderFilter,
     notes,
     updatedAt: new Date(),
   };
@@ -332,6 +375,108 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
     .returning({ id: accounts.id });
   refreshStore(slug);
   return { ok: true, message: "Hesap envantere eklendi.", data: { id: created.id } };
+}
+
+export type AccessCodeTest = {
+  label: string;
+  code: string;
+  kind: "steam" | "totp" | "email";
+  secondsRemaining: number;
+};
+
+/**
+ * "Test et" button in the account modal: generates the Steam Guard / TOTP code
+ * or reads the newest mail code over IMAP before the account is even saved.
+ */
+export async function testAccessCode(
+  slug: string,
+  accountId: number | null,
+  values: {
+    guardType: string;
+    steamSecret?: string;
+    totpSecret?: string;
+    mailEmail?: string;
+    mailPassword?: string;
+    mailProvider?: string;
+    mailHost?: string;
+    mailPort?: number | null;
+    mailSenderFilter?: string;
+  },
+): Promise<ActionResult<{ results: AccessCodeTest[] }>> {
+  const guard = await requireStoreAdmin(slug);
+  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  const gate = hitRateLimit(`code-test:${guard.state.store.id}`, 20, 60_000);
+  if (!gate.allowed) {
+    return { ok: false, message: `Çok fazla test isteği. ${gate.retryInSeconds} saniye bekleyin.` };
+  }
+
+  let stored: typeof accounts.$inferSelect | null = null;
+  if (accountId) {
+    const rows = await db
+      .select()
+      .from(accounts)
+      .where(and(eq(accounts.id, accountId), eq(accounts.storeId, guard.state.store.id)))
+      .limit(1);
+    stored = rows[0] ?? null;
+  }
+
+  const guardType = values.guardType || "none";
+  const results: AccessCodeTest[] = [];
+
+  if (guardHasSteam(guardType)) {
+    const secret = values.steamSecret || (stored?.steamSecret ? decryptData(stored.steamSecret) : "");
+    if (!secret || !isValidSteamSecret(secret)) {
+      return { ok: false, message: "Steam Guard kodu üretilemedi: shared_secret geçersiz veya boş." };
+    }
+    results.push({
+      label: "Steam Guard",
+      code: generateSteamGuardCode(secret),
+      kind: "steam",
+      secondsRemaining: secondsRemaining(),
+    });
+  }
+
+  if (guardHasTotp(guardType)) {
+    const secret = values.totpSecret || (stored?.totpSecret ? decryptData(stored.totpSecret) : "");
+    if (!secret || !isValidTotpSecret(secret)) {
+      return { ok: false, message: "TOTP kodu üretilemedi: secret key geçersiz veya boş." };
+    }
+    results.push({
+      label: "Authenticator (TOTP)",
+      code: generateTotpCode(secret),
+      kind: "totp",
+      secondsRemaining: secondsRemaining(),
+    });
+  }
+
+  if (guardHasEmail(guardType)) {
+    const email = values.mailEmail || stored?.mailEmail || "";
+    const password = values.mailPassword || (stored?.mailPassword ? decryptData(stored.mailPassword) : "");
+    const provider = resolveMailPreset(values.mailProvider || stored?.mailProvider || "gmail");
+    const host = values.mailHost || stored?.mailHost || provider.host;
+    const port = values.mailPort ?? stored?.mailPort ?? provider.port;
+    const mail = await fetchLatestMailCode({
+      email,
+      password,
+      host,
+      port,
+      secure: port === 993,
+      senderFilter: values.mailSenderFilter || stored?.mailSenderFilter || "steam",
+      sinceMinutes: 120,
+    });
+    if (!mail.ok) return { ok: false, message: `Mail kodu alınamadı: ${mail.message}` };
+    results.push({
+      label: `E-posta (${mail.from || email})`,
+      code: mail.code,
+      kind: "email",
+      secondsRemaining: 0,
+    });
+  }
+
+  if (results.length === 0) {
+    return { ok: false, message: "Test edilecek bir koruma yöntemi seçilmedi." };
+  }
+  return { ok: true, message: "Kod(lar) başarıyla üretildi.", data: { results } };
 }
 
 export async function deleteAccount(formData: FormData): Promise<ActionResult> {
@@ -759,6 +904,16 @@ export async function saveStoreCredentials(formData: FormData): Promise<ActionRe
 
   if (!/^[a-zA-Z0-9._-]{3,32}$/.test(username)) {
     return { ok: false, message: "Yönetici kullanıcı adı 3-32 karakter olmalıdır." };
+  }
+  const reserved = managerIdentifierError(username, email);
+  if (reserved) return { ok: false, message: reserved };
+  const duplicate = await db
+    .select({ id: storeAdmins.id })
+    .from(storeAdmins)
+    .where(and(sql`lower(${storeAdmins.username}) = ${username.toLowerCase()}`, ne(storeAdmins.id, guard.session.adminId)))
+    .limit(1);
+  if (duplicate.length > 0) {
+    return { ok: false, message: "Bu yönetici kullanıcı adı platformda zaten kullanılıyor." };
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return { ok: false, message: "Geçerli bir e-posta girin." };

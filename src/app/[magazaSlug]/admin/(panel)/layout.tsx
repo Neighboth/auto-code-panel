@@ -9,6 +9,8 @@ import {
   requireStoreAdmin,
 } from "@/lib/tenant";
 import { AdminShell } from "@/components/admin/shell";
+import { getLocale } from "@/lib/i18n/server";
+import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -21,18 +23,19 @@ export default async function StoreAdminPanelLayout({
 }) {
   const { magazaSlug } = await params;
   const guard = await requireStoreAdmin(magazaSlug);
+  const state = await getStoreState(magazaSlug);
+  if (!state) notFound();
   if (!guard) {
-    const state = await getStoreState(magazaSlug);
-    const basePath = state ? await getStoreBasePath(state.store) : `/${magazaSlug.toLowerCase()}`;
+    const basePath = await getStoreBasePath(state.store);
     redirect(`${basePath}/admin/giris`);
   }
-  if (!guard.state) notFound();
 
-  const { store } = guard.state;
+  const { store, suspended, expired } = state;
   const settings = await getPlatformSettings();
   const quota = await accountQuota(store);
   const remaining = store.expiresAt ? remainingLabel(store.expiresAt) : "Sınırsız";
   const basePath = await getStoreBasePath(store);
+  const locale = await getLocale();
 
   return (
     <AdminShell
@@ -42,12 +45,14 @@ export default async function StoreAdminPanelLayout({
       logoUrl={store.logoUrl}
       adminUsername={guard.session.username}
       remaining={remaining}
-      renewalUrl={store.renewalUrl || settings.renewalUrl}
+      renewalUrl={env.renewalUrl || store.renewalUrl || settings.renewalUrl}
       accountUsed={quota.used}
       accountMax={quota.max}
-      suspended={guard.state.suspended}
-      expired={guard.state.expired}
-      supportEmail={settings.supportEmail}
+      suspended={suspended}
+      expired={expired}
+      supportEmail={env.supportEmail || settings.supportEmail}
+      locale={locale.code}
+
     >
       {children}
     </AdminShell>

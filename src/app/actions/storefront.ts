@@ -12,7 +12,7 @@ import {
   redemptions,
   type Account,
 } from "@/db/schema";
-import { hashPassword, verifyPassword } from "@/lib/crypto";
+import { hashPassword, randomToken, verifyPassword } from "@/lib/crypto";
 import { decryptData } from "@/lib/secret-crypto";
 import {
   accessExpired,
@@ -27,6 +27,8 @@ import {
 import { requireCustomer, resolveStoreState } from "@/lib/tenant";
 import { findStoreBySlug } from "@/lib/tenant";
 import { generateSteamGuardCode, generateTotpCode, secondsRemaining } from "@/lib/totp";
+import { guardHasEmail, guardHasSteam, guardHasTotp } from "@/lib/fonts";
+import { fetchLatestMailCode } from "@/lib/imap";
 import type {
   ActionResult,
   CodePreview,
@@ -132,7 +134,8 @@ export async function previewCode(slug: string, rawCode: string): Promise<Action
       type: code.type as CodePreview["type"],
       choiceCount: code.choiceCount,
       durationMinutes: code.durationMinutes,
-      durationLabel: formatDuration(code.durationMinutes),
+      // Shared accounts are never time-limited: the customer keeps unlimited access.
+      durationLabel: "Sınırsız erişim",
       items,
       selectableGames: storeGames.map((game) => ({
         id: game.id,
@@ -253,8 +256,10 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
     };
   }
 
-  const accessExpiresAt =
-    code.durationMinutes === null ? null : new Date(Date.now() + code.durationMinutes * 60_000);
+  // The platform delivers shared accounts, so access never expires: a code is a
+  // permanent, unlimited assignment even if the code form offered a duration.
+  const accessExpiresAt: Date | null = null;
+  const guestToken = randomToken(18);
 
   let delivered: DeliveredItem[] = [];
 
@@ -279,33 +284,26 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           codeId: code.id,
           customerId,
           guestUsername: customerId ? null : "Misafir kullanıcı",
+          guestToken,
           accessExpiresAt,
         })
         .returning();
 
       const outputs: DeliveredItem[] = [];
 
+      /**
+       * Shared inventory: the same account is reused for every delivery instead
+       * of being "sold" once. Accounts are only excluded when the store owner
+       * retires them manually.
+       */
       async function claimAccountForGame(gameId: number): Promise<Account | null> {
-        const available = await tx
+        const pool = await tx
           .select()
           .from(accounts)
-          .where(
-            and(
-              eq(accounts.storeId, tenantId),
-              eq(accounts.status, "available"),
-              eq(accounts.platform, "steam"),
-            ),
-          );
-        const candidates = available.filter((account) => (account.linkedGameIds ?? []).includes(gameId)).slice(0, 5);
-        for (const candidate of candidates) {
-          const updated = await tx
-            .update(accounts)
-            .set({ status: "assigned", updatedAt: new Date() })
-            .where(and(eq(accounts.id, candidate.id), eq(accounts.status, "available")))
-            .returning();
-          if (updated[0]) return updated[0];
-        }
-        return null;
+          .where(and(eq(accounts.storeId, tenantId), sql`${accounts.status} <> 'retired'`));
+        const linked = pool.filter((account) => (account.linkedGameIds ?? []).includes(gameId));
+        const steamLinked = linked.filter((account) => account.platform === "steam");
+        return steamLinked[0] ?? linked[0] ?? null;
       }
 
       async function deliverGame(gameId: number) {
@@ -339,8 +337,9 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           mailEmail: account?.mailEmail ?? null,
           mailPassword: account ? decryptData(account.mailPassword) : null,
           notes: account?.notes ?? "",
-          expiresAt: accessExpiresAt ? accessExpiresAt.toISOString() : null,
+          expiresAt: null,
           coverImage: game.coverImage,
+          accessToken: customerId ? undefined : guestToken,
         });
       }
 
@@ -352,14 +351,10 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           .limit(1);
         const account = rows[0];
         if (!account) throw new RedeemError("Koda bağlı hesap bulunamadı.");
-        const updated = await tx
-          .update(accounts)
-          .set({ status: "assigned", updatedAt: new Date() })
-          .where(and(eq(accounts.id, account.id), eq(accounts.status, "available")))
-          .returning();
-        if (!updated[0]) {
-          throw new RedeemError(`${account.platformLabel} hesabı şu anda başka bir teslimatta kullanımda.`);
+        if (account.status === "retired") {
+          throw new RedeemError(`${account.platformLabel} hesabı mağaza yönetimi tarafından kapatılmış.`);
         }
+        // Shared account: no state change, the customer gets unlimited access.
         const linkedGame = storeGames.find((game) => account.linkedGameIds.includes(game.id));
         const title = linkedGame?.title ?? account.productLabel ?? account.platformLabel;
         const [entitlement] = await tx
@@ -389,8 +384,9 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           mailEmail: account.mailEmail,
           mailPassword: decryptData(account.mailPassword),
           notes: account.notes,
-          expiresAt: accessExpiresAt ? accessExpiresAt.toISOString() : null,
+          expiresAt: null,
           coverImage: linkedGame?.coverImage ?? "",
+          accessToken: customerId ? undefined : guestToken,
         });
       }
 
@@ -420,47 +416,70 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
       : "Kod kullanıldı. Bilgileri hemen kaydedin!",
     data: {
       code: code.code,
-      expiresAt: accessExpiresAt ? accessExpiresAt.toISOString() : null,
+      expiresAt: null,
       guest: !customerId,
+      guestToken: customerId ? null : guestToken,
       items: delivered,
     },
   };
 }
 
+export type AccessCode = {
+  code: string;
+  digits: number;
+  kind: "steam" | "totp" | "email";
+  secondsRemaining: number;
+  expiresAt: string | null;
+  detail?: string;
+};
+
+/**
+ * Returns the live access code for a delivered item.
+ *
+ * Works for logged-in customers and for guests that just redeemed a code: the
+ * redemption issues an unguessable token that is embedded in the delivery result.
+ */
 export async function getTwoFactorCode(
   slug: string,
   entitlementId: number,
-): Promise<ActionResult<{ code: string; digits: number; kind: "steam" | "totp"; secondsRemaining: number; expiresAt: string | null }>> {
-  const guard = await requireCustomer(slug);
-  if (!guard) return { ok: false, message: "Kod almak için giriş yapmalısınız." };
-  if (!guard.state.active) return { ok: false, message: "Mağaza erişimi aktif değil." };
+  guestToken?: string | null,
+): Promise<ActionResult<AccessCode>> {
+  await ensureDatabase();
+  const store = await findStoreBySlug(slug);
+  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  const state = resolveStoreState(store);
+  if (!state.active) return { ok: false, message: "Mağazanın erişimi aktif değil." };
+
+  const session = await getCustomerSession();
+  const customerSession = session && session.storeId === store.id ? session : null;
 
   const rows = await db
-    .select({ entitlement: entitlements, account: accounts })
+    .select({ entitlement: entitlements, account: accounts, redemption: redemptions })
     .from(entitlements)
     .leftJoin(accounts, eq(accounts.id, entitlements.accountId))
-    .where(
-      and(
-        eq(entitlements.id, entitlementId),
-        eq(entitlements.storeId, guard.state.store.id),
-        eq(entitlements.customerId, guard.session.customerId),
-      ),
-    )
+    .leftJoin(redemptions, eq(redemptions.id, entitlements.redemptionId))
+    .where(and(eq(entitlements.id, entitlementId), eq(entitlements.storeId, store.id)))
     .limit(1);
 
   const row = rows[0];
-  if (!row) return { ok: false, message: "Bu ürün kütüphanenizde bulunamadı." };
-  if (accessExpired(row.entitlement.expiresAt)) {
-    return {
-      ok: false,
-      message: "Erişim süreniz doldu. Kod üretimi durduruldu, ürün kütüphanenizden kaldırıldı.",
-    };
+  if (!row) return { ok: false, message: "Bu ürün bulunamadı." };
+
+  const ownedByCustomer = Boolean(
+    customerSession && row.entitlement.customerId === customerSession.customerId,
+  );
+  const ownedByGuest = Boolean(guestToken && row.redemption?.guestToken === guestToken);
+  if (!ownedByCustomer && !ownedByGuest) {
+    return { ok: false, message: "Kod almak için giriş yapmalısınız veya teslimat bağlantısını kullanmalısınız." };
   }
+
   const account = row.account;
   if (!account) return { ok: false, message: "Bu ürüne atanmış bir hesap yok." };
+
+  const guardType = account.guardType || "none";
   const steamSecret = account.steamSecret ? decryptData(account.steamSecret) : "";
   const totpSecret = account.totpSecret ? decryptData(account.totpSecret) : "";
-  if (account.guardType === "steam_guard" && steamSecret) {
+
+  if (guardHasSteam(guardType) && steamSecret) {
     return {
       ok: true,
       data: {
@@ -468,11 +487,11 @@ export async function getTwoFactorCode(
         digits: 5,
         kind: "steam",
         secondsRemaining: secondsRemaining(),
-        expiresAt: row.entitlement.expiresAt ? new Date(row.entitlement.expiresAt).toISOString() : null,
+        expiresAt: null,
       },
     };
   }
-  if (account.guardType === "totp" && totpSecret) {
+  if (guardHasTotp(guardType) && totpSecret) {
     return {
       ok: true,
       data: {
@@ -480,7 +499,30 @@ export async function getTwoFactorCode(
         digits: 6,
         kind: "totp",
         secondsRemaining: secondsRemaining(),
-        expiresAt: row.entitlement.expiresAt ? new Date(row.entitlement.expiresAt).toISOString() : null,
+        expiresAt: null,
+      },
+    };
+  }
+  if (guardHasEmail(guardType) && account.mailEmail) {
+    const mail = await fetchLatestMailCode({
+      email: account.mailEmail,
+      password: account.mailPassword ? decryptData(account.mailPassword) : "",
+      host: account.mailHost,
+      port: account.mailPort,
+      secure: (account.mailPort ?? 993) === 993,
+      senderFilter: account.mailSenderFilter || "steam",
+      sinceMinutes: 180,
+    });
+    if (!mail.ok) return { ok: false, message: `Mail kodu alınamadı: ${mail.message}` };
+    return {
+      ok: true,
+      data: {
+        code: mail.code,
+        digits: mail.code.length,
+        kind: "email",
+        secondsRemaining: 0,
+        expiresAt: null,
+        detail: mail.subject || mail.from,
       },
     };
   }

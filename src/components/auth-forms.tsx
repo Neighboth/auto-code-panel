@@ -343,6 +343,7 @@ export function CustomerAuthForm({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
+  const [showPassword, setShowPassword] = useState(false);
   const fallback = `${basePath}/kutuphane`;
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -403,18 +404,27 @@ export function CustomerAuthForm({
         htmlFor="password"
         hint={mode === "register" ? "En az 6 karakter." : undefined}
       >
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          minLength={6}
-          className="input"
-          autoComplete={mode === "register" ? "new-password" : "current-password"}
-        />
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            minLength={6}
+            className="input pr-16"
+            autoComplete={mode === "register" ? "new-password" : "current-password"}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((value) => !value)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
+          >
+            {showPassword ? "Gizle" : "Göster"}
+          </button>
+        </div>
       </Field>
       <ErrorBox message={error} />
-      <button type="submit" className="btn btn-gray w-full" disabled={pending}>
+      <button type="submit" className="btn btn-primary w-full" disabled={pending}>
         {pending ? <Loader2 size={14} className="animate-spin" /> : null}
         {mode === "register" ? "Hesap oluştur" : "Giriş yap"}
       </button>
@@ -428,6 +438,60 @@ export function CustomerAuthForm({
         />
       ) : null}
     </form>
+  );
+}
+
+/**
+ * Storefront entry point with two tabs: customers and the store's own manager.
+ * Shop owners can sign in from their storefront without hunting for /admin.
+ */
+export function StoreLoginTabs({
+  slug,
+  storeName,
+  basePath,
+  initialTab = "customer",
+}: {
+  slug: string;
+  storeName: string;
+  basePath: string;
+  initialTab?: "customer" | "manager";
+}) {
+  const [tab, setTab] = useState<"customer" | "manager">(initialTab);
+
+  return (
+    <div>
+      <div className="flex items-center gap-1 rounded-xl border p-1 hairline" role="tablist">
+        {(["customer", "manager"] as const).map((item) => (
+          <button
+            key={item}
+            type="button"
+            role="tab"
+            aria-selected={tab === item}
+            onClick={() => setTab(item)}
+            className="flex-1 rounded-lg px-3 py-2 text-[12.5px] font-medium transition"
+            style={{
+              background: tab === item ? "var(--store-primary)" : "transparent",
+              color: tab === item ? "#fff" : "var(--fg-muted)",
+            }}
+          >
+            {item === "customer" ? "Müşteri girişi" : "Mağaza yöneticisi"}
+          </button>
+        ))}
+      </div>
+      <div className="mt-5">
+        {tab === "customer" ? (
+          <CustomerAuthForm slug={slug} mode="login" basePath={basePath} />
+        ) : (
+          <div className="space-y-3">
+            <p className="text-[12px] leading-relaxed muted">
+              {storeName} mağazasının yönetici hesabıyla giriş yapın. Bu giriş sizi doğrudan mağaza
+              paneline yönlendirir.
+            </p>
+            <StoreAdminLoginForm slug={slug} storeName={storeName} basePath={basePath} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

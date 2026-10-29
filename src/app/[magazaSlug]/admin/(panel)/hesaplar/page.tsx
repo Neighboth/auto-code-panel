@@ -42,7 +42,11 @@ export default async function AdminAccountsPage({ params }: { params: Promise<{ 
     hasSteamSecret: Boolean(account.steamSecret),
     hasTotpSecret: Boolean(account.totpSecret),
     mailEmail: account.mailEmail,
-    mailPassword: account.mailPassword,
+    mailPassword: account.mailPassword ? decryptData(account.mailPassword) : "",
+    mailProvider: account.mailProvider,
+    mailHost: account.mailHost,
+    mailPort: account.mailPort,
+    mailSenderFilter: account.mailSenderFilter,
     notes: account.notes,
     status: account.status,
   }));

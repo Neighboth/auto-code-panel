@@ -117,8 +117,16 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
             </div>
           </Field>
         </div>
-        <Field label="Süre Uzatma İlan Linki" hint="Boş bırakılırsa sistem ayarlarındaki global link kullanılır.">
-          <input name="renewalUrl" className="input" placeholder={globalRenewalUrl} />
+        <Field
+          label="Süre Uzatma Linki"
+          hint="RENEWAL_URL ortam değişkeninden gelir; bayilik koduna da bu link yazılır."
+        >
+          <input
+            name="renewalUrl"
+            className="input mono text-[12px] opacity-70"
+            value={globalRenewalUrl}
+            readOnly
+          />
         </Field>
         <div className="grid gap-3 sm:grid-cols-[1fr_110px]">
           <Field label="Not (opsiyonel)">
@@ -302,11 +310,17 @@ export function PlatformSettingsForm({
   renewalUrl,
   supportEmail,
   defaultPlanNote,
+  envRenewalUrl,
+  envSupportEmail,
 }: {
   renewalUrl: string;
   supportEmail: string;
   defaultPlanNote: string;
+  envRenewalUrl?: string;
+  envSupportEmail?: string;
 }) {
+  const renewalLocked = envRenewalUrl ?? renewalUrl;
+  const supportLocked = envSupportEmail ?? supportEmail;
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -328,19 +342,37 @@ export function PlatformSettingsForm({
   return (
     <form onSubmit={onSubmit} className="card space-y-4 p-5">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Destek E-postası">
-          <input name="supportEmail" type="email" defaultValue={supportEmail} className="input" required />
+        <Field
+          label="Destek E-postası"
+          hint="Bu değer SUPPORT_EMAIL ortam değişkeninden okunur; panelden değiştirilemez."
+        >
+          <input
+            value={supportLocked}
+            readOnly
+            className="input mono text-[12px] opacity-70"
+            aria-readonly="true"
+          />
         </Field>
-        <Field label="Marka adı" hint="Ortam değişkeninden (BRAND_NAME) yönetilir.">
+        <Field label="Marka adı" hint="BRAND_NAME ortam değişkeninden okunur.">
           <input value="BRAND_NAME" readOnly className="input mono text-[12px] opacity-70" />
         </Field>
       </div>
       <Field
         label="Global Süre Uzatma Linki"
-        hint="Bayilik kodunda özel link tanımlanmadıysa bu link kullanılır."
+        hint="RENEWAL_URL ortam değişkeninden okunur. Değiştirmek için .env dosyasını düzenleyip uygulamayı yeniden başlatın."
       >
-        <input name="renewalUrl" defaultValue={renewalUrl} className="input" required />
+        <input
+          value={renewalLocked}
+          readOnly
+          className="input mono text-[12px] opacity-70"
+          aria-readonly="true"
+        />
       </Field>
+      <p className="note note-info">
+        Süre uzatma linki ve destek e-postası güvenlik gereği yalnızca <span className="mono">.env</span>{" "}
+        (<span className="mono">RENEWAL_URL</span>, <span className="mono">SUPPORT_EMAIL</span>) üzerinden
+        yönetilir.
+      </p>
       <Field label="Bayilere gösterilecek not">
         <textarea name="defaultPlanNote" defaultValue={defaultPlanNote} className="textarea" rows={3} />
       </Field>

@@ -1,5 +1,8 @@
+# Production compose file: pulls the image that GitHub Actions publishes to
+# GHCR. Use `docker compose up -d --build` if you prefer building locally.
 services:
   app:
+    image: ${APP_IMAGE:-ghcr.io/neighboth/auto-code-panel:latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -7,12 +10,16 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: "3000"
       SQLITE_PATH: /data/app.db
-      AUTH_SECRET: ${AUTH_SECRET:-ornek-oturum-anahtari-6f3a9c1e8b2d4f70a5e9c3b1d8f2a6e4}
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-please-use-a-long-random-secret}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:-change-me-please-use-a-long-random-secret}
       SUPER_ADMIN_USERNAME: ${SUPER_ADMIN_USERNAME:-admin}
       SUPER_ADMIN_PASSWORD: ${SUPER_ADMIN_PASSWORD:-Admin12345!}
       SUPER_ADMIN_EMAIL: ${SUPER_ADMIN_EMAIL:-owner@example.com}
@@ -21,8 +28,7 @@ services:
       BRAND_LOGO_URL: ${BRAND_LOGO_URL:-}
       RENEWAL_URL: ${RENEWAL_URL:-https://t.me/ornek_destek}
       SUPPORT_EMAIL: ${SUPPORT_EMAIL:-destek@example.com}
-      CRON_SECRET: ${CRON_SECRET:-ornek-cron-anahtari-93kd82ls01}
-      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:-change-this-data-key-before-going-live}
+      CRON_SECRET: ${CRON_SECRET:-change-me-cron-secret}
     volumes:
       - app-data:/data
     healthcheck:

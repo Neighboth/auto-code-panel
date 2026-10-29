@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { ArrowRight, ChevronDown, KeyRound, Menu, Search, User, X } from "lucide-react";
+import { ArrowRight, ChevronDown, KeyRound, Menu, Search, ShieldCheck, User, X } from "lucide-react";
 import { LogoutButton } from "@/components/auth-forms";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-provider";
+import { createTranslator } from "@/lib/i18n/translate";
 
 export function StoreNav({
   slug,
@@ -12,13 +15,16 @@ export function StoreNav({
   storeName,
   logoUrl,
   customer,
+  locale = "tr",
 }: {
   slug: string;
   basePath: string;
   storeName: string;
   logoUrl: string;
   customer: string | null;
+  locale?: string;
 }) {
+  const t = createTranslator(locale);
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,9 +32,9 @@ export function StoreNav({
   const [code, setCode] = useState("");
 
   const links = [
-    { href: basePath || "/", label: "Anasayfa" },
-    { href: `${basePath}/oyunlar`, label: "Oyunlar" },
-    { href: `${basePath}/kod-gir`, label: "Kod Gir" },
+    { href: basePath || "/", label: t("nav.home") },
+    { href: `${basePath}/oyunlar`, label: t("nav.products") },
+    { href: `${basePath}/kod-gir`, label: t("nav.redeem") },
   ];
 
   function quickRedeem(event: FormEvent<HTMLFormElement>) {
@@ -89,7 +95,7 @@ export function StoreNav({
               <input
                 value={code}
                 onChange={(event) => setCode(event.target.value)}
-                placeholder="Hızlı kod gir..."
+                placeholder={t("store.quickCode")}
                 className="input mono h-9 pl-8 text-[12px] uppercase"
                 aria-label="Hızlı kod gir"
               />
@@ -125,7 +131,7 @@ export function StoreNav({
                     onMouseLeave={() => setAccountOpen(false)}
                   >
                     <Link href={`${basePath}/kutuphane`} className="block px-3 py-2 text-[12.5px] hover:opacity-70">
-                      Kütüphanem
+                      {t("nav.library")}
                     </Link>
                     <Link href={`${basePath}/profil`} className="block px-3 py-2 text-[12.5px] hover:opacity-70">
                       Profil ayarları
@@ -143,10 +149,10 @@ export function StoreNav({
             ) : (
               <div className="hidden items-center gap-1.5 sm:flex">
                 <Link href={`${basePath}/giris`} className="btn btn-ghost btn-sm">
-                  Giriş
+                  {t("nav.login")}
                 </Link>
                 <Link href={`${basePath}/kayit`} className="btn btn-primary btn-sm">
-                  Kayıt ol
+                  {t("nav.register")}
                 </Link>
               </div>
             )}
@@ -154,10 +160,13 @@ export function StoreNav({
             <Link
               href={`${basePath}/kod-gir`}
               className="btn btn-outline btn-sm px-2 sm:hidden"
-              aria-label="Kod gir"
+              aria-label={t("nav.redeem")}
             >
               <KeyRound size={14} />
             </Link>
+
+            <LanguageSwitcher locale={locale} compact />
+            <ThemeToggle />
 
             <button
               type="button"
@@ -178,7 +187,7 @@ export function StoreNav({
             <input
               value={code}
               onChange={(event) => setCode(event.target.value)}
-              placeholder="Hızlı kod gir..."
+              placeholder={t("store.quickCode")}
               className="input mono h-9 pl-8 text-[12px] uppercase"
               aria-label="Hızlı kod gir"
             />
@@ -207,14 +216,22 @@ export function StoreNav({
               onClick={() => setMobileOpen(false)}
               className="rounded-lg px-2 py-2.5 text-[13.5px] font-medium muted active:opacity-60"
             >
-              Kütüphanem
+              {t("nav.library")}
             </Link>
             <Link
               href={`${basePath}/profil`}
               onClick={() => setMobileOpen(false)}
               className="rounded-lg px-2 py-2.5 text-[13.5px] font-medium muted active:opacity-60"
             >
-              Profil
+              {t("nav.profile")}
+            </Link>
+            <Link
+              href={`${basePath}/admin/giris`}
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-1.5 rounded-lg px-2 py-2.5 text-[13.5px] font-medium muted active:opacity-60"
+            >
+              <ShieldCheck size={13} />
+              {t("store.openAdmin")}
             </Link>
           </nav>
           <div className="mt-3 flex items-center gap-2 border-t pt-3 hairline">

@@ -1,6 +1,6 @@
 "use server";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
 import {
@@ -187,10 +187,12 @@ export async function addCustomerEntitlement(
   const candidates = await db
     .select()
     .from(accounts)
-    .where(and(eq(accounts.storeId, g.storeId), eq(accounts.status, "available"), eq(accounts.platform, "steam")));
+    .where(and(eq(accounts.storeId, g.storeId), sql`${accounts.status} <> 'retired'`));
   const candidate = candidates.find((account) => (account.linkedGameIds ?? []).includes(gameId));
 
-  const expiresAt = durationMinutes ? new Date(Date.now() + durationMinutes * 60_000) : null;
+  // Shared account model: no expiry, the customer keeps access forever.
+  void durationMinutes;
+  const expiresAt: Date | null = null;
 
   await db.transaction(async (tx) => {
     const [redemption] = await tx
@@ -214,17 +216,13 @@ export async function addCustomerEntitlement(
       title: gameRow.title,
       expiresAt,
     });
-    if (candidate) {
-      await tx
-        .update(accounts)
-        .set({ status: "assigned", updatedAt: new Date() })
-        .where(and(eq(accounts.id, candidate.id), eq(accounts.status, "available")));
-    }
   });
   refresh(g.slug);
   return {
     ok: true,
-    message: candidate ? "Ürün kütüphaneye eklendi, hesap atandı." : "Ürün kütüphaneye eklendi (müsait hesap yoktu).",
+    message: candidate
+      ? "Ürün kütüphaneye eklendi, hesap tanımlandı."
+      : "Ürün kütüphaneye eklendi (eşleşen hesap bulunamadı).",
   };
 }
 

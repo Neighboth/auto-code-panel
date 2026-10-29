@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { brand } from "@/lib/brand";
+import { getLocale } from "@/lib/i18n/server";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,18 +13,29 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s · ${brand.name}`,
     },
     description:
-      "Çoklu mağaza altyapısı: oyun ve hesap envanteri, 2FA/Steam Guard kod üretimi, otomatik teslimat ve bayilik yönetimi.",
+      "Multi-tenant digital account and code delivery platform: inventory, 2FA/Steam Guard codes, automatic delivery and reseller management.",
   };
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const locale = await getLocale();
+
   return (
-    <html lang="tr">
+    <html lang={locale.code} dir={locale.dir} suppressHydrationWarning>
+      <head>
+        {/* Applies the saved theme before first paint. Light is the default. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('pix-theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';}catch(e){document.documentElement.dataset.theme='light';}})();",
+          }}
+        />
+      </head>
       <body className="min-h-dvh antialiased">
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Toaster
           position="top-center"
-          theme="light"
+          theme="system"
           toastOptions={{
             style: {
               borderRadius: "12px",

@@ -8,9 +8,9 @@ export const CUSTOMER_COOKIE = "kr_customer";
 export const PENDING_COOKIE = "kr_pending";
 
 export type PendingSubject =
-  | { t: "super"; id: number; slug?: never; username: string }
-  | { t: "store"; id: number; slug: string; username: string }
-  | { t: "customer"; id: number; slug: string; username: string };
+  | { t: "super"; id: number; slug?: never; storeId?: never; username: string }
+  | { t: "store"; id: number; storeId: number; slug: string; username: string }
+  | { t: "customer"; id: number; storeId: number; slug: string; username: string };
 
 export type SuperSession = { kind: "super"; id: number; username: string };
 export type StoreAdminSession = {

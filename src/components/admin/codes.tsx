@@ -7,7 +7,7 @@ import { Check, Copy, Download, Loader2, Plus, Trash2, Wand2 } from "lucide-reac
 import { createCodes, deleteCode } from "@/app/actions/store-admin";
 import { Modal } from "@/components/modal";
 import { Field } from "@/components/ui";
-import { DURATION_PRESETS, formatDateTime, formatDuration } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
 
 export type AdminCode = {
   id: number;
@@ -32,9 +32,9 @@ type GameOption = { id: number; title: string };
 type AccountOption = { id: number; label: string };
 
 const typeLabels: Record<AdminCode["type"], string> = {
-  choice: "İstediğin X oyun",
-  single: "Tekli mod",
-  bundle: "Çoklu mod (paket)",
+  choice: "Seçmeli (müşteri seçer)",
+  single: "Tekli teslimat",
+  bundle: "Paket (çoklu)",
 };
 
 export function CodeManager({
@@ -61,9 +61,6 @@ export function CodeManager({
   const [choiceCount, setChoiceCount] = useState(2);
   const [gameIds, setGameIds] = useState<number[]>([]);
   const [accountIds, setAccountIds] = useState<number[]>([]);
-  const [durationIndex, setDurationIndex] = useState("0");
-  const [customDays, setCustomDays] = useState(7);
-  const [customHours, setCustomHours] = useState(0);
   const [count, setCount] = useState(1);
   const [generated, setGenerated] = useState<string[]>([]);
 
@@ -88,21 +85,17 @@ export function CodeManager({
     setChoiceCount(2);
     setGameIds([]);
     setAccountIds([]);
-    setDurationIndex("0");
-    setCustomDays(7);
-    setCustomHours(0);
     setCount(1);
     setGenerated([]);
     setError(null);
   }
 
+  /**
+   * The platform delivers shared accounts: access is never time limited.
+   * Codes therefore always carry a null duration (unlimited).
+   */
   function durationMinutes(): number | null {
-    if (durationIndex === "custom") {
-      const total = customDays * 24 * 60 + customHours * 60;
-      return total > 0 ? total : null;
-    }
-    const preset = DURATION_PRESETS[Number(durationIndex)];
-    return preset ? preset.minutes : null;
+    return null;
   }
 
   function toggleTarget(kind: "game" | "account", id: number) {
@@ -134,7 +127,7 @@ export function CodeManager({
       gameIds,
       accountIds,
       count,
-      label: `${typeLabels[type]}${type === "choice" ? ` (${choiceCount})` : ""} · ${formatDuration(durationMinutes())}`,
+      label: `${typeLabels[type]}${type === "choice" ? ` (${choiceCount})` : ""} · ${"Sınırsız"}`,
     });
     setPending(false);
     if (!result.ok) {
@@ -257,7 +250,7 @@ export function CodeManager({
                       <span className="ml-1 text-[10.5px] muted">{code.choiceCount} seçim</span>
                     ) : null}
                   </td>
-                  <td className="text-[12px]">{formatDuration(code.durationMinutes)}</td>
+                  <td className="text-[12px]">Sınırsız</td>
                   <td className="text-[11px] muted">{formatDateTime(code.createdAt)}</td>
                   <td>
                     <span
@@ -297,7 +290,7 @@ export function CodeManager({
         open={detail !== null}
         onClose={() => setDetail(null)}
         title={detail?.code}
-        description={detail ? `${typeLabels[detail.type]} · ${formatDuration(detail.durationMinutes)}` : undefined}
+        description={detail ? `${typeLabels[detail.type]} · Sınırsız` : undefined}
         size="lg"
       >
         {detail ? (
@@ -319,7 +312,7 @@ export function CodeManager({
                     <div>
                       <p className="text-[12.5px] font-medium">{item.title}</p>
                       <p className="text-[10.5px] muted">
-                        {item.kind === "game" ? "Oyun" : "Hesap"}
+                        {item.kind === "game" ? "Ürün" : "Hesap"}
                         {item.gameId ? ` · ürün #${item.gameId}` : ""}
                         {item.accountId ? ` · atanan hesap #${item.accountId}` : ""}
                       </p>
@@ -361,7 +354,7 @@ export function CodeManager({
         open={wizardOpen}
         onClose={() => setWizardOpen(false)}
         title="Kod oluştur"
-        description="4 adımda teslimat kodu üretin. Süre, kod kullanıldığı anda başlar."
+        description="4 adımda teslimat kodu üretin. Erişim süresizdir."
         size="lg"
         footer={
           <div className="flex w-full items-center justify-between gap-2">
@@ -382,7 +375,7 @@ export function CodeManager({
                   Devam
                 </button>
               ) : null}
-              {step === 3 ? (
+        {step === 3 ? (
                 <button type="button" className="btn btn-dark" onClick={onGenerate} disabled={pending}>
                   {pending ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={13} />}
                   Oluştur
@@ -407,9 +400,9 @@ export function CodeManager({
           <div className="space-y-3">
             {(
               [
-                { id: "choice", title: "İstediğiniz X Oyun (Seçmeli Mod)", text: "Müşteri mağazadaki ürünler arasından hakkı kadar seçim yapar." },
-                { id: "single", title: "Tekli Mod", text: "Kod tek bir oyun/ürün veya hesap grubuna bağlanır." },
-                { id: "bundle", title: "Çoklu Mod (Paket)", text: "Tek koda birden fazla oyun veya hesap tanımlanır." },
+                { id: "choice", title: "Seçmeli Kod", text: "Müşteri mağazadaki ürünler arasından hakkı kadar seçim yapar." },
+                { id: "single", title: "Tekli Teslimat", text: "Kod tek bir ürün veya hesap grubuna bağlanır." },
+                { id: "bundle", title: "Paket Teslimat", text: "Tek koda birden fazla ürün veya hesap tanımlanır." },
               ] as const
             ).map((option) => (
               <button
@@ -436,7 +429,7 @@ export function CodeManager({
             ))}
 
             {type === "choice" ? (
-              <Field label="Seçilebilir Oyun Sayısı" hint="Müşterinin koddan alabileceği oyun adedi (1-20).">
+              <Field label="Seçim Hakkı" hint="Müşterinin koddan alabileceği ürün adedi (1-20).">
                 <select
                   value={choiceCount}
                   onChange={(event) => setChoiceCount(Number(event.target.value))}
@@ -444,7 +437,7 @@ export function CodeManager({
                 >
                   {Array.from({ length: 20 }, (_, index) => index + 1).map((value) => (
                     <option key={value} value={value}>
-                      {value} oyun
+                      {value} ürün
                     </option>
                   ))}
                 </select>
@@ -454,8 +447,8 @@ export function CodeManager({
                 <p className="label">Hedef seçimi ({type === "single" ? "yalnızca 1" : "çoklu"})</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div className="max-h-44 overflow-y-auto rounded-lg border p-2 hairline scroll-thin">
-                    <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">Oyunlar</p>
-                    {games.length === 0 ? <p className="px-1 py-1 text-[11px] muted">Oyun yok</p> : null}
+                    <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">Ürünler</p>
+                    {games.length === 0 ? <p className="px-1 py-1 text-[11px] muted">Ürün yok</p> : null}
                     {games.map((game) => (
                       <label key={game.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-[11.5px]">
                         <input
@@ -491,42 +484,17 @@ export function CodeManager({
 
         {step === 2 ? (
           <div className="space-y-3">
-            <Field label="Kullanım Süresi" hint="Kod kullanıldığı saniyede başlar. Süre bitince erişim otomatik imha edilir.">
-              <select value={durationIndex} onChange={(event) => setDurationIndex(event.target.value)} className="select">
-                {DURATION_PRESETS.map((preset, index) => (
-                  <option key={preset.label} value={index}>
-                    {preset.label}
-                  </option>
-                ))}
-                <option value="custom">Özel Gün/Saat Girişi</option>
-              </select>
-            </Field>
-            {durationIndex === "custom" ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Gün">
-                  <input
-                    type="number"
-                    min={0}
-                    value={customDays}
-                    onChange={(event) => setCustomDays(Math.max(0, Number(event.target.value) || 0))}
-                    className="input"
-                  />
-                </Field>
-                <Field label="Saat">
-                  <input
-                    type="number"
-                    min={0}
-                    max={23}
-                    value={customHours}
-                    onChange={(event) => setCustomHours(Math.min(23, Math.max(0, Number(event.target.value) || 0)))}
-                    className="input"
-                  />
-                </Field>
-              </div>
-            ) : null}
-            <div className="rounded-lg border px-3 py-2 text-[11.5px] muted hairline">
-              Seçilen erişim: <span className="font-medium" style={{ color: "var(--fg)" }}>{formatDuration(durationMinutes())}</span>
+            <div className="rounded-xl border p-3.5 hairline">
+              <p className="text-[12.5px] font-medium">Sınırsız erişim</p>
+              <p className="mt-1 text-[11.5px] leading-relaxed muted">
+                Bu platform paylaşımlı hesap satışı yapar: kod kullanıldığında erişim kalıcı olarak
+                açılır. Teslimatın süresi dolmaz ve hesap “teslim edildi / durdu” moduna geçmez.
+              </p>
             </div>
+            <p className="text-[11.5px] leading-relaxed muted">
+              Seçmeli kodlarda müşteri, koddaki seçim hakkı kadar ürünü kendisi seçer. Tüm ürünler
+              süresiz erişimle kütüphaneye eklenir.
+            </p>
           </div>
         ) : null}
 
@@ -546,9 +514,9 @@ export function CodeManager({
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] muted">Özet</p>
               <div className="mt-2 space-y-1.5 text-[12px]">
                 <SummaryRow label="Tür" value={typeLabels[type]} />
-                {type === "choice" ? <SummaryRow label="Seçim hakkı" value={`${choiceCount} oyun`} /> : null}
+                {type === "choice" ? <SummaryRow label="Seçim hakkı" value={`${choiceCount} ürün`} /> : null}
                 {type !== "choice" ? <SummaryRow label="Hedef sayısı" value={`${targetCount} öğe`} /> : null}
-                <SummaryRow label="Erişim süresi" value={formatDuration(durationMinutes())} />
+                <SummaryRow label="Erişim süresi" value="Sınırsız" />
                 <SummaryRow label="Adet" value={`${count} kod`} />
               </div>
             </div>
