@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useT } from "@/components/i18n-provider";
 import { ArrowLeft, ArrowRight, Clock3, Fingerprint, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 import { getTwoFactorCode, type AccessCode } from "@/app/actions/storefront";
 import { CopyButton } from "@/components/copy-button";
@@ -48,6 +49,7 @@ export function CredentialsModal(props: CredentialsModalProps) {
 }
 
 function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps) {
+  const t = useT();
   const [step, setStep] = useState<Step>("credentials");
   const [code, setCode] = useState<AccessCode | null>(null);
   const [loading, setLoading] = useState(false);
@@ -174,7 +176,7 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
                 <Markdown content={item.notes} />
               </div>
             ) : (
-              <p className="note">Bu hesap için ek not girilmemiş.</p>
+              <p className="note">{t("library.noNotes")}</p>
             )}
             {item.mailEmail ? (
               <div className="grid gap-2.5">

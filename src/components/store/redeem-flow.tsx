@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useT } from "@/components/i18n-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ export function RedeemFlow({
   customerName: string | null;
 }) {
   const router = useRouter();
+  const t = useT();
   const [codeInput, setCodeInput] = useState(initialCode);
   const [preview, setPreview] = useState<CodePreview | null>(null);
   const [selected, setSelected] = useState<number[]>([]);
@@ -186,7 +188,7 @@ export function RedeemFlow({
               onChange={(event) => setCodeInput(event.target.value)}
               placeholder="KEYR-XXXXX-XXXXX"
               className="input mono flex-1 uppercase tracking-wide"
-              aria-label="Redeem kodu"
+              aria-label={t("redeem.title")}
               required
             />
             <button type="submit" className="btn btn-primary btn-lg" disabled={pending}>
@@ -207,8 +209,8 @@ export function RedeemFlow({
         <div className="card p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">Kod türü</p>
-              <h1 className="mt-1 text-[20px] font-semibold tracking-[-0.02em]">İstediğiniz oyunları seçin</h1>
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{t("redeem.kind")}</p>
+              <h1 className="mt-1 text-[20px] font-semibold tracking-[-0.02em]">{t("redeem.choose")}</h1>
               <p className="mt-1 text-[12.5px] muted">
                 {preview.choiceCount} oyun hakkınız var · Erişim süresi: {durationText}
               </p>
@@ -352,7 +354,7 @@ export function RedeemFlow({
 
       {step === "confirm" && preview ? (
         <div className="card p-6">
-          <h1 className="text-[21px] font-semibold tracking-[-0.02em]">Teslimatı onayla</h1>
+          <h1 className="text-[21px] font-semibold tracking-[-0.02em]">{t("redeem.confirm")}</h1>
           <p className="mt-1.5 text-[12.5px] muted">
             Paylaşımlı hesap teslimatı: kod kullanıldığında erişim sınırsız süreyle açılır ve
             kütüphanenize eklenir.
@@ -369,7 +371,7 @@ export function RedeemFlow({
             ))}
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-            <span className="badge badge-blue">Erişim: Sınırsız</span>
+            <span className="badge badge-blue">{t("library.unlimited")}</span>
             <div className="flex items-center gap-2">
               <button type="button" className="btn btn-outline" onClick={() => setStep("entry")}>
                 Vazgeç
@@ -392,7 +394,7 @@ export function RedeemFlow({
             >
               <Check size={18} />
             </span>
-            <h1 className="mt-4 text-[22px] font-semibold tracking-[-0.02em]">Teslimat tamamlandı</h1>
+            <h1 className="mt-4 text-[22px] font-semibold tracking-[-0.02em]">{t("redeem.result")}</h1>
             <p className="mt-1.5 text-[12.5px] muted">
               <span className="mono">{result.code}</span> kodu kullanıldı ·{" "}
               {result.expiresAt
@@ -472,7 +474,7 @@ export function RedeemFlow({
       <Modal
         open={guestWarning}
         onClose={() => setGuestWarning(false)}
-        title="Hesap oluşturmadan devam etmek üzeresiniz"
+        title={t("redeem.guestTitle")}
         footer={
           <>
             <button type="button" className="btn btn-outline" onClick={() => setGuestWarning(false)}>

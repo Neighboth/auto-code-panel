@@ -6,6 +6,7 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { toast } from "sonner";
 import { setLocale } from "@/app/actions/locale";
 import { LOCALES, findLocale, flagUrl } from "@/lib/i18n/config";
+import { useT } from "@/components/i18n-provider";
 
 export function Flag({ flag, size = 20 }: { flag: string; size?: number }) {
   const [failed, setFailed] = useState(false);
@@ -45,6 +46,7 @@ export function LanguageSwitcher({
   compact?: boolean;
 }) {
   const router = useRouter();
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState(false);
@@ -76,7 +78,7 @@ export function LanguageSwitcher({
     const result = await setLocale(code);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Dil değiştirilemedi");
+      toast.error(result.message ?? t("ui.languageError"));
       return;
     }
     setOpen(false);
@@ -111,7 +113,7 @@ export function LanguageSwitcher({
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Dil ara / Search language"
+              placeholder={t("ui.searchLanguage")}
               className="input h-8 pl-7 text-[12px]"
               autoFocus
             />

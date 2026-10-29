@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { brand } from "@/lib/brand";
 import { getLocale } from "@/lib/i18n/server";
 import { ThemeProvider } from "@/components/theme-provider";
+import { I18nProvider } from "@/components/i18n-provider";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,7 +33,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
       <body className="min-h-dvh antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <I18nProvider locale={locale.code}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </I18nProvider>
         <Toaster
           position="top-center"
           theme="system"

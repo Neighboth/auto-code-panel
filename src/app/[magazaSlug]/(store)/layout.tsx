@@ -39,22 +39,20 @@ export default async function StorefrontLayout({
           <BrandMark size={34} />
           <span className="badge badge-amber mt-5">
             <ClockAlert size={12} />
-            {suspended ? "Askıya alındı" : "Süresi doldu"}
+            {t(suspended ? "store.suspended" : "common.expired")}
           </span>
           <h1 className="mt-4 text-[26px] font-semibold tracking-[-0.025em] sm:text-[32px]">
-            {suspended ? "Mağaza geçici olarak askıda." : "Bayilik süresi dolmuş - askıda."}
+            {t(suspended ? "store.suspendedTitle" : "store.expiredTitle")}
           </h1>
           <p className="mt-3 max-w-md text-[13.5px] leading-relaxed muted">
-            {suspended
-              ? "Bu mağaza yönetici tarafından geçici olarak hizmet dışı bırakıldı. Mevcut teslimatlar donduruldu."
-              : "Bu mağazanın bayilik süresi sona erdiği için vitrin ve teslimat otomatik olarak durduruldu. Mevcut müşteri kütüphanelerine erişim askıya alındı."}
+            {t(suspended ? "store.suspendedBody" : "store.expiredBody")}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
             <Link href={`${basePath}/admin/giris`} className="btn btn-dark">
-              Mağaza yönetimi
+              {t("store.adminPanel")}
             </Link>
             <a href={renewalUrl} target="_blank" rel="noreferrer" className="btn btn-outline">
-              Süre uzat
+              {t("common.renew")}
               <ArrowUpRight size={13} />
             </a>
           </div>
