@@ -104,7 +104,7 @@ export async function CustomerDetailView({
             </div>
           </div>
           <span className={`badge ${customer.status === "active" ? "badge-green" : "badge-red"}`}>
-            {customer.status === "active" ? "Aktif" : t("x.yasakl")}
+            {customer.status === "active" ? t("x.aktif") : t("x.yasakl")}
           </span>
         </div>
 

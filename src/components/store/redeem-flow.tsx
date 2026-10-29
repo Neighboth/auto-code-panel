@@ -309,7 +309,7 @@ export function RedeemFlow({
                   onClick={() => setShowPassword((value) => !value)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
                 >
-                  {showPassword ? "Gizle" : t("x.goster")}
+                  {showPassword ? t("x.gizle") : t("x.goster")}
                 </button>
               </div>
             </Field>
@@ -398,7 +398,7 @@ export function RedeemFlow({
                     {item.platformLabel} · {item.subtitle}
                   </p>
                 </div>
-                <span className="badge">{item.kind === "game" ? "Ürün" : "Hesap"}</span>
+                <span className="badge">{item.kind === "game" ? t("x.urun") : t("x.hesap")}</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3.5">
                 <p className="text-[11.5px] muted">{t("x.kullanc-ad-sifre-notlar-ve-canl-kod-srayla-gosterilir")}</p>

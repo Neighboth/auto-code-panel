@@ -6,7 +6,7 @@
  * Audit-log summaries use `{placeholder}` params so a row renders in the
  * reader's language instead of the writer's.
  *
- * Verify with `npm run i18n:coverage` and `npm run i18n:hardcoded`.
+ * Verify with `npm run i18n:coverage` and `npm run i18n:check`.
  */
 
 export const EXTRA_TR: Record<string, string> = {
@@ -136,7 +136,7 @@ export const EXTRA_TR: Record<string, string> = {
   "x.guvenli-aktivasyon": "Güvenli aktivasyon",
   "x.guvenlik-sorunuzun-cevab": "Güvenlik sorunuzun cevabı",
   "x.guvenlik-sorusu": "Güvenlik sorusu",
-  "x.guvenlik": "Güvenlik:",
+  "x.guvenlik": "Güvenlik",
   "x.haftann-gunleri": "Haftanın günleri",
   "x.hedef-says": "Hedef sayısı",
   "x.henuz-bayi-yok-sagdaki-formdan-bayilik-kodu-uretin": "Henüz bayi yok. Sağdaki formdan bayilik kodu üretin.",
@@ -1336,6 +1336,24 @@ export const EXTRA_TR: Record<string, string> = {
   "x.1-hafta": "1 hafta",
   "x.6-ay": "6 ay",
   "x.kritik": "Kritik",
+  "x.analitik": "Analitik",
+  "x.katalog": "Katalog",
+  "x.duyuru": "Duyuru",
+  "x.test": "Test",
+  "x.genel": "Genel",
+  "x.gecersiz-alici": "Geçersiz alıcı adresi",
+  "x.smtp-yapilandirilmadi": "SMTP yapılandırılmadı",
+  "x.zaten-gonderildi": "Daha önce gönderildi",
+  "x.gonderim-hatasi": "Gönderim hatası",
+  "x.hesap-eklendi": "Hesap eklendi",
+  "x.duyuru-silindi": "Duyuru silindi",
+  "x.bayilik-kodu-iptal-edildi": "Bayilik kodu iptal edildi",
+  "x.bildirim-tercihleri-kaydedildi": "Bildirim tercihleri kaydedildi.",
+  "x.aktif": "Aktif",
+  "x.pasif": "Pasif",
+  "x.gizle": "Gizle",
+  "x.yasakla": "Yasakla",
+  "x.yapilandirildi": "Yapılandırıldı",
 };
 
 export const EXTRA_EN: Record<string, string> = {
@@ -1465,7 +1483,7 @@ export const EXTRA_EN: Record<string, string> = {
   "x.guvenli-aktivasyon": "Secure activation",
   "x.guvenlik-sorunuzun-cevab": "Answer to your security question",
   "x.guvenlik-sorusu": "Security question",
-  "x.guvenlik": "Security:",
+  "x.guvenlik": "Security",
   "x.haftann-gunleri": "Days of the week",
   "x.hedef-says": "Target count",
   "x.henuz-bayi-yok-sagdaki-formdan-bayilik-kodu-uretin": "No resellers yet. Generate a reseller code with the form on the right.",
@@ -2665,6 +2683,24 @@ export const EXTRA_EN: Record<string, string> = {
   "x.1-hafta": "1 week",
   "x.6-ay": "6 months",
   "x.kritik": "Critical",
+  "x.analitik": "Analytics",
+  "x.katalog": "Catalogue",
+  "x.duyuru": "Announcement",
+  "x.test": "Test",
+  "x.genel": "General",
+  "x.gecersiz-alici": "Invalid recipient address",
+  "x.smtp-yapilandirilmadi": "SMTP is not configured",
+  "x.zaten-gonderildi": "Already sent",
+  "x.gonderim-hatasi": "Delivery failed",
+  "x.hesap-eklendi": "Account created",
+  "x.duyuru-silindi": "Announcement deleted",
+  "x.bayilik-kodu-iptal-edildi": "Reseller key revoked",
+  "x.bildirim-tercihleri-kaydedildi": "Notification preferences saved.",
+  "x.aktif": "Active",
+  "x.pasif": "Inactive",
+  "x.gizle": "Hide",
+  "x.yasakla": "Ban",
+  "x.yapilandirildi": "Configured",
 };
 
 /** Turkish source text → English, used by `t()` as a last-chance fallback. */

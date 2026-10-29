@@ -198,10 +198,10 @@ Durum (v1.4.0):
 
 | Katman | Anahtar | Dil |
 | --- | --- | --- |
-| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1326 | `tr`, `en` (tam) |
+| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1344 | `tr`, `en` (tam) |
 | Çekirdek paket (`core-packs.ts`) | 39 | 80 dilin **tamamı** |
 
-`tr` ve `en` 1326 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
+`tr` ve `en` 1344 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
 giriş/kayıt, kod girme, "kalan süre", "kopyala", "çıkış" gibi her ekranda görünen
 39 anahtarı **kendi dilinde** gösterir; bu anahtarlarda İngilizceye düşme yoktur.
 Çekirdek pakette bulunmayan uzun kuyruk anahtarlar (panel tabloları, form
@@ -237,13 +237,38 @@ await logAudit({
   doldurulmaya devam eder: eski satırlar, arama kutusu ve CSV'yi başka araçla
   açanlar bozulmaz. `summary_key` boşsa satır eski davranışla gösterilir.
 
+#### Eski kayıtları geriye dönük çevirme
+
+Yapılandırılmış audit'ten önce yazılmış satırların `summary_key` alanı boştur.
+`audit:backfill` bunları sözlükteki karşılıklarıyla eşleştirir:
+
+```bash
+npm run audit:backfill                       # DENEME: hiçbir şey yazmaz, rapor verir
+npm run audit:backfill -- --apply            # eşleşen satırları günceller
+npm run audit:backfill -- --json             # makine okunur rapor
+SQLITE_PATH=/veri/app.db npm run audit:backfill   # başka bir veritabanı
+```
+
+- **Birebir** ve **tek `{placeholder}`** eşleşmeleri çevrilir; birden fazla
+  şablonla eşleşen satır *belirsiz*, hiç eşleşmeyen satır *dokunulmaz* sayılır ve
+  listelenir — uydurma çeviri yazılmaz.
+- Yalnızca `summary_key` boş olan satırlara dokunur, bu yüzden **idempotenttir**;
+  tekrar çalıştırmak zarar vermez.
+- `--apply` sonrası eski `summary` metni yerinde kalır (yedek görevi görür).
+
 ```bash
 npm run i18n:coverage        # dil dil kapsam raporu
-npm run i18n:hardcoded       # sabit metin denetimi (UI + sunucu tarafı)
+npm run i18n:hardcoded       # sabit metin denetimi (rapor; derlemeyi düşürmez)
+npm run i18n:check           # aynı denetim, katı mod: sayaç sıfır değilse exit 1
 npm run i18n:hardcoded -- --json
 ```
 
-`i18n:hardcoded` bir denetim aracıdır, derlemeyi düşürmez. Üç sayı verir:
+`i18n:check` **CI kapısıdır**: `.github/workflows/docker-publish.yml` içindeki
+`verify` işi typecheck ve lint'ten sonra bunu çalıştırır; dört sayaçtan biri bile
+sıfırdan farklıysa iş kırmızı olur. Böylece yeni bir sabit metin ya da sözlükte
+olmayan anahtar incelemeye değil, doğrudan CI'a takılır.
+
+Denetim üç sayı verir:
 
 - **Sabit (çevrilmemiş) Türkçe metin** — JSX içinde doğrudan yazılmış metin.
   v1.4.0 itibarıyla **0**.
@@ -252,9 +277,23 @@ npm run i18n:hardcoded -- --json
 - **Sözlükte eksik anahtar** — kodda `t("…")` ile istenen ama sözlükte olmayan
   anahtar. v1.4.0 itibarıyla **0** (bu sayı sıfır değilse kullanıcı ham anahtar
   görür, yani gerçek bir hatadır).
+- **Çevrilmeden basılan etiket haritası** — değerleri sözlük anahtarı olan bir
+  nesnenin (`{ sent: "x.gonderildi" }`) `t()`/`pick()` olmadan doğrudan
+  basılması. v1.4.0 itibarıyla **0**; bu denetim olmadan haritadaki anahtarlar
+  ekrana ham hâlde çıkıyordu.
+
+Denetim yalnızca JSX metnini değil, etiket haritalarındaki (`{ sent: "Gönderildi" }`)
+ve `summary:` alanlarındaki metinleri de tarar — bu sayede "haritada anahtar
+tutup `t()` çağırmayı unutma" hatası (ham `x.…` anahtarının ekrana basılması)
+yakalanır. CSS değerleri (`var(--fg)`) ve kod belirteçleri yanlış pozitif
+üretmemesi için ayrıca elenir.
 
 E-posta şablonları (`mail-templates.ts`, `mailer.ts`) bilinçli olarak denetim
 dışıdır: işlemsel mailler arayüz dilinde değil **mağazanın dilinde** gönderilir.
+Buna karşın `mail_events.detail` sütunu (süper yönetici > Postalar ekranında
+görünür) artık **metin değil sebep kodu** tutar (`x.gonderildi`,
+`x.smtp-yapilandirilmadi`, `x.gonderim-hatasi`, `x.zaten-gonderildi`,
+`x.gecersiz-alici`); ham SMTP hata metni yalnızca sunucu günlüğüne yazılır.
 
 Kapsam ayrıca `/super-admin/ayarlar` sayfasındaki "Dil kapsamı" kartında canlı
 olarak gösterilir.
@@ -281,7 +320,8 @@ dosyalarını (`*.db`, `-wal`, `-shm`, `-journal`) siler. Bir sonraki `start.bat
 
 `.github/workflows/docker-publish.yml` iki iş çalıştırır:
 
-1. **verify:** bağımlılıkları kurar, `npm run typecheck`, `npm run lint` ve `npm run build` çalıştırır.
+1. **verify:** bağımlılıkları kurar; `npm run typecheck`, `npm run lint`, `npm run i18n:check`
+   (sabit metin/sözlük kapısı) ve `npm run build` çalıştırır.
 2. **publish:** `main` dalına yapılan her push'ta (veya **Actions > Run workflow** ile elle)
    çok mimarili (`linux/amd64`, `linux/arm64`) imajı derleyip GHCR'ye gönderir:
    `ghcr.io/<kullanici>/<repo>:latest`, `:sha-<kısa>`, `:main`.

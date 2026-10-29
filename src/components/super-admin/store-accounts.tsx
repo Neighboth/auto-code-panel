@@ -106,7 +106,7 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
                             onClick={() => toggleReveal(account.id)}
                             className="text-[10.5px] font-medium underline underline-offset-2 muted"
                           >
-                            {shown ? "Gizle" : t("x.goster")}
+                            {shown ? t("x.gizle") : t("x.goster")}
                           </button>
                         </div>
                       </td>

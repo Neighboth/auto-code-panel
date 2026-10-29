@@ -2,7 +2,7 @@
 
 > Bu rapor, "kalanları hallet + §6 listesi + bitir" talebinin ne olduğunu, nerede
 > durduğunu, nasıl doğrulandığını ve **dürüstçe** neyin eksik kaldığını anlatır.
-> Tarih: 2026-10-29 · Branch: `arena/1156f4ed-auto-code-panel` → `main` (PR #7: son i18n kapanışı)
+> Tarih: 2026-10-29 · Branch: `arena/55a47014-auto-code-panel` → `main` (PR #8: CI kapısı + geçmiş migrasyonu)
 
 ---
 
@@ -13,8 +13,8 @@
 | Derleme / tip / lint | ✅ temiz | `npm run build`, `npm run typecheck`, `npm run lint` → 0 hata |
 | 80 dil kaydı | ✅ | `src/lib/i18n/config.ts` |
 | 80 dilde yerel menü/UI çekirdeği | ✅ | `src/lib/i18n/core-packs.ts` (39 anahtar × 80 dil) |
-| tr/en referans sözlük | ✅ **1326 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
-| Sabit metin denetimi | ✅ **0 UI + 0 sunucu tarafı** | `npm run i18n:hardcoded` |
+| tr/en referans sözlük | ✅ **1344 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
+| Sabit metin denetimi | ✅ **0 UI + 0 sunucu + 0 eksik anahtar** | `npm run i18n:check` (CI kapısı) |
 | Lisans hatırlatma cron'u | ✅ | `/api/cron/reminders?secret=…` |
 | CSV/Excel içe aktarma | ✅ | `importProductsCsv`, `importAccountsCsv` |
 | Bildirim tercihleri + tek tık abonelikten çıkma | ✅ | `/abonelik?t=…`, `/demo/profil` kartı |
@@ -23,7 +23,8 @@
 | Sanallaştırma / görsel optimizasyonu | ⚠️ kısmi | ilk 24 kart, `loading="lazy"` |
 | Sentry / OpenTelemetry | ❌ yok | — |
 | Ham anahtar sızıntısı | ✅ 0 (canlı SSR taraması + eksik anahtar denetimi) | `i18n:hardcoded` |
-| Audit log dil bağımsızlığı | ✅ `summary_key` + `summary_params` | `schema.ts`, `audit.ts` |
+| Audit log dil bağımsızlığı | ✅ `summary_key` + `summary_params` + geçmiş migrasyonu | `schema.ts`, `audit.ts`, `audit-backfill.mjs` |
+| Gerçek SMTP teslimatı | ✅ yerel SMTP sink ile doğrulandı | `mail_events` satırları + sink günlüğü |
 
 Sıfır `alert` / `confirm`: tüm akışlar `Modal`, `toast` ve satır içi hata mesajlarıyla çalışıyor.
 
@@ -110,8 +111,8 @@ durum kendi tam cümlesini aldı.
 npm run typecheck      → 0 hata
 npm run lint           → 0 hata / 0 uyarı
 npm run build          → ✓ Compiled successfully
-npm run i18n:hardcoded → UI 0 · sunucu tarafı 0 · eksik anahtar 0
-sözlük                 → EXTRA_TR 1326 / EXTRA_EN 1326 (eksik çeviri 0)
+npm run i18n:check     → UI 0 · sunucu tarafı 0 · eksik anahtar 0 (exit 0)
+sözlük                 → EXTRA_TR 1344 / EXTRA_EN 1344 (eksik çeviri 0)
 ```
 
 Canlı doğrulama (`node server.js`):
@@ -146,6 +147,103 @@ göremediği** üç sınıf hata bulundu:
 - `i18n:hardcoded` denetimi güçlendirildi: `summaryKey` varsa eşlik eden `summary`
   artık raporlanmıyor, `mail-events.ts` operasyonel breadcrumb olduğu için denetim
   dışı, ve **eksik anahtar** üçüncü metrik olarak eklendi.
+
+---
+
+## 0.3 Bu tur: kapı + geçmiş (PR #8)
+
+Önceki turda açık kalan iki kalem kapatıldı: **denetimi CI'a bağlamak** ve **eski audit
+kayıtlarını geriye dönük çevirmek**. Yol boyunca denetim aracının kendi kör noktası
+ortaya çıktı ve düzeltildi.
+
+### a) `i18n:check` artık CI kapısı
+
+| Değişiklik | Dosya |
+| --- | --- |
+| `--strict`: üç sayaçtan biri >0 ise `exit 1`, sıfırsa `i18n gate: OK` | `scripts/i18n-hardcoded.mjs` |
+| `verify` işine lint'ten sonra `npm run i18n:check` adımı | `.github/workflows/docker-publish.yml` |
+| `npm run i18n:check` / `npm run audit:backfill` komutları | `package.json` |
+
+**Kapının gerçekten kırdığı kanıtlandı** (enjeksiyon testi): `modal.tsx` içindeki
+`aria-label={t("common.close")}` geçici olarak `aria-label="Kapat"` yapıldı →
+`npm run i18n:check` **exit 1**. Dosya geri alındı → exit 0.
+
+### b) Denetim aracının kör noktası: etiket haritaları
+
+Negatif test sırasında araç `"Kapat"` metnini yakalamadı: tek sözcüklü Türkçe metni
+"kod belirteci" sanıp atlıyordu. Düzeltme (`TURKISH_WORDS` + sözlük kontrolü) **10
+gizli metni** ortaya çıkardı: `Analitik`, `Katalog`, `Teslimat` ×3, `Kaydedildi` ×4,
+`Kritik` → hepsi `t()`'ye çevrildi.
+
+Ardından **nesne sabiti** deseni eklendi (`{ sent: "Gönderildi" }` gibi etiket
+haritaları). Bu desen ikinci turda daha ağır hatalar buldu:
+
+| Bulunan hata | Etki | Düzeltme |
+| --- | --- | --- |
+| `audit-log.tsx`: `ACTION_LABEL` anahtar tutuyor ama **`t()` çağrılmıyor** | süper yönetici log ekranında her satırda ham `x.urun-eklendi` | `labelFor(t)` fabrikası; 6 harita değeri anahtara çevrildi |
+| `codes.tsx`: `typeLabels` anahtarları ham basılıyordu (4 render yeri) | kod tablosunda ham `x.secmeli-musteri-secer` | `typeLabel(t, type)` yardımcısı |
+| `mail-console.tsx`: `KIND_LABEL` anahtarları ham + 3 değer Türkçe | Postalar ekranında ham anahtar / çevrilmemiş etiket | `t()` + `x.duyuru`, `x.test`, `x.genel` |
+| `mailer.ts`: `detail` alanına **Türkçe metin ya da ham SMTP hatası** yazılıyordu | Postalar ekranında dile bağımlı metin, ayrıca sunucu hatası sızıntısı | `detailCode` (sözlük anahtarı) saklanır, ham hata yalnızca sunucu günlüğüne |
+| `mail-prefs.ts`: aksiyon mesajı sabit Türkçe | bildirim kaydında çevrilmemiş toast | `t("x.bildirim-tercihleri-kaydedildi")` |
+| `customers-table.tsx`: `CONFIRM` haritası ham basılıyordu + `"Yasakla"` düz metin | toplu işlem onay modalı ham anahtar gösteriyordu | `t(CONFIRM[...].title/body/cta)` |
+| `audit-log.tsx`: `SEVERITY_LABEL` ham basılıyordu | şiddet rozetinde ham `x.kritik` | `t()` ile çözüldü |
+| 9 yerde ternary içinde sabit metin (`? "Aktif" : …`, `? "Gizle" : …`) | dil değişince yarım Türkçe ekran | hepsi `t("x.aktif")` / `t("x.gizle")` / … |
+
+Bu son iki sınıf (harita + ternary) için araca **iki yeni geçiş** eklendi:
+`? "…" :` deseni ve "değerleri `x.…` olan nesne, `t()` olmadan basılıyor mu"
+denetimi (4. sayaç). Yanlış pozitifler de ayıklandı: `var(--fg)` gibi CSS değerleri
+ve yalnızca *bayrak* okuyan satırlar (`CONFIRM[x].danger`, açık `i18n-ignore` ile)
+raporlanmıyor.
+
+Yeni geçişlerin de gerçekten kırdığı enjeksiyonla kanıtlandı: `ACTOR_LABEL[...]`
+satırı `t()`'siz hâle getirildi → `exit 1`, "çevrilmemiş harita 1"; geri alındı → `exit 0`.
+
+### c) Gerçek SMTP teslimatı (önceki turun açık kalemi)
+
+Yerel bir SMTP sink (port 2525) ayağa kaldırıldı ve `sendMail()` dört yol üzerinden
+sınandı:
+
+| Senaryo | `status` | `detailCode` | Veritabanına yazılan |
+| --- | --- | --- | --- |
+| Gerçek gönderim | `sent` | `x.gonderildi` | `x.gonderildi` (+ message-id sunucu günlüğünde) |
+| Aynı `dedupeRef` ikinci kez | `duplicate` | `x.zaten-gonderildi` | yazılmadı |
+| Geçersiz adres | `skipped` | `x.gecersiz-alici` | yazılmadı |
+| SMTP kapalı | `skipped` | `x.smtp-yapilandirilmadi` | `x.smtp-yapilandirilmadi` |
+| Port kapalı (bağlantı reddi) | `failed` | `x.gonderim-hatasi` | `x.gonderim-hatasi` (ham `ECONNREFUSED` **sadece** günlükte) |
+
+Sink mesajı gerçekten aldı (`To: demo@example.com`, `Subject: SMTP testi`).
+
+### d) Eski audit kayıtlarının migrasyonu
+
+`npm run audit:backfill` (varsayılan **deneme**, `--apply` yazar, `--json` rapor):
+
+```
+DENEME (yazılmadı) · taranan satır: 7
+  birebir eşleşme : 2
+  şablon eşleşmesi: 4
+  belirsiz        : 0
+  eşleşmeyen      : 1
+  ! 7 [unmatched] x.unknown.action :: Bu metin sözlükte yok, elle yazılmış
+```
+
+`--apply` sonrası 6/7 satır çevrildi; eşleşmeyen satır **bilinçli olarak dokunulmadı**
+(uydurma çeviri yazılmaz). Doğrulama: aynı satırlar `tr`/`en` olarak render edildi —
+`25 kod üretildi (choice)` / `25 codes generated (choice)`, `Elden Ring ürünü
+güncellendi` / `Elden Ring product updated` → **sızıntı yok**. İkinci çalıştırma
+yalnızca o eşleşmeyen tek satırı taradı → **idempotent**.
+
+### Kanıt
+
+```
+npm run i18n:check     → i18n gate: OK (0 / 0 / 0 / 0), exit 0
+npm run typecheck      → 0 hata
+npm run lint           → 0 hata
+npm run build          → ✓ Compiled successfully (9.2s)
+npm run audit:backfill → 6/7 satır çevrildi, 1 dokunulmadı, tekrar çalıştırma no-op
+```
+
+Etiket haritalarının tamamı (`ACTION_LABEL` 49, `ACTOR_LABEL` 4, `KIND_LABEL` 8,
+`typeLabels` 3) iki dilde de sözlükte karşılığını buluyor (otomatik kontrol, 0 sorun).
 
 ---
 
@@ -355,25 +453,27 @@ Demo kimlikleri: `demo` mağazası (`demo_admin` / `Demo12345!`), müşteri `tes
 ## E. Dürüstçe kalanlar / riskler
 
 1. ~~Panel içi sabit Türkçe metin: 489 / 49 dosya.~~ **Kapandı** → 0 UI + 0 sunucu tarafı (§0.1, §0.2).
-2. **Uzun kuyruk anahtarlar (1315) 78 dilde İngilizceye düşüyor.** Çekirdek 39 anahtar 80 dilde yerel;
+2. **Uzun kuyruk anahtarlar (1344'un 1300'ü) 78 dilde İngilizceye düşüyor.** Çekirdek 39 anahtar 80 dilde yerel;
    ham anahtar hiçbir dilde görünmüyor. Gerçek çeviri maliyeti insan emeği gerektiriyor.
-3. **Gerçek SMTP teslimatı** test edilmedi (SMTP yok → `skipped` yolu doğrulandı).
+3. ~~**Gerçek SMTP teslimatı** test edilmedi.~~ **Kapandı** → yerel SMTP sink ile
+   `sent`/`duplicate`/`skipped`/`failed` dört yolun tamamı doğrulandı (§0.3c). Gerçek bir
+   sağlayıcıda (Postmark/Mailtrap) bounce webhook'u hâlâ denenmedi.
 4. **Sentry/OpenTelemetry yok**; yalnızca audit + mail_events + `/api/health`.
 5. **`next/image` + CDN yok**; `loading="lazy"`/`decoding="async"` ile yetinildi.
 6. **Gerçek sanallaştırma yok** (react-virtual); sayfalama + mount-on-open ile çözüldü.
 7. **Excel (.xlsx) doğrudan okuma yok**; CSV dışa aktarımı ile kullanılıyor.
 8. Tarayıcıda görsel (piksel) testi yapılmadı; doğrulama HTML/HTTP responları üzerinden.
-9. **Audit geçmişi geriye dönük çevrilmiyor.** `summary_key` sütunu bu sürümden önce yazılmış
-   satırlarda boştur; o satırlar kaydedildikleri Türkçe metinle kalır. İstenirse tek seferlik bir
-   migrasyon (`action` → anahtar eşlemesi) ile doldurulabilir, ancak serbest metinli eski satırlar
-   (`summary` içine gömülü kullanıcı adları) anahtara birebir çevrilemez.
+9. ~~**Audit geçmişi geriye dönük çevrilmiyor.**~~ **Kapandı** → `npm run audit:backfill`
+   (§0.3d). Eşleşen satırlar anahtara çevrildi. **Kalan sınır:** sözlükteki hiçbir şablonla
+   eşleşmeyen serbest metinli satırlar (elle yazılmış özetler, ileri derecede kişiselleştirilmiş
+   cümleler) bilinçli olarak dokunulmadan bırakılır; araç bunları `unmatched` olarak listeler.
 10. **Kullanıcı verisi çevrilmez:** mağaza adı/başlığı/duyurusu, ürün açıklaması ve `.env` ile verilen
     marka sloganı veri olduğu için olduğu gibi gösterilir.
 
 ## F. Öneriler (sıradaki tur)
 
-1. `i18n:hardcoded` çıktısını CI'da **sıfır eşiğine** bağla: üç metriğin herhangi biri >0 ise
-   build kırmızı. Araç artık buna hazır (UI 0, sunucu 0, eksik anahtar 0).
+1. ~~`i18n:hardcoded` çıktısını CI'da **sıfır eşiğine** bağla.~~ **Kapandı** → `npm run i18n:check`
+   `verify` işinde çalışıyor (§0.3a).
 2. Çekirdek paketi 39 → 80 anahtara çıkar (panel başlıkları, tablo kolonları, form etiketleri
    ilk sırada) ve `en` çevirilerini gözden geçir.
 3. SMTP'yi staging'de gerçek bir sunucuyla (Mailtrap/Postmark) uçtan uca test et; bounced/
