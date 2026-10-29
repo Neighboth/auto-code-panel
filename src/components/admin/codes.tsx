@@ -476,8 +476,8 @@ export function CodeManager({
             {(
               [
                 { id: "choice", title: t("x.secmeli-kod"), text: t("x.musteri-magazadaki-urunler-arasndan-hakk-kadar-secim-yap") },
-                { id: "single", title: "Tekli Teslimat", text: t("x.kod-tek-bir-urun-veya-hesap-grubuna-baglanr") },
-                { id: "bundle", title: "Paket Teslimat", text: t("x.tek-koda-birden-fazla-urun-veya-hesap-tanmlanr") },
+                { id: "single", title: t("x.tekli-teslimat"), text: t("x.kod-tek-bir-urun-veya-hesap-grubuna-baglanr") },
+                { id: "bundle", title: t("x.paket-teslimat"), text: t("x.tek-koda-birden-fazla-urun-veya-hesap-tanmlanr") },
               ] as const
             ).map((option) => (
               <button
@@ -497,7 +497,7 @@ export function CodeManager({
                   {type === option.id ? <span className="h-2 w-2 rounded-full" style={{ background: "var(--store-primary)" }} /> : null}
                 </span>
                 <span>
-                  <span className="block text-[12.5px] font-medium">{option.title}</span>
+                  <span className="block text-[12.5px] font-medium">{t(option.title)}</span>
                   <span className="mt-0.5 block text-[11px] muted">{option.text}</span>
                 </span>
               </button>

@@ -251,7 +251,7 @@ export function AuditLogView({
                         <td className="px-4 py-2.5">
                           {row.storeSlug ? <span className="font-mono text-[11.5px]">/{row.storeSlug}</span> : <span className="muted">—</span>}
                         </td>
-                        <td className="max-w-[280px] px-4 py-2.5">{row.summary || "—"}</td>
+                        <td className="max-w-[280px] px-4 py-2.5">{row.summaryKey ? t(row.summaryKey, row.summaryParams) : row.summary || "—"}</td>
                         <td className="px-4 py-2.5 font-mono text-[11px] muted">{row.ip || "—"}</td>
                         <td className="px-2 py-2.5">
                           <button

@@ -198,10 +198,10 @@ Durum (v1.4.0):
 
 | Katman | Anahtar | Dil |
 | --- | --- | --- |
-| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1230 | `tr`, `en` (tam) |
+| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1326 | `tr`, `en` (tam) |
 | Çekirdek paket (`core-packs.ts`) | 39 | 80 dilin **tamamı** |
 
-`tr` ve `en` 1230 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
+`tr` ve `en` 1326 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
 giriş/kayıt, kod girme, "kalan süre", "kopyala", "çıkış" gibi her ekranda görünen
 39 anahtarı **kendi dilinde** gösterir; bu anahtarlarda İngilizceye düşme yoktur.
 Çekirdek pakette bulunmayan uzun kuyruk anahtarlar (panel tabloları, form
@@ -216,21 +216,45 @@ olarak İngilizceye düşer). Şablon değişkenleri `{ad}` biçimindedir:
 t("x.kod-email-adresine-gonderildi", { email: "a@b.c" });
 ```
 
+### Audit log artık dile bağımsız
+
+Audit satırları **yazıldıkları dilde donmaz**. `logAudit()` çağrıları metin yerine
+anahtar + parametre yazar:
+
+```ts
+await logAudit({
+  action: "store.code.generate",
+  summaryKey: "x.count-kod-uretildi-type",   // sözlük anahtarı
+  summaryParams: { count: 25, type: "choice" },
+});
+```
+
+- `audit_logs.summary_key` + `audit_logs.summary_params` sütunları (mevcut
+  veritabanlarına açılışta `alter table` ile eklenir).
+- Süper yönetici paneli ve CSV dışa aktarımı satırı **o anda kullanılan arayüz
+  dilinde** render eder (`t(row.summaryKey, row.summaryParams)`).
+- `audit_logs.summary` sütunu geriye dönük uyumluluk için Türkçe metinle
+  doldurulmaya devam eder: eski satırlar, arama kutusu ve CSV'yi başka araçla
+  açanlar bozulmaz. `summary_key` boşsa satır eski davranışla gösterilir.
+
 ```bash
 npm run i18n:coverage        # dil dil kapsam raporu
 npm run i18n:hardcoded       # sabit metin denetimi (UI + sunucu tarafı)
 npm run i18n:hardcoded -- --json
 ```
 
-`i18n:hardcoded` bir denetim aracıdır, derlemeyi düşürmez. İki sayı verir:
+`i18n:hardcoded` bir denetim aracıdır, derlemeyi düşürmez. Üç sayı verir:
 
 - **Sabit (çevrilmemiş) Türkçe metin** — JSX içinde doğrudan yazılmış metin.
   v1.4.0 itibarıyla **0**.
-- **Sunucu tarafı Türkçe metin** — yalnızca süper yönetici panelinde görünen
-  audit-log özetleri (`summary:`) ve birkaç iç yardımcı mesajı. v1.4.0
-  itibarıyla 43 metin / 11 dosya. Bunlar veritabanına yazıldığı için çeviri
-  yazma anında değil, gösterim anında yapılmalıdır; yapılandırılmış log
-  (`summary_key` + `summary_params`) işi sonraki sürüme bırakıldı.
+- **Sunucu tarafı Türkçe metin** — audit özetleri (`summary:`) ve aksiyon
+  mesajları. v1.4.0 itibarıyla **0**.
+- **Sözlükte eksik anahtar** — kodda `t("…")` ile istenen ama sözlükte olmayan
+  anahtar. v1.4.0 itibarıyla **0** (bu sayı sıfır değilse kullanıcı ham anahtar
+  görür, yani gerçek bir hatadır).
+
+E-posta şablonları (`mail-templates.ts`, `mailer.ts`) bilinçli olarak denetim
+dışıdır: işlemsel mailler arayüz dilinde değil **mağazanın dilinde** gönderilir.
 
 Kapsam ayrıca `/super-admin/ayarlar` sayfasındaki "Dil kapsamı" kartında canlı
 olarak gösterilir.

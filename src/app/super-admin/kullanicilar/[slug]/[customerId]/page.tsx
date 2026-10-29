@@ -7,7 +7,10 @@ import { CustomerDetailView } from "@/components/admin/customer-detail";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "x.musteri-yonetimi" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.musteri-yonetimi") };
+}
 
 export default async function SuperCustomerDetailPage({
   params,

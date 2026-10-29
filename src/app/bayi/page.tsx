@@ -6,7 +6,10 @@ import { ActivationForm } from "@/components/auth-forms";
 import { brand } from "@/lib/brand";
 import { getTranslator } from "@/lib/i18n/server";
 
-export const metadata: Metadata = { title: "Bayilik Aktivasyonu" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.bayilik-aktivasyonu") };
+}
 export const dynamic = "force-dynamic";
 
 const bullets = [

@@ -2,7 +2,7 @@
 
 > Bu rapor, "kalanları hallet + §6 listesi + bitir" talebinin ne olduğunu, nerede
 > durduğunu, nasıl doğrulandığını ve **dürüstçe** neyin eksik kaldığını anlatır.
-> Tarih: 2026-10-29 · Branch: `arena/9cd566a9-auto-code-panel` → `main` (PR #6: site geneli i18n)
+> Tarih: 2026-10-29 · Branch: `arena/1156f4ed-auto-code-panel` → `main` (PR #7: son i18n kapanışı)
 
 ---
 
@@ -13,8 +13,8 @@
 | Derleme / tip / lint | ✅ temiz | `npm run build`, `npm run typecheck`, `npm run lint` → 0 hata |
 | 80 dil kaydı | ✅ | `src/lib/i18n/config.ts` |
 | 80 dilde yerel menü/UI çekirdeği | ✅ | `src/lib/i18n/core-packs.ts` (39 anahtar × 80 dil) |
-| tr/en referans sözlük | ✅ **1237 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
-| Sabit metin denetimi | ✅ **0 metin / 0 dosya** | `npm run i18n:hardcoded` |
+| tr/en referans sözlük | ✅ **1326 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
+| Sabit metin denetimi | ✅ **0 UI + 0 sunucu tarafı** | `npm run i18n:hardcoded` |
 | Lisans hatırlatma cron'u | ✅ | `/api/cron/reminders?secret=…` |
 | CSV/Excel içe aktarma | ✅ | `importProductsCsv`, `importAccountsCsv` |
 | Bildirim tercihleri + tek tık abonelikten çıkma | ✅ | `/abonelik?t=…`, `/demo/profil` kartı |
@@ -22,7 +22,8 @@
 | Gözlemlenebilirlik | ✅ kısmi | `/api/health`, `/super-admin/postalar` |
 | Sanallaştırma / görsel optimizasyonu | ⚠️ kısmi | ilk 24 kart, `loading="lazy"` |
 | Sentry / OpenTelemetry | ❌ yok | — |
-| Ham anahtar sızıntısı | ✅ 0 (canlı SSR taraması) | `i18n:hardcoded` 3. geçiş |
+| Ham anahtar sızıntısı | ✅ 0 (canlı SSR taraması + eksik anahtar denetimi) | `i18n:hardcoded` |
+| Audit log dil bağımsızlığı | ✅ `summary_key` + `summary_params` | `schema.ts`, `audit.ts` |
 
 Sıfır `alert` / `confirm`: tüm akışlar `Modal`, `toast` ve satır içi hata mesajlarıyla çalışıyor.
 
@@ -70,6 +71,81 @@ Canlı SSR taraması (`Accept-Language: en`, `node server.js`): `/`, `/bayi`, `/
   ayrı satırda görünür, yani gizlenmiyor.
 - 80 dilin 78'i **çekirdek 39 anahtar**ta tam; uzun kuyruk (1237 anahtar) yalnızca `tr`/`en`.
   Diğer dillerde İngilizceye düşer (ham anahtar asla görünmez).
+
+---
+
+## 0.2 Son tur: kalan 47 metin de kapandı
+
+Önceki turda `i18n:hardcoded` **0 UI metni** gösteriyordu ama **47 sunucu tarafı
+Türkçe metin / 11 dosya** açık kalmıştı. Bu turda onlar da bitti.
+
+### Kök sorun
+Audit satırları **yazıldıkları anda** Türkçe olarak veritabanına yazılıyordu. Yani
+arayüzü İngilizceye alan süper yönetici log ekranında Türkçe özet görüyordu. Metni
+çevirmek yetmez — **yazma anını** da düzeltmek gerekiyordu.
+
+### Çözüm: yapılandırılmış audit özeti
+
+| Değişiklik | Dosya |
+| --- | --- |
+| `summary_key` + `summary_params` sütunları (DDL + açılışta `alter table`) | `src/db/index.ts`, `src/db/schema.ts` |
+| `logAudit()` anahtar + parametre kabul ediyor, Türkçe metni uyumluluk için yine yazıyor | `src/lib/audit.ts` |
+| `queryAudit()` satırları `summaryKey` + ayrıştırılmış `summaryParams` ile döndürüyor | `src/lib/audit.ts` |
+| Log ekranı ve CSV, satırı **okuyucunun dilinde** render ediyor | `audit-log.tsx`, `api/super-admin/audit/export/route.ts` |
+| 56 çağrı yeri durum başına ayrı anahtara çevrildi (`suspended ? A : B` → iki anahtar) | 10 dosya |
+
+**Neden durum başına ayrı anahtar?** Türkçe "askıya alındı" / "yeniden
+aktifleştirildi" cinsinden bir cümle kurmak, parametre olarak fiil geçirmeyi
+gerektirir; bu da Arapça/Japonca gibi dillerde bozuk cümle üretir. Bu yüzden her
+durum kendi tam cümlesini aldı.
+
+### Geriye dönük uyumluluk
+- Eski satırlarda `summary_key` boştur → satır, kaydedilmiş metniyle gösterilir.
+- `summary` sütunu hâlâ dolduruluyor → arama kutusu, CSV ve harici araçlar bozulmaz.
+- Bozuk `summary_params` JSON'u çökmez (`parseSummaryParams` → `{}`).
+
+### Kanıt
+
+```
+npm run typecheck      → 0 hata
+npm run lint           → 0 hata / 0 uyarı
+npm run build          → ✓ Compiled successfully
+npm run i18n:hardcoded → UI 0 · sunucu tarafı 0 · eksik anahtar 0
+sözlük                 → EXTRA_TR 1326 / EXTRA_EN 1326 (eksik çeviri 0)
+```
+
+Canlı doğrulama (`node server.js`):
+- `audit_logs` tablosunda `summary_key`, `summary_params` sütunları **otomatik eklendi**.
+- Anahtarlı satır: `{"count":25,"type":"choice"}` → tr "25 kod üretildi (choice)",
+  en "25 codes generated (choice)". Ham anahtar / `{placeholder}` sızıntısı yok.
+- `summary_key` boş eski satır → kaydedilmiş metniyle render edildi.
+- 11 sayfa × tr/en taraması: `/`, `/bayi`, `/abonelik`, `/demo`, `/demo/giris`,
+  `/demo/kayit`, `/demo/kod-gir`, `/demo/oyunlar`, `/demo/dogrula`, `/super-admin`,
+  `/demo/admin/giris` → hepsi 200, **görünen metinde 0 ham anahtar** (tr ve en).
+
+### Görsel doğrulamada yakalanan 3 gizli hata
+
+Bu tur "bitti" demeden önce canlı SSR taraması yapıldı ve **denetim aracının
+göremediği** üç sınıf hata bulundu:
+
+1. **11 sayfa sekme başlığı hâlâ sabit Türkçeydi.** `export const metadata = { title: "Oyunlar" }`
+   gibi. → `generateMetadata()` + `t()` yapıldı (`/bayi` "Reseller activation" oldu).
+2. **Değişkende tutulan anahtarlar.** `const stepLabels = { auth: "x.hesap" }` biçiminde
+   anahtar tutulunca `t("…")` deseni görmüyordu; `x.hesap`, `x.onay`, `x.teslimat`
+   sözlükte yoktu ve **ekranda ham anahtar** görünüyordu. → anahtarlar eklendi **ve**
+   denetime "her `x.`/`common.`/`redeem.`/`library.` string literali sözlükte olmalı"
+   kuralı eklendi. Bu kural ilk çalıştırmada 3 gerçek eksik daha buldu
+   (`x.1-hafta`, `x.6-ay`, `x.kritik`).
+3. **Çift çeviri riski.** `entry: t("x.kod-girisi")` + render'da tekrar `t(...)`.
+   → etiketler artık yalnızca anahtar tutuyor, çeviri tek yerde yapılıyor.
+
+### Bu turda ayrıca kapatılan küçük kalemler
+- `kod-gir`, `oyunlar`, giriş/kayıt gibi 13+ sayfa başlığı `generateMetadata()` ile çevrildi
+  (sekme başlığında `x.giris-yap` görünmesi bu turda bulundu ve düzeltildi).
+- `bayi` sayfasındaki dört madde (`{bullet}` → `t(bullet)`).
+- `i18n:hardcoded` denetimi güçlendirildi: `summaryKey` varsa eşlik eden `summary`
+  artık raporlanmıyor, `mail-events.ts` operasyonel breadcrumb olduğu için denetim
+  dışı, ve **eksik anahtar** üçüncü metrik olarak eklendi.
 
 ---
 
@@ -278,20 +354,26 @@ Demo kimlikleri: `demo` mağazası (`demo_admin` / `Demo12345!`), müşteri `tes
 
 ## E. Dürüstçe kalanlar / riskler
 
-1. **Panel içi sabit Türkçe metin: 489 / 49 dosya.** Denetim aracı listeliyor; kapatılmadı.
-   Müşteri tarafı (vitrin, kod girme, kütüphane, profil, abonelik) çevrildi.
-2. **Uzun kuyruk anahtarlar 78 dilde İngilizceye düşüyor.** Çekirdek 39 anahtar 80 dilde yerel.
+1. ~~Panel içi sabit Türkçe metin: 489 / 49 dosya.~~ **Kapandı** → 0 UI + 0 sunucu tarafı (§0.1, §0.2).
+2. **Uzun kuyruk anahtarlar (1315) 78 dilde İngilizceye düşüyor.** Çekirdek 39 anahtar 80 dilde yerel;
+   ham anahtar hiçbir dilde görünmüyor. Gerçek çeviri maliyeti insan emeği gerektiriyor.
 3. **Gerçek SMTP teslimatı** test edilmedi (SMTP yok → `skipped` yolu doğrulandı).
 4. **Sentry/OpenTelemetry yok**; yalnızca audit + mail_events + `/api/health`.
 5. **`next/image` + CDN yok**; `loading="lazy"`/`decoding="async"` ile yetinildi.
 6. **Gerçek sanallaştırma yok** (react-virtual); sayfalama + mount-on-open ile çözüldü.
 7. **Excel (.xlsx) doğrudan okuma yok**; CSV dışa aktarımı ile kullanılıyor.
 8. Tarayıcıda görsel (piksel) testi yapılmadı; doğrulama HTML/HTTP responları üzerinden.
+9. **Audit geçmişi geriye dönük çevrilmiyor.** `summary_key` sütunu bu sürümden önce yazılmış
+   satırlarda boştur; o satırlar kaydedildikleri Türkçe metinle kalır. İstenirse tek seferlik bir
+   migrasyon (`action` → anahtar eşlemesi) ile doldurulabilir, ancak serbest metinli eski satırlar
+   (`summary` içine gömülü kullanıcı adları) anahtara birebir çevrilemez.
+10. **Kullanıcı verisi çevrilmez:** mağaza adı/başlığı/duyurusu, ürün açıklaması ve `.env` ile verilen
+    marka sloganı veri olduğu için olduğu gibi gösterilir.
 
 ## F. Öneriler (sıradaki tur)
 
-1. `i18n:hardcoded` çıktısını CI'da eşik kontrolüne bağla (ör. >400 ise uyarı, >0 ise kırmızı
-   yalnızca "yeni dosya" kuralıyla).
+1. `i18n:hardcoded` çıktısını CI'da **sıfır eşiğine** bağla: üç metriğin herhangi biri >0 ise
+   build kırmızı. Araç artık buna hazır (UI 0, sunucu 0, eksik anahtar 0).
 2. Çekirdek paketi 39 → 80 anahtara çıkar (panel başlıkları, tablo kolonları, form etiketleri
    ilk sırada) ve `en` çevirilerini gözden geçir.
 3. SMTP'yi staging'de gerçek bir sunucuyla (Mailtrap/Postmark) uçtan uca test et; bounced/

@@ -22,6 +22,14 @@ export type AuditInput = {
   action: string;
   entity?: string;
   entityId?: string | number | null;
+  /**
+   * Prefer `summaryKey` + `summaryParams`: the row then carries the dictionary
+   * key and the translator renders it in the reader's language. `summary` stays
+   * supported for already-written rows and is still filled from the key so the
+   * search box and the CSV export keep working.
+   */
+  summaryKey?: string;
+  summaryParams?: Record<string, string | number>;
   summary?: string;
   severity?: Severity;
   storeId?: number | null;
@@ -114,6 +122,44 @@ function serializeMetadata(metadata: Record<string, unknown> | null | undefined)
   }
 }
 
+/**
+ * Renders the audit summary. `summaryKey` wins, so a row written today is
+ * readable in every interface language; older rows keep their stored text.
+ */
+function summaryText(
+  input: Pick<AuditInput, "summaryKey" | "summaryParams" | "summary">,
+  t: (key: string, params?: Record<string, string | number>) => string,
+): string {
+  if (input.summaryKey) return t(input.summaryKey, input.summaryParams);
+  return input.summary ?? "";
+}
+
+function serializeParams(params: Record<string, string | number> | undefined): string {
+  if (!params) return "{}";
+  try {
+    const json = JSON.stringify(params);
+    return json.length > 2000 ? `${json.slice(0, 1999)}…` : json;
+  } catch {
+    return "{}";
+  }
+}
+
+/** Parses the stored params back into an object (never throws). */
+export function parseSummaryParams(raw: string): Record<string, string | number> {
+  try {
+    const value = JSON.parse(raw || "{}") as unknown;
+    if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+    const out: Record<string, string | number> = {};
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+      if (typeof item === "string" || typeof item === "number") out[key] = item;
+      else if (item !== null && item !== undefined) out[key] = String(item);
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 /** Writes one audit row. Never throws. */
 export async function logAudit(input: AuditInput): Promise<void> {
   const t = createTranslator("tr");
@@ -130,7 +176,9 @@ export async function logAudit(input: AuditInput): Promise<void> {
       entity: (input.entity ?? "").slice(0, 60),
       entityId: input.entityId === null || input.entityId === undefined ? "" : String(input.entityId).slice(0, 60),
       severity: input.severity ?? "info",
-      summary: (input.summary ?? "").slice(0, 500),
+      summary: summaryText(input, t).slice(0, 500),
+      summaryKey: (input.summaryKey ?? "").slice(0, 160),
+      summaryParams: serializeParams(input.summaryParams),
       metadata: serializeMetadata(input.metadata),
       ip: actor.ip.slice(0, 80),
       userAgent: actor.userAgent,
@@ -179,6 +227,8 @@ export type AuditRow = {
   entityId: string;
   severity: string;
   summary: string;
+  summaryKey: string;
+  summaryParams: Record<string, string | number>;
   metadata: string;
   ip: string;
   userAgent: string;
@@ -255,6 +305,8 @@ export async function queryAudit(filter: AuditFilter = {}): Promise<AuditPage> {
       entityId: row.entityId,
       severity: row.severity,
       summary: row.summary,
+      summaryKey: row.summaryKey,
+      summaryParams: parseSummaryParams(row.summaryParams),
       metadata: row.metadata,
       ip: row.ip,
       userAgent: row.userAgent,

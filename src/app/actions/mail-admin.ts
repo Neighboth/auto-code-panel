@@ -86,7 +86,8 @@ export async function sendTestMail(toRaw: string): Promise<ActionResult> {
   await logAudit({
     action: "super.mail.test",
     entity: "mail",
-    summary: `Test e-postası ${maskEmail(to)} adresine gönderildi (${result.status})`,
+    summaryKey: "x.test-e-postas-recipient-adresine-gonderildi-status",
+    summaryParams: { recipient: maskEmail(to), status: result.status },
     severity: result.status === "sent" ? "info" : "warn",
     metadata: { status: result.status, detail: result.detail },
   });

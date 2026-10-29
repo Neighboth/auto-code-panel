@@ -2,9 +2,13 @@ import { notFound } from "next/navigation";
 import { getCustomerSession } from "@/lib/session";
 import { getStoreState, getStoreBasePath } from "@/lib/tenant";
 import { RedeemFlow } from "@/components/store/redeem-flow";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kod Gir" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.kod-gir") };
+}
 
 export default async function RedeemPage({
   params,

@@ -132,8 +132,9 @@ export function RedeemFlow({
 
   const durationText = preview?.durationLabel ?? "";
   const stepLabels: Record<Step, string> = {
-    entry: t("x.kod-girisi"),
-    choices: t("x.oyun-secimi"),
+    // Keys only — translated once at render, so no double translation.
+    entry: "x.kod-girisi",
+    choices: "x.oyun-secimi",
     auth: "x.hesap",
     confirm: "x.onay",
     result: "x.teslimat",
@@ -159,7 +160,7 @@ export function RedeemFlow({
               >
                 {done ? <Check size={11} /> : index + 1}
               </span>
-              <span className={isActive ? "font-medium" : "muted"}>{stepLabels[item]}</span>
+              <span className={isActive ? "font-medium" : "muted"}>{t(stepLabels[item])}</span>
               {index < 3 ? <span className="mx-1 h-px w-5" style={{ background: "var(--border)" }} /> : null}
             </li>
           );

@@ -241,6 +241,8 @@ const DDL = [
     entity_id text not null default '',
     severity text not null default 'info',
     summary text not null default '',
+    summary_key text not null default '',
+    summary_params text not null default '{}',
     metadata text not null default '{}',
     ip text not null default '',
     user_agent text not null default '',
@@ -295,6 +297,8 @@ async function bootstrap(): Promise<void> {
     "alter table stores add column custom_domain text",
     "alter table stores add column custom_domain_verified_at integer",
     "alter table customers add column email_verified_at integer",
+    "alter table audit_logs add column summary_key text not null default ''",
+    "alter table audit_logs add column summary_params text not null default '{}'",
     "drop index if exists stores_custom_domain_uq",
     "create unique index if not exists stores_custom_domain_verified_uq on stores (custom_domain) where custom_domain is not null and custom_domain_verified_at is not null",
   ];
