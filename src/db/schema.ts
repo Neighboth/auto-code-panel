@@ -1,0 +1,246 @@
+import { sql } from "drizzle-orm";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+
+const timestamp = (name: string) => integer(name, { mode: "timestamp_ms" });
+const bool = (name: string, fallback = false) =>
+  integer(name, { mode: "boolean" }).notNull().default(fallback);
+
+export const platformSettings = sqliteTable("platform_settings", {
+  id: integer("id").primaryKey().default(1),
+  brandName: text("brand_name").notNull().default("Platform"),
+  renewalUrl: text("renewal_url").notNull().default("https://example.com/renew"),
+  supportEmail: text("support_email").notNull().default("destek@example.com"),
+  defaultPlanNote: text("default_plan_note").notNull().default(""),
+  updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+});
+
+export const resellerKeys = sqliteTable(
+  "reseller_keys",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    code: text("code").notNull(),
+    durationDays: integer("duration_days"),
+    maxAccounts: integer("max_accounts"),
+    renewalUrl: text("renewal_url"),
+    note: text("note"),
+    status: text("status").notNull().default("available"),
+    storeId: integer("store_id"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    usedAt: timestamp("used_at"),
+  },
+  (table) => [uniqueIndex("reseller_keys_code_uq").on(table.code)],
+);
+
+export const stores = sqliteTable(
+  "stores",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    slug: text("slug").notNull(),
+    name: text("name").notNull(),
+    title: text("title").notNull().default("Dijital Hesap Mağazası"),
+    subtitle: text("subtitle")
+      .notNull()
+      .default("Oyun ve hesap kodlarını saniyeler içinde teslim alın."),
+    announcement: text("announcement").notNull().default(""),
+    footerText: text("footer_text").notNull().default(""),
+    logoUrl: text("logo_url").notNull().default(""),
+    faviconUrl: text("favicon_url").notNull().default(""),
+    primaryColor: text("primary_color").notNull().default("#111827"),
+    accentColor: text("accent_color").notNull().default("#2563eb"),
+    fontFamily: text("font_family").notNull().default("Inter"),
+    contactLinks: text("contact_links", { mode: "json" })
+      .$type<{ label: string; url: string }[]>()
+      .notNull()
+      .default(sql`'[]'`),
+    status: text("status").notNull().default("active"),
+    expiresAt: timestamp("expires_at"),
+    maxAccounts: integer("max_accounts"),
+    renewalUrl: text("renewal_url"),
+    resellerKeyId: integer("reseller_key_id"),
+    customDomain: text("custom_domain"),
+    customDomainVerifiedAt: timestamp("custom_domain_verified_at"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [
+    uniqueIndex("stores_slug_uq").on(table.slug),
+    uniqueIndex("stores_custom_domain_verified_uq")
+      .on(table.customDomain)
+      .where(sql`custom_domain_verified_at is not null`),
+  ],
+);
+
+export const platformPosts = sqliteTable(
+  "platform_posts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    kind: text("kind").notNull().default("announcement"),
+    title: text("title").notNull(),
+    body: text("body").notNull().default(""),
+    version: text("version").notNull().default(""),
+    pinned: bool("pinned"),
+    publishedAt: timestamp("published_at").notNull().$defaultFn(() => new Date()),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [index("platform_posts_kind_idx").on(table.kind, table.publishedAt)],
+);
+
+export const storeAdmins = sqliteTable(
+  "store_admins",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    username: text("username").notNull(),
+    email: text("email").notNull(),
+    passwordHash: text("password_hash").notNull(),
+    status: text("status").notNull().default("active"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    lastLoginAt: timestamp("last_login_at"),
+  },
+  (table) => [uniqueIndex("store_admins_username_uq").on(table.username)],
+);
+
+export const customers = sqliteTable(
+  "customers",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    username: text("username").notNull(),
+    displayName: text("display_name").notNull(),
+    email: text("email"),
+    avatarUrl: text("avatar_url").notNull().default(""),
+    passwordHash: text("password_hash").notNull(),
+    status: text("status").notNull().default("active"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [uniqueIndex("customers_store_username_uq").on(table.storeId, table.username)],
+);
+
+export const securityFactors = sqliteTable(
+  "security_factors",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    subjectType: text("subject_type").notNull(),
+    subjectId: integer("subject_id").notNull(),
+    kind: text("kind").notNull(),
+    data: text("data").notNull(),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [uniqueIndex("security_factors_subject_kind_uq").on(table.subjectType, table.subjectId, table.kind)],
+);
+
+export const games = sqliteTable(
+  "games",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    salesUrl: text("sales_url").notNull().default(""),
+    steamUrl: text("steam_url").notNull().default(""),
+    steamAppId: text("steam_app_id"),
+    originalPrice: text("original_price"),
+    originalCurrency: text("original_currency").notNull().default("TRY"),
+    ourPrice: text("our_price").notNull().default("0"),
+    currency: text("currency").notNull().default("TRY"),
+    coverImage: text("cover_image").notNull().default(""),
+    autoSync: bool("auto_sync"),
+    lastSyncedAt: timestamp("last_synced_at"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [index("games_store_idx").on(table.storeId)],
+);
+
+export const accounts = sqliteTable(
+  "accounts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    platform: text("platform").notNull().default("steam"),
+    platformLabel: text("platform_label").notNull().default("Steam"),
+    username: text("username"),
+    email: text("email"),
+    password: text("password").notNull(),
+    productLabel: text("product_label").notNull().default(""),
+    linkedGameIds: text("linked_game_ids", { mode: "json" }).$type<number[]>().notNull().default(sql`'[]'`),
+    guardType: text("guard_type").notNull().default("none"),
+    steamSecret: text("steam_secret"),
+    totpSecret: text("totp_secret"),
+    mailEmail: text("mail_email"),
+    mailPassword: text("mail_password"),
+    notes: text("notes").notNull().default(""),
+    status: text("status").notNull().default("available"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [index("accounts_store_idx").on(table.storeId)],
+);
+
+export const codes = sqliteTable(
+  "codes",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    code: text("code").notNull(),
+    type: text("type").notNull().default("single"),
+    choiceCount: integer("choice_count").notNull().default(1),
+    durationMinutes: integer("duration_minutes"),
+    gameIds: text("game_ids", { mode: "json" }).$type<number[]>().notNull().default(sql`'[]'`),
+    accountIds: text("account_ids", { mode: "json" }).$type<number[]>().notNull().default(sql`'[]'`),
+    label: text("label").notNull().default(""),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    redeemedAt: timestamp("redeemed_at"),
+    redeemedByCustomerId: integer("redeemed_by_customer_id"),
+  },
+  (table) => [
+    uniqueIndex("codes_code_uq").on(table.code),
+    index("codes_store_idx").on(table.storeId),
+  ],
+);
+
+export const redemptions = sqliteTable(
+  "redemptions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    codeId: integer("code_id").notNull(),
+    customerId: integer("customer_id"),
+    guestUsername: text("guest_username"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+    accessExpiresAt: timestamp("access_expires_at"),
+  },
+  (table) => [
+    uniqueIndex("redemptions_code_uq").on(table.codeId),
+    index("redemptions_store_idx").on(table.storeId, table.createdAt),
+  ],
+);
+
+export const entitlements = sqliteTable(
+  "entitlements",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    redemptionId: integer("redemption_id").notNull(),
+    codeId: integer("code_id").notNull(),
+    customerId: integer("customer_id"),
+    kind: text("kind").notNull().default("game"),
+    gameId: integer("game_id"),
+    accountId: integer("account_id"),
+    title: text("title").notNull().default(""),
+    grantedAt: timestamp("granted_at").notNull().$defaultFn(() => new Date()),
+    expiresAt: timestamp("expires_at"),
+  },
+  (table) => [index("entitlements_customer_idx").on(table.storeId, table.customerId)],
+);
+
+export type Store = typeof stores.$inferSelect;
+export type Game = typeof games.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type Code = typeof codes.$inferSelect;
+export type Customer = typeof customers.$inferSelect;
+export type Entitlement = typeof entitlements.$inferSelect;
+export type PlatformSettings = typeof platformSettings.$inferSelect;
+export type ResellerKey = typeof resellerKeys.$inferSelect;
+export type PlatformPost = typeof platformPosts.$inferSelect;

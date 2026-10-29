@@ -1,0 +1,13 @@
+node_modules
+.next
+data
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+.env*
+!.env.example
+npm-debug.log
+*.tsbuildinfo

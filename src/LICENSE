@@ -1,0 +1,75 @@
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                                      ║
+║  PixelithShop™                                                                                       ║
+║  OFFICIAL DIGITAL ASSETS & SOFTWARE INFRASTRUCTURE                                                  ║
+║  STOREFRONT: https://itemsatis.com/p/pixelithshop · DISCORD: neighboth                               ║
+║                                                                                                      ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                      ║
+║  [ EN ] PROPRIETARY INTELLECTUAL PROPERTY, TRADEMARK & SOURCE CODE SPECIFICATION                    ║
+║  ──────────────────────────────────────────────────────────────────────────────────────────────────  ║
+║                                                                                                      ║
+║  • TRADEMARK & PROPRIETARY RIGHTS NOTICE:                                                            ║
+║    The brand designation "PixelithShop™", all associated service marks, product terminology,         ║
+║    software architectures, programmatic logic, visual hierarchies, graphic design templates,        ║
+║    cascading stylesheets (CSS), compiled client-side scripts, microservice integrations, and         ║
+║    underlying algorithm frameworks are the exclusive, unalienable intellectual property of           ║
+║    PixelithShop™ and its designated affiliates.                                                      ║
+║                                                                                                      ║
+║  • OFFICIAL VERIFICATION & DISTRIBUTION CHANNELS:                                                    ║
+║    PixelithShop™ products, digital assets, licenses, and verified services are provided solely       ║
+║    through verified distribution endpoints, primarily itemsatis.com/p/pixelithshop and authorized    ║
+║    direct communications via Discord (@neighboth). Any acquisition outside verified points of sale  ║
+║    is strictly unauthorized, unsupported, and constitutes intellectual property infringement.        ║
+║                                                                                                      ║
+║  • ABSOLUTE CODE INTEGRITY & RESTRICTIONS ON USE:                                                    ║
+║    No person, corporate entity, automated scraper, crawler, botnet, or third-party service is        ║
+║    granted any license, title, or interest in or to this codebase. Any form of reproduction,         ║
+║    decompilation, disassembly, extraction, reverse engineering, unauthorized mirroring, public      ║
+║    hosting, modification, fork deployment, automated extraction, or commercial repackaging of this   ║
+║    code or interface layout—in whole or in part, in raw or obfuscated form—is strictly prohibited   ║
+║    without an explicit, authenticated written commercial licensing agreement executed by             ║
+║    PixelithShop™.                                                                                    ║
+║                                                                                                      ║
+║  • STATUTORY ENFORCEMENT & REMEDIES UNDER LAW:                                                       ║
+║    Unauthorized deployment, commercial redistribution, private repackaging, brand infringement,      ║
+║    or code piracy constitutes a direct violation of international intellectual property treaties,    ║
+║    including but not limited to the Berne Convention, the WIPO Copyright Treaty, and Title 17        ║
+║    of the United States Code (DMCA § 512). PixelithShop™ rigorously pursues cross-border civil       ║
+║    litigation, seizure orders, domain blacklisting, platform takedowns, full restitution for lost    ║
+║    revenues, and criminal prosecution to the maximum boundary permitted by relevant jurisdictions.   ║
+║                                                                                                      ║
+╠══════════════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                                      ║
+║  [ TR ] MÜNHASIR FİKRİ MÜLKİYET, TİCARİ MARKA VE KAYNAK KOD KORUMA ŞARTNAMESİ                        ║
+║  ──────────────────────────────────────────────────────────────────────────────────────────────────  ║
+║                                                                                                      ║
+║  • MARKA VE MÜLKİYET HAKLARI BİLDİRİMİ:                                                              ║
+║    "PixelithShop™" ticari unvanı, markası, ürün ve hizmet modelleri, yazılım mimarisi, kaynak        ║
+║    kodları, arayüz bileşenleri (UI), kullanıcı deneyimi akışları (UX), stil şablonları, derlenmiş    ║
+║    algoritmalar, betikler, veri modelleri ve bunlarla bağlantılı tüm dijital varlıkların tasarrufu, ║
+║    tamamen ve münhasıran PixelithShop™ mülkiyetine aittir.                                           ║
+║                                                                                                      ║
+║  • RESMİ DAĞITIM VE İLETİŞİM KANALLARI:                                                              ║
+║    PixelithShop™ varlıkları, yazılım ürünleri, dijital lisanslar ve hizmet modelleri yalnızca        ║
+║    resmi mağaza kanalı olan itemsatis.com/p/pixelithshop ve resmi Discord (neighboth) irtibatı       ║
+║    üzerinden sağlanmaktadır. Bu kanallar haricindeki temin, dağıtım ve satış girişimleri gayrimeşru  ║
+║    olup lisans ihlali ve haksız rekabet kapsamında değerlendirilir.                                  ║
+║                                                                                                      ║
+║  • KESİN KULLANIM YASAKLARI VE SINIRLAMALAR:                                                         ║
+║    PixelithShop™ yetkilileri tarafından yazılı, açık ve doğrulanabilir bir lisans sözleşmesi         ║
+║    tanzim edilmediği sürece; işbu kaynak kodlarının, sistem yapısının, arayüz tasarımlarının veya    ║
+║    algoritmik bloklarının tamamının veya bir kısmının kopyalanması, çoğaltılması, kaynak koda       ║
+║    dönüştürülmesi (decompile), tersine mühendisliğe tabi tutulması, klonlanması, satılması,          ║
+║    kiralanması, üçüncü taraf platformlarda barındırılması (mirroring), dağıtılması veya ticari       ║
+║    amaçla izinsiz kullanılması kesin olarak yasaklanmıştır.                                          ║
+║                                                                                                      ║
+║  • YASAL YAPTIRIMLAR VE CEZAİ HÜKÜMLER:                                                              ║
+║    Aksi yöndeki her türlü ihlal; 5846 sayılı Fikir ve Sanat Eserleri Kanunu (FSEK), 6102 sayılı      ║
+║    Türk Ticaret Kanunu (haksız rekabet hükümleri) ve 5237 sayılı Türk Ceza Kanunu (TCK) maddeleri    ║
+║    başta olmak üzere ilgili uluslararası telif ve fikri mülkiyet mevzuatları kapsamında doğrudan     ║
+║    hukuki ve cezai suç teşkil etmektedir. İhlali gerçekleştiren taraflar aleyhine maddi/manevi       ║
+║    tazminat davaları açılacak, erişim engelleme ve içerik kaldırma süreçleri işletilecek, adli       ║
+║    soruşturma için yetkili mercilere suç duyurusunda bulunulacaktır.                                 ║
+║                                                                                                      ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
