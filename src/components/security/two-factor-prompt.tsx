@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Fingerprint, KeyRound, Lock, ShieldCheck, Smartphone } from "lucide-react";
-import { beginPasskeyLogin, verifyTwoFactorLogin } from "@/app/actions/security";
+import { Fingerprint, KeyRound, Lock, Mail, ShieldCheck, Smartphone } from "lucide-react";
+import { beginPasskeyLogin, sendLoginEmailCode, verifyTwoFactorLogin } from "@/app/actions/security";
 import { Field } from "@/components/ui";
 
-type Methods = { totp: boolean; passkey: boolean; question: boolean };
+type Methods = { totp: boolean; passkey: boolean; question: boolean; email?: boolean };
 
 function b64urlToBuf(value: string): ArrayBuffer {
   const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -37,12 +37,16 @@ export function TwoFactorPrompt({
   basePath?: string;
   onCancel: () => void;
 }) {
-  const [tab, setTab] = useState<"totp" | "passkey" | "question">(
-    methods.totp ? "totp" : methods.passkey ? "passkey" : "question",
+  const [tab, setTab] = useState<"totp" | "passkey" | "question" | "email">(
+    methods.totp ? "totp" : methods.passkey ? "passkey" : methods.email ? "email" : "question",
   );
   const [pending, setPending] = useState(false);
   const [code, setCode] = useState("");
   const [answer, setAnswer] = useState("");
+  const [mailCode, setMailCode] = useState("");
+  const [mailSent, setMailSent] = useState(false);
+  const [mailPending, setMailPending] = useState(false);
+  const [verificationId, setVerificationId] = useState<number | null>(null);
 
   async function finish(result: { ok: boolean; message?: string; redirectTo?: string }) {
     setPending(false);
@@ -124,8 +128,28 @@ export function TwoFactorPrompt({
     }
   }
 
+  async function sendMailCode() {
+    setMailPending(true);
+    const result = await sendLoginEmailCode();
+    setMailPending(false);
+    if (!result.ok) {
+      toast.error(result.message ?? "Kod gönderilemedi.");
+      return;
+    }
+    setVerificationId(result.verificationId ?? null);
+    setMailSent(true);
+    toast.success(result.message ?? "Kod gönderildi");
+  }
+
+  async function submitMailCode() {
+    if (mailCode.length !== 6) return;
+    setPending(true);
+    await finish(await verifyTwoFactorLogin("email", { code: mailCode, verificationId: verificationId ?? undefined }));
+  }
+
   const tabs = [
     { id: "totp" as const, label: "2FA Kodu", icon: Smartphone, enabled: methods.totp },
+    { id: "email" as const, label: "E-posta", icon: Mail, enabled: Boolean(methods.email) },
     { id: "passkey" as const, label: "Passkey", icon: Fingerprint, enabled: methods.passkey },
     { id: "question" as const, label: "Güvenlik Sorusu", icon: Lock, enabled: methods.question },
   ].filter((item) => item.enabled);
@@ -189,6 +213,43 @@ export function TwoFactorPrompt({
             <button type="button" className="btn btn-primary w-full" onClick={usePasskey} disabled={pending}>
               {pending ? "Doğrulanıyor..." : "Passkey ile doğrula"}
             </button>
+          </div>
+        ) : null}
+
+        {tab === "email" && methods.email ? (
+          <div className="space-y-2">
+            <p className="text-[11.5px] muted">
+              Hesabınıza bağlı e-posta adresine 6 haneli kod gönderilir. Kod 15 dakika geçerlidir.
+            </p>
+            {!mailSent ? (
+              <button type="button" className="btn btn-primary w-full" onClick={sendMailCode} disabled={mailPending}>
+                {mailPending ? "Gönderiliyor..." : "E-posta ile kod gönder"}
+              </button>
+            ) : (
+              <>
+                <Field label="E-postanıza gelen 6 haneli kod">
+                  <input
+                    value={mailCode}
+                    onChange={(event) => setMailCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="input mono text-center text-[16px] tracking-[0.35em]"
+                    inputMode="numeric"
+                    placeholder="000000"
+                    autoFocus
+                  />
+                </Field>
+                <button
+                  type="button"
+                  className="btn btn-primary w-full"
+                  onClick={submitMailCode}
+                  disabled={pending || mailCode.length !== 6}
+                >
+                  {pending ? "Doğrulanıyor..." : "Kodu doğrula"}
+                </button>
+                <button type="button" className="btn btn-ghost btn-sm w-full" onClick={sendMailCode} disabled={mailPending}>
+                  Kodu tekrar gönder
+                </button>
+              </>
+            )}
           </div>
         ) : null}
 

@@ -136,6 +136,16 @@ body {
     opacity: 0.7;
   }
 
+  /* Checkbox used by the bulk-selection toolbars. */
+  .checkbox {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong, var(--border));
+    accent-color: var(--store-primary);
+    cursor: pointer;
+  }
+
   .textarea {
     min-height: 96px;
     resize: vertical;

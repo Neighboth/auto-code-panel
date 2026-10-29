@@ -110,6 +110,7 @@ export const customers = sqliteTable(
     displayName: text("display_name").notNull(),
     email: text("email"),
     avatarUrl: text("avatar_url").notNull().default(""),
+    emailVerifiedAt: timestamp("email_verified_at"),
     passwordHash: text("password_hash").notNull(),
     status: text("status").notNull().default("active"),
     createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
@@ -240,6 +241,80 @@ export const entitlements = sqliteTable(
   (table) => [index("entitlements_customer_idx").on(table.storeId, table.customerId)],
 );
 
+/**
+ * One row per verification challenge. A challenge carries a 6-digit code
+ * (hashed) and a magic-link token: the link only reveals the code, it never
+ * performs the verification by itself.
+ */
+export const emailVerifications = sqliteTable(
+  "email_verifications",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    storeId: integer("store_id").notNull(),
+    customerId: integer("customer_id"),
+    subjectType: text("subject_type").notNull().default("customer"),
+    subjectId: integer("subject_id"),
+    email: text("email").notNull(),
+    purpose: text("purpose").notNull().default("signup"),
+    codeSecret: text("code_secret").notNull(),
+    token: text("token").notNull(),
+    attempts: integer("attempts").notNull().default(0),
+    expiresAt: timestamp("expires_at").notNull(),
+    usedAt: timestamp("used_at"),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [
+    uniqueIndex("email_verifications_token_uq").on(table.token),
+    index("email_verifications_subject_idx").on(table.subjectType, table.subjectId),
+  ],
+);
+
+/** Idempotency ledger for automated e-mails (reminders, receipts, digests). */
+export const mailEvents = sqliteTable(
+  "mail_events",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    kind: text("kind").notNull(),
+    ref: text("ref").notNull(),
+    storeId: integer("store_id"),
+    recipient: text("recipient"),
+    status: text("status").notNull().default("sent"),
+    detail: text("detail").notNull().default(""),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [uniqueIndex("mail_events_kind_ref_uq").on(table.kind, table.ref)],
+);
+
+/**
+ * Full audit trail. Every state change and every sensitive read writes a row.
+ * Super admins can filter, search and export it from /super-admin/loglar.
+ */
+export const auditLogs = sqliteTable(
+  "audit_logs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    actorType: text("actor_type").notNull().default("system"),
+    actorId: integer("actor_id"),
+    actorName: text("actor_name").notNull().default(""),
+    storeId: integer("store_id"),
+    storeSlug: text("store_slug").notNull().default(""),
+    action: text("action").notNull(),
+    entity: text("entity").notNull().default(""),
+    entityId: text("entity_id").notNull().default(""),
+    severity: text("severity").notNull().default("info"),
+    summary: text("summary").notNull().default(""),
+    metadata: text("metadata").notNull().default("{}"),
+    ip: text("ip").notNull().default(""),
+    userAgent: text("user_agent").notNull().default(""),
+    createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+  },
+  (table) => [
+    index("audit_logs_created_idx").on(table.createdAt),
+    index("audit_logs_store_idx").on(table.storeId, table.createdAt),
+    index("audit_logs_action_idx").on(table.action),
+  ],
+);
+
 export type Store = typeof stores.$inferSelect;
 export type Game = typeof games.$inferSelect;
 export type Account = typeof accounts.$inferSelect;
@@ -249,3 +324,6 @@ export type Entitlement = typeof entitlements.$inferSelect;
 export type PlatformSettings = typeof platformSettings.$inferSelect;
 export type ResellerKey = typeof resellerKeys.$inferSelect;
 export type PlatformPost = typeof platformPosts.$inferSelect;
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type EmailVerification = typeof emailVerifications.$inferSelect;
+export type MailEvent = typeof mailEvents.$inferSelect;

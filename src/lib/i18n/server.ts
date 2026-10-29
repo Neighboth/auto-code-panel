@@ -32,3 +32,9 @@ export async function getTranslator(): Promise<{ locale: Locale; t: Translator }
   const locale = await getLocale();
   return { locale, t: createTranslator(locale.code) };
 }
+
+/** Locale code only — for templates and server actions that just need a tag. */
+export async function currentLocaleCode(): Promise<string> {
+  const locale = await getLocale();
+  return locale.code;
+}

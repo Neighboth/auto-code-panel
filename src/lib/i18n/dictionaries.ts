@@ -69,6 +69,7 @@ const tr: Dictionary = {
   "super.navStores": "Bayilik Yönetimi",
   "super.navUsers": "Kullanıcılar",
   "super.navPosts": "Duyurular",
+  "super.navLogs": "İşlem Kayıtları",
   "super.navSettings": "Sistem Ayarları",
   "super.badge": "Süper Admin",
   "super.promo": "Tanıtım sitesi",
@@ -154,6 +155,7 @@ const tr: Dictionary = {
   "auth.customerBadge": "Müşteri hesabı",
   "auth.welcomeBack": "Tekrar hoş geldiniz",
   "auth.registerAuto": "Hesabınızı kodu kullanmadan önce de oluşturabilirsiniz. Kodunuz otomatik olarak kütüphanenize kaydedilir.",
+  "auth.alreadyMember": "Zaten üye misiniz?",
 };
 
 const en: Dictionary = {
@@ -215,6 +217,7 @@ const en: Dictionary = {
   "super.navStores": "Licenses",
   "super.navUsers": "Users",
   "super.navPosts": "Announcements",
+  "super.navLogs": "Activity log",
   "super.navSettings": "System settings",
   "super.badge": "Super admin",
   "super.promo": "Marketing site",
@@ -299,6 +302,7 @@ const en: Dictionary = {
   "auth.storeLoginSuccess": "panel signed in",
   "auth.customerBadge": "Customer account",
   "auth.welcomeBack": "Welcome back",
+  "auth.alreadyMember": "Already a member?",
   "auth.registerAuto": "You can create your account before redeeming. Your code is stored in your library automatically.",
 };
 

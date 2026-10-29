@@ -21,11 +21,16 @@ import {
   type PendingSubject,
 } from "@/lib/session";
 import { requireCustomer, requireStoreAdmin } from "@/lib/tenant";
+import { customers, storeAdmins, stores } from "@/db/schema";
+import { env, mailVerificationEnabled, smtpConfigured } from "@/lib/env";
+import { createVerification, consumeVerification } from "@/lib/verification";
+import { logAudit } from "@/lib/audit";
+import { deliver, securityTemplate } from "@/lib/mail-templates";
 import { decryptData, encryptData } from "@/lib/secret-crypto";
 import { consumeChallenge, issueChallenge, verifyAssertion, type StoredPasskey } from "@/lib/webauthn";
 import type { ActionResult } from "@/lib/types";
 
-const KINDS = ["totp", "passkey", "question"] as const;
+const KINDS = ["totp", "passkey", "question", "email"] as const;
 type Kind = (typeof KINDS)[number];
 type SubjectType = "super" | "store" | "customer";
 
@@ -55,6 +60,35 @@ async function currentSubject(slug: string, subjectType: SubjectType) {
   return { type: "customer" as const, id: guard.session.customerId, username: guard.session.username, slug };
 }
 
+/** E-mail address a 2FA code can be sent to, per subject type. */
+async function subjectEmail(subjectType: SubjectType, subjectId: number): Promise<{ email: string; name: string; storeName: string; storeSlug: string } | null> {
+  if (subjectType === "customer") {
+    const rows = await db
+      .select({ customer: customers, store: stores })
+      .from(customers)
+      .innerJoin(stores, eq(stores.id, customers.storeId))
+      .where(eq(customers.id, subjectId))
+      .limit(1);
+    const row = rows[0];
+    if (!row?.customer.email) return null;
+    return { email: row.customer.email, name: row.customer.username, storeName: row.store.name, storeSlug: row.store.slug };
+  }
+  if (subjectType === "store") {
+    const rows = await db
+      .select({ admin: storeAdmins, store: stores })
+      .from(storeAdmins)
+      .innerJoin(stores, eq(stores.id, storeAdmins.storeId))
+      .where(eq(storeAdmins.id, subjectId))
+      .limit(1);
+    const row = rows[0];
+    if (!row?.admin.email) return null;
+    return { email: row.admin.email, name: row.admin.username, storeName: row.store.name, storeSlug: row.store.slug };
+  }
+  const email = env.superAdminEmail;
+  if (!email) return null;
+  return { email, name: "super admin", storeName: "Platform", storeSlug: "" };
+}
+
 async function factorRow(subjectType: SubjectType, subjectId: number, kind: Kind) {
   const rows = await db
     .select()
@@ -79,11 +113,22 @@ async function saveFactor(subjectType: SubjectType, subjectId: number, kind: Kin
 export async function listFactors(
   slug: string,
   subjectType: SubjectType,
-): Promise<ActionResult<{ totp: boolean; passkey: boolean; question: boolean; questionText: string }>> {
+): Promise<
+  ActionResult<{
+    totp: boolean;
+    passkey: boolean;
+    question: boolean;
+    email: boolean;
+    emailAddress: string;
+    questionText: string;
+  }>
+> {
   const subject = await currentSubject(slug, subjectType);
   if (!subject) return { ok: false, message: "Oturum bulunamadı." };
   const totp = !!(await factorRow(subjectType, subject.id, "totp"));
   const passkey = !!(await factorRow(subjectType, subject.id, "passkey"));
+  const emailRow = await factorRow(subjectType, subject.id, "email");
+  const emailTarget = await subjectEmail(subjectType, subject.id);
   const questionRow = await factorRow(subjectType, subject.id, "question");
   let questionText = "";
   if (questionRow) {
@@ -93,7 +138,81 @@ export async function listFactors(
       questionText = "";
     }
   }
-  return { ok: true, data: { totp, passkey, question: Boolean(questionRow), questionText } };
+  return {
+    ok: true,
+    data: {
+      totp,
+      passkey,
+      question: Boolean(questionRow),
+      email: Boolean(emailRow),
+      emailAddress: emailTarget?.email ?? "",
+      questionText,
+    },
+  };
+}
+
+/* --------------------------- E-mail 2FA factor --------------------------- */
+
+export async function enableEmailFactor(
+  slug: string,
+  subjectType: SubjectType,
+): Promise<ActionResult<{ email: string }>> {
+  await ensureDatabase();
+  const subject = await currentSubject(slug, subjectType);
+  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!smtpConfigured() || !mailVerificationEnabled()) {
+    return { ok: false, message: "E-posta ile 2FA için SMTP yapılandırılmış olmalıdır." };
+  }
+  const target = await subjectEmail(subjectType, subject.id);
+  if (!target) return { ok: false, message: "Hesabınıza bağlı bir e-posta adresi yok. Önce e-posta ekleyin." };
+
+  await saveFactor(subjectType, subject.id, "email", encryptData(JSON.stringify({ email: target.email })));
+  await logAudit({
+    action: "security.email_2fa.enabled",
+    entity: "security_factor",
+    entityId: `${subjectType}:${subject.id}`,
+    storeSlug: target.storeSlug || null,
+    summary: "E-posta ile 2FA açıldı",
+    metadata: { email: target.email },
+  });
+  refresh(slug || undefined);
+  return { ok: true, message: `E-posta ile 2FA açıldı (${target.email}).`, data: { email: target.email } };
+}
+
+/** Sends a fresh 6-digit code to the pending subject's mailbox. */
+export async function sendLoginEmailCode(): Promise<ActionResult<{ expiresInMinutes: number }>> {
+  await ensureDatabase();
+  const pending = await getPendingSubject();
+  if (!pending) return { ok: false, message: "Doğrulama oturumu süresi doldu. Yeniden giriş yapın." };
+  const gate = hitRateLimit(`2fa-mail:${pending.t}:${pending.id}`, 4, 300_000);
+  if (!gate.allowed) {
+    return { ok: false, message: `Çok fazla kod isteği. ${gate.retryInSeconds} saniye sonra deneyin.` };
+  }
+  const row = await factorRow(pending.t, pending.id, "email");
+  if (!row) return { ok: false, message: "Bu hesapta e-posta ile 2FA açık değil." };
+  const target = await subjectEmail(pending.t, pending.id);
+  if (!target) return { ok: false, message: "Hesabınıza bağlı bir e-posta adresi bulunamadı." };
+
+  const storeRows = target.storeSlug
+    ? await db.select({ id: stores.id }).from(stores).where(eq(stores.slug, target.storeSlug)).limit(1)
+    : [];
+  const challenge = await createVerification({
+    storeId: storeRows[0]?.id ?? 0,
+    storeSlug: target.storeSlug || "super-admin",
+    storeName: target.storeName,
+    email: target.email,
+    username: target.name,
+    purpose: "totp",
+    subjectType: pending.t,
+    subjectId: pending.id,
+    locale: "tr",
+  });
+  return {
+    ok: true,
+    message: `Kod ${target.email} adresine gönderildi.`,
+    data: { expiresInMinutes: 15 },
+    verificationId: challenge.id,
+  };
 }
 
 export async function beginTotpSetup(
@@ -244,6 +363,23 @@ export async function removeFactor(slug: string, subjectType: SubjectType, kind:
         eq(securityFactors.kind, kind),
       ),
     );
+  await logAudit({
+    action: `security.factor.removed.${kind}`,
+    entity: "security_factor",
+    entityId: `${subjectType}:${subject.id}`,
+    summary: `${kind} güvenlik yöntemi kaldırıldı`,
+  });
+  const target = await subjectEmail(subjectType, subject.id);
+  if (target) {
+    const template = securityTemplate({
+      storeName: target.storeName,
+      username: target.name,
+      what: "Güvenlik yöntemi kaldırıldı",
+      detail: kind,
+      at: new Date(),
+    });
+    await deliver({ to: target.email, template, kind: "security" });
+  }
   refresh(slug || undefined);
   return { ok: true, message: "Güvenlik yöntemi kaldırıldı." };
 }
@@ -290,8 +426,8 @@ function finalizeSession(subject: PendingSubject): { redirectTo: string; apply: 
 }
 
 export async function verifyTwoFactorLogin(
-  method: "totp" | "passkey" | "question",
-  payload: { code?: string; answer?: string; assertion?: string },
+  method: "totp" | "passkey" | "question" | "email",
+  payload: { code?: string; answer?: string; assertion?: string; verificationId?: number },
 ): Promise<ActionResult> {
   await ensureDatabase();
   const pending = await getPendingSubject();
@@ -312,6 +448,12 @@ export async function verifyTwoFactorLogin(
     if (row && payload.answer) {
       const stored = JSON.parse(row.data) as { answerHash: string };
       passed = verifyPassword(payload.answer.trim().toLowerCase(), stored.answerHash);
+    }
+  } else if (method === "email") {
+    const row = await factorRow(pending.t, pending.id, "email");
+    if (row && payload.code) {
+      const outcome = await consumeVerification({ id: payload.verificationId ?? null }, payload.code);
+      passed = outcome.ok && outcome.purpose === "totp";
     }
   } else if (method === "passkey") {
     const row = await factorRow(pending.t, pending.id, "passkey");
@@ -363,12 +505,15 @@ export async function beginPasskeyLogin(): Promise<ActionResult<{ options: Recor
   return { ok: true, data: { options, tokenId } };
 }
 
-export async function verifyPendingFactors(): Promise<ActionResult<{ methods: { totp: boolean; passkey: boolean; question: boolean } }>> {
+export async function verifyPendingFactors(): Promise<
+  ActionResult<{ methods: { totp: boolean; passkey: boolean; question: boolean; email: boolean } }>
+> {
   const pending = await getPendingSubject();
   if (!pending) return { ok: false, message: "Doğrulama oturumu süresi doldu." };
   const totp = !!(await factorRow(pending.t, pending.id, "totp"));
   const passkey = !!(await factorRow(pending.t, pending.id, "passkey"));
   const question = !!(await factorRow(pending.t, pending.id, "question"));
-  return { ok: true, data: { methods: { totp, passkey, question } } };
+  const email = !!(await factorRow(pending.t, pending.id, "email"));
+  return { ok: true, data: { methods: { totp, passkey, question, email } } };
 }
 

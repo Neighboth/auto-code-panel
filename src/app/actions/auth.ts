@@ -18,6 +18,11 @@ import {
   setSessionCookie,
 } from "@/lib/session";
 import { sweepExpiredEntitlements } from "@/lib/tenant";
+import { logAudit } from "@/lib/audit";
+import { sendWelcomeMail } from "@/lib/mail-events";
+import { mailVerificationEnabled } from "@/lib/env";
+import { consumeVerification, createVerification } from "@/lib/verification";
+import { currentLocaleCode } from "@/lib/i18n/server";
 import type { ActionResult } from "@/lib/types";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -44,13 +49,18 @@ async function grantStoreAdminSession(
 async function factorMethods(
   subjectType: "super" | "store" | "customer",
   subjectId: number,
-): Promise<{ totp: boolean; passkey: boolean; question: boolean }> {
+): Promise<{ totp: boolean; passkey: boolean; question: boolean; email: boolean }> {
   const rows = await db
     .select({ kind: securityFactors.kind })
     .from(securityFactors)
     .where(and(eq(securityFactors.subjectType, subjectType), eq(securityFactors.subjectId, subjectId)));
   const kinds = new Set(rows.map((row) => row.kind));
-  return { totp: kinds.has("totp"), passkey: kinds.has("passkey"), question: kinds.has("question") };
+  return {
+    totp: kinds.has("totp"),
+    passkey: kinds.has("passkey"),
+    question: kinds.has("question"),
+    email: kinds.has("email"),
+  };
 }
 
 type PendingInput =
@@ -60,7 +70,7 @@ type PendingInput =
 
 async function startPendingOrSession(subject: PendingInput, redirectTo: string): Promise<ActionResult> {
   const methods = await factorMethods(subject.t, subject.id);
-  if (!methods.totp && !methods.passkey && !methods.question) {
+  if (!methods.totp && !methods.passkey && !methods.question && !methods.email) {
     if (subject.t === "super") {
       await clearSessionCookie(STORE_COOKIE);
       await setSessionCookie(SUPER_COOKIE, { kind: "super", id: 1, username: subject.username });
@@ -127,6 +137,16 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
 
   if (isOwner) {
     recordSuccess(`mgr:${identifier}`);
+    await logAudit({
+      action: "auth.login",
+      entity: "super_admin",
+      entityId: 1,
+      summary: `${env.superAdminUsername} süper admin paneline giriş yaptı`,
+      actorType: "super",
+      actorId: 1,
+      actorName: env.superAdminUsername,
+      metadata: { via: "manager-login" },
+    });
     return startPendingOrSession({ t: "super", id: 1, username: env.superAdminUsername }, "/super-admin");
   }
 
@@ -146,6 +166,15 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
 
   const matches = candidates.filter(({ admin }) => verifyPassword(password, admin.passwordHash));
   if (matches.length === 0) {
+    await logAudit({
+      action: "auth.login.failed",
+      entity: "store_admin",
+      summary: `Başarısız yönetici girişi: ${identifier.slice(0, 60)}`,
+      severity: "warn",
+      actorType: "system",
+      actorName: identifier.slice(0, 60),
+      metadata: { identifier, reason: "invalid_credentials" },
+    });
     return { ok: false, message: "Kullanıcı adı, e-posta veya şifre hatalı." };
   }
   if (matches.length > 1) {
@@ -154,6 +183,18 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
 
   const { admin, store } = matches[0];
   recordSuccess(`mgr:${identifier}`);
+  await logAudit({
+    action: "auth.login",
+    entity: "store_admin",
+    entityId: admin.id,
+    summary: `${admin.username} yönetici paneline giriş yaptı`,
+    storeId: store.id,
+    storeSlug: store.slug,
+    actorType: "store",
+    actorId: admin.id,
+    actorName: admin.username,
+    metadata: { via: "manager-login" },
+  });
   return startPendingOrSession(
     { t: "store", id: admin.id, storeId: store.id, slug: store.slug, username: admin.username },
     `/${store.slug}/admin`,
@@ -233,7 +274,7 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
       : new Date(Date.now() + resellerKey.durationDays * 86_400_000);
 
   try {
-    const createdStoreId = await db.transaction(async (tx) => {
+    const createdStore = await db.transaction(async (tx) => {
       const [store] = await tx
         .insert(stores)
         .values({
@@ -264,14 +305,20 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
         .set({ status: "used", usedAt: new Date(), storeId: store.id })
         .where(eq(resellerKeys.id, resellerKey.id));
 
-      return store.id;
+      return store;
     });
+    const createdStoreId = createdStore.id;
 
     const adminRows = await db
       .select()
       .from(storeAdmins)
       .where(eq(storeAdmins.storeId, createdStoreId))
       .limit(1);
+
+    // Activation e-mail (best effort; never blocks the signup).
+    await sendWelcomeMail(createdStore, adminRows[0]).catch((err) =>
+      console.error("[signup] welcome mail failed", err),
+    );
 
     await setSessionCookie(STORE_COOKIE, {
       kind: "store",
@@ -323,9 +370,32 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
     );
   const admin = adminRows.find((row) => verifyPassword(password, row.passwordHash));
   if (!admin) {
+    await logAudit({
+      action: "auth.login.failed",
+      entity: "store_admin",
+      summary: `Başarısız mağaza paneli girişi (${store.slug}): ${identifier.slice(0, 60)}`,
+      severity: "warn",
+      storeId: store.id,
+      storeSlug: store.slug,
+      actorType: "system",
+      actorName: identifier.slice(0, 60),
+      metadata: { identifier, reason: "invalid_credentials" },
+    });
     return { ok: false, message: "Kullanıcı adı veya şifre hatalı." };
   }
   recordSuccess(`st:${slug}:${identifier}`);
+  await logAudit({
+    action: "auth.login",
+    entity: "store_admin",
+    entityId: admin.id,
+    summary: `${admin.username} mağaza paneline giriş yaptı`,
+    storeId: store.id,
+    storeSlug: store.slug,
+    actorType: "store",
+    actorId: admin.id,
+    actorName: admin.username,
+    metadata: { via: "store-login" },
+  });
   return startPendingOrSession(
     { t: "store", id: admin.id, storeId: store.id, slug: store.slug, username: admin.username },
     `/${store.slug}/admin`,
@@ -333,11 +403,13 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
 }
 
 export async function storeAdminLogout(slug: string): Promise<ActionResult> {
+  await logAudit({ action: "auth.logout", entity: "store_admin", summary: "Mağaza panelinden çıkış yapıldı", storeSlug: slug });
   await clearSessionCookie(STORE_COOKIE);
   return { ok: true, redirectTo: `/${slug}/admin/giris` };
 }
 
 export async function superAdminLogout(): Promise<ActionResult> {
+  await logAudit({ action: "auth.logout", entity: "super_admin", summary: "Süper admin panelinden çıkış yapıldı", actorType: "super" });
   await clearSessionCookie(SUPER_COOKIE);
   return { ok: true, redirectTo: "/super-admin" };
 }
@@ -360,7 +432,9 @@ async function signCustomer(storeId: number, slug: string, customer: { id: numbe
   revalidatePath(`/${slug}`, "layout");
 }
 
-export async function customerRegister(formData: FormData): Promise<ActionResult<{ username: string }>> {
+export async function customerRegister(
+  formData: FormData,
+): Promise<ActionResult<{ username: string; verificationId?: number; email?: string }>> {
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -380,6 +454,12 @@ export async function customerRegister(formData: FormData): Promise<ActionResult
   const store = await loadStore(slug);
   if (!store) return { ok: false, message: "Mağaza bulunamadı." };
 
+  // SMTP configured -> e-mail verification is mandatory before the account is usable.
+  const verificationOn = mailVerificationEnabled();
+  if (verificationOn && !email) {
+    return { ok: false, message: "E-posta doğrulaması açık. Kayıt için geçerli bir e-posta girin." };
+  }
+
   const exists = await db
     .select({ id: customers.id })
     .from(customers)
@@ -397,11 +477,134 @@ export async function customerRegister(formData: FormData): Promise<ActionResult
       displayName,
       email: email || null,
       passwordHash: hashPassword(password),
+      emailVerifiedAt: verificationOn ? null : new Date(),
     })
     .returning();
 
+  await logAudit({
+    action: "customer.register",
+    entity: "customer",
+    entityId: customer.id,
+    storeId: store.id,
+    storeSlug: store.slug,
+    summary: `${customer.username} kayıt oldu`,
+    metadata: { email: email || null, verification: verificationOn },
+  });
+
+  if (verificationOn) {
+    const locale = await currentLocaleCode();
+    const challenge = await createVerification({
+      storeId: store.id,
+      storeSlug: store.slug,
+      storeName: store.name,
+      email,
+      username: customer.username,
+      purpose: "signup",
+      customerId: customer.id,
+      locale,
+    });
+    await db.update(customers).set({ status: "pending" }).where(eq(customers.id, customer.id));
+    return {
+      ok: true,
+      message:
+        challenge.delivered === "sent"
+          ? "Doğrulama kodu e-postanıza gönderildi."
+          : "Doğrulama kaydı oluşturuldu ancak e-posta gönderilemedi. Yöneticiye bildirin.",
+      data: { username: customer.username, verificationId: challenge.id, email },
+    };
+  }
+
   await signCustomer(store.id, store.slug, customer);
   return { ok: true, message: "Hesabınız oluşturuldu.", data: { username: customer.username } };
+}
+
+/**
+ * Completes registration (or a gated sign-in) with the 6-digit code that was
+ * e-mailed. Only then is the session granted.
+ */
+export async function verifyCustomerEmail(
+  slugRaw: string,
+  identifier: { id?: number | null; token?: string | null },
+  code: string,
+): Promise<ActionResult<{ redirectTo: string }>> {
+  await ensureDatabase();
+  const slug = slugRaw.trim().toLowerCase();
+  const store = await loadStore(slug);
+  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+
+  const outcome = await consumeVerification(identifier, code);
+  if (!outcome.ok) return { ok: false, message: outcome.message };
+  if (outcome.storeId !== store.id) return { ok: false, message: "Bu kod bu mağaza için geçerli değil." };
+  if (!outcome.customerId) return { ok: false, message: "Doğrulama kaydı bir hesaba bağlı değil." };
+
+  const rows = await db
+    .select()
+    .from(customers)
+    .where(and(eq(customers.id, outcome.customerId), eq(customers.storeId, store.id)))
+    .limit(1);
+  const customer = rows[0];
+  if (!customer) return { ok: false, message: "Hesap bulunamadı." };
+  if (customer.status === "banned") return { ok: false, message: "Hesabınız yasaklanmış." };
+
+  await db
+    .update(customers)
+    .set({ emailVerifiedAt: new Date(), status: "active" })
+    .where(eq(customers.id, customer.id));
+
+  await signCustomer(store.id, store.slug, customer);
+  await logAudit({
+    action: "customer.email_verified",
+    entity: "customer",
+    entityId: customer.id,
+    storeId: store.id,
+    storeSlug: store.slug,
+    summary: `${customer.username} e-postasını doğruladı`,
+  });
+
+  return { ok: true, message: "E-posta doğrulandı, giriş yapıldı.", data: { redirectTo: `/${store.slug}/kutuphane` } };
+}
+
+/** Re-sends a fresh 6-digit code for a pending registration. */
+export async function resendCustomerVerification(
+  slugRaw: string,
+  emailRaw: string,
+): Promise<ActionResult<{ verificationId: number }>> {
+  await ensureDatabase();
+  const slug = slugRaw.trim().toLowerCase();
+  const email = emailRaw.trim();
+  const store = await loadStore(slug);
+  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!EMAIL_RE.test(email)) return { ok: false, message: "Geçerli bir e-posta girin." };
+
+  const rows = await db
+    .select()
+    .from(customers)
+    .where(and(eq(customers.storeId, store.id), sql`lower(${customers.email}) = ${email.toLowerCase()}`))
+    .limit(1);
+  const customer = rows[0];
+  if (!customer) return { ok: false, message: "Bu e-posta ile kayıtlı bir hesap yok." };
+
+  const gate = hitRateLimit(`resend:${store.id}:${email.toLowerCase()}`, 3, 300_000);
+  if (!gate.allowed) {
+    return { ok: false, message: `Çok fazla kod isteği. ${gate.retryInSeconds} saniye sonra deneyin.` };
+  }
+
+  const locale = await currentLocaleCode();
+  const challenge = await createVerification({
+    storeId: store.id,
+    storeSlug: store.slug,
+    storeName: store.name,
+    email,
+    username: customer.username,
+    purpose: "signup",
+    customerId: customer.id,
+    locale,
+  });
+  return {
+    ok: true,
+    message: "Yeni doğrulama kodu gönderildi.",
+    data: { verificationId: challenge.id },
+  };
 }
 
 export async function customerLogin(formData: FormData): Promise<ActionResult> {
@@ -426,12 +629,54 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
     .limit(1);
   const customer = rows[0];
   if (!customer || !verifyPassword(password, customer.passwordHash)) {
+    await logAudit({
+      action: "auth.login.failed",
+      entity: "customer",
+      summary: `Başarısız müşteri girişi (${store.slug}): ${username.slice(0, 60)}`,
+      severity: "warn",
+      storeId: store.id,
+      storeSlug: store.slug,
+      actorType: "system",
+      actorName: username.slice(0, 60),
+      metadata: { reason: "invalid_credentials" },
+    });
     return { ok: false, message: "Kullanıcı adı veya şifre hatalı." };
   }
   if (customer.status === "banned") {
     return { ok: false, message: "Hesabınız mağaza yöneticisi tarafından yasaklandı." };
   }
+  if (mailVerificationEnabled() && customer.email && !customer.emailVerifiedAt) {
+    const locale = await currentLocaleCode();
+    const challenge = await createVerification({
+      storeId: store.id,
+      storeSlug: store.slug,
+      storeName: store.name,
+      email: customer.email,
+      username: customer.username,
+      purpose: "login",
+      customerId: customer.id,
+      locale,
+    });
+    return {
+      ok: true,
+      message: "E-posta adresiniz doğrulanmamış. Yeni bir doğrulama kodu gönderdik.",
+      needsEmailVerification: true,
+      verificationId: challenge.id,
+      verificationEmail: customer.email,
+    };
+  }
   recordSuccess(`cu:${slug}:${username.toLowerCase()}`);
+  await logAudit({
+    action: "auth.login",
+    entity: "customer",
+    entityId: customer.id,
+    summary: `${customer.username} müşteri olarak giriş yaptı`,
+    storeId: store.id,
+    storeSlug: store.slug,
+    actorType: "customer",
+    actorId: customer.id,
+    actorName: customer.username,
+  });
   return startPendingOrSession(
     { t: "customer", id: customer.id, storeId: store.id, slug: store.slug, username: customer.username },
     `/${store.slug}/kutuphane`,
@@ -440,6 +685,7 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
 
 export async function customerLogout(formData: FormData): Promise<ActionResult> {
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
+  await logAudit({ action: "auth.logout", entity: "customer", summary: "Müşteri çıkış yaptı", storeSlug: slug });
   await clearSessionCookie(CUSTOMER_COOKIE);
   if (slug) revalidatePath(`/${slug}`, "layout");
   return { ok: true, redirectTo: `/${slug}` };

@@ -14,9 +14,11 @@ import {
   RefreshCw,
   ShieldCheck,
   Sparkles,
+  Tags,
   Trash2,
 } from "lucide-react";
 import {
+  bulkUpdateProductPrices,
   deleteAccount,
   deleteGame,
   saveAccount,
@@ -112,6 +114,10 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
   const [lookupPending, setLookupPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<AdminGame | null>(null);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkMode, setBulkMode] = useState<"percent" | "amount">("percent");
+  const [bulkValue, setBulkValue] = useState("10");
 
   const emptyForm = useMemo(
     () => ({
@@ -233,6 +239,23 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
     router.refresh();
   }
 
+  function toggleSelect(id: number) {
+    setSelected((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
+  }
+
+  async function onBulkPrice() {
+    if (selected.length === 0) return;
+    const result = await bulkUpdateProductPrices(slug, selected, bulkMode, Number(bulkValue.replace(",", ".")));
+    if (!result.ok) {
+      toast.error(result.message ?? "Fiyatlar güncellenemedi");
+      return;
+    }
+    toast.success(result.message ?? "Fiyatlar güncellendi");
+    setBulkOpen(false);
+    setSelected([]);
+    router.refresh();
+  }
+
   async function onSync() {
     setPending(true);
     const formData = new FormData();
@@ -270,11 +293,33 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
         </div>
       </div>
 
+      {selected.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-[var(--surface)] px-3 py-2.5 hairline">
+          <span className="text-[12px] font-medium">{selected.length} ürün seçildi</span>
+          <span className="flex-1" />
+          <button type="button" className="btn btn-outline btn-sm" onClick={() => setBulkOpen(true)}>
+            <Tags size={12} /> Toplu fiyat
+          </button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelected([])}>
+            Temizle
+          </button>
+        </div>
+      ) : null}
+
       <div className="card overflow-hidden">
         <div className="overflow-x-auto scroll-thin">
-          <table className="table min-w-[820px]">
+          <table className="table min-w-[860px]">
             <thead>
               <tr>
+                <th className="w-9">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    aria-label="Tüm ürünleri seç"
+                    checked={games.length > 0 && selected.length === games.length}
+                    onChange={(event) => setSelected(event.target.checked ? games.map((game) => game.id) : [])}
+                  />
+                </th>
                 <th>Ürün</th>
                 <th>Orijinal</th>
                 <th>Bizim fiyat</th>
@@ -286,7 +331,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
             <tbody>
               {games.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center">
+                  <td colSpan={7} className="py-12 text-center">
                     <Boxes size={22} className="mx-auto muted" />
                     <p className="mt-2 text-[12.5px] font-medium">Henüz ürün yok</p>
                     <p className="mt-1 text-[11.5px] muted">
@@ -297,6 +342,15 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
               ) : null}
               {games.map((game) => (
                 <tr key={game.id}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      aria-label={`${game.title} seç`}
+                      checked={selected.includes(game.id)}
+                      onChange={() => toggleSelect(game.id)}
+                    />
+                  </td>
                   <td>
                     <div className="flex items-center gap-2.5">
                       <span className="h-9 w-16 shrink-0 overflow-hidden rounded-md" style={{ background: "var(--bg)" }}>
@@ -496,6 +550,57 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
           <strong>{deleting?.title}</strong> ürününü silmek istediğinize emin misiniz? Bağlı kodlar
           varsa silme işlemi engellenir.
         </p>
+      </Modal>
+
+      <Modal
+        open={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        title="Toplu fiyat güncelle"
+        description={`${selected.length} ürün seçildi`}
+        footer={
+          <>
+            <button type="button" className="btn btn-outline" onClick={() => setBulkOpen(false)}>
+              Vazgeç
+            </button>
+            <button type="button" className="btn btn-dark" onClick={onBulkPrice}>
+              Uygula
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-3">
+          <Field label="İşlem türü" htmlFor="bulkMode">
+            <select
+              id="bulkMode"
+              className="select"
+              value={bulkMode}
+              onChange={(event) => setBulkMode(event.target.value as "percent" | "amount")}
+            >
+              <option value="percent">Yüzde olarak değiştir (%)</option>
+              <option value="amount">Tutar kadar değiştir</option>
+            </select>
+          </Field>
+          <Field
+            label={bulkMode === "percent" ? "Yüzde" : "Tutar"}
+            hint={
+              bulkMode === "percent"
+                ? "Negatif değer indirim uygular. Örnek: -15 → fiyatlar %15 düşer."
+                : "Negatif değer indirim uygular. Örnek: -50 → her fiyattan 50 birim düşülür."
+            }
+            htmlFor="bulkValue"
+          >
+            <input
+              id="bulkValue"
+              className="input"
+              inputMode="decimal"
+              value={bulkValue}
+              onChange={(event) => setBulkValue(event.target.value)}
+            />
+          </Field>
+          <p className="text-[11.5px] leading-relaxed muted">
+            Fiyatlar ürünün kendi para biriminde güncellenir. Sıfır veya altına düşecek ürünler atlanır.
+          </p>
+        </div>
       </Modal>
     </div>
   );

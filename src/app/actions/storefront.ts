@@ -28,6 +28,8 @@ import { requireCustomer, resolveStoreState } from "@/lib/tenant";
 import { findStoreBySlug } from "@/lib/tenant";
 import { generateSteamGuardCode, generateTotpCode, secondsRemaining } from "@/lib/totp";
 import { guardHasEmail, guardHasSteam, guardHasTotp } from "@/lib/fonts";
+import { sendDeliveryReceipt } from "@/lib/mail-events";
+import { logAudit } from "@/lib/audit";
 import { fetchLatestMailCode } from "@/lib/imap";
 import type {
   ActionResult,
@@ -407,6 +409,31 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
     console.error("[redeem] failed", err);
     return { ok: false, message: "Kod kullanılamadı. Lütfen tekrar deneyin." };
   }
+
+  await logAudit({
+    action: "code.redeem",
+    entity: "code",
+    entityId: code.id,
+    summary: `${code.code} kodu kullanıldı, ${delivered.length} ürün teslim edildi`,
+    storeId: tenantId,
+    storeSlug: store.slug,
+    actorType: customerId ? "customer" : "system",
+    actorId: customerId ?? null,
+    actorName: customerId ? `müşteri#${customerId}` : "misafir",
+    metadata: {
+      items: delivered.map((item) => item.title),
+      guest: !customerId,
+    },
+  });
+
+  // Delivery receipt for members (guests have no mailbox on file). Failures are
+  // swallowed by `deliver`, so the redemption result never depends on SMTP.
+  await sendDeliveryReceipt({
+    store,
+    customerId,
+    code: code.code,
+    items: delivered.map((item) => ({ title: item.title, platformLabel: item.platformLabel })),
+  }).catch((err) => console.error("[redeem] receipt mail failed", err));
 
   revalidatePath(`/${store.slug}`, "layout");
   return {
