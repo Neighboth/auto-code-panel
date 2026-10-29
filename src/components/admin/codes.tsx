@@ -391,7 +391,7 @@ export function CodeManager({
         }
       >
         {error ? (
-          <p className="mb-3 rounded-md px-2.5 py-1.5 text-[11.5px]" style={{ background: "#fef2f2", color: "#b91c1c" }}>
+          <p className="note note-danger mb-3 text-[11.5px]">
             {error}
           </p>
         ) : null}

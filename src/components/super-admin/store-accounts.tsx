@@ -48,10 +48,7 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
         description="Yalnızca platform sahibine açıktır."
         size="lg"
       >
-        <div
-          className="flex items-start gap-2.5 rounded-lg border p-3"
-          style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}
-        >
+        <div className="note note-warn flex items-start gap-2.5">
           <ShieldAlert size={16} className="mt-0.5 shrink-0" />
           <p className="text-[11.5px] font-medium leading-relaxed">
             UYARI: Bu veriler yalnızca teknik destek amacıyla görüntülenmektedir. İzinsiz erişim,

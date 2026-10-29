@@ -165,10 +165,7 @@ export function RedeemFlow({
       </ol>
 
       {error ? (
-        <div
-          className="mb-4 rounded-lg border px-3 py-2.5 text-[12.5px]"
-          style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#b91c1c" }}
-        >
+        <div className="note note-danger mb-4 text-[12.5px]">
           {error}
         </div>
       ) : null}
@@ -331,7 +328,6 @@ export function RedeemFlow({
               type="button"
               onClick={() => setGuestWarning(true)}
               className="btn btn-outline"
-              style={{ borderColor: "#fca5a5", color: "#b91c1c" }}
             >
               Üye olmadan es geç
             </button>
@@ -404,7 +400,6 @@ export function RedeemFlow({
             {result.guest ? (
               <div
                 className="mt-4 flex items-start gap-2 rounded-lg border px-3.5 py-3"
-                style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}
               >
                 <ShieldAlert size={16} className="mt-0.5 shrink-0" />
                 <p className="text-[12px] font-medium leading-relaxed">
@@ -495,7 +490,6 @@ export function RedeemFlow({
       >
         <div
           className="flex items-start gap-3 rounded-lg border p-3.5"
-          style={{ borderColor: "#fca5a5", background: "#fef2f2", color: "#991b1b" }}
         >
           <AlertTriangle size={20} className="mt-0.5 shrink-0" />
           <p className="text-[12.5px] font-medium leading-relaxed">

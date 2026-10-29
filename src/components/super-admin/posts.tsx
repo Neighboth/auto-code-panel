@@ -233,7 +233,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
           </label>
 
           {error ? (
-            <p className="rounded-md px-3 py-2 text-[12px]" style={{ background: "#fef2f2", color: "#b91c1c" }}>
+            <p className="note note-danger text-[12px]">
               {error}
             </p>
           ) : null}

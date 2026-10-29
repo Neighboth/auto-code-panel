@@ -336,7 +336,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
       </section>
 
       {error ? (
-        <p className="rounded-md px-3 py-2 text-[12px]" style={{ background: "#fef2f2", color: "#b91c1c" }}>
+        <p className="note note-danger text-[12px]">
           {error}
         </p>
       ) : null}
@@ -498,7 +498,6 @@ export function StoreDomainForm({
       {verified && savedDomain ? (
         <div
           className="mt-3 rounded-lg border px-3 py-2 text-[11.5px]"
-          style={{ borderColor: "#bbf7d0", background: "#f0fdf4", color: "#166534" }}
         >
           <span className="font-semibold">https://{savedDomain}</span> mağazanıza bağlı. SSL sertifikası
           için alan adını sunucuya yönlendirip HTTPS yapılandırmasını tamamlayın.
@@ -538,7 +537,7 @@ export function StoreDomainForm({
       ) : null}
 
       {error ? (
-        <p className="mt-3 rounded-md px-3 py-2 text-[12px]" style={{ background: "#fef2f2", color: "#b91c1c" }}>
+        <p className="note note-danger mt-3 text-[12px]">
           {error}
         </p>
       ) : null}
@@ -596,7 +595,7 @@ export function StoreCredentialsForm({
         </Field>
       </div>
       {error ? (
-        <p className="mt-3 rounded-md px-3 py-2 text-[12px]" style={{ background: "#fef2f2", color: "#b91c1c" }}>
+        <p className="note note-danger mt-3 text-[12px]">
           {error}
         </p>
       ) : null}

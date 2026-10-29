@@ -5,6 +5,7 @@ import { getStoreAdminSession } from "@/lib/session";
 import { getStoreState, getStoreBasePath } from "@/lib/tenant";
 import { StoreAdminLoginForm } from "@/components/auth-forms";
 import { BrandMark } from "@/components/brand";
+import { getLocale } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Mağaza Yönetimi Girişi" };
@@ -18,6 +19,7 @@ export default async function StoreAdminLoginPage({
   const state = await getStoreState(magazaSlug);
   if (!state) notFound();
   const basePath = await getStoreBasePath(state.store);
+  const locale = await getLocale();
   const session = await getStoreAdminSession();
   if (session && session.storeId === state.store.id) redirect(`${basePath}/admin`);
 
@@ -45,14 +47,23 @@ export default async function StoreAdminLoginPage({
           {!state.active ? (
             <div
               className="mt-3 rounded-lg border px-3 py-2 text-[11.5px]"
-              style={{ borderColor: "#fde68a", background: "#fffbeb", color: "#92400e" }}
+              style={{
+                borderColor: "color-mix(in srgb, #f59e0b 40%, var(--border))",
+                background: "color-mix(in srgb, #f59e0b 12%, var(--bg-elevated))",
+                color: "color-mix(in srgb, #b45309 70%, var(--fg))",
+              }}
             >
               Mağaza şu anda {state.suspended ? "askıda" : "süresi dolmuş"} durumda. Panele giriş yapıp
               lisans durumunuzu görüntüleyebilirsiniz.
             </div>
           ) : null}
           <div className="mt-5">
-            <StoreAdminLoginForm slug={state.store.slug} storeName={state.store.name} basePath={basePath} />
+            <StoreAdminLoginForm
+              slug={state.store.slug}
+              storeName={state.store.name}
+              basePath={basePath}
+              locale={locale.code}
+            />
           </div>
 
         </div>
