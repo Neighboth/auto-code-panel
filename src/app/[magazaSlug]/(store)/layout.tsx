@@ -9,6 +9,7 @@ import { BrandMark } from "@/components/brand";
 import { brand } from "@/lib/brand";
 import { getLocale } from "@/lib/i18n/server";
 import { createTranslator } from "@/lib/i18n/translate";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -56,12 +57,10 @@ export default async function StorefrontLayout({
               <ArrowUpRight size={13} />
             </a>
           </div>
-          <p className="mt-6 text-[11px] muted">
-            Mağaza sahibiyseniz yönetim panelinden lisans durumunu görüntüleyebilirsiniz.
-          </p>
+          <p className="mt-6 text-[11px] muted">{t("x.magaza-sahibiyseniz-yonetim-panelinden-lisans-durumunu-g")}</p>
         </div>
         <footer className="border-t py-5 text-center text-[11px] muted hairline">
-          {store.footerText || `${store.name} — ${brand.name} altyapısı`}
+          {store.footerText || t("x.store-brand-altyaps", { store: store.name, brand: brand.name })}
         </footer>
       </div>
     );
@@ -82,9 +81,7 @@ export default async function StorefrontLayout({
         customer={customerName}
         locale={locale.code}
       />
-      <a href="#main" className="skip-link">
-        İçeriğe geç
-      </a>
+      <a href="#main" className="skip-link">{t("x.icerige-gec")}</a>
       <main id="main" tabIndex={-1} className="flex-1">
         {children}
       </main>
@@ -108,7 +105,7 @@ export default async function StorefrontLayout({
               <span className="text-[13.5px] font-semibold">{store.name}</span>
             </div>
             <p className="mt-2 text-[11.5px] leading-relaxed muted">
-              {store.footerText || "Dijital oyun ve hesap teslimatı."}
+              {store.footerText || t("x.dijital-oyun-ve-hesap-teslimat")}
             </p>
           </div>
           <div>

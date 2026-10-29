@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,7 @@ export type StoreBranding = {
 };
 
 export function StoreSettingsForm({ store }: { store: StoreBranding }) {
+  const t = useT();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     const file = event.target.files?.[0];
     if (!file) return;
     if (file.size > 180_000) {
-      toast.error("Görsel en fazla 180 KB olabilir.");
+      toast.error(t("x.gorsel-en-fazla-180-kb-olabilir"));
       return;
     }
     const reader = new FileReader();
@@ -92,10 +94,10 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     const result = await saveStoreSettings(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Kaydedilemedi.");
+      setError(result.message ?? t("x.kaydedilemedi"));
       return;
     }
-    toast.success(result.message ?? "Ayarlar kaydedildi");
+    toast.success(result.message ?? t("x.ayarlar-kaydedildi"));
     if (result.data?.slug && result.data.slug !== store.slug) {
       // Always use the prefixed path: on a custom domain the server's domain cache
       // may still point at the previous slug for a few seconds.
@@ -107,23 +109,23 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <section className="card p-5">
-        <h2 className="text-[14px] font-semibold">Mağaza kimliği</h2>
-        <p className="mt-0.5 text-[11.5px] muted">Vitrinde görünen başlık, açıklama ve duyuru metinleri.</p>
+        <h2 className="text-[14px] font-semibold">{" "}{t("x.magaza-kimligi")}</h2>
+        <p className="mt-0.5 text-[11.5px] muted">{" "}{t("x.vitrinde-gorunen-baslk-acklama-ve-duyuru-metinleri")}</p>
         <div className="mt-4 grid gap-3.5 sm:grid-cols-2">
-          <Field label="Site Başlığı (Title)">
+          <Field label={t("x.site-baslg-title")}>
             <input name="title" defaultValue={store.title} className="input" required />
           </Field>
-          <Field label="Mağaza ID (slug)" hint={`Vitrin adresi: /${slug}`}>
+          <Field label={t("x.magaza-id-slug")} hint={`Vitrin adresi: /${slug}`}>
             <input value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase())} className="input mono" required />
           </Field>
         </div>
         <div className="mt-3.5">
-          <Field label="Alt Başlık">
+          <Field label={t("x.alt-baslk")}>
             <input name="subtitle" defaultValue={store.subtitle} className="input" />
           </Field>
         </div>
         <div className="mt-3.5 grid gap-3.5 sm:grid-cols-2">
-          <Field label="Duyuru Bandı" hint="Boş bırakılırsa bant gizlenir.">
+          <Field label={t("x.duyuru-band")} hint={t("x.bos-braklrsa-bant-gizlenir")}>
             <input name="announcement" defaultValue={store.announcement} className="input" />
           </Field>
           <Field label="Footer Metni">
@@ -142,19 +144,17 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                     loading="lazy"
                     decoding="async" src={logoUrl} alt="Logo" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-[10px] muted">yok</span>
+                  <span className="text-[10px] muted">{t("x.yok")}</span>
                 )}
               </span>
               <div className="flex-1">
                 <label className="btn btn-outline btn-sm cursor-pointer">
-                  <Upload size={12} />
-                  Görsel yükle
-                  <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(event) => onImage(event, "logo")} />
+                  <Upload size={12} />{t("x.gorsel-yukle")}<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(event) => onImage(event, "logo")} />
                 </label>
                 <input
                   value={logoUrl.startsWith("data:") ? "" : logoUrl}
                   onChange={(event) => setLogoUrl(event.target.value)}
-                  placeholder="veya https://..."
+                  placeholder={t("x.veya-https")}
                   className="input mt-1.5 text-[11.5px]"
                 />
               </div>
@@ -170,19 +170,17 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                     loading="lazy"
                     decoding="async" src={faviconUrl} alt="Favicon" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-[10px] muted">yok</span>
+                  <span className="text-[10px] muted">{t("x.yok")}</span>
                 )}
               </span>
               <div className="flex-1">
                 <label className="btn btn-outline btn-sm cursor-pointer">
-                  <Upload size={12} />
-                  Görsel yükle
-                  <input type="file" accept="image/png,image/x-icon,image/svg+xml" className="hidden" onChange={(event) => onImage(event, "favicon")} />
+                  <Upload size={12} />{t("x.gorsel-yukle")}<input type="file" accept="image/png,image/x-icon,image/svg+xml" className="hidden" onChange={(event) => onImage(event, "favicon")} />
                 </label>
                 <input
                   value={faviconUrl.startsWith("data:") ? "" : faviconUrl}
                   onChange={(event) => setFaviconUrl(event.target.value)}
-                  placeholder="veya https://..."
+                  placeholder={t("x.veya-https")}
                   className="input mt-1.5 text-[11.5px]"
                 />
               </div>
@@ -193,9 +191,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
 
       <section className="card p-5">
         <h2 className="text-[14px] font-semibold">Tema ve tipografi</h2>
-        <p className="mt-0.5 text-[11.5px] muted">
-          Renkler CSS değişkenleri ile tüm mağaza arayüzüne anında yansır.
-        </p>
+        <p className="mt-0.5 text-[11.5px] muted">{t("x.renkler-css-degiskenleri-ile-tum-magaza-arayuzune-annda")}</p>
         <div className="mt-4 grid gap-3.5 sm:grid-cols-2">
           <div>
             <p className="label">Ana Renk (Primary)</p>
@@ -232,7 +228,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
         </div>
 
         <div className="mt-4">
-          <p className="label">Yazı Tipi (Google Fonts)</p>
+          <p className="label">{" "}{t("x.yaz-tipi-google-fonts")}</p>
           <button
             type="button"
             onClick={() => setFontOpen((value) => !value)}
@@ -250,7 +246,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                 <input
                   value={fontSearch}
                   onChange={(event) => setFontSearch(event.target.value)}
-                  placeholder="Font ara..."
+                  placeholder={t("x.font-ara")}
                   className="input h-9 pl-8 text-[12px]"
                   autoFocus
                 />
@@ -280,13 +276,9 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
             </div>
           ) : null}
           <div className="mt-2 rounded-lg border px-3 py-2.5 hairline">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] muted">Canlı önizleme</p>
-            <p className="mt-1 text-[17px] font-semibold" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>
-              Dijital hesap teslimatı
-            </p>
-            <p className="text-[12px] muted" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>
-              Steam Guard kodları saniyeler içinde yenilenir. 0123456789
-            </p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] muted">{" "}{t("x.canl-onizleme")}</p>
+            <p className="mt-1 text-[17px] font-semibold" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>{t("x.dijital-hesap-teslimat")}</p>
+            <p className="text-[12px] muted" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>{t("x.steam-guard-kodlar-saniyeler-icinde-yenilenir-0123456789")}</p>
           </div>
         </div>
       </section>
@@ -294,8 +286,8 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
       <section className="card p-5">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-[14px] font-semibold">Sosyal medya & iletişim</h2>
-            <p className="mt-0.5 text-[11.5px] muted">Footer&apos;da en fazla 6 link gösterilir.</p>
+            <h2 className="text-[14px] font-semibold">{" "}{t("x.sosyal-medya-iletisim")}</h2>
+            <p className="mt-0.5 text-[11.5px] muted">{" "}{t("x.footer-da-en-fazla-6-link-gosterilir")}</p>
           </div>
           <button
             type="button"
@@ -348,7 +340,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
       <div className="flex justify-end">
         <button type="submit" className="btn btn-dark" disabled={pending}>
           {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-          Tüm ayarları kaydet
+          {t("x.tum-ayarlar-kaydet")}
         </button>
       </div>
     </form>
@@ -366,6 +358,7 @@ export function StoreDomainForm({
   verifiedAt: string | null;
   token: string;
 }) {
+  const t = useT();
   const router = useRouter();
   const [value, setValue] = useState(domain);
   const [savedDomain, setSavedDomain] = useState(domain);
@@ -385,7 +378,7 @@ export function StoreDomainForm({
     const result = await saveStoreDomain(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Alan adı kaydedilemedi.");
+      setError(result.message ?? t("x.alan-ad-kaydedilemedi"));
       return;
     }
     const next = result.data?.domain ?? "";
@@ -394,7 +387,7 @@ export function StoreDomainForm({
     setActiveToken(result.data?.token ?? "");
     setVerified(unchanged && Boolean(verifiedAt));
     setValue(next);
-    toast.success(result.message ?? "Alan adı kaydedildi");
+    toast.success(result.message ?? t("x.alan-ad-kaydedildi"));
     router.refresh();
   }
 
@@ -411,11 +404,11 @@ export function StoreDomainForm({
     const result = await verifyStoreDomain(formData);
     setVerifying(false);
     if (!result.ok) {
-      setError(result.message ?? "Doğrulanamadı.");
+      setError(result.message ?? t("x.dogrulanamad"));
       return;
     }
     setVerified(true);
-    toast.success(result.message ?? "Alan adı doğrulandı");
+    toast.success(result.message ?? t("x.alan-ad-dogruland"));
     router.refresh();
   }
 
@@ -436,11 +429,8 @@ export function StoreDomainForm({
             <Globe2 size={16} />
           </span>
           <div>
-            <h2 className="text-[14px] font-semibold">Özel alan adı</h2>
-            <p className="mt-0.5 max-w-xl text-[11.5px] leading-relaxed muted">
-              Opsiyonel. Mağazanızı <span className="mono">magazadi.com</span> gibi kendi alan adınızla
-              yayınlayın. Bağlı alan adında <span className="mono">/slug</span> öneki görünmez.
-            </p>
+            <h2 className="text-[14px] font-semibold">{" "}{t("x.ozel-alan-ad")}</h2>
+            <p className="mt-0.5 max-w-xl text-[11.5px] leading-relaxed muted">{t("x.opsiyonel-magazanz")}<span className="mono">magazadi.com</span>{t("x.gibi-kendi-alan-adnzla-yaynlayn-bagl-alan-adnda")}<span className="mono">/slug</span>{t("x.oneki-gorunmez")}</p>
           </div>
         </div>
         <span className={`badge ${verified ? "badge-green" : savedDomain ? "badge-amber" : "badge"}`}>
@@ -449,9 +439,9 @@ export function StoreDomainForm({
               <ShieldCheck size={10} /> Aktif
             </>
           ) : savedDomain ? (
-            "Doğrulama bekliyor"
+            t("x.dogrulama-bekliyor")
           ) : (
-            "Kapalı"
+            t("x.kapal")
           )}
         </span>
       </div>
@@ -481,7 +471,7 @@ export function StoreDomainForm({
               disabled={verifying || pending}
             >
               {verifying ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
-              DNS doğrula
+              {t("x.dns-dogrula")}
             </button>
           ) : null}
           {savedDomain ? (
@@ -491,7 +481,7 @@ export function StoreDomainForm({
               onClick={onRemove}
               disabled={pending || verifying}
               style={{ color: "#dc2626" }}
-              title="Alan adını kaldır"
+              title={t("x.alan-adn-kaldr")}
             >
               <Trash2 size={14} />
             </button>
@@ -503,40 +493,29 @@ export function StoreDomainForm({
         <div
           className="mt-3 rounded-lg border px-3 py-2 text-[11.5px]"
         >
-          <span className="font-semibold">https://{savedDomain}</span> mağazanıza bağlı. SSL sertifikası
-          için alan adını sunucuya yönlendirip HTTPS yapılandırmasını tamamlayın.
-        </div>
+          <span className="font-semibold">https://{savedDomain}</span>{t("x.magazanza-bagl-ssl-sertifikas-icin-alan-adn-sunucuya-yon")}</div>
       ) : null}
 
       {savedDomain && activeToken && !verified ? (
         <div className="mt-3 rounded-lg border p-3 hairline" style={{ background: "var(--bg)" }}>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">
-            DNS doğrulama kayıtları
-          </p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">{t("x.dns-dogrulama-kaytlar")}</p>
           <div className="mt-2 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-2.5 py-2 hairline">
               <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.06em] muted">TXT kaydı</p>
+                <p className="text-[10px] uppercase tracking-[0.06em] muted">{" "}{t("x.txt-kayd")}</p>
                 <p className="mono mt-0.5 truncate text-[11px]">_pixguard.{savedDomain}</p>
                 <p className="mono mt-0.5 truncate text-[11px]" style={{ color: "var(--fg)" }}>
                   {activeToken}
                 </p>
               </div>
-              <CopyButton value={activeToken} compact label="TXT değerini kopyala" />
+              <CopyButton value={activeToken} compact label={t("x.txt-degerini-kopyala")} />
             </div>
             <div className="rounded-md border px-2.5 py-2 hairline">
-              <p className="text-[10px] uppercase tracking-[0.06em] muted">Yönlendirme</p>
-              <p className="mt-0.5 text-[11px] leading-relaxed muted">
-                Alan adının A kaydını sunucunuzun IP adresine, <span className="mono">www</span> alt alan
-                adını ise aynı adrese veya <span className="mono">{savedDomain}</span> CNAME&apos;ine
-                yönlendirin. DNS yayılımı 5 dakikaya kadar sürebilir.
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.06em] muted">{t("x.yonlendirme")}</p>
+              <p className="mt-0.5 text-[11px] leading-relaxed muted">{t("x.alan-adnn-a-kaydn-sunucunuzun-ip-adresine")}<span className="mono">www</span>{t("x.alt-alan-adn-ise-ayn-adrese-veya")}<span className="mono">{savedDomain}</span>{t("x.cname-ine-yonlendirin-dns-yaylm-5-dakikaya-kadar-surebil")}</p>
             </div>
           </div>
-          <p className="mt-2 text-[10.5px] leading-relaxed muted">
-            Doğrulama yalnızca alan adının sizde olduğunu kontrol eder. TXT kaydı eklendikten sonra
-            &quot;DNS doğrula&quot; düğmesine basın; alan adı birkaç saniye içinde yayına alınır.
-          </p>
+          <p className="mt-2 text-[10.5px] leading-relaxed muted">{t("x.dogrulama-yalnzca-alan-adnn-sizde-oldugunu-kontrol-eder")}</p>
         </div>
       ) : null}
 
@@ -558,6 +537,7 @@ export function StoreCredentialsForm({
   username: string;
   email: string;
 }) {
+  const t = useT();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -571,7 +551,7 @@ export function StoreCredentialsForm({
     const result = await saveStoreCredentials(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Kaydedilemedi.");
+      setError(result.message ?? t("x.kaydedilemedi"));
       return;
     }
     toast.success(result.message ?? "Kaydedildi");
@@ -580,21 +560,19 @@ export function StoreCredentialsForm({
 
   return (
     <form onSubmit={onSubmit} className="card p-5">
-      <h2 className="text-[14px] font-semibold">Yönetici erişimi</h2>
-      <p className="mt-0.5 text-[11.5px] muted">
-        Panel giriş bilgileri. Şifre değiştirmek için mevcut şifrenizi girin.
-      </p>
+      <h2 className="text-[14px] font-semibold">{" "}{t("x.yonetici-erisimi")}</h2>
+      <p className="mt-0.5 text-[11.5px] muted">{t("x.panel-giris-bilgileri-sifre-degistirmek-icin-mevcut-sifr")}</p>
       <div className="mt-4 grid gap-3.5 sm:grid-cols-2">
-        <Field label="Kullanıcı Adı">
+        <Field label={t("x.kullanc-ad")}>
           <input name="username" defaultValue={username} className="input" required minLength={3} />
         </Field>
         <Field label="E-posta">
           <input name="email" type="email" defaultValue={email} className="input" required />
         </Field>
-        <Field label="Mevcut Şifre" hint="Yalnızca şifre değiştirirken gerekir.">
+        <Field label={t("x.mevcut-sifre")} hint={t("x.yalnzca-sifre-degistirirken-gerekir")}>
           <input name="currentPassword" type="password" className="input" autoComplete="current-password" />
         </Field>
-        <Field label="Yeni Şifre">
+        <Field label={t("x.yeni-sifre")}>
           <input name="newPassword" type="password" className="input" autoComplete="new-password" />
         </Field>
       </div>
@@ -606,7 +584,7 @@ export function StoreCredentialsForm({
       <div className="mt-4 flex justify-end">
         <button type="submit" className="btn btn-outline" disabled={pending}>
           {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-          Erişim bilgilerini güncelle
+          {t("x.erisim-bilgilerini-guncelle")}
         </button>
       </div>
     </form>

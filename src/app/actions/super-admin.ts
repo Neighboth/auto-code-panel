@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
@@ -27,9 +29,10 @@ export type StoreAccountView = {
 
 /** Platform owner only: decrypts inventory credentials for the selected tenant. */
 export async function viewStoreAccounts(storeId: number): Promise<ActionResult<StoreAccountView[]>> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const storeRows = await db.select().from(stores).where(eq(stores.id, storeId)).limit(1);
-  if (storeRows.length === 0) return { ok: false, message: "Mağaza bulunamadı." };
+  if (storeRows.length === 0) return { ok: false, message: t("x.magaza-bulunamad-2") };
   const rows = await db
     .select()
     .from(accounts)
@@ -78,7 +81,8 @@ export type ResellerKeyPayload = {
 export async function createResellerKeys(
   payload: ResellerKeyPayload,
 ): Promise<ActionResult<{ codes: string[] }>> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
 
   const count = Math.min(50, Math.max(1, Math.trunc(payload.count || 1)));
   const durationDays =
@@ -88,7 +92,7 @@ export async function createResellerKeys(
   const renewalUrl = payload.renewalUrl.trim();
 
   if (renewalUrl && !/^https?:\/\//i.test(renewalUrl)) {
-    return { ok: false, message: "Süre uzatma linki http(s) ile başlamalıdır." };
+    return { ok: false, message: t("x.sure-uzatma-linki-http-s-ile-baslamaldr") };
   }
 
   const values = Array.from({ length: count }, () => ({
@@ -116,20 +120,21 @@ export async function createResellerKeys(
   revalidatePath("/super-admin");
   return {
     ok: true,
-    message: `${inserted.length} bayilik kodu oluşturuldu.`,
+    message: t("x.count-bayilik-kodu-olusturuldu", { count: inserted.length }),
     data: { codes: inserted.map((row) => row.code) },
   };
 }
 
 export async function revokeResellerKey(formData: FormData): Promise<ActionResult> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = Number(formData.get("id"));
-  if (!Number.isInteger(id)) return { ok: false, message: "Geçersiz kod." };
+  if (!Number.isInteger(id)) return { ok: false, message: t("x.gecersiz-kod") };
   const rows = await db.select().from(resellerKeys).where(eq(resellerKeys.id, id)).limit(1);
   const key = rows[0];
-  if (!key) return { ok: false, message: "Kod bulunamadı." };
+  if (!key) return { ok: false, message: t("x.kod-bulunamad") };
   if (key.status === "used") {
-    return { ok: false, message: "Kullanılmış kod iptal edilemez. Bayiyi askıya alabilirsiniz." };
+    return { ok: false, message: t("x.kullanlms-kod-iptal-edilemez-bayiyi-askya-alabilirsiniz") };
   }
   await db.update(resellerKeys).set({ status: "revoked" }).where(eq(resellerKeys.id, id));
   await logAudit({
@@ -145,20 +150,21 @@ export async function revokeResellerKey(formData: FormData): Promise<ActionResul
 }
 
 export async function extendStoreLicense(formData: FormData): Promise<ActionResult> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const storeId = Number(formData.get("storeId"));
   const daysRaw = String(formData.get("days") ?? "").trim();
   const maxAccountsRaw = String(formData.get("maxAccounts") ?? "").trim();
   const renewalUrl = String(formData.get("renewalUrl") ?? "").trim();
 
-  if (!Number.isInteger(storeId)) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!Number.isInteger(storeId)) return { ok: false, message: t("x.magaza-bulunamad-2") };
   const rows = await db.select().from(stores).where(eq(stores.id, storeId)).limit(1);
   const store = rows[0];
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   if (daysRaw !== "" && daysRaw !== "0") {
     const days = Number(daysRaw);
-    if (!Number.isFinite(days) || days <= 0) return { ok: false, message: "Geçerli bir gün sayısı girin." };
+    if (!Number.isFinite(days) || days <= 0) return { ok: false, message: t("x.gecerli-bir-gun-says-girin") };
     const base =
       store.expiresAt && new Date(store.expiresAt).getTime() > Date.now()
         ? new Date(store.expiresAt).getTime()
@@ -172,21 +178,21 @@ export async function extendStoreLicense(formData: FormData): Promise<ActionResu
   if (maxAccountsRaw !== "") {
     const maxAccounts = maxAccountsRaw === "unlimited" ? null : Number(maxAccountsRaw);
     if (maxAccounts !== null && (!Number.isFinite(maxAccounts) || maxAccounts < 1)) {
-      return { ok: false, message: "Hesap limiti geçersiz." };
+      return { ok: false, message: t("x.hesap-limiti-gecersiz") };
     }
     await db.update(stores).set({ maxAccounts, updatedAt: new Date() }).where(eq(stores.id, store.id));
   }
 
   if (renewalUrl) {
     if (!/^https?:\/\//i.test(renewalUrl)) {
-      return { ok: false, message: "Süre uzatma linki http(s) ile başlamalıdır." };
+      return { ok: false, message: t("x.sure-uzatma-linki-http-s-ile-baslamaldr") };
     }
     await db.update(stores).set({ renewalUrl, updatedAt: new Date() }).where(eq(stores.id, store.id));
   }
 
   const refreshed = await db.select().from(stores).where(eq(stores.id, store.id)).limit(1);
   if (refreshed[0]?.expiresAt && new Date(refreshed[0].expiresAt).getTime() <= Date.now()) {
-    return { ok: false, message: "Süre eklendi ancak lisans hâlâ geçmiş tarihte. Daha fazla gün ekleyin." };
+    return { ok: false, message: t("x.sure-eklendi-ancak-lisans-hala-gecmis-tarihte-daha-fazla") };
   }
 
   await logAudit({
@@ -206,7 +212,7 @@ export async function extendStoreLicense(formData: FormData): Promise<ActionResu
   });
   revalidatePath("/super-admin");
   revalidatePath(`/${store.slug}`, "layout");
-  return { ok: true, message: "Bayi lisansı güncellendi." };
+  return { ok: true, message: t("x.bayi-lisans-guncellendi") };
 }
 
 /**
@@ -215,21 +221,23 @@ export async function extendStoreLicense(formData: FormData): Promise<ActionResu
  * panel and produced an infinite redirect loop. Only `setStoreSuspension` exists.
  */
 export async function getStoreSuspensionInfo(storeId: number): Promise<ActionResult<{ suspended: boolean }>> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const rows = await db.select({ status: stores.status }).from(stores).where(eq(stores.id, storeId)).limit(1);
-  if (!rows[0]) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!rows[0]) return { ok: false, message: t("x.magaza-bulunamad-2") };
   return { ok: true, data: { suspended: rows[0].status === "suspended" } };
 }
 
 export async function setStoreSuspension(formData: FormData): Promise<ActionResult> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const storeId = Number(formData.get("storeId"));
   const suspended = String(formData.get("suspended")) === "true";
-  if (!Number.isInteger(storeId)) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!Number.isInteger(storeId)) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   const rows = await db.select().from(stores).where(eq(stores.id, storeId)).limit(1);
   const store = rows[0];
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   await db
     .update(stores)
@@ -248,13 +256,14 @@ export async function setStoreSuspension(formData: FormData): Promise<ActionResu
 
   revalidatePath("/super-admin");
   revalidatePath(`/${store.slug}`, "layout");
-  return { ok: true, message: suspended ? "Bayi askıya alındı." : "Bayi yeniden aktifleştirildi." };
+  return { ok: true, message: suspended ? t("x.bayi-askya-alnd") : t("x.bayi-yeniden-aktiflestirildi") };
 }
 
 /* ------------------------- Duyuru & güncelleme ------------------------ */
 
 export async function savePlatformPost(formData: FormData): Promise<ActionResult<{ id: number }>> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
 
   const idRaw = String(formData.get("id") ?? "").trim();
   const kind = String(formData.get("kind") ?? "announcement") === "update" ? "update" : "announcement";
@@ -263,10 +272,10 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
   const version = String(formData.get("version") ?? "").trim();
   const pinned = formData.get("pinned") === "on" || formData.get("pinned") === "true";
 
-  if (title.length < 3) return { ok: false, message: "Başlık en az 3 karakter olmalıdır." };
-  if (title.length > 120) return { ok: false, message: "Başlık en fazla 120 karakter olabilir." };
-  if (body.length > 8000) return { ok: false, message: "İçerik en fazla 8000 karakter olabilir." };
-  if (version.length > 24) return { ok: false, message: "Sürüm etiketi en fazla 24 karakter olabilir." };
+  if (title.length < 3) return { ok: false, message: t("x.baslk-en-az-3-karakter-olmaldr") };
+  if (title.length > 120) return { ok: false, message: t("x.baslk-en-fazla-120-karakter-olabilir") };
+  if (body.length > 8000) return { ok: false, message: t("x.icerik-en-fazla-8000-karakter-olabilir") };
+  if (version.length > 24) return { ok: false, message: t("x.surum-etiketi-en-fazla-24-karakter-olabilir") };
 
   const values = {
     kind,
@@ -279,13 +288,13 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
 
   if (idRaw) {
     const id = Number(idRaw);
-    if (!Number.isInteger(id)) return { ok: false, message: "Geçersiz kayıt." };
+    if (!Number.isInteger(id)) return { ok: false, message: t("x.gecersiz-kayt") };
     const updated = await db
       .update(platformPosts)
       .set(values)
       .where(eq(platformPosts.id, id))
       .returning({ id: platformPosts.id });
-    if (updated.length === 0) return { ok: false, message: "Kayıt bulunamadı." };
+    if (updated.length === 0) return { ok: false, message: t("x.kayt-bulunamad") };
     await logAudit({
       action: "super.post.update",
       entity: "platform_post",
@@ -295,7 +304,7 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
     });
     revalidatePath("/super-admin");
     revalidatePath("/super-admin/duyurular");
-    return { ok: true, message: "Kayıt güncellendi.", data: { id: updated[0].id } };
+    return { ok: true, message: t("x.kayt-guncellendi"), data: { id: updated[0].id } };
   }
 
   const [created] = await db
@@ -321,15 +330,16 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
   revalidatePath("/super-admin/duyurular");
   return {
     ok: true,
-    message: `${kind === "update" ? "Güncelleme notu yayınlandı" : "Duyuru yayınlandı"} — ${broadcast.sent} mağazaya e-posta gönderildi.`,
+    message: t(kind === "update" ? "x.guncelleme-notu-yaynland-count-magazaya-e-posta-gonderil" : "x.duyuru-yaynland-count-magazaya-e-posta-gonderildi", { count: broadcast.sent }),
     data: { id: created.id },
   };
 }
 
 export async function deletePlatformPost(formData: FormData): Promise<ActionResult> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = Number(formData.get("id"));
-  if (!Number.isInteger(id)) return { ok: false, message: "Geçersiz kayıt." };
+  if (!Number.isInteger(id)) return { ok: false, message: t("x.gecersiz-kayt") };
   const removed = await db.select().from(platformPosts).where(eq(platformPosts.id, id)).limit(1);
   await db.delete(platformPosts).where(eq(platformPosts.id, id));
   await logAudit({
@@ -342,25 +352,26 @@ export async function deletePlatformPost(formData: FormData): Promise<ActionResu
   });
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/duyurular");
-  return { ok: true, message: "Kayıt silindi." };
+  return { ok: true, message: t("x.kayt-silindi") };
 }
 
 export async function setPlatformPostPinned(formData: FormData): Promise<ActionResult> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = Number(formData.get("id"));
   const pinned = String(formData.get("pinned")) === "true";
-  if (!Number.isInteger(id)) return { ok: false, message: "Geçersiz kayıt." };
+  if (!Number.isInteger(id)) return { ok: false, message: t("x.gecersiz-kayt") };
   await db.update(platformPosts).set({ pinned, updatedAt: new Date() }).where(eq(platformPosts.id, id));
   await logAudit({
     action: "super.post.pin",
     entity: "platform_post",
     entityId: id,
-    summary: pinned ? "Duyuru sabitlendi" : "Sabitleme kaldırıldı",
+    summary: pinned ? "Duyuru sabitlendi" : t("x.sabitleme-kaldrld"),
     metadata: { pinned },
   });
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/duyurular");
-  return { ok: true, message: pinned ? "Kayıt sabitlendi." : "Sabitleme kaldırıldı." };
+  return { ok: true, message: pinned ? t("x.kayt-sabitlendi") : t("x.sabitleme-kaldrld-2") };
 }
 
 /**
@@ -370,7 +381,8 @@ export async function setPlatformPostPinned(formData: FormData): Promise<ActionR
  * payment flows.
  */
 export async function updatePlatformSettings(formData: FormData): Promise<ActionResult> {
-  if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
   const defaultPlanNote = String(formData.get("defaultPlanNote") ?? "").trim();
   if (defaultPlanNote.length > 2000) {
     return { ok: false, message: "Bilgilendirme metni en fazla 2000 karakter olabilir." };
@@ -394,11 +406,11 @@ export async function updatePlatformSettings(formData: FormData): Promise<Action
     action: "super.settings.update",
     entity: "platform_settings",
     entityId: 1,
-    summary: "Sistem ayarları güncellendi",
+    summary: t("x.sistem-ayarlar-guncellendi"),
     metadata: { defaultPlanNoteLength: defaultPlanNote.length },
   });
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/ayarlar");
   revalidatePath("/", "layout");
-  return { ok: true, message: "Sistem ayarları kaydedildi. Süre uzatma linki ve destek e-postası .env dosyasından okunur." };
+  return { ok: true, message: t("x.sistem-ayarlar-kaydedildi-sure-uzatma-linki-ve-destek-e") };
 }

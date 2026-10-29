@@ -1,10 +1,10 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Upload } from "lucide-react";
-import { useT } from "@/components/i18n-provider";
 import { updateCustomerProfile } from "@/app/actions/auth";
 import { Field } from "@/components/ui";
 
@@ -25,7 +25,7 @@ export function ProfileForm({
     const file = event.target.files?.[0];
     if (!file) return;
     if (file.size > 160_000) {
-      toast.error("Görsel en fazla 160 KB olabilir.");
+      toast.error(t("x.gorsel-en-fazla-160-kb-olabilir"));
       return;
     }
     const reader = new FileReader();
@@ -44,10 +44,10 @@ export function ProfileForm({
     const result = await updateCustomerProfile(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Profil güncellenemedi.");
+      setError(result.message ?? t("x.profil-guncellenemedi"));
       return;
     }
-    toast.success(result.message ?? "Profil güncellendi");
+    toast.success(result.message ?? t("x.profil-guncellendi"));
     router.refresh();
   }
 
@@ -69,9 +69,7 @@ export function ProfileForm({
         </div>
         <div>
           <label className="btn btn-outline btn-sm cursor-pointer">
-            <Upload size={12} />
-            Avatar yükle
-            <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={onFile} />
+            <Upload size={12} />{t("x.avatar-yukle")}<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={onFile} />
           </label>
           <p className="mt-1.5 text-[10.5px] muted">{t("profile.avatarHint")}</p>
         </div>
@@ -80,16 +78,14 @@ export function ProfileForm({
           className="btn btn-ghost btn-sm ml-auto"
           onClick={() => setAvatar("")}
           disabled={!avatar}
-        >
-          Avatarı kaldır
-        </button>
+        >{t("x.avatar-kaldr")}</button>
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        <Field label="Kullanıcı Adı" hint="Benzersiz olmalıdır. Kütüphane erişiminde kullanılır.">
+        <Field label={t("x.kullanc-ad")} hint={t("x.benzersiz-olmaldr-kutuphane-erisiminde-kullanlr")}>
           <input name="username" defaultValue={customer.username} required minLength={3} maxLength={24} className="input" />
         </Field>
-        <Field label="Görünen Ad">
+        <Field label={t("x.gorunen-ad")}>
           <input name="displayName" defaultValue={customer.displayName} className="input" />
         </Field>
         <Field label="E-posta (opsiyonel)">
@@ -109,10 +105,10 @@ export function ProfileForm({
         <p className="text-[12px] font-semibold">{t("profile.changePassword")}</p>
         <p className="mt-0.5 text-[11px] muted">{t("profile.changePasswordHint")}</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
-          <Field label="Mevcut şifre">
+          <Field label={t("x.mevcut-sifre-2")}>
             <input name="currentPassword" type="password" className="input" autoComplete="current-password" />
           </Field>
-          <Field label="Yeni şifre">
+          <Field label={t("x.yeni-sifre-2")}>
             <input name="newPassword" type="password" className="input" autoComplete="new-password" />
           </Field>
         </div>
@@ -127,7 +123,7 @@ export function ProfileForm({
       <div className="mt-5 flex justify-end">
         <button type="submit" className="btn btn-primary" disabled={pending}>
           {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-          Değişiklikleri kaydet
+          {t("x.degisiklikleri-kaydet")}
         </button>
       </div>
     </form>

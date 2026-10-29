@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -19,11 +20,12 @@ const durationOptions = [
   { label: "1 Ay", days: 30 },
   { label: "3 Ay", days: 90 },
   { label: "6 Ay", days: 180 },
-  { label: "1 Yıl", days: 365 },
-  { label: "Sınırsız", days: null },
+  { label: "x.1-yl", days: 365 },
+  { label: "x.snrsz", days: null },
 ];
 
 export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: string }) {
+  const t = useT();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,17 +50,17 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
     });
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Kod üretilemedi.");
+      setError(result.message ?? t("x.kod-uretilemedi"));
       return;
     }
     setCodes(result.data?.codes ?? []);
-    toast.success(result.message ?? "Kodlar oluşturuldu");
+    toast.success(result.message ?? t("x.kodlar-olusturuldu"));
     router.refresh();
   }
 
   async function copyAll() {
     await navigator.clipboard.writeText(codes.join("\n"));
-    toast.success("Tüm kodlar kopyalandı");
+    toast.success(t("x.tum-kodlar-kopyaland"));
   }
 
   function download() {
@@ -75,13 +77,13 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
     <div className="card p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Bayilik kodu üret</h2>
-          <p className="mt-1 text-[12px] muted">Süre, hesap limiti ve süre uzatma linki kodla birlikte saklanır.</p>
+          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">{" "}{t("x.bayilik-kodu-uret")}</h2>
+          <p className="mt-1 text-[12px] muted">{" "}{t("x.sure-hesap-limiti-ve-sure-uzatma-linki-kodla-birlikte-sa")}</p>
         </div>
       </div>
       <form onSubmit={onSubmit} className="mt-4 space-y-3.5">
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Bayilik Süresi">
+          <Field label={t("x.bayilik-suresi")}>
             <select
               name="duration"
               className="select"
@@ -111,15 +113,13 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
                   type="checkbox"
                   checked={unlimitedAccounts}
                   onChange={(event) => setUnlimitedAccounts(event.target.checked)}
-                />
-                Sınırsız
-              </label>
+                />{t("x.snrsz")}</label>
             </div>
           </Field>
         </div>
         <Field
-          label="Süre Uzatma Linki"
-          hint="RENEWAL_URL ortam değişkeninden gelir; bayilik koduna da bu link yazılır."
+          label={t("x.sure-uzatma-linki")}
+          hint={t("x.renewal-url-ortam-degiskeninden-gelir-bayilik-koduna-da")}
         >
           <input
             name="renewalUrl"
@@ -130,9 +130,9 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
         </Field>
         <div className="grid gap-3 sm:grid-cols-[1fr_110px]">
           <Field label="Not (opsiyonel)">
-            <input name="note" className="input" placeholder="Örn. kampanya bayi paketi" />
+            <input name="note" className="input" placeholder={t("x.orn-kampanya-bayi-paketi")} />
           </Field>
-          <Field label="Adet">
+          <Field label={t("x.adet")}>
             <input
               type="number"
               min={1}
@@ -150,14 +150,14 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
         ) : null}
         <button type="submit" className="btn btn-dark w-full" disabled={pending}>
           {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-          Kod oluştur
+          {t("x.kod-olustur")}
         </button>
       </form>
 
       {codes.length > 0 ? (
         <div className="mt-4 rounded-lg border p-3 hairline">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] muted">Üretilen kodlar</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] muted">{" "}{t("x.uretilen-kodlar")}</p>
             <div className="flex items-center gap-1.5">
               <button type="button" onClick={copyAll} className="btn btn-outline btn-sm">
                 <Copy size={12} /> Kopyala
@@ -177,6 +177,7 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
 }
 
 export function RevokeKeyButton({ keyId, status }: { keyId: number; status: string }) {
+  const t = useT();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   if (status !== "available") return null;
@@ -187,16 +188,16 @@ export function RevokeKeyButton({ keyId, status }: { keyId: number; status: stri
     const result = await revokeResellerKey(formData);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "İptal edilemedi");
+      toast.error(result.message ?? t("x.iptal-edilemedi"));
       return;
     }
-    toast.success(result.message ?? "İptal edildi");
+    toast.success(result.message ?? t("x.iptal-edildi"));
     router.refresh();
   }
   return (
     <button type="button" onClick={onClick} disabled={pending} className="btn btn-ghost btn-sm">
       {pending ? <Loader2 size={12} className="animate-spin" /> : <ShieldOff size={12} />}
-      İptal
+      {t("x.iptal")}
     </button>
   );
 }
@@ -216,6 +217,7 @@ export function StoreActions({
   maxAccounts: number | null;
   renewalUrl: string | null;
 }) {
+  const t = useT();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -228,10 +230,10 @@ export function StoreActions({
     const result = await extendStoreLicense(formData);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Güncellenemedi");
+      toast.error(result.message ?? t("x.guncellenemedi"));
       return;
     }
-    toast.success(result.message ?? "Güncellendi");
+    toast.success(result.message ?? t("x.guncellendi"));
     setOpen(false);
     router.refresh();
   }
@@ -244,10 +246,10 @@ export function StoreActions({
     const result = await setStoreSuspension(formData);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "İşlem başarısız");
+      toast.error(result.message ?? t("x.islem-basarsz"));
       return;
     }
-    toast.success(result.message ?? "Güncellendi");
+    toast.success(result.message ?? t("x.guncellendi"));
     router.refresh();
   }
 
@@ -257,29 +259,29 @@ export function StoreActions({
         Lisans
       </button>
       <button type="button" className="btn btn-ghost btn-sm" onClick={toggleSuspension} disabled={pending}>
-        {suspended ? "Aktifleştir" : "Askıya al"}
+        {suspended ? t("x.aktiflestir") : t("x.askya-al")}
       </button>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title={`${storeName} — lisans yönetimi`}
-        description="Eklenen günler mevcut bitiş tarihinin üzerine eklenir. Geçmiş tarihli lisanslarda bugünden itibaren hesaplanır."
+        title={t("x.store-lisans-yonetimi", { store: storeName })}
+        description={t("x.eklenen-gunler-mevcut-bitis-tarihinin-uzerine-eklenir-ge")}
       >
         <form onSubmit={onExtend} className="space-y-4">
           <div className="rounded-lg border px-3 py-2 text-[12px] hairline">
-            <span className="muted">Mevcut bitiş: </span>
+            <span className="muted">{" "}{t("x.mevcut-bitis")}</span>
             <span className="font-medium">
-              {expiresAt ? new Date(expiresAt).toLocaleDateString("tr-TR") : "Sınırsız"}
+              {expiresAt ? new Date(expiresAt).toLocaleDateString("tr-TR") : t("x.snrsz")}
             </span>
             <span className="mx-2 muted">·</span>
-            <span className="muted">Hesap limiti: </span>
-            <span className="font-medium">{maxAccounts ?? "Sınırsız"}</span>
+            <span className="muted">{t("x.hesap-limiti")}: </span>
+            <span className="font-medium">{maxAccounts ?? t("x.snrsz")}</span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Eklenecek gün" hint="Örn. 30">
+            <Field label={t("x.eklenecek-gun")} hint={t("x.orn-30")}>
               <input name="days" type="number" min={1} className="input" placeholder="30" />
             </Field>
-            <Field label="Hesap limiti" hint="unlimited yazarak sınırsız yapın.">
+            <Field label={t("x.hesap-limiti")} hint={t("x.unlimited-yazarak-snrsz-yapn")}>
               <input
                 name="maxAccounts"
                 className="input"
@@ -288,13 +290,11 @@ export function StoreActions({
               />
             </Field>
           </div>
-          <Field label="Bayiye özel süre uzatma linki">
+          <Field label={t("x.bayiye-ozel-sure-uzatma-linki")}>
             <input name="renewalUrl" className="input" defaultValue={renewalUrl ?? ""} placeholder="https://..." />
           </Field>
           <div className="flex justify-end gap-2 pt-1">
-            <button type="button" className="btn btn-outline" onClick={() => setOpen(false)}>
-              Vazgeç
-            </button>
+            <button type="button" className="btn btn-outline" onClick={() => setOpen(false)}>{t("x.vazgec")}</button>
             <button type="submit" className="btn btn-dark" disabled={pending}>
               {pending ? <Loader2 size={14} className="animate-spin" /> : null}
               Kaydet
@@ -319,6 +319,7 @@ export function PlatformSettingsForm({
   envRenewalUrl?: string;
   envSupportEmail?: string;
 }) {
+  const t = useT();
   const renewalLocked = envRenewalUrl ?? renewalUrl;
   const supportLocked = envSupportEmail ?? supportEmail;
   const router = useRouter();
@@ -332,7 +333,7 @@ export function PlatformSettingsForm({
     const result = await updatePlatformSettings(new FormData(event.currentTarget));
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Kaydedilemedi");
+      setError(result.message ?? t("x.kaydedilemedi"));
       return;
     }
     toast.success(result.message ?? "Kaydedildi");
@@ -343,8 +344,8 @@ export function PlatformSettingsForm({
     <form onSubmit={onSubmit} className="card space-y-4 p-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
-          label="Destek E-postası"
-          hint="Bu değer SUPPORT_EMAIL ortam değişkeninden okunur; panelden değiştirilemez."
+          label={t("x.destek-e-postas")}
+          hint={t("x.bu-deger-support-email-ortam-degiskeninden-okunur-paneld")}
         >
           <input
             value={supportLocked}
@@ -353,13 +354,13 @@ export function PlatformSettingsForm({
             aria-readonly="true"
           />
         </Field>
-        <Field label="Marka adı" hint="BRAND_NAME ortam değişkeninden okunur.">
+        <Field label={t("x.marka-ad")} hint={t("x.brand-name-ortam-degiskeninden-okunur")}>
           <input value="BRAND_NAME" readOnly className="input mono text-[12px] opacity-70" />
         </Field>
       </div>
       <Field
-        label="Global Süre Uzatma Linki"
-        hint="RENEWAL_URL ortam değişkeninden okunur. Değiştirmek için .env dosyasını düzenleyip uygulamayı yeniden başlatın."
+        label={t("x.global-sure-uzatma-linki")}
+        hint={t("x.renewal-url-ortam-degiskeninden-okunur-degistirmek-icin")}
       >
         <input
           value={renewalLocked}
@@ -368,12 +369,9 @@ export function PlatformSettingsForm({
           aria-readonly="true"
         />
       </Field>
-      <p className="note note-info">
-        Süre uzatma linki ve destek e-postası güvenlik gereği yalnızca <span className="mono">.env</span>{" "}
-        (<span className="mono">RENEWAL_URL</span>, <span className="mono">SUPPORT_EMAIL</span>) üzerinden
-        yönetilir.
-      </p>
-      <Field label="Bayilere gösterilecek not">
+      <p className="note note-info">{t("x.sure-uzatma-linki-ve-destek-e-postas-guvenlik-geregi-yal")}<span className="mono">.env</span>{" "}
+        (<span className="mono">RENEWAL_URL</span>, <span className="mono">SUPPORT_EMAIL</span>{t("x.uzerinden-yonetilir")}</p>
+      <Field label={t("x.bayilere-gosterilecek-not")}>
         <textarea name="defaultPlanNote" defaultValue={defaultPlanNote} className="textarea" rows={3} />
       </Field>
       {error ? (
@@ -384,7 +382,7 @@ export function PlatformSettingsForm({
       <div className="flex justify-end">
         <button type="submit" className="btn btn-dark" disabled={pending}>
           {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-          Ayarları kaydet
+          {t("x.ayarlar-kaydet")}
         </button>
       </div>
     </form>

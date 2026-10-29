@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -145,7 +146,7 @@ export function AdminShell({
           </div>
         </div>
 
-        <nav aria-label="Mağaza yönetimi" className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible">
+        <nav aria-label={t("x.magaza-yonetimi")} className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible">
           {nav.map((item) => {
             const href = item.href ? `${basePath}/admin/${item.href}` : `${basePath}/admin`;
             const active = pathname === href;
@@ -215,9 +216,7 @@ export function AdminShell({
         </div>
       </aside>
 
-      <a href="#main" className="skip-link">
-        İçeriğe geç
-      </a>
+      <a href="#main" className="skip-link">{t("x.icerige-gec")}</a>
       <main id="main" tabIndex={-1} className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-7">
         {superView ? (
           <div className="note note-info mb-4">

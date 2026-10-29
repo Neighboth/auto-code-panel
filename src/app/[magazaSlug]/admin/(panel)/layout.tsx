@@ -11,6 +11,7 @@ import {
 import { AdminShell } from "@/components/admin/shell";
 import { getLocale } from "@/lib/i18n/server";
 import { env } from "@/lib/env";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function StoreAdminPanelLayout({
   children: ReactNode;
   params: Promise<{ magazaSlug: string }>;
 }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const guard = await requireStoreAdmin(magazaSlug);
   const state = await getStoreState(magazaSlug);
@@ -33,7 +35,7 @@ export default async function StoreAdminPanelLayout({
   const { store, suspended, expired } = state;
   const settings = await getPlatformSettings();
   const quota = await accountQuota(store);
-  const remaining = store.expiresAt ? remainingLabel(store.expiresAt) : "Sınırsız";
+  const remaining = store.expiresAt ? remainingLabel(store.expiresAt) : t("x.snrsz");
   const basePath = await getStoreBasePath(store);
   const locale = await getLocale();
 

@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -35,6 +36,7 @@ export function EmailVerifyCard({
   basePath?: string;
   redirectTo?: string;
 }) {
+  const t = useT();
   const router = useRouter();
   // The magic-link page already knows the code; prefill it without an effect.
   const [code, setCode] = useState(initialCode ?? "");
@@ -51,10 +53,10 @@ export function EmailVerifyCard({
     const result = await verifyCustomerEmail(slug, { id: currentId, token: token ?? null }, code);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Doğrulama başarısız.");
+      setError(result.message ?? t("x.dogrulama-basarsz-2"));
       return;
     }
-    toast.success(result.message ?? "Doğrulandı");
+    toast.success(result.message ?? t("x.dogruland"));
     const target = redirectTo ?? result.data?.redirectTo ?? `${basePath}/kutuphane`;
     router.push(target);
     router.refresh();
@@ -65,10 +67,10 @@ export function EmailVerifyCard({
     try {
       await navigator.clipboard.writeText(initialCode);
       setCopied(true);
-      toast.success("Kod kopyalandı");
+      toast.success(t("x.kod-kopyaland"));
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
-      toast.error("Kopyalanamadı, kodu elle seçin.");
+      toast.error(t("x.kopyalanamad-kodu-elle-secin"));
     }
   }
 
@@ -78,11 +80,11 @@ export function EmailVerifyCard({
     const result = await resendCustomerVerification(slug, email);
     setResending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Kod gönderilemedi.");
+      toast.error(result.message ?? t("x.kod-gonderilemedi"));
       return;
     }
     setCurrentId(result.data?.verificationId ?? null);
-    toast.success(result.message ?? "Yeni kod gönderildi");
+    toast.success(result.message ?? t("x.yeni-kod-gonderildi"));
   }
 
   return (
@@ -93,34 +95,30 @@ export function EmailVerifyCard({
         </span>
         <div className="min-w-0">
           <p className="text-[12.5px] font-medium">
-            {mode === "link" ? "Doğrulama kodunuz" : "E-postanızı doğrulayın"}
+            {mode === "link" ? t("x.dogrulama-kodunuz") : t("x.e-postanz-dogrulayn")}
           </p>
           <p className="mt-0.5 break-all text-[11.5px] leading-relaxed muted">
-            {email ? `${email} adresine 6 haneli bir kod gönderdik.` : "E-postanıza gönderilen 6 haneli kodu girin."}
+            {email ? t("x.email-adresine-6-haneli-bir-kod-gonderdik", { email }) : t("x.e-postanza-gonderilen-6-haneli-kodu-girin")}
           </p>
         </div>
       </div>
 
       {initialCode ? (
         <div className="rounded-xl border border-dashed p-4 text-center hairline">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">
-            E-posta doğrulama kodu
-          </p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("x.e-posta-dogrulama-kodu")}</p>
           <p className="mono mt-2 text-[34px] font-bold leading-none tracking-[0.28em]">{initialCode}</p>
           <div className="mt-3 flex items-center justify-center gap-2">
             <button type="button" onClick={copyCode} className="btn btn-outline btn-sm">
               {copied ? <Check size={12} /> : <Copy size={12} />}
-              {copied ? "Kopyalandı" : "Kodu kopyala"}
+              {copied ? t("x.kopyaland") : "Kodu kopyala"}
             </button>
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed muted">
-            Kodu kopyalayıp kayıt sayfasına dönerek girebilir veya bu sayfada aşağıdaki alana yazabilirsiniz.
-          </p>
+          <p className="mt-2 text-[11px] leading-relaxed muted">{t("x.kodu-kopyalayp-kayt-sayfasna-donerek-girebilir-veya-bu-s")}</p>
         </div>
       ) : null}
 
       <form onSubmit={submit} className="space-y-3">
-        <Field label="Doğrulama kodu" htmlFor="verification-code" hint="6 haneli sayısal kod">
+        <Field label={t("x.dogrulama-kodu")} htmlFor="verification-code" hint={t("x.6-haneli-saysal-kod")}>
           <input
             id="verification-code"
             value={code}
@@ -135,7 +133,7 @@ export function EmailVerifyCard({
         {error ? <p className="note note-danger text-[12px]">{error}</p> : null}
         <button type="submit" className="btn btn-primary w-full" disabled={pending || code.length !== 6}>
           {pending ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
-          Doğrula ve giriş yap
+          {t("x.dogrula-ve-giris-yap")}
         </button>
       </form>
 
@@ -147,11 +145,9 @@ export function EmailVerifyCard({
           className="inline-flex items-center gap-1.5 muted disabled:opacity-50"
         >
           {resending ? <Loader2 size={11} className="animate-spin" /> : <RefreshCw size={11} />}
-          Kodu tekrar gönder
+          {t("x.kodu-tekrar-gonder")}
         </button>
-        <Link href={basePath ? `${basePath}/giris` : "/"} className="muted underline underline-offset-2">
-          Giriş ekranına dön
-        </Link>
+        <Link href={basePath ? `${basePath}/giris` : "/"} className="muted underline underline-offset-2">{t("x.giris-ekranna-don")}</Link>
       </div>
     </div>
   );

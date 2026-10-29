@@ -4,11 +4,13 @@ import { db } from "@/db";
 import { platformPosts } from "@/db/schema";
 import { getSuperSession } from "@/lib/session";
 import { PostManager, type PostItem } from "@/components/super-admin/posts";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Duyurular & Güncellemeler" };
+export const metadata = { title: "x.duyurular-guncellemeler" };
 
 export default async function SuperAdminPostsPage() {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
   if (!session) redirect("/super-admin");
 
@@ -32,12 +34,9 @@ export default async function SuperAdminPostsPage() {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">İletişim merkezi</p>
-        <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">Duyurular & güncellemeler</h1>
-        <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed muted">
-          Burada yayınladığınız kayıtlar tüm mağaza yöneticilerinin panelinde iki büyük kutu içinde
-          görünür. Sabitlenen kayıtlar listenin en üstünde gösterilir.
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">{" "}{t("x.iletisim-merkezi")}</p>
+        <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{" "}{t("x.duyurular-guncellemeler")}</h1>
+        <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed muted">{t("x.burada-yaynladgnz-kaytlar-tum-magaza-yoneticilerinin-pan")}</p>
       </div>
 
       <PostManager posts={posts} />

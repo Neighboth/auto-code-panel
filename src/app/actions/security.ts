@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 import { authenticator } from "otplib";
@@ -124,7 +126,7 @@ export async function listFactors(
   }>
 > {
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: "x.oturum-bulunamad" };
   const totp = !!(await factorRow(subjectType, subject.id, "totp"));
   const passkey = !!(await factorRow(subjectType, subject.id, "passkey"));
   const emailRow = await factorRow(subjectType, subject.id, "email");
@@ -157,14 +159,15 @@ export async function enableEmailFactor(
   slug: string,
   subjectType: SubjectType,
 ): Promise<ActionResult<{ email: string }>> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
   if (!smtpConfigured() || !mailVerificationEnabled()) {
-    return { ok: false, message: "E-posta ile 2FA için SMTP yapılandırılmış olmalıdır." };
+    return { ok: false, message: t("x.e-posta-ile-2fa-icin-smtp-yaplandrlms-olmaldr") };
   }
   const target = await subjectEmail(subjectType, subject.id);
-  if (!target) return { ok: false, message: "Hesabınıza bağlı bir e-posta adresi yok. Önce e-posta ekleyin." };
+  if (!target) return { ok: false, message: t("x.hesabnza-bagl-bir-e-posta-adresi-yok-once-e-posta-ekleyi") };
 
   await saveFactor(subjectType, subject.id, "email", encryptData(JSON.stringify({ email: target.email })));
   await logAudit({
@@ -172,26 +175,27 @@ export async function enableEmailFactor(
     entity: "security_factor",
     entityId: `${subjectType}:${subject.id}`,
     storeSlug: target.storeSlug || null,
-    summary: "E-posta ile 2FA açıldı",
+    summary: t("x.e-posta-ile-2fa-acld"),
     metadata: { email: target.email },
   });
   refresh(slug || undefined);
-  return { ok: true, message: `E-posta ile 2FA açıldı (${target.email}).`, data: { email: target.email } };
+  return { ok: true, message: t("x.e-posta-ile-2fa-acld-email", { email: target.email }), data: { email: target.email } };
 }
 
 /** Sends a fresh 6-digit code to the pending subject's mailbox. */
 export async function sendLoginEmailCode(): Promise<ActionResult<{ expiresInMinutes: number }>> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const pending = await getPendingSubject();
-  if (!pending) return { ok: false, message: "Doğrulama oturumu süresi doldu. Yeniden giriş yapın." };
+  if (!pending) return { ok: false, message: t("x.dogrulama-oturumu-suresi-doldu-yeniden-giris-yapn") };
   const gate = hitRateLimit(`2fa-mail:${pending.t}:${pending.id}`, 4, 300_000);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla kod isteği. ${gate.retryInSeconds} saniye sonra deneyin.` };
+    return { ok: false, message: t("x.cok-fazla-kod-istegi-seconds-saniye-sonra-deneyin", { seconds: gate.retryInSeconds }) };
   }
   const row = await factorRow(pending.t, pending.id, "email");
-  if (!row) return { ok: false, message: "Bu hesapta e-posta ile 2FA açık değil." };
+  if (!row) return { ok: false, message: t("x.bu-hesapta-e-posta-ile-2fa-ack-degil") };
   const target = await subjectEmail(pending.t, pending.id);
-  if (!target) return { ok: false, message: "Hesabınıza bağlı bir e-posta adresi bulunamadı." };
+  if (!target) return { ok: false, message: t("x.hesabnza-bagl-bir-e-posta-adresi-bulunamad") };
 
   const storeRows = target.storeSlug
     ? await db.select({ id: stores.id }).from(stores).where(eq(stores.slug, target.storeSlug)).limit(1)
@@ -209,7 +213,7 @@ export async function sendLoginEmailCode(): Promise<ActionResult<{ expiresInMinu
   });
   return {
     ok: true,
-    message: `Kod ${target.email} adresine gönderildi.`,
+    message: t("x.kod-email-adresine-gonderildi", { email: target.email }),
     data: { expiresInMinutes: 15 },
     verificationId: challenge.id,
   };
@@ -219,8 +223,9 @@ export async function beginTotpSetup(
   slug: string,
   subjectType: SubjectType,
 ): Promise<ActionResult<{ secret: string; uri: string; qr: string }>> {
+  const { t } = await getTranslator();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
   const secret = authenticator.generateSecret(16);
   const uri = authenticator.keyuri(subject.username, brand.name, secret);
   const qr = await QRCode.toDataURL(uri, { width: 220, margin: 1, errorCorrectionLevel: "M" });
@@ -233,17 +238,18 @@ export async function confirmTotpSetup(
   secret: string,
   code: string,
 ): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
   const normalized = secret.replace(/\s+/g, "").toUpperCase();
   if (!normalized || normalized.length < 8) {
-    return { ok: false, message: "Geçersiz secret anahtarı." };
+    return { ok: false, message: t("x.gecersiz-secret-anahtar") };
   }
   if (!/^[0-9]{6}$/.test(code.trim())) {
-    return { ok: false, message: "6 haneli doğrulama kodunu girin." };
+    return { ok: false, message: t("x.6-haneli-dogrulama-kodunu-girin") };
   }
   if (!authenticator.check(code.trim(), normalized)) {
-    return { ok: false, message: "Kod doğrulanamadı. Uygulamanızdaki kodu tekrar deneyin." };
+    return { ok: false, message: t("x.kod-dogrulanamad-uygulamanzdaki-kodu-tekrar-deneyin") };
   }
   await saveFactor(subjectType, subject.id, "totp", encryptData(normalized));
   refresh(slug || undefined);
@@ -254,8 +260,9 @@ export async function beginPasskeyRegistration(
   slug: string,
   subjectType: SubjectType,
 ): Promise<ActionResult<{ options: Record<string, unknown>; tokenId: string }>> {
+  const { t } = await getTranslator();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
   const { challenge, tokenId } = issueChallenge("register");
   const options = {
     rp: { name: brand.name, id: "" },
@@ -283,10 +290,11 @@ export async function savePasskeyRegistration(
   challenge: string,
   credentialJson: string,
 ): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
   if (!consumeChallenge(tokenId, challenge)) {
-    return { ok: false, message: "Kurulum oturumu süresi doldu. Tekrar deneyin." };
+    return { ok: false, message: t("x.kurulum-oturumu-suresi-doldu-tekrar-deneyin") };
   }
   try {
     const credential = JSON.parse(credentialJson) as {
@@ -301,7 +309,7 @@ export async function savePasskeyRegistration(
       challenge: string;
     };
     if (clientData.type !== "webauthn.create" || clientData.challenge !== challenge) {
-      return { ok: false, message: "Kurulum doğrulanamadı. Tekrar deneyin." };
+      return { ok: false, message: t("x.kurulum-dogrulanamad-tekrar-deneyin") };
     }
     const stored: StoredPasskey = {
       id: credential.id,
@@ -318,7 +326,7 @@ export async function savePasskeyRegistration(
     refresh(slug || undefined);
     return { ok: true, message: "Passkey kaydedildi." };
   } catch {
-    return { ok: false, message: "Passkey verisi çözümlenemedi. Tekrar deneyin." };
+    return { ok: false, message: t("x.passkey-verisi-cozumlenemedi-tekrar-deneyin") };
   }
 }
 
@@ -329,31 +337,33 @@ export async function setSecurityQuestion(
   answer: string,
   confirmAnswer: string,
 ): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
   const cleanQuestion = question.trim();
   if (cleanQuestion.length < 5) {
-    return { ok: false, message: "Güvenlik sorusu en az 5 karakter olmalıdır." };
+    return { ok: false, message: t("x.guvenlik-sorusu-en-az-5-karakter-olmaldr") };
   }
   const cleanAnswer = answer.trim().toLowerCase();
   if (cleanAnswer.length < 3) {
-    return { ok: false, message: "Cevap en az 3 karakter olmalıdır." };
+    return { ok: false, message: t("x.cevap-en-az-3-karakter-olmaldr") };
   }
   if (cleanAnswer !== confirmAnswer.trim().toLowerCase()) {
-    return { ok: false, message: "Cevap onayları eşleşmiyor. İkisi de aynı olmalı." };
+    return { ok: false, message: t("x.cevap-onaylar-eslesmiyor-ikisi-de-ayn-olmal") };
   }
   const data = JSON.stringify({ question: cleanQuestion, answerHash: hashPassword(cleanAnswer) });
   await saveFactor(subjectType, subject.id, "question", data);
   refresh(slug || undefined);
-  return { ok: true, message: "Güvenlik sorusu kaydedildi." };
+  return { ok: true, message: t("x.guvenlik-sorusu-kaydedildi-2") };
 }
 
 export async function removeFactor(slug: string, subjectType: SubjectType, kind: Kind): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const subject = await currentSubject(slug, subjectType);
-  if (!subject) return { ok: false, message: "Oturum bulunamadı." };
-  if (!KINDS.includes(kind)) return { ok: false, message: "Geçersiz yöntem." };
+  if (!subject) return { ok: false, message: t("x.oturum-bulunamad") };
+  if (!KINDS.includes(kind)) return { ok: false, message: t("x.gecersiz-yontem") };
   const row = await factorRow(subjectType, subject.id, kind);
-  if (!row) return { ok: false, message: "Kayıtlı yöntem bulunamadı." };
+  if (!row) return { ok: false, message: t("x.kaytl-yontem-bulunamad") };
   await db
     .delete(securityFactors)
     .where(
@@ -374,14 +384,14 @@ export async function removeFactor(slug: string, subjectType: SubjectType, kind:
     const template = securityTemplate({
       storeName: target.storeName,
       username: target.name,
-      what: "Güvenlik yöntemi kaldırıldı",
+      what: t("x.guvenlik-yontemi-kaldrld"),
       detail: kind,
       at: new Date(),
     });
     await deliver({ to: target.email, template, kind: "security" });
   }
   refresh(slug || undefined);
-  return { ok: true, message: "Güvenlik yöntemi kaldırıldı." };
+  return { ok: true, message: t("x.guvenlik-yontemi-kaldrld-2") };
 }
 
 /* ------------------------------ Login challenge ------------------------------ */
@@ -429,13 +439,14 @@ export async function verifyTwoFactorLogin(
   method: "totp" | "passkey" | "question" | "email",
   payload: { code?: string; answer?: string; assertion?: string; verificationId?: number },
 ): Promise<ActionResult> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const pending = await getPendingSubject();
-  if (!pending) return { ok: false, message: "Doğrulama oturumu süresi doldu. Yeniden giriş yapın." };
+  if (!pending) return { ok: false, message: t("x.dogrulama-oturumu-suresi-doldu-yeniden-giris-yapn") };
 
   const gate = hitRateLimit(`2fa:${pending.t}:${pending.id}`, 5, 60_000);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla doğrulama denemesi. ${gate.retryInSeconds} saniye bekleyin.` };
+    return { ok: false, message: t("x.cok-fazla-dogrulama-denemesi-seconds-saniye-bekleyin", { seconds: gate.retryInSeconds }) };
   }
 
   let passed = false;
@@ -479,20 +490,21 @@ export async function verifyTwoFactorLogin(
   }
 
   if (!passed) {
-    return { ok: false, message: "Doğrulama başarısız. Yöntemi kontrol edip tekrar deneyin." };
+    return { ok: false, message: t("x.dogrulama-basarsz-yontemi-kontrol-edip-tekrar-deneyin") };
   }
   recordSuccess(`2fa:${pending.t}:${pending.id}`);
   const result = finalizeSession(pending);
   await result.apply();
   await clearPendingSubject();
-  return { ok: true, redirectTo: result.redirectTo, message: "Doğrulama başarılı." };
+  return { ok: true, redirectTo: result.redirectTo, message: t("x.dogrulama-basarl-2") };
 }
 
 export async function beginPasskeyLogin(): Promise<ActionResult<{ options: Record<string, unknown>; tokenId: string }>> {
+  const { t } = await getTranslator();
   const pending = await getPendingSubject();
-  if (!pending) return { ok: false, message: "Doğrulama oturumu süresi doldu. Yeniden giriş yapın." };
+  if (!pending) return { ok: false, message: t("x.dogrulama-oturumu-suresi-doldu-yeniden-giris-yapn") };
   const row = await factorRow(pending.t, pending.id, "passkey");
-  if (!row) return { ok: false, message: "Bu hesapta passkey kayıtlı değil." };
+  if (!row) return { ok: false, message: t("x.bu-hesapta-passkey-kaytl-degil") };
   const stored = JSON.parse(decryptData(row.data)) as StoredPasskey;
   const { challenge, tokenId } = issueChallenge("login");
   const options = {
@@ -508,8 +520,9 @@ export async function beginPasskeyLogin(): Promise<ActionResult<{ options: Recor
 export async function verifyPendingFactors(): Promise<
   ActionResult<{ methods: { totp: boolean; passkey: boolean; question: boolean; email: boolean } }>
 > {
+  const { t } = await getTranslator();
   const pending = await getPendingSubject();
-  if (!pending) return { ok: false, message: "Doğrulama oturumu süresi doldu." };
+  if (!pending) return { ok: false, message: t("x.dogrulama-oturumu-suresi-doldu") };
   const totp = !!(await factorRow(pending.t, pending.id, "totp"));
   const passkey = !!(await factorRow(pending.t, pending.id, "passkey"));
   const question = !!(await factorRow(pending.t, pending.id, "question"));

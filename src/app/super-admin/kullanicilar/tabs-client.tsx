@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -39,6 +40,7 @@ export function UserTabs({
   customers: StoreCustomer[];
   initialTab?: "resellers" | "customers";
 }) {
+  const t = useT();
   const [tab, setTab] = useState<"resellers" | "customers">(initialTab);
   const [query, setQuery] = useState("");
   // Snapshot of "now" so the render stays pure.
@@ -76,7 +78,7 @@ export function UserTabs({
             }}
           >
             <Store size={13} />
-            Bayi hesapları ({resellers.length})
+            {t("x.bayi-hesaplar-count", { count: resellers.length })}
           </button>
           <button
             type="button"
@@ -88,7 +90,7 @@ export function UserTabs({
             }}
           >
             <Users size={13} />
-            Mağaza müşterileri ({customers.length})
+            {t("x.magaza-musterileri-count", { count: customers.length })}
           </button>
         </div>
         <div className="relative ml-auto w-full sm:w-64">
@@ -96,7 +98,7 @@ export function UserTabs({
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Kullanıcı, e-posta veya mağaza ara"
+            placeholder={t("x.kullanc-e-posta-veya-magaza-ara")}
             className="input h-8 pl-7 text-[12px]"
           />
         </div>
@@ -108,21 +110,21 @@ export function UserTabs({
             <tr>
               {tab === "resellers" ? (
                 <>
-                  <th>Bayi hesabı</th>
+                  <th>{" "}{t("x.bayi-hesab")}</th>
                   <th>E-posta</th>
-                  <th>Mağaza</th>
-                  <th>Kayıt</th>
-                  <th>Durum</th>
-                  <th className="text-right">İşlem</th>
+                  <th>{t("x.magaza")}</th>
+                  <th>{t("x.kayt")}</th>
+                  <th>{t("x.durum")}</th>
+                  <th className="text-right">{t("x.islem")}</th>
                 </>
               ) : (
                 <>
-                  <th>Müşteri</th>
+                  <th>{t("x.musteri")}</th>
                   <th>E-posta</th>
-                  <th>Bağlı mağaza</th>
-                  <th>Kayıt</th>
-                  <th>Durum</th>
-                  <th className="text-right">İşlem</th>
+                  <th>{" "}{t("x.bagl-magaza")}</th>
+                  <th>{t("x.kayt")}</th>
+                  <th>{t("x.durum")}</th>
+                  <th className="text-right">{t("x.islem")}</th>
                 </>
               )}
             </tr>
@@ -131,9 +133,7 @@ export function UserTabs({
             {tab === "resellers" ? (
               filteredResellers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center text-[12.5px] muted">
-                    Kayıt bulunamadı.
-                  </td>
+                  <td colSpan={6} className="py-10 text-center text-[12.5px] muted">{t("x.kayt-bulunamad")}</td>
                 </tr>
               ) : (
                 filteredResellers.map((reseller) => {
@@ -145,7 +145,7 @@ export function UserTabs({
                     <tr key={reseller.id}>
                       <td>
                         <p className="text-[12.5px] font-medium">{reseller.username}</p>
-                        <p className="text-[10.5px] muted">Yönetici hesabı</p>
+                        <p className="text-[10.5px] muted">{" "}{t("x.yonetici-hesab")}</p>
                       </td>
                       <td className="text-[12px]">{reseller.email}</td>
                       <td>
@@ -161,15 +161,13 @@ export function UserTabs({
                       <td className="text-[11.5px] muted">{formatDate(reseller.createdAt)}</td>
                       <td>
                         <span className={`badge ${storeBlocked ? "badge-red" : "badge-green"}`}>
-                          {storeBlocked ? "Mağaza kapalı" : "Aktif"}
+                          {storeBlocked ? t("x.magaza-kapal") : "Aktif"}
                         </span>
                       </td>
                       <td>
                         <div className="flex justify-end">
                           <Link href="/super-admin" className="btn btn-outline btn-sm">
-                            <Settings2 size={12} />
-                            Mağazayı yönet
-                          </Link>
+                            <Settings2 size={12} />{t("x.magazay-yonet")}</Link>
                         </div>
                       </td>
                     </tr>
@@ -178,9 +176,7 @@ export function UserTabs({
               )
             ) : filteredCustomers.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-[12.5px] muted">
-                  Kayıt bulunamadı.
-                </td>
+                <td colSpan={6} className="py-10 text-center text-[12.5px] muted">{t("x.kayt-bulunamad")}</td>
               </tr>
             ) : (
               filteredCustomers.map((customer) => (
@@ -203,7 +199,7 @@ export function UserTabs({
                   <td className="text-[11.5px] muted">{formatDate(customer.createdAt)}</td>
                   <td>
                     <span className={`badge ${customer.status === "active" ? "badge-green" : "badge-red"}`}>
-                      {customer.status === "active" ? "Aktif" : "Yasaklı"}
+                      {customer.status === "active" ? "Aktif" : t("x.yasakl")}
                     </span>
                   </td>
                   <td>
@@ -211,9 +207,7 @@ export function UserTabs({
                       <Link
                         href={`/super-admin/kullanicilar/${customer.storeSlug}/${customer.id}`}
                         className="btn btn-outline btn-sm"
-                      >
-                        Yönet
-                      </Link>
+                      >{t("x.yonet")}</Link>
                     </div>
                   </td>
                 </tr>

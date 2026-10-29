@@ -1,5 +1,6 @@
 import { ImapFlow } from "imapflow";
 import { MAIL_PRESETS, resolveMailPreset, type MailProvider } from "@/lib/mail-presets";
+import { createTranslator } from "@/lib/i18n/translate";
 
 export { MAIL_PRESETS, resolveMailPreset };
 export type { MailProvider };
@@ -77,8 +78,9 @@ export async function fetchLatestMailCode(options: {
   senderFilter?: string | null;
   sinceMinutes?: number;
 }): Promise<MailCodeResult> {
+  const t = createTranslator("tr");
   if (!options.email || !options.password) {
-    return { ok: false, message: "Mail adresi ve uygulama şifresi zorunludur." };
+    return { ok: false, message: t("x.mail-adresi-ve-uygulama-sifresi-zorunludur") };
   }
   const host = options.host?.trim() || "imap.gmail.com";
   const port = options.port ?? 993;
@@ -98,7 +100,7 @@ export async function fetchLatestMailCode(options: {
   } catch (error) {
     return {
       ok: false,
-      message: `IMAP bağlantısı kurulamadı (${host}:${port}). Sunucu bilgilerini ve uygulama şifresini kontrol edin. ${(error as Error).message.slice(0, 120)}`,
+      message: t("x.imap-baglants-kurulamad-host-port-sunucu-bilgilerini-ve-", { host, port, detail: (error as Error).message.slice(0, 120) }),
     };
   }
 
@@ -108,7 +110,7 @@ export async function fetchLatestMailCode(options: {
   try {
     const mailbox = await client.mailboxOpen("INBOX");
     if (!mailbox || mailbox.exists === 0) {
-      return { ok: false, message: "Posta kutusu boş görünüyor." };
+      return { ok: false, message: t("x.posta-kutusu-bos-gorunuyor") };
     }
     const searchCriteria = { since, ...(sender ? { from: sender } : {}) } as {
       since: Date;
@@ -120,8 +122,8 @@ export async function fetchLatestMailCode(options: {
       return {
         ok: false,
         message: sender
-          ? `Son ${options.sinceMinutes ?? 30} dakikada "${sender}" adresinden mail bulunamadı.`
-          : `Son ${options.sinceMinutes ?? 30} dakikada mail bulunamadı.`,
+          ? t("x.son-minutes-dakikada-sender-adresinden-mail-bulunamad", { minutes: options.sinceMinutes ?? 30, sender })
+          : t("x.son-minutes-dakikada-mail-bulunamad", { minutes: options.sinceMinutes ?? 30 }),
       };
     }
     for await (const message of client.fetch(
@@ -144,10 +146,10 @@ export async function fetchLatestMailCode(options: {
     }
     return {
       ok: false,
-      message: "Yeni mailler bulundu ancak içinde geçerli bir doğrulama kodu algılanamadı.",
+      message: t("x.yeni-mailler-bulundu-ancak-icinde-gecerli-bir-dogrulama"),
     };
   } catch (error) {
-    return { ok: false, message: `Mail okunamadı: ${(error as Error).message.slice(0, 140)}` };
+    return { ok: false, message: t("x.mail-okunamad-detail", { detail: (error as Error).message.slice(0, 140) }) };
   } finally {
     try {
       await client.logout();

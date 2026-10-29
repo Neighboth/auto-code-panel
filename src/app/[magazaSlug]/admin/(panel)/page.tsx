@@ -20,9 +20,13 @@ import { formatDateTime } from "@/lib/format";
 import { getStoreBasePath, getStoreState, requireStoreAdmin } from "@/lib/tenant";
 import { Markdown } from "@/components/markdown";
 import { Stat } from "@/components/ui";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Genel Bakış" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.genel-baks") };
+}
 
 type PostRow = typeof platformPosts.$inferSelect;
 
@@ -40,7 +44,7 @@ function postList(rows: PostRow[], kind: "announcement" | "update") {
   return rows.filter((post) => post.kind === kind).slice(0, 8);
 }
 
-function PostBox({
+async function PostBox({
   title,
   description,
   icon,
@@ -55,6 +59,7 @@ function PostBox({
   posts: PostRow[];
   emptyText: string;
 }) {
+  const { t } = await getTranslator();
   return (
     <section className="card flex min-h-[220px] flex-col overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b px-5 py-4 hairline">
@@ -70,14 +75,14 @@ function PostBox({
             <p className="text-[11px] muted">{description}</p>
           </div>
         </div>
-        <span className="badge">{posts.length} kayıt</span>
+        <span className="badge">{t("x.count-kayt", { count: posts.length })}</span>
       </div>
       <div className="max-h-[130px] flex-1 space-y-3 overflow-y-auto p-4 scroll-thin">
         {posts.length === 0 ? (
           <div className="flex h-full min-h-[150px] flex-col items-center justify-center rounded-xl border border-dashed px-5 py-8 text-center hairline">
             <Sparkles size={20} className="muted" />
             <p className="mt-2 text-[12.5px] font-medium">{emptyText}</p>
-            <p className="mt-1 text-[11px] muted">Platform yönetimi yeni bir kayıt yayınladığında burada görünür.</p>
+            <p className="mt-1 text-[11px] muted">{" "}{t("x.platform-yonetimi-yeni-bir-kayt-yaynladgnda-burada-gorun")}</p>
           </div>
         ) : null}
         {posts.map((post) => (
@@ -105,6 +110,7 @@ export default async function AdminDashboardPage({
 }: {
   params: Promise<{ magazaSlug: string }>;
 }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const guard = await requireStoreAdmin(magazaSlug);
   if (!guard) {
@@ -162,20 +168,20 @@ export default async function AdminDashboardPage({
     {
       href: `${basePath}/admin/oyunlar`,
       icon: Boxes,
-      title: "Ürün ekle",
-      text: "Steam linkiyle veya manuel ürün tanımla.",
+      title: t("x.urun-ekle"),
+      text: t("x.steam-linkiyle-veya-manuel-urun-tanmla"),
     },
     {
       href: `${basePath}/admin/kodlar`,
       icon: Code2,
-      title: "Kod üret",
-      text: "Tekli, seçmeli veya paket teslimat kodu oluştur.",
+      title: t("x.kod-uret"),
+      text: t("x.tekli-secmeli-veya-paket-teslimat-kodu-olustur"),
     },
     {
       href: `${basePath}/admin/istatistikler`,
       icon: BarChart3,
-      title: "İstatistikler",
-      text: "Detaylı satış ve teslimat raporlarını incele.",
+      title: t("x.istatistikler"),
+      text: t("x.detayl-sats-ve-teslimat-raporlarn-incele"),
     },
   ];
 
@@ -183,74 +189,72 @@ export default async function AdminDashboardPage({
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Mağaza paneli</p>
-          <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">Hoş geldiniz, {guard.session.username}</h1>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{" "}{t("x.magaza-paneli")}</p>
+          <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{t("x.hos-geldiniz-name", { name: guard.session.username })}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-[12.5px] muted">
-            {store.name} mağazasının genel durumu ve platform duyuruları.
+            {t("x.store-magazasnn-genel-durumu-ve-platform-duyurular", { store: store.name })}
             {domainActive ? (
               <span className="badge badge-green">
                 <Globe2 size={10} /> {store.customDomain}
               </span>
             ) : store.customDomain ? (
               <Link href={`${basePath}/admin/ayarlar`} className="badge badge-amber">
-                <Globe2 size={10} /> {store.customDomain} · doğrulama bekliyor
+                <Globe2 size={10} /> {store.customDomain} · {t("x.dogrulama-bekliyor-2")}
               </Link>
             ) : null}
           </p>
         </div>
-        <Link href={basePath || "/"} target="_blank" className="btn btn-outline btn-sm">
-          Vitrini görüntüle
-          <ArrowUpRight size={12} />
+        <Link href={basePath || "/"} target="_blank" className="btn btn-outline btn-sm">{t("x.vitrini-goruntule")}<ArrowUpRight size={12} />
         </Link>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
-          label="Bugünkü kod kullanımı"
+          label={t("x.bugunku-kod-kullanm")}
           value={Number(todayRedemptions[0]?.value ?? 0)}
-          sub="Bugün kullanılan kod sayısı"
+          sub={t("x.bugun-kullanlan-kod-says")}
         />
         <Stat
-          label="Son 7 gün"
+          label={t("x.son-7-gun")}
           value={Number(weekRedemptions[0]?.value ?? 0)}
-          sub="Haftalık redemption"
+          sub={t("x.haftalk-redemption")}
         />
         <Stat
-          label="Kullanılabilir kod"
+          label={t("x.kullanlabilir-kod")}
           value={codeAvailable}
-          sub={`${codeRedeemed} / ${codeTotal} kod kullanıldı`}
+          sub={t("x.used-total-kod-kullanld", { used: codeRedeemed, total: codeTotal })}
         />
         <Stat
-          label="Müşteri & envanter"
+          label={t("x.musteri-envanter")}
           value={Number(customerCount[0]?.value ?? 0)}
-          sub={`${Number(availableAccounts[0]?.value ?? 0)} hesap teslimata hazır`}
+          sub={t("x.count-hesap-teslimata-hazr", { count: Number(availableAccounts[0]?.value ?? 0) })}
         />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <PostBox
           title="Duyurular"
-          description="Platform yönetiminden önemli bilgilendirmeler"
+          description={t("x.platform-yonetiminden-onemli-bilgilendirmeler")}
           icon={<Megaphone size={18} />}
           tone="#d97706"
           posts={announcements}
-          emptyText="Henüz duyuru yok"
+          emptyText={t("x.henuz-duyuru-yok")}
         />
         <PostBox
-          title="Güncelleme Notları"
-          description="Yeni özellikler ve sürüm değişiklikleri"
+          title={t("x.guncelleme-notlar")}
+          description={t("x.yeni-ozellikler-ve-surum-degisiklikleri")}
           icon={<Rocket size={18} />}
           tone="#2563eb"
           posts={updates}
-          emptyText="Henüz güncelleme notu yok"
+          emptyText={t("x.henuz-guncelleme-notu-yok")}
         />
       </div>
 
       <div>
         <div className="mb-3 flex items-end justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold">Hızlı işlemler</h2>
-            <p className="text-[11.5px] muted">En sık kullanılan mağaza yönetimi kısayolları.</p>
+            <h2 className="text-[15px] font-semibold">{" "}{t("x.hzl-islemler")}</h2>
+            <p className="text-[11.5px] muted">{" "}{t("x.en-sk-kullanlan-magaza-yonetimi-ksayollar")}</p>
           </div>
           <span className="hidden text-[11px] muted sm:block">
             <KeyRound size={11} className="mr-1 inline" />
@@ -277,17 +281,13 @@ export default async function AdminDashboardPage({
         <div className="flex items-center gap-2.5">
           <Users size={15} className="muted" />
           <p className="text-[12px] muted">
-            Kullanıcı listesi, teslimat geçmişi ve müşteri detayları için{" "}
-            <Link href={`${basePath}/admin/kullanicilar`} className="underline underline-offset-2" style={{ color: "var(--fg)" }}>
-              kullanıcılar
-            </Link>{" "}
-            sayfasını kullanın.
+            {t("x.kullanc-listesi-teslimat-gecmisi-ve-musteri-detaylar-ici")}{" "}
+            <Link href={`${basePath}/admin/kullanicilar`} className="underline underline-offset-2" style={{ color: "var(--fg)" }}>{t("x.kullanclar-2")}</Link>{" "}
+            {t("x.sayfasn-kullann")}
           </p>
         </div>
         <Link href={`${basePath}/admin/istatistikler`} className="btn btn-dark btn-sm">
-          <BarChart3 size={13} />
-          Detaylı istatistikler
-        </Link>
+          <BarChart3 size={13} />{t("x.detayl-istatistikler")}</Link>
       </div>
     </div>
   );

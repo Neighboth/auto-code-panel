@@ -2,6 +2,7 @@ import Link from "next/link";
 import { brand } from "@/lib/brand";
 import { readUnsubscribeToken } from "@/lib/mail-prefs";
 import { UnsubscribeForm } from "@/components/unsubscribe-form";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "E-posta tercihleri", robots: { index: false, follow: false } };
@@ -11,6 +12,7 @@ export default async function UnsubscribePage({
 }: {
   searchParams: Promise<{ t?: string }>;
 }) {
+  const { t } = await getTranslator();
   const params = await searchParams;
   const token = params.t ?? "";
   const resolved = readUnsubscribeToken(token);
@@ -22,21 +24,12 @@ export default async function UnsubscribePage({
 
       {!resolved ? (
         <>
-          <p className="mt-2 text-[13px] leading-relaxed muted">
-            Bu bağlantı geçersiz veya değiştirilmiş. Bildirimleri kapatmak için mağaza panelinizdeki
-            <strong> Profil → E-posta bildirimleri</strong> bölümünü kullanabilirsiniz.
-          </p>
-          <Link href="/" className="btn btn-outline mt-5 w-fit">
-            Ana sayfaya dön
-          </Link>
+          <p className="mt-2 text-[13px] leading-relaxed muted">{t("x.bu-baglant-gecersiz-veya-degistirilmis-bildirimleri-kapa")}<strong> Profil → E-posta bildirimleri</strong>{t("x.bolumunu-kullanabilirsiniz")}</p>
+          <Link href="/" className="btn btn-outline mt-5 w-fit">{t("x.ana-sayfaya-don")}</Link>
         </>
       ) : (
         <>
-          <p className="mt-2 text-[13px] leading-relaxed muted">
-            Aşağıdaki tercih yalnızca bu bağlantının gönderildiği adres için geçerlidir. İşlemi
-            onayladığınızda duyuru ve pazarlama e-postaları durur; zorunlu güvenlik/teslimat
-            bildirimleri için ikinci seçeneği kullanabilirsiniz.
-          </p>
+          <p className="mt-2 text-[13px] leading-relaxed muted">{t("x.asagdaki-tercih-yalnzca-bu-baglantnn-gonderildigi-adres")}</p>
           <UnsubscribeForm token={token} />
         </>
       )}

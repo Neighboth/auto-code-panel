@@ -18,7 +18,7 @@ export const MAIL_PRESETS: MailProvider[] = [
   { id: "icloud", label: "iCloud Mail", host: "imap.mail.me.com", port: 993, secure: true },
   { id: "zoho", label: "Zoho Mail", host: "imap.zoho.com", port: 993, secure: true },
   { id: "proton", label: "ProtonMail Bridge", host: "127.0.0.1", port: 1143, secure: false },
-  { id: "custom", label: "Özel IMAP sunucusu", host: "", port: 993, secure: true },
+  { id: "custom", label: "x.ozel-imap-sunucusu", host: "", port: 993, secure: true },
 ];
 
 export function resolveMailPreset(id: string | null | undefined): MailProvider {

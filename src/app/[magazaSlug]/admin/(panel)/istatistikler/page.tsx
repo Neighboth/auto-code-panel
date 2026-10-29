@@ -20,14 +20,18 @@ import { computeStoreStats } from "@/lib/store-stats";
 import { getStoreBasePath, getStoreState, requireStoreAdmin } from "@/lib/tenant";
 import { BarChart, HourHeatmap, ProgressRow, UsageDonut } from "@/components/admin/stats";
 import { Stat } from "@/components/ui";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "İstatistikler" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.istatistikler") };
+}
 
 const RANGES = [
-  { days: 7, label: "7 gün" },
-  { days: 30, label: "30 gün" },
-  { days: 90, label: "90 gün" },
+  { days: 7, label: "x.7-gun" },
+  { days: 30, label: "x.30-gun" },
+  { days: 90, label: "x.90-gun" },
 ];
 
 export default async function AdminStatsPage({
@@ -37,6 +41,7 @@ export default async function AdminStatsPage({
   params: Promise<{ magazaSlug: string }>;
   searchParams: Promise<{ range?: string }>;
 }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const { range } = await searchParams;
   const guard = await requireStoreAdmin(magazaSlug);
@@ -120,7 +125,7 @@ export default async function AdminStatsPage({
         .where(eq(accounts.storeId, store.id)),
     ]);
 
-  const stats = computeStoreStats(
+  const stats = await computeStoreStats(
     {
       codes: codeRows,
       redemptions: redemptionRows,
@@ -146,10 +151,10 @@ export default async function AdminStatsPage({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Analitik</p>
-          <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">Detaylı istatistikler</h1>
+          <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{" "}{t("x.detayl-istatistikler")}</h1>
           <p className="mt-1 text-[12.5px] muted">
-            Kod kullanımı, teslimat hacmi, müşteri büyümesi ve envanter durumu.
-            {lastRedemption ? ` Son işlem: ${formatDateTime(lastRedemption)}.` : ""}
+            {t("x.kod-kullanm-teslimat-hacmi-musteri-buyumesi-ve-envanter-")}
+            {lastRedemption ? t("x.son-islem-when", { when: formatDateTime(lastRedemption) }) : ""}
           </p>
         </div>
         <div className="flex items-center gap-1 rounded-lg border p-1 hairline" style={{ background: "var(--bg-elevated)" }}>
@@ -172,47 +177,47 @@ export default async function AdminStatsPage({
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
-          label="Kod kullanım oranı"
+          label={t("x.kod-kullanm-oran")}
           value={`${stats.totals.redemptionRate}%`}
-          sub={`${stats.totals.codesRedeemed} / ${stats.totals.codes} kod kullanıldı`}
+          sub={t("x.used-total-kod-kullanld", { used: stats.totals.codesRedeemed, total: stats.totals.codes })}
         />
         <Stat
-          label="Toplam teslimat"
+          label={t("x.toplam-teslimat")}
           value={stats.totals.deliveries}
-          sub={`${stats.totals.activeDeliveries} aktif · ${stats.totals.expiringSoon} yakında bitiyor`}
+          sub={t("x.active-aktif-expiring-yaknda-bitiyor", { active: stats.totals.activeDeliveries, expiring: stats.totals.expiringSoon })}
         />
         <Stat
-          label="Müşteri"
+          label={t("x.musteri")}
           value={stats.totals.customers}
-          sub={`+${stats.totals.newCustomers} yeni · ${stats.totals.bannedCustomers} yasaklı`}
+          sub={t("x.added-yeni-banned-yasakl", { added: stats.totals.newCustomers, banned: stats.totals.bannedCustomers })}
         />
         <Stat
-          label="Teslimata hazır hesap"
+          label={t("x.teslimata-hazr-hesap")}
           value={stats.totals.accountsAvailable}
-          sub={`${stats.totals.accountsAssigned} atanmış · ${stats.totals.accountsRetired} pasif`}
+          sub={t("x.assigned-atanms-retired-pasif", { assigned: stats.totals.accountsAssigned, retired: stats.totals.accountsRetired })}
         />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
-          label={`${rangeDays} günlük redemption`}
+          label={t("x.days-gunluk-redemption", { days: rangeDays })}
           value={stats.totals.rangeRedemptions}
-          sub={`${stats.totals.guestRedemptions} misafir · ${stats.totals.registeredRedemptions} kayıtlı (tüm zamanlar)`}
+          sub={t("x.guest-misafir-registered-kaytl-tum-zamanlar", { guest: stats.totals.guestRedemptions, registered: stats.totals.registeredRedemptions })}
         />
         <Stat
-          label={`${rangeDays} günlük teslimat`}
+          label={t("x.days-gunluk-teslimat", { days: rangeDays })}
           value={stats.totals.rangeDeliveries}
-          sub={`Redemption başına ${stats.totals.avgDeliveriesPerRedemption} ürün`}
+          sub={t("x.redemption-basna-avg-urun", { avg: stats.totals.avgDeliveriesPerRedemption })}
         />
         <Stat
-          label="Tahmini teslim değeri"
+          label={t("x.tahmini-teslim-degeri")}
           value={<span className="text-[17px] leading-tight">{deliveredValue}</span>}
-          sub="Oyun liste fiyatlarıyla, tüm zamanlar"
+          sub={t("x.oyun-liste-fiyatlaryla-tum-zamanlar")}
         />
         <Stat
-          label="Yoğun saat"
+          label={t("x.yogun-saat")}
           value={`${String(stats.peakHour.hour).padStart(2, "0")}:00`}
-          sub={`${stats.peakHour.count} redemption · en yoğun gün ${stats.peakWeekday.label}`}
+          sub={t("x.count-redemption-en-yogun-gun-day", { count: stats.peakHour.count, day: stats.peakWeekday.label })}
         />
       </div>
 
@@ -224,9 +229,9 @@ export default async function AdminStatsPage({
                 <Activity size={15} />
                 Redemption trendi
               </h2>
-              <p className="mt-0.5 text-[11.5px] muted">Son {rangeDays} gün · günlük kullanılan kod sayısı</p>
+              <p className="mt-0.5 text-[11.5px] muted">{t("x.son-days-gun-gunluk-kullanlan-kod-says", { days: rangeDays })}</p>
             </div>
-            <span className="badge badge-blue">{stats.totals.rangeRedemptions} işlem</span>
+            <span className="badge badge-blue">{t("x.count-islem", { count: stats.totals.rangeRedemptions })}</span>
           </div>
           <div className="mt-4">
             <BarChart data={stats.daily.map((day) => ({ key: day.key, label: day.label, value: day.redemptions }))} />
@@ -235,15 +240,13 @@ export default async function AdminStatsPage({
 
         <section className="card p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-            <Code2 size={15} />
-            Kod kullanımı
-          </h2>
-          <p className="mt-0.5 text-[11.5px] muted">Tüm zamanlar · tür bazında doluluk</p>
+            <Code2 size={15} />{t("x.kod-kullanm")}</h2>
+          <p className="mt-0.5 text-[11.5px] muted">{" "}{t("x.tum-zamanlar-tur-baznda-doluluk")}</p>
           <div className="mt-4">
             <UsageDonut
               used={stats.totals.codesRedeemed}
               total={stats.totals.codes}
-              label="Kullanılan kod / toplam kod"
+              label={t("x.kullanlan-kod-toplam-kod")}
             />
           </div>
           <div className="mt-4 space-y-3">
@@ -263,30 +266,26 @@ export default async function AdminStatsPage({
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="card p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-            <Users size={15} />
-            Müşteri büyümesi
-          </h2>
-          <p className="mt-0.5 text-[11.5px] muted">Son {rangeDays} gün · günlük yeni kayıt</p>
+            <Users size={15} />{t("x.musteri-buyumesi")}</h2>
+          <p className="mt-0.5 text-[11.5px] muted">{t("x.son-days-gun-gunluk-yeni-kayt", { days: rangeDays })}</p>
           <div className="mt-4">
             <BarChart
               data={stats.daily.map((day) => ({ key: day.key, label: day.label, value: day.customers }))}
               tone="#16a34a"
-              emptyText="Bu aralıkta yeni müşteri yok"
+              emptyText={t("x.bu-aralkta-yeni-musteri-yok")}
             />
           </div>
         </section>
 
         <section className="card p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-            <PackageCheck size={15} />
-            Günlük teslimat
-          </h2>
-          <p className="mt-0.5 text-[11.5px] muted">Son {rangeDays} gün · oluşturulan entitlement sayısı</p>
+            <PackageCheck size={15} />{t("x.gunluk-teslimat")}</h2>
+          <p className="mt-0.5 text-[11.5px] muted">{t("x.son-days-gun-olusturulan-entitlement-says", { days: rangeDays })}</p>
           <div className="mt-4">
             <BarChart
               data={stats.daily.map((day) => ({ key: day.key, label: day.label, value: day.deliveries }))}
               tone="var(--store-primary)"
-              emptyText="Bu aralıkta teslimat yok"
+              emptyText={t("x.bu-aralkta-teslimat-yok")}
             />
           </div>
         </section>
@@ -295,15 +294,13 @@ export default async function AdminStatsPage({
       <div className="grid gap-4 lg:grid-cols-[1.35fr_1fr]">
         <section className="card p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-            <Clock3 size={15} />
-            Saatlik yoğunluk
-          </h2>
-          <p className="mt-0.5 text-[11.5px] muted">Seçili aralıktaki redemption saatleri</p>
+            <Clock3 size={15} />{t("x.saatlik-yogunluk")}</h2>
+          <p className="mt-0.5 text-[11.5px] muted">{" "}{t("x.secili-aralktaki-redemption-saatleri")}</p>
           <div className="mt-4">
             <HourHeatmap hours={stats.hours} />
           </div>
           <div className="mt-4 border-t pt-4 hairline">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">Haftanın günleri</p>
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">{" "}{t("x.haftann-gunleri")}</p>
             <div className="mt-3 grid grid-cols-7 gap-2">
               {stats.weekdays.map((day) => (
                 <div key={day.label} className="text-center">
@@ -330,13 +327,11 @@ export default async function AdminStatsPage({
 
         <section className="card p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-            <Warehouse size={15} />
-            Envanter dağılımı
-          </h2>
-          <p className="mt-0.5 text-[11.5px] muted">Platforma göre hesap stok durumu</p>
+            <Warehouse size={15} />{t("x.envanter-daglm")}</h2>
+          <p className="mt-0.5 text-[11.5px] muted">{" "}{t("x.platforma-gore-hesap-stok-durumu")}</p>
           <div className="mt-4 space-y-3">
             {stats.inventory.length === 0 ? (
-              <p className="text-[12px] muted">Henüz envanter hesabı yok.</p>
+              <p className="text-[12px] muted">{" "}{t("x.henuz-envanter-hesab-yok")}</p>
             ) : null}
             {stats.inventory.map((item) => (
               <div key={item.platform} className="rounded-lg border p-3 hairline">
@@ -350,9 +345,9 @@ export default async function AdminStatsPage({
                   <div style={{ width: `${(item.retired / Math.max(1, item.total)) * 100}%`, background: "#a1a1aa" }} />
                 </div>
                 <div className="mt-1.5 flex flex-wrap gap-2 text-[10px] muted">
-                  <span><span style={{ color: "#16a34a" }}>●</span> {item.available} müsait</span>
-                  <span><span style={{ color: "#2563eb" }}>●</span> {item.assigned} atanmış</span>
-                  <span><span style={{ color: "#a1a1aa" }}>●</span> {item.retired} pasif</span>
+                  <span><span style={{ color: "#16a34a" }}>●</span> {t("x.count-musait", { count: item.available })}</span>
+                  <span><span style={{ color: "#2563eb" }}>●</span> {t("x.count-atanms", { count: item.assigned })}</span>
+                  <span><span style={{ color: "#a1a1aa" }}>●</span> {t("x.count-pasif", { count: item.retired })}</span>
                 </div>
               </div>
             ))}
@@ -365,22 +360,20 @@ export default async function AdminStatsPage({
           <div className="flex items-center justify-between gap-2 border-b px-5 py-3.5 hairline">
             <div>
               <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-                <Trophy size={15} />
-                En çok teslim edilen ürünler
-              </h2>
-              <p className="text-[11px] muted">Tüm zamanlar · tahmini değer oyun liste fiyatıyla</p>
+                <Trophy size={15} />{t("x.en-cok-teslim-edilen-urunler")}</h2>
+              <p className="text-[11px] muted">{" "}{t("x.tum-zamanlar-tahmini-deger-oyun-liste-fiyatyla")}</p>
             </div>
             <span className="badge">{stats.topProducts.length}</span>
           </div>
           {stats.topProducts.length === 0 ? (
-            <p className="px-5 py-8 text-center text-[12px] muted">Henüz teslimat yok.</p>
+            <p className="px-5 py-8 text-center text-[12px] muted">{" "}{t("x.henuz-teslimat-yok")}</p>
           ) : (
             <table className="table">
               <thead>
                 <tr>
-                  <th>Ürün</th>
+                  <th>{t("x.urun")}</th>
                   <th className="text-right">Teslimat</th>
-                  <th className="text-right">Değer</th>
+                  <th className="text-right">{t("x.deger")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -402,20 +395,18 @@ export default async function AdminStatsPage({
           <div className="flex items-center justify-between gap-2 border-b px-5 py-3.5 hairline">
             <div>
               <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-                <Coins size={15} />
-                En aktif müşteriler
-              </h2>
-              <p className="text-[11px] muted">Seçili aralıkta redemption sayısı</p>
+                <Coins size={15} />{t("x.en-aktif-musteriler")}</h2>
+              <p className="text-[11px] muted">{" "}{t("x.secili-aralkta-redemption-says")}</p>
             </div>
-            <span className="badge">{rangeDays} gün</span>
+            <span className="badge">{t("x.days-gun", { days: rangeDays })}</span>
           </div>
           {stats.topCustomers.length === 0 ? (
-            <p className="px-5 py-8 text-center text-[12px] muted">Bu aralıkta kayıtlı müşteri işlemi yok.</p>
+            <p className="px-5 py-8 text-center text-[12px] muted">{" "}{t("x.bu-aralkta-kaytl-musteri-islemi-yok")}</p>
           ) : (
             <table className="table">
               <thead>
                 <tr>
-                  <th>Müşteri</th>
+                  <th>{t("x.musteri")}</th>
                   <th className="text-right">Redemption</th>
                 </tr>
               </thead>
@@ -436,25 +427,23 @@ export default async function AdminStatsPage({
         <div className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3.5 hairline">
           <div>
             <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-              <BarChart3 size={15} />
-              Son redemption işlemleri
-            </h2>
-            <p className="text-[11px] muted">En yeni 12 kod kullanımı</p>
+              <BarChart3 size={15} />{t("x.son-redemption-islemleri")}</h2>
+            <p className="text-[11px] muted">{" "}{t("x.en-yeni-12-kod-kullanm")}</p>
           </div>
           <span className="badge">{redemptionRows.length} toplam</span>
         </div>
         {stats.recent.length === 0 ? (
-          <p className="px-5 py-8 text-center text-[12px] muted">Henüz kod kullanılmadı.</p>
+          <p className="px-5 py-8 text-center text-[12px] muted">{" "}{t("x.henuz-kod-kullanlmad")}</p>
         ) : (
           <div className="overflow-x-auto scroll-thin">
             <table className="table min-w-[720px]">
               <thead>
                 <tr>
-                  <th>Kod</th>
-                  <th>Alıcı</th>
-                  <th>Ürün</th>
+                  <th>{t("x.kod")}</th>
+                  <th>{t("x.alc")}</th>
+                  <th>{t("x.urun")}</th>
                   <th>Tarih</th>
-                  <th>Erişim</th>
+                  <th>{t("x.erisim")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -462,11 +451,11 @@ export default async function AdminStatsPage({
                   <tr key={row.id}>
                     <td className="mono text-[11.5px]">{row.code}</td>
                     <td className="text-[12px]">{row.buyer}</td>
-                    <td className="text-[12px] tabular-nums">{row.items} ürün</td>
+                    <td className="text-[12px] tabular-nums">{t("x.count-urun", { count: row.items })}</td>
                     <td className="text-[11.5px] muted">{formatDateTime(row.createdAt)}</td>
                     <td>
                       {row.accessExpiresAt === null ? (
-                        <span className="badge badge-green">Süresiz</span>
+                        <span className="badge badge-green">{t("x.suresiz")}</span>
                       ) : row.expired ? (
                         <span className="badge badge-red">Doldu</span>
                       ) : (
@@ -486,21 +475,19 @@ export default async function AdminStatsPage({
           <div className="flex items-center justify-between gap-2 border-b px-5 py-3.5 hairline">
             <div>
               <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-                <CalendarClock size={15} />
-                Süresi yaklaşan teslimatlar
-              </h2>
-              <p className="text-[11px] muted">Önümüzdeki 7 gün içinde kapanacak erişimler</p>
+                <CalendarClock size={15} />{t("x.suresi-yaklasan-teslimatlar")}</h2>
+              <p className="text-[11px] muted">{" "}{t("x.onumuzdeki-7-gun-icinde-kapanacak-erisimler")}</p>
             </div>
             <span className="badge badge-amber">{stats.totals.expiringSoon}</span>
           </div>
           {stats.expiring.length === 0 ? (
-            <p className="px-5 py-8 text-center text-[12px] muted">Yakın zamanda süresi dolacak teslimat yok.</p>
+            <p className="px-5 py-8 text-center text-[12px] muted">{" "}{t("x.yakn-zamanda-suresi-dolacak-teslimat-yok")}</p>
           ) : (
             <table className="table">
               <thead>
                 <tr>
-                  <th>Ürün</th>
-                  <th>Alıcı</th>
+                  <th>{t("x.urun")}</th>
+                  <th>{t("x.alc")}</th>
                   <th className="text-right">Kalan</th>
                 </tr>
               </thead>
@@ -521,19 +508,17 @@ export default async function AdminStatsPage({
 
         <section className="card p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-semibold">
-            <PackageCheck size={15} />
-            Teslimat özeti
-          </h2>
-          <p className="mt-0.5 text-[11.5px] muted">Aktiflik ve süre dağılımı</p>
+            <PackageCheck size={15} />{t("x.teslimat-ozeti")}</h2>
+          <p className="mt-0.5 text-[11.5px] muted">{" "}{t("x.aktiflik-ve-sure-daglm")}</p>
           <div className="mt-4 space-y-3">
             <ProgressRow
-              label="Aktif teslimat"
+              label={t("x.aktif-teslimat")}
               value={stats.totals.activeDeliveries}
               total={Math.max(1, stats.totals.deliveries)}
               tone="#16a34a"
             />
             <ProgressRow
-              label="Süresi dolan"
+              label={t("x.suresi-dolan")}
               value={stats.totals.expiredDeliveries}
               total={Math.max(1, stats.totals.deliveries)}
               tone="#dc2626"
@@ -545,7 +530,7 @@ export default async function AdminStatsPage({
               tone="#d97706"
             />
             <ProgressRow
-              label="Kullanılabilir kod"
+              label={t("x.kullanlabilir-kod")}
               value={stats.totals.codesAvailable}
               total={Math.max(1, stats.totals.codes)}
               tone="#2563eb"
@@ -553,16 +538,16 @@ export default async function AdminStatsPage({
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 border-t pt-4 text-[11.5px] hairline">
             <div className="rounded-lg border p-2.5 hairline">
-              <p className="muted">Müşteri başına</p>
+              <p className="muted">{" "}{t("x.musteri-basna")}</p>
               <p className="mt-0.5 text-[14px] font-semibold tabular-nums">
                 {stats.totals.customers > 0
                   ? (redemptionRows.filter((row) => row.customerId !== null).length / stats.totals.customers).toFixed(1)
                   : "0.0"}{" "}
-                işlem
+                {t("x.islem-2")}
               </p>
             </div>
             <div className="rounded-lg border p-2.5 hairline">
-              <p className="muted">Ortalama ürün</p>
+              <p className="muted">{" "}{t("x.ortalama-urun")}</p>
               <p className="mt-0.5 text-[14px] font-semibold tabular-nums">
                 {stats.totals.avgDeliveriesPerRedemption} / redemption
               </p>
@@ -571,10 +556,7 @@ export default async function AdminStatsPage({
         </section>
       </div>
 
-      <p className="pb-2 text-center text-[10.5px] leading-relaxed muted">
-        Tahmini değer yalnızca oyun teslimatlarını ve mağazadaki liste fiyatlarını kapsar; gerçek
-        tahsilat veya kâr hesabı değildir. Tüm saatler sunucunun yerel saat dilimine göredir.
-      </p>
+      <p className="pb-2 text-center text-[10.5px] leading-relaxed muted">{t("x.tahmini-deger-yalnzca-oyun-teslimatlarn-ve-magazadaki-li")}</p>
     </div>
   );
 }

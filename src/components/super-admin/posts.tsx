@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -53,6 +54,7 @@ const EMPTY: Draft = {
 };
 
 export function PostManager({ posts }: { posts: PostItem[] }) {
+  const t = useT();
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [pending, setPending] = useState(false);
@@ -78,10 +80,10 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
     const result = await savePlatformPost(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Kaydedilemedi.");
+      setError(result.message ?? t("x.kaydedilemedi"));
       return;
     }
-    toast.success(result.message ?? "Kayıt yayınlandı");
+    toast.success(result.message ?? t("x.kayt-yaynland"));
     setDraft(EMPTY);
     router.refresh();
   }
@@ -98,10 +100,10 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
     const result = await deletePlatformPost(formData);
     setBusyId(null);
     if (!result.ok) {
-      toast.error(result.message ?? "Silinemedi.");
+      toast.error(result.message ?? t("x.silinemedi"));
       return;
     }
-    toast.success("Kayıt silindi");
+    toast.success(t("x.kayt-silindi"));
     if (draft.id === post.id) setDraft(EMPTY);
     router.refresh();
   }
@@ -114,10 +116,10 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
     const result = await setPlatformPostPinned(formData);
     setBusyId(null);
     if (!result.ok) {
-      toast.error(result.message ?? "Güncellenemedi.");
+      toast.error(result.message ?? t("x.guncellenemedi-2"));
       return;
     }
-    toast.success(result.message ?? "Güncellendi");
+    toast.success(result.message ?? t("x.guncellendi"));
     router.refresh();
   }
 
@@ -140,19 +142,16 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
         <div className="flex items-start justify-between gap-2">
           <div>
             <h2 className="text-[14px] font-semibold">
-              {draft.id ? "Kaydı düzenle" : "Yeni kayıt yayınla"}
+              {draft.id ? t("x.kayd-duzenle") : t("x.yeni-kayt-yaynla")}
             </h2>
-            <p className="mt-0.5 text-[11.5px] leading-relaxed muted">
-              Duyurular ve güncelleme notları tüm mağaza yöneticilerinin panelinde iki büyük kutuda
-              gösterilir.
-            </p>
+            <p className="mt-0.5 text-[11.5px] leading-relaxed muted">{t("x.duyurular-ve-guncelleme-notlar-tum-magaza-yoneticilerini")}</p>
           </div>
           {draft.id ? (
             <button
               type="button"
               className="btn btn-ghost btn-sm"
               onClick={() => setDraft(EMPTY)}
-              aria-label="Düzenlemeyi kapat"
+              aria-label={t("x.duzenlemeyi-kapat")}
             >
               <X size={13} />
             </button>
@@ -161,7 +160,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
 
         <form onSubmit={onSubmit} className="mt-4 space-y-3.5">
           <div>
-            <p className="label">Tür</p>
+            <p className="label">{t("x.tur")}</p>
             <div className="grid grid-cols-2 gap-1.5">
               <button
                 type="button"
@@ -184,25 +183,23 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
                     draft.kind === "update" ? "color-mix(in srgb, var(--fg) 7%, transparent)" : "transparent",
                 }}
               >
-                <Rocket size={13} />
-                Güncelleme
-              </button>
+                <Rocket size={13} />{t("x.guncelleme")}</button>
             </div>
           </div>
 
-          <Field label="Başlık">
+          <Field label={t("x.baslk")}>
             <input
               value={draft.title}
               onChange={(event) => update("title", event.target.value)}
               className="input"
               maxLength={120}
               required
-              placeholder={draft.kind === "update" ? "Sürüm 2.4 yayında" : "Bakım duyurusu"}
+              placeholder={draft.kind === "update" ? t("x.surum-2-4-yaynda") : t("x.bakm-duyurusu")}
             />
           </Field>
 
           {draft.kind === "update" ? (
-            <Field label="Sürüm etiketi" hint="Opsiyonel, örn. v2.4.0">
+            <Field label={t("x.surum-etiketi")} hint={t("x.opsiyonel-orn-v2-4-0")}>
               <input
                 value={draft.version}
                 onChange={(event) => update("version", event.target.value)}
@@ -213,13 +210,13 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
             </Field>
           ) : null}
 
-          <Field label="İçerik" hint="Markdown desteklenir. Boş bırakılabilir.">
+          <Field label={t("x.icerik")} hint={t("x.markdown-desteklenir-bos-braklabilir")}>
             <textarea
               value={draft.body}
               onChange={(event) => update("body", event.target.value)}
               className="textarea min-h-40"
               maxLength={8000}
-              placeholder={"- Yeni özellik\n- Hata düzeltmeleri\n- Performans iyileştirmeleri"}
+              placeholder={t("x.yeni-ozellik-n-hata-duzeltmeleri-n-performans-iyilestirm")}
             />
           </Field>
 
@@ -228,9 +225,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
               type="checkbox"
               checked={draft.pinned}
               onChange={(event) => update("pinned", event.target.checked)}
-            />
-            Panellerde en üstte sabitle
-          </label>
+            />{t("x.panellerde-en-ustte-sabitle")}</label>
 
           {error ? (
             <p className="note note-danger text-[12px]">
@@ -240,7 +235,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
 
           <button type="submit" className="btn btn-dark w-full" disabled={pending}>
             {pending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-            {draft.id ? "Değişiklikleri kaydet" : "Yayınla"}
+            {draft.id ? t("x.degisiklikleri-kaydet") : t("x.yaynla")}
           </button>
         </form>
       </div>
@@ -248,16 +243,16 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 className="text-[15px] font-semibold">Yayınlanan kayıtlar</h2>
-            <p className="text-[11.5px] muted">{posts.length} kayıt · en yeni önce</p>
+            <h2 className="text-[15px] font-semibold">{" "}{t("x.yaynlanan-kaytlar")}</h2>
+            <p className="text-[11.5px] muted">{t("x.count-kayt-en-yeni-once", { count: posts.length })}</p>
           </div>
         </div>
 
         {posts.length === 0 ? (
           <div className="rounded-xl border border-dashed px-6 py-14 text-center hairline">
             <Megaphone size={22} className="mx-auto muted" />
-            <p className="mt-2 text-[13px] font-medium">Henüz duyuru veya güncelleme yok</p>
-            <p className="mt-1 text-[11.5px] muted">Soldaki formdan ilk kaydı yayınlayabilirsiniz.</p>
+            <p className="mt-2 text-[13px] font-medium">{" "}{t("x.henuz-duyuru-veya-guncelleme-yok")}</p>
+            <p className="mt-1 text-[11.5px] muted">{" "}{t("x.soldaki-formdan-ilk-kayd-yaynlayabilirsiniz")}</p>
           </div>
         ) : null}
 
@@ -273,7 +268,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className={`badge ${isUpdate ? "badge-blue" : "badge-amber"}`}>
-                        {isUpdate ? "Güncelleme" : "Duyuru"}
+                        {isUpdate ? t("x.guncelleme") : "Duyuru"}
                       </span>
                       {post.version ? <span className="badge mono">{post.version}</span> : null}
                       {post.pinned ? (
@@ -295,7 +290,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
                     onClick={() => togglePin(post)}
                     disabled={busyId === post.id}
                     className="btn btn-ghost btn-sm"
-                    title={post.pinned ? "Sabitlemeyi kaldır" : "Sabitle"}
+                    title={post.pinned ? t("x.sabitlemeyi-kaldr") : "Sabitle"}
                   >
                     {post.pinned ? <PinOff size={12} /> : <Pin size={12} />}
                   </button>
@@ -303,7 +298,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
                     type="button"
                     onClick={() => startEdit(post)}
                     className="btn btn-ghost btn-sm"
-                    title="Düzenle"
+                    title={t("x.duzenle")}
                   >
                     <Pencil size={12} />
                   </button>
@@ -313,7 +308,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
                     disabled={busyId === post.id}
                     className="btn btn-ghost btn-sm"
                     style={{ color: "#dc2626" }}
-                    title="Sil"
+                    title={t("x.sil")}
                   >
                     <Trash2 size={12} />
                   </button>

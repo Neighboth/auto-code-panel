@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -31,6 +32,7 @@ export function CustomerDetailActions({
   games: { id: number; title: string }[];
   listHref?: string;
 }) {
+  const t = useT();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [banOpen, setBanOpen] = useState(false);
@@ -61,24 +63,18 @@ export function CustomerDetailActions({
         type="button"
         className="btn btn-outline btn-sm"
         onClick={() =>
-          run(() => setCustomerBan(slug, customerId, !banned), "Güncellendi")
+          run(() => setCustomerBan(slug, customerId, !banned), t("x.guncellendi"))
         }
         disabled={pending}
       >
         <Gavel size={12} />
-        {banned ? "Yasağı kaldır" : "Yasakla"}
+        {banned ? t("x.yasag-kaldr") : "Yasakla"}
       </button>
-      <button type="button" className="btn btn-outline btn-sm" onClick={() => setEditOpen(true)}>
-        Düzenle / şifre sıfırla
-      </button>
+      <button type="button" className="btn btn-outline btn-sm" onClick={() => setEditOpen(true)}>{t("x.duzenle-sifre-sfrla")}</button>
       <button type="button" className="btn btn-outline btn-sm" onClick={() => setAddOpen(true)}>
-        <Plus size={12} />
-        Kütüphaneye ekle
-      </button>
+        <Plus size={12} />{t("x.kutuphaneye-ekle")}</button>
       <button type="button" className="btn btn-outline btn-sm" onClick={() => setBanOpen(true)}>
-        <ShieldOff size={12} />
-        2FA&apos;yı sıfırla
-      </button>
+        <ShieldOff size={12} />{t("x.2fa-y-sfrla")}</button>
       <button
         type="button"
         className="btn btn-ghost btn-sm"
@@ -102,12 +98,10 @@ export function CustomerDetailActions({
         <Modal
           open
           onClose={() => setDeleteOpen(false)}
-          title="Müşteriyi sil"
+          title={t("x.musteriyi-sil")}
           footer={
             <>
-              <button type="button" className="btn btn-outline" onClick={() => setDeleteOpen(false)}>
-                Vazgeç
-              </button>
+              <button type="button" className="btn btn-outline" onClick={() => setDeleteOpen(false)}>{t("x.vazgec")}</button>
               <button
                 type="button"
                 className="btn btn-danger"
@@ -120,15 +114,12 @@ export function CustomerDetailActions({
                 }
               >
                 {pending ? <Loader2 size={13} className="animate-spin" /> : null}
-                Kalıcı olarak sil
+                {t("x.kalc-olarak-sil")}
               </button>
             </>
           }
         >
-          <p className="text-[13px]">
-            Müşteri, kütüphanesi ve güvenlik yöntemleri kalıcı olarak silinecek. Bu işlem geri
-            alınamaz.
-          </p>
+          <p className="text-[13px]">{t("x.musteri-kutuphanesi-ve-guvenlik-yontemleri-kalc-olarak-s")}</p>
         </Modal>
       ) : null}
       {editOpen ? (
@@ -175,26 +166,24 @@ function FactorResetModal({
   busy: boolean;
   onRun: Runner;
 }) {
+  const t = useT();
   const kinds = [
     { id: "totp", label: "TOTP 2FA" },
     { id: "passkey", label: "Passkey" },
-    { id: "question", label: "Güvenlik sorusu" },
+    { id: "question", label: t("x.guvenlik-sorusu") },
   ];
   return (
     <Modal
       open
       onClose={onClose}
-      title="2FA sıfırla"
+      title={t("x.2fa-sfrla")}
       footer={
         <button type="button" className="btn btn-outline" onClick={onClose}>
           Kapat
         </button>
       }
     >
-      <p className="mb-3 text-[12.5px] muted">
-        Müşterinin kayıtlı güvenlik yöntemlerini tek tek kaldırın. Müşteri istediğinde
-        profilinden yeniden kurar.
-      </p>
+      <p className="mb-3 text-[12.5px] muted">{t("x.musterinin-kaytl-guvenlik-yontemlerini-tek-tek-kaldrn-mu")}</p>
       <div className="grid gap-2">
         {kinds.map((kind) => (
           <button
@@ -203,7 +192,7 @@ function FactorResetModal({
             className="btn btn-outline"
             disabled={busy}
             onClick={() =>
-              onRun(() => resetCustomerFactors(slug, customerId, kind.id), "Sıfırlandı", onDone)
+              onRun(() => resetCustomerFactors(slug, customerId, kind.id), t("x.sfrland"), onDone)
             }
           >
             <ShieldOff size={13} />
@@ -228,8 +217,9 @@ function EditCustomerModal({
   busy: boolean;
   onRun: Runner;
 }) {
+  const t = useT();
   return (
-    <Modal open onClose={onClose} title="Müşteri düzenle">
+    <Modal open onClose={onClose} title={t("x.musteri-duzenle")}>
       <EditCustomerForm
         slug={slug}
         customerId={customerId}
@@ -254,23 +244,24 @@ function EditCustomerForm({
   onDone: () => void;
   onRun: Runner;
 }) {
+  const t = useT();
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    onRun(() => editCustomer(slug, customerId, formData), "Güncellendi", onDone);
+    onRun(() => editCustomer(slug, customerId, formData), t("x.guncellendi"), onDone);
   }
   return (
     <form onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
-      <Field label="Kullanıcı adı">
+      <Field label={t("x.kullanc-ad-2")}>
         <input name="username" required minLength={3} maxLength={24} className="input" />
       </Field>
-      <Field label="Görünen ad">
+      <Field label={t("x.gorunen-ad-2")}>
         <input name="displayName" className="input" />
       </Field>
       <Field label="E-posta">
         <input name="email" type="email" className="input" />
       </Field>
-      <Field label="Yeni şifre" hint="Boş bırakılırsa şifre değişmez.">
+      <Field label={t("x.yeni-sifre-2")} hint={t("x.bos-braklrsa-sifre-degismez")}>
         <input name="newPassword" type="text" className="input mono" />
       </Field>
       <div className="flex justify-end gap-2 sm:col-span-2">
@@ -298,6 +289,7 @@ function AddDeliveryModal({
   busy: boolean;
   onRun: Runner;
 }) {
+  const t = useT();
   const [selected, setSelected] = useState(games[0]?.id ?? 0);
   const [durationIndex, setDurationIndex] = useState("0");
 
@@ -309,17 +301,17 @@ function AddDeliveryModal({
         : DURATION_PRESETS[Number(durationIndex)]?.minutes ?? null;
     onRun(
       () => addCustomerEntitlement(slug, customerId, selected, duration),
-      "Kütüphaneye eklendi",
+      t("x.kutuphaneye-eklendi"),
       onClose,
     );
   }
 
   return (
-    <Modal open onClose={onClose} title="Kütüphaneye teslimat ekle">
+    <Modal open onClose={onClose} title={t("x.kutuphaneye-teslimat-ekle")}>
       <form onSubmit={onSubmit} className="space-y-3">
-        <Field label="Ürün">
+        <Field label={t("x.urun")}>
           <select className="select" value={selected} onChange={(event) => setSelected(Number(event.target.value))}>
-            {games.length === 0 ? <option value={0}>Ürün yok</option> : null}
+            {games.length === 0 ? <option value={0}>{" "}{t("x.urun-yok")}</option> : null}
             {games.map((game) => (
               <option key={game.id} value={game.id}>
                 {game.title}
@@ -327,9 +319,9 @@ function AddDeliveryModal({
             ))}
           </select>
         </Field>
-        <Field label="Erişim süresi">
+        <Field label={t("x.erisim-suresi")}>
           <select className="select" value={durationIndex} onChange={(event) => setDurationIndex(event.target.value)}>
-            <option value="0">Süresiz / Sınırsız</option>
+            <option value="0">{" "}{t("x.suresiz-snrsz")}</option>
             {DURATION_PRESETS.slice(1).map((preset, index) => (
               <option key={preset.label} value={index + 1}>
                 {preset.label}
@@ -357,6 +349,7 @@ export function CustomerRemoveButton({
   customerId: number;
   entitlementId: number;
 }) {
+  const t = useT();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
@@ -370,16 +363,16 @@ export function CustomerRemoveButton({
     const result = await removeCustomerEntitlement(slug, entitlementId, customerId);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Kaldırılamadı");
+      toast.error(result.message ?? t("x.kaldrlamad"));
       return;
     }
-    toast.success(result.message ?? "Kaldırıldı");
+    toast.success(result.message ?? t("x.kaldrld"));
     router.refresh();
   }
   return (
     <button type="button" className="btn btn-ghost btn-sm" style={{ color: "#dc2626" }} onClick={onClick} disabled={pending}>
       {pending ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
-      Kaldır
+      {t("x.kaldr")}
     </button>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { Fragment, useMemo, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -7,60 +8,60 @@ import { Badge, Button, EmptyState, buttonClass, cn } from "@/components/ui";
 import type { AuditPage } from "@/lib/audit";
 
 const SEVERITY_LABEL: Record<string, string> = {
-  info: "Bilgi",
-  warn: "Uyarı",
-  critical: "Kritik",
+  info: "x.bilgi",
+  warn: "x.uyar",
+  critical: "x.kritik",
 };
 
 const ACTOR_LABEL: Record<string, string> = {
-  super: "Süper admin",
-  store: "Mağaza yöneticisi",
-  customer: "Müşteri",
-  system: "Sistem",
+  super: "x.super-admin",
+  store: "x.magaza-yoneticisi",
+  customer: "x.musteri",
+  system: "x.sistem",
 };
 
-/** Human readable action name: `store.product.create` → "Ürün oluştur". */
+/** Human readable action name: `store.product.create` → t("x.urun-olustur"). */
 const ACTION_LABEL: Record<string, string> = {
-  "store.product.create": "Ürün eklendi",
-  "store.product.update": "Ürün güncellendi",
-  "store.product.delete": "Ürün silindi",
+  "store.product.create": "x.urun-eklendi",
+  "store.product.update": "x.urun-guncellendi",
+  "store.product.delete": "x.urun-silindi",
   "store.account.create": "Hesap eklendi",
-  "store.account.update": "Hesap güncellendi",
+  "store.account.update": "x.hesap-guncellendi",
   "store.account.delete": "Hesap silindi",
-  "store.code.create": "Kod oluşturuldu",
-  "store.code.bulk": "Toplu kod işlemi",
+  "store.code.create": "x.kod-olusturuldu",
+  "store.code.bulk": "x.toplu-kod-islemi",
   "store.code.delete": "Kod silindi",
-  "store.settings.update": "Mağaza ayarları güncellendi",
-  "store.domain.add": "Özel alan adı eklendi",
-  "store.domain.remove": "Özel alan adı kaldırıldı",
-  "store.customer.create": "Müşteri eklendi",
-  "store.customer.update": "Müşteri güncellendi",
-  "store.customer.delete": "Müşteri silindi",
-  "store.customer.bulk": "Toplu müşteri işlemi",
-  "super.store.suspend": "Mağaza askıya alındı",
-  "super.store.resume": "Mağaza aktifleştirildi",
-  "super.store.extend": "Lisans süresi uzatıldı",
-  "super.accounts.reveal": "Hesap şifreleri görüntülendi",
-  "super.post.create": "Duyuru yayınlandı",
-  "super.post.update": "Duyuru güncellendi",
+  "store.settings.update": "x.magaza-ayarlar-guncellendi",
+  "store.domain.add": "x.ozel-alan-ad-eklendi",
+  "store.domain.remove": "x.ozel-alan-ad-kaldrld",
+  "store.customer.create": "x.musteri-eklendi",
+  "store.customer.update": "x.musteri-guncellendi",
+  "store.customer.delete": "x.musteri-silindi",
+  "store.customer.bulk": "x.toplu-musteri-islemi",
+  "super.store.suspend": "x.magaza-askya-alnd",
+  "super.store.resume": "x.magaza-aktiflestirildi",
+  "super.store.extend": "x.lisans-suresi-uzatld",
+  "super.accounts.reveal": "x.hesap-sifreleri-goruntulendi",
+  "super.post.create": "x.duyuru-yaynland",
+  "super.post.update": "x.duyuru-guncellendi",
   "super.post.delete": "Duyuru silindi",
   "super.post.pin": "Duyuru sabitlendi",
-  "super.settings.update": "Sistem ayarları güncellendi",
-  "super.reseller_keys.create": "Bayilik kodu üretildi",
+  "super.settings.update": "x.sistem-ayarlar-guncellendi",
+  "super.reseller_keys.create": "x.bayilik-kodu-uretildi",
   "super.reseller_keys.revoke": "Bayilik kodu iptal edildi",
-  "super.user.update": "Kullanıcı güncellendi",
-  "super.user.delete": "Kullanıcı silindi",
-  "auth.login": "Giriş yapıldı",
-  "auth.login.failed": "Başarısız giriş",
-  "auth.signup": "Kayıt olundu",
-  "auth.logout": "Çıkış yapıldı",
-  "auth.password.change": "Şifre değiştirildi",
-  "email.verification.sent": "Doğrulama e-postası gönderildi",
-  "email.verification.failed": "Doğrulama başarısız",
-  "mail.announcement.broadcast": "Duyuru e-postası gönderildi",
-  "security.factor.add": "2FA faktörü eklendi",
-  "security.factor.remove": "2FA faktörü kaldırıldı",
-  "code.redeem": "Kod kullanıldı",
+  "super.user.update": "x.kullanc-guncellendi",
+  "super.user.delete": "x.kullanc-silindi",
+  "auth.login": "x.giris-yapld",
+  "auth.login.failed": "x.basarsz-giris",
+  "auth.signup": "x.kayt-olundu",
+  "auth.logout": "x.cks-yapld",
+  "auth.password.change": "x.sifre-degistirildi",
+  "email.verification.sent": "x.dogrulama-e-postas-gonderildi",
+  "email.verification.failed": "x.dogrulama-basarsz",
+  "mail.announcement.broadcast": "x.duyuru-e-postas-gonderildi",
+  "security.factor.add": "x.2fa-faktoru-eklendi",
+  "security.factor.remove": "x.2fa-faktoru-kaldrld",
+  "code.redeem": "x.kod-kullanld",
 };
 
 function labelFor(action: string): string {
@@ -85,6 +86,7 @@ export function AuditLogView({
     to: string;
   };
 }) {
+  const t = useT();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -119,7 +121,7 @@ export function AuditLogView({
             <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 muted" />
             <input
               className="input pl-9"
-              placeholder="Özet, varlık, IP veya yönetici ara…"
+              placeholder={t("x.ozet-varlk-ip-veya-yonetici-ara")}
               value={term}
               onChange={(event) => setTerm(event.target.value)}
               onKeyDown={(event) => {
@@ -131,9 +133,9 @@ export function AuditLogView({
             className="input w-auto min-w-[180px]"
             value={filters.action}
             onChange={(event) => apply({ action: event.target.value })}
-            aria-label="İşlem türü"
+            aria-label={t("x.islem-turu")}
           >
-            <option value="">Tüm işlemler</option>
+            <option value="">{" "}{t("x.tum-islemler")}</option>
             {pageData.actions.map((item) => (
               <option key={item.action} value={item.action}>
                 {labelFor(item.action)} ({item.count})
@@ -144,35 +146,35 @@ export function AuditLogView({
             className="input w-auto min-w-[130px]"
             value={filters.severity}
             onChange={(event) => apply({ severity: event.target.value })}
-            aria-label="Önem"
+            aria-label={t("x.onem")}
           >
-            <option value="">Tüm önemler</option>
-            <option value="info">Bilgi</option>
-            <option value="warn">Uyarı</option>
+            <option value="">{" "}{t("x.tum-onemler")}</option>
+            <option value="info">{t("x.bilgi")}</option>
+            <option value="warn">{t("x.uyar")}</option>
             <option value="critical">Kritik</option>
           </select>
           <input
             className="input w-auto"
-            placeholder="Yönetici / mağaza"
+            placeholder={t("x.yonetici-magaza")}
             defaultValue={filters.actor}
             onKeyDown={(event) => {
               if (event.key === "Enter") apply({ actor: (event.target as HTMLInputElement).value });
             }}
-            aria-label="Yönetici"
+            aria-label={t("x.yonetici")}
           />
           <input
             className="input w-auto"
             type="date"
             value={filters.from}
             onChange={(event) => apply({ from: event.target.value })}
-            aria-label="Başlangıç"
+            aria-label={t("x.baslangc")}
           />
           <input
             className="input w-auto"
             type="date"
             value={filters.to}
             onChange={(event) => apply({ to: event.target.value })}
-            aria-label="Bitiş"
+            aria-label={t("x.bitis")}
           />
           <Button type="button" variant="outline" size="sm" onClick={() => apply({ q: term })}>
             <Filter size={14} /> Filtrele
@@ -189,19 +191,18 @@ export function AuditLogView({
               startTransition(() => router.push(pathname));
             }}
           >
-            <RefreshCw size={14} /> Sıfırla
-          </Button>
+            <RefreshCw size={14} />{t("x.sfrla")}</Button>
         </div>
         <p className="mt-2 text-[11.5px] muted">
-          {pending ? "Yükleniyor…" : `${pageData.total} kayıt · sayfa ${pageData.page}/${pages}`} · İşlem
-          kimliği, yönetici, IP ve tarayıcı bilgisi her kayıtta saklanır.
+          {pending ? t("x.yukleniyor") : t("x.total-kayt-sayfa-page-pages", { total: pageData.total, page: pageData.page, pages })} · {t("x.islem-3")}
+          {t("x.kimligi-yonetici-ip-ve-tarayc-bilgisi-her-kaytta-saklanr")}
         </p>
       </div>
 
       {pageData.rows.length === 0 ? (
         <EmptyState
-          title="Henüz kayıt yok"
-          description="Panelde yapılan her işlem burada listelenir. Filtreleri sıfırlayarak tüm kayıtları görebilirsiniz."
+          title={t("x.henuz-kayt-yok")}
+          description={t("x.panelde-yaplan-her-islem-burada-listelenir-filtreleri-sf")}
         />
       ) : (
         <div className="card overflow-hidden">
@@ -209,11 +210,11 @@ export function AuditLogView({
             <table className="w-full min-w-[860px] text-left text-[12.5px]">
               <thead className="border-b text-[11px] uppercase tracking-[0.08em] muted hairline">
                 <tr>
-                  <th className="px-4 py-2.5 font-semibold">Zaman</th>
-                  <th className="px-4 py-2.5 font-semibold">İşlem</th>
+                  <th className="px-4 py-2.5 font-semibold">{t("x.zaman")}</th>
+                  <th className="px-4 py-2.5 font-semibold">{t("x.islem")}</th>
                   <th className="px-4 py-2.5 font-semibold">Yapan</th>
-                  <th className="px-4 py-2.5 font-semibold">Mağaza</th>
-                  <th className="px-4 py-2.5 font-semibold">Özet</th>
+                  <th className="px-4 py-2.5 font-semibold">{t("x.magaza")}</th>
+                  <th className="px-4 py-2.5 font-semibold">{t("x.ozet")}</th>
                   <th className="px-4 py-2.5 font-semibold">IP</th>
                   <th className="px-4 py-2.5" />
                 </tr>
@@ -256,7 +257,7 @@ export function AuditLogView({
                           <button
                             type="button"
                             className="btn btn-ghost btn-sm"
-                            aria-label="Detay"
+                            aria-label={t("x.detay")}
                             aria-expanded={expanded}
                             onClick={() => setOpen(expanded ? null : row.id)}
                           >
@@ -281,14 +282,14 @@ export function AuditLogView({
                               </div>
                               <div className="space-y-1 text-[11.5px]">
                                 <p>
-                                  <span className="muted">Varlık:</span> {row.entity || "—"}
+                                  <span className="muted">{t("x.varlk")}</span> {row.entity || "—"}
                                   {row.entityId ? ` #${row.entityId}` : ""}
                                 </p>
                                 <p>
-                                  <span className="muted">Kayıt no:</span> #{row.id}
+                                  <span className="muted">{" "}{t("x.kayt-no")}</span> #{row.id}
                                 </p>
                                 <p className="break-all">
-                                  <span className="muted">Tarayıcı:</span>{" "}
+                                  <span className="muted">{t("x.tarayc")}</span>{" "}
                                   {row.userAgent || "—"}
                                 </p>
                               </div>
@@ -313,9 +314,7 @@ export function AuditLogView({
             size="sm"
             disabled={pageData.page <= 1}
             onClick={() => apply({ page: String(pageData.page - 1) })}
-          >
-            Önceki
-          </Button>
+          >{t("x.onceki")}</Button>
           <span className="text-[12px] muted">
             {pageData.page} / {pages}
           </span>

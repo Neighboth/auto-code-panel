@@ -6,15 +6,20 @@ import { formatDate } from "@/lib/format";
 import { requireStoreAdmin, getStoreBasePath } from "@/lib/tenant";
 import { EmptyState } from "@/components/ui";
 import { CustomersTable, type CustomerRow } from "@/components/admin/customers-table";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kullanıcılar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.kullanclar") };
+}
 
 export default async function StoreCustomersPage({
   params,
 }: {
   params: Promise<{ magazaSlug: string }>;
 }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const guard = await requireStoreAdmin(magazaSlug);
   if (!guard) notFound();
@@ -33,18 +38,17 @@ export default async function StoreCustomersPage({
   return (
     <div className="mx-auto w-full max-w-6xl space-y-5">
       <div>
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Mağaza yönetimi</p>
-        <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">Kullanıcılar</h1>
+        <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{" "}{t("x.magaza-yonetimi")}</p>
+        <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">{t("x.kullanclar")}</h1>
         <p className="mt-1 text-[12.5px] muted">
-          {rows.length} müşteri kaydı. Müşteriler yalnızca kendi mağazanıza özeldir; aynı kullanıcı
-          adı başka mağazada farklı bir müşteri olabilir.
+          {t("x.count-musteri-kayd-musteriler-yalnzca-kendi-magazanza-oz", { count: rows.length })}
         </p>
       </div>
 
       {rows.length === 0 ? (
         <EmptyState
-          title="Henüz müşteri yok"
-          description="Kod kullanan ve hesap oluşturan müşteriler burada listelenir."
+          title={t("x.henuz-musteri-yok")}
+          description={t("x.kod-kullanan-ve-hesap-olusturan-musteriler-burada-listel")}
         />
       ) : (
         <CustomersTable

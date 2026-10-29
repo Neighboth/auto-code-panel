@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -52,7 +53,7 @@ export function SuperAdminShell({
             <ThemeToggle />
           </div>
         </div>
-        <nav aria-label="Süper admin" className="flex gap-1 overflow-x-auto px-3 py-3 lg:flex-col">
+        <nav aria-label={t("x.super-admin")} className="flex gap-1 overflow-x-auto px-3 py-3 lg:flex-col">
           {nav.map((item) => {
             const active = pathname === item.href;
             return (
@@ -93,9 +94,7 @@ export function SuperAdminShell({
           </div>
         </div>
       </aside>
-      <a href="#main" className="skip-link">
-        İçeriğe geç
-      </a>
+      <a href="#main" className="skip-link">{t("x.icerige-gec")}</a>
       <main id="main" tabIndex={-1} className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-8">
         {children}
       </main>

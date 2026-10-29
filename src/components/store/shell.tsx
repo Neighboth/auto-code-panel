@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -136,9 +137,7 @@ export function StoreNav({
                     <Link href={`${basePath}/kutuphane`} className="block px-3 py-2 text-[12.5px] hover:opacity-70">
                       {t("nav.library")}
                     </Link>
-                    <Link href={`${basePath}/profil`} className="block px-3 py-2 text-[12.5px] hover:opacity-70">
-                      Profil ayarları
-                    </Link>
+                    <Link href={`${basePath}/profil`} className="block px-3 py-2 text-[12.5px] hover:opacity-70">{t("x.profil-ayarlar")}</Link>
                     <div className="my-1 h-px" style={{ background: "var(--border)" }} />
                     <LogoutButton
                       kind="customer"
@@ -175,7 +174,7 @@ export function StoreNav({
               type="button"
               onClick={() => setMobileOpen((value) => !value)}
               className="rounded-lg border p-1.5 hairline lg:hidden"
-              aria-label={mobileOpen ? "Menüyü kapat" : "Menüyü aç"}
+              aria-label={mobileOpen ? t("x.menuyu-kapat") : t("x.menuyu-ac")}
               aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X size={17} /> : <Menu size={17} />}
@@ -248,12 +247,8 @@ export function StoreNav({
               </>
             ) : (
               <>
-                <Link href={`${basePath}/giris`} onClick={() => setMobileOpen(false)} className="btn btn-outline btn-sm flex-1">
-                  Giriş yap
-                </Link>
-                <Link href={`${basePath}/kayit`} onClick={() => setMobileOpen(false)} className="btn btn-primary btn-sm flex-1">
-                  Kayıt ol
-                </Link>
+                <Link href={`${basePath}/giris`} onClick={() => setMobileOpen(false)} className="btn btn-outline btn-sm flex-1">{t("x.giris-yap")}</Link>
+                <Link href={`${basePath}/kayit`} onClick={() => setMobileOpen(false)} className="btn btn-primary btn-sm flex-1">{t("x.kayt-ol")}</Link>
               </>
             )}
           </div>

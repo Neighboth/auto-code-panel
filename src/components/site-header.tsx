@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -6,9 +7,9 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { Wordmark } from "@/components/brand";
 
 const links = [
-  { href: "#ozellikler", label: "Özellikler" },
-  { href: "#nasil-calisir", label: "Nasıl Çalışır" },
-  { href: "#fiyatlandirma", label: "Fiyatlandırma" },
+  { href: "#ozellikler", label: "x.ozellikler" },
+  { href: "#nasil-calisir", label: "x.nasl-calsr" },
+  { href: "#fiyatlandirma", label: "x.fiyatlandrma" },
   { href: "#sss", label: "SSS" },
 ];
 
@@ -21,6 +22,7 @@ export function SiteHeader({
   tagline: string;
   logoUrl?: string;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
 
   return (
@@ -40,25 +42,23 @@ export function SiteHeader({
               href={link.href}
               className="text-[13px] font-medium muted transition hover:opacity-70"
             >
-              {link.label}
+              {t(link.label)}
             </a>
           ))}
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 md:ml-auto">
-          <Link href="/super-admin" className="btn btn-gray btn-sm hidden md:inline-flex">
-            Giriş
-          </Link>
+          <Link href="/super-admin" className="btn btn-gray btn-sm hidden md:inline-flex">{t("x.giris")}</Link>
           <Link href="/bayi" className="btn btn-dark btn-sm">
-            <span className="sm:hidden">Bayilik</span>
-            <span className="hidden sm:inline">Bayilik Aktivasyonu</span>
+            <span className="sm:hidden">{t("x.bayilik")}</span>
+            <span className="hidden sm:inline">{t("x.bayilik-aktivasyonu")}</span>
             <ArrowRight size={13} />
           </Link>
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
             className="rounded-lg border p-1.5 hairline md:hidden"
-            aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+            aria-label={open ? t("x.menuyu-kapat") : t("x.menuyu-ac")}
             aria-expanded={open}
           >
             {open ? <X size={17} /> : <Menu size={17} />}
@@ -76,14 +76,12 @@ export function SiteHeader({
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-2 py-2.5 text-[13.5px] font-medium muted active:opacity-60"
               >
-                {link.label}
+                {t(link.label)}
               </a>
             ))}
           </nav>
           <div className="mt-3 flex items-center gap-2 border-t pt-3 hairline">
-            <Link href="/super-admin" onClick={() => setOpen(false)} className="btn btn-gray btn-sm flex-1">
-              Giriş
-            </Link>
+            <Link href="/super-admin" onClick={() => setOpen(false)} className="btn btn-gray btn-sm flex-1">{t("x.giris")}</Link>
           </div>
         </div>
       ) : null}

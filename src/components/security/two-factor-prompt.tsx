@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ export function TwoFactorPrompt({
   basePath?: string;
   onCancel: () => void;
 }) {
+  const t = useT();
   const [tab, setTab] = useState<"totp" | "passkey" | "question" | "email">(
     methods.totp ? "totp" : methods.passkey ? "passkey" : methods.email ? "email" : "question",
   );
@@ -51,10 +53,10 @@ export function TwoFactorPrompt({
   async function finish(result: { ok: boolean; message?: string; redirectTo?: string }) {
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Doğrulama başarısız.");
+      toast.error(result.message ?? t("x.dogrulama-basarsz-2"));
       return;
     }
-    toast.success(result.message ?? "Doğrulama başarılı");
+    toast.success(result.message ?? t("x.dogrulama-basarl"));
     let target = result.redirectTo ?? redirectTo;
     if (slug && basePath !== undefined) {
       const prefix = `/${slug}`;
@@ -81,7 +83,7 @@ export function TwoFactorPrompt({
     const begin = await beginPasskeyLogin();
     if (!begin.ok || !begin.data) {
       setPending(false);
-      toast.error(begin.message ?? "Passkey başlatılamadı.");
+      toast.error(begin.message ?? t("x.passkey-baslatlamad"));
       return;
     }
     const options = begin.data.options as {
@@ -105,7 +107,7 @@ export function TwoFactorPrompt({
         | null;
       if (!assertion) {
         setPending(false);
-        toast.error("Passkey doğrulanamadı.");
+        toast.error(t("x.passkey-dogrulanamad"));
         return;
       }
       const response = assertion.response as unknown as {
@@ -124,7 +126,7 @@ export function TwoFactorPrompt({
       await finish(await verifyTwoFactorLogin("passkey", { assertion: JSON.stringify(payload) }));
     } catch {
       setPending(false);
-      toast.error("Passkey doğrulaması sırasında hata oluştu.");
+      toast.error(t("x.passkey-dogrulamas-srasnda-hata-olustu"));
     }
   }
 
@@ -133,12 +135,12 @@ export function TwoFactorPrompt({
     const result = await sendLoginEmailCode();
     setMailPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Kod gönderilemedi.");
+      toast.error(result.message ?? t("x.kod-gonderilemedi"));
       return;
     }
     setVerificationId(result.verificationId ?? null);
     setMailSent(true);
-    toast.success(result.message ?? "Kod gönderildi");
+    toast.success(result.message ?? t("x.kod-gonderildi"));
   }
 
   async function submitMailCode() {
@@ -151,7 +153,7 @@ export function TwoFactorPrompt({
     { id: "totp" as const, label: "2FA Kodu", icon: Smartphone, enabled: methods.totp },
     { id: "email" as const, label: "E-posta", icon: Mail, enabled: Boolean(methods.email) },
     { id: "passkey" as const, label: "Passkey", icon: Fingerprint, enabled: methods.passkey },
-    { id: "question" as const, label: "Güvenlik Sorusu", icon: Lock, enabled: methods.question },
+    { id: "question" as const, label: t("x.guvenlik-sorusu"), icon: Lock, enabled: methods.question },
   ].filter((item) => item.enabled);
 
   return (
@@ -161,12 +163,9 @@ export function TwoFactorPrompt({
     >
       <div className="flex items-center gap-2">
         <ShieldCheck size={16} />
-        <p className="text-[13px] font-semibold">İki aşamalı doğrulama</p>
+        <p className="text-[13px] font-semibold">{" "}{t("x.iki-asamal-dogrulama")}</p>
       </div>
-      <p className="mt-1 text-[11.5px] muted">
-        Hesabınız ikinci faktör koruması altında. Devam etmek için aşağıdaki yöntemlerden birini
-        kullanın.
-      </p>
+      <p className="mt-1 text-[11.5px] muted">{t("x.hesabnz-ikinci-faktor-korumas-altnda-devam-etmek-icin-as")}</p>
 
       <div className="mt-3 flex gap-1 rounded-lg border p-1 hairline" style={{ background: "var(--bg)" }}>
         {tabs.map((item) => (
@@ -189,7 +188,7 @@ export function TwoFactorPrompt({
       <div className="mt-3">
         {tab === "totp" && methods.totp ? (
           <div className="space-y-2">
-            <Field label="Uygulamanızdaki 6 haneli kod">
+            <Field label={t("x.uygulamanzdaki-6-haneli-kod")}>
               <input
                 value={code}
                 onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -200,34 +199,30 @@ export function TwoFactorPrompt({
               />
             </Field>
             <button type="button" className="btn btn-primary w-full" onClick={submitCode} disabled={pending || code.length !== 6}>
-              {pending ? "Doğrulanıyor..." : "Kodu doğrula"}
+              {pending ? t("x.dogrulanyor") : t("x.kodu-dogrula")}
             </button>
           </div>
         ) : null}
 
         {tab === "passkey" && methods.passkey ? (
           <div className="space-y-2">
-            <p className="text-[11.5px] muted">
-              Parmak izi, Face ID veya cihaz PIN&apos;inizle doğrulayın.
-            </p>
+            <p className="text-[11.5px] muted">{t("x.parmak-izi-face-id-veya-cihaz-pin-inizle-dogrulayn")}</p>
             <button type="button" className="btn btn-primary w-full" onClick={usePasskey} disabled={pending}>
-              {pending ? "Doğrulanıyor..." : "Passkey ile doğrula"}
+              {pending ? t("x.dogrulanyor") : t("x.passkey-ile-dogrula")}
             </button>
           </div>
         ) : null}
 
         {tab === "email" && methods.email ? (
           <div className="space-y-2">
-            <p className="text-[11.5px] muted">
-              Hesabınıza bağlı e-posta adresine 6 haneli kod gönderilir. Kod 15 dakika geçerlidir.
-            </p>
+            <p className="text-[11.5px] muted">{t("x.hesabnza-bagl-e-posta-adresine-6-haneli-kod-gonderilir-k")}</p>
             {!mailSent ? (
               <button type="button" className="btn btn-primary w-full" onClick={sendMailCode} disabled={mailPending}>
-                {mailPending ? "Gönderiliyor..." : "E-posta ile kod gönder"}
+                {mailPending ? t("x.gonderiliyor") : t("x.e-posta-ile-kod-gonder")}
               </button>
             ) : (
               <>
-                <Field label="E-postanıza gelen 6 haneli kod">
+                <Field label={t("x.e-postanza-gelen-6-haneli-kod")}>
                   <input
                     value={mailCode}
                     onChange={(event) => setMailCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -243,11 +238,9 @@ export function TwoFactorPrompt({
                   onClick={submitMailCode}
                   disabled={pending || mailCode.length !== 6}
                 >
-                  {pending ? "Doğrulanıyor..." : "Kodu doğrula"}
+                  {pending ? t("x.dogrulanyor") : t("x.kodu-dogrula")}
                 </button>
-                <button type="button" className="btn btn-ghost btn-sm w-full" onClick={sendMailCode} disabled={mailPending}>
-                  Kodu tekrar gönder
-                </button>
+                <button type="button" className="btn btn-ghost btn-sm w-full" onClick={sendMailCode} disabled={mailPending}>{t("x.kodu-tekrar-gonder")}</button>
               </>
             )}
           </div>
@@ -255,29 +248,25 @@ export function TwoFactorPrompt({
 
         {tab === "question" && methods.question ? (
           <div className="space-y-2">
-            <Field label="Güvenlik sorunuzun cevabı">
+            <Field label={t("x.guvenlik-sorunuzun-cevab")}>
               <input
                 value={answer}
                 onChange={(event) => setAnswer(event.target.value)}
                 className="input"
-                placeholder="Cevabınızı girin"
+                placeholder={t("x.cevabnz-girin")}
                 autoFocus
               />
             </Field>
             <button type="button" className="btn btn-primary w-full" onClick={submitQuestion} disabled={pending || !answer.trim()}>
-              {pending ? "Doğrulanıyor..." : "Cevabı doğrula"}
+              {pending ? t("x.dogrulanyor") : t("x.cevab-dogrula")}
             </button>
           </div>
         ) : null}
       </div>
 
-      <button type="button" onClick={onCancel} className="btn btn-ghost btn-sm mt-3">
-        Girişten vazgeç
-      </button>
+      <button type="button" onClick={onCancel} className="btn btn-ghost btn-sm mt-3">{t("x.giristen-vazgec")}</button>
       <p className="mt-2 flex items-center gap-1 text-[10.5px] muted">
-        <KeyRound size={10} />
-        Doğrulama anahtarınız hiçbir tarayıcıya gönderilmez, kodlar sunucuda üretilir.
-      </p>
+        <KeyRound size={10} />{t("x.dogrulama-anahtarnz-hicbir-taraycya-gonderilmez-kodlar-s")}</p>
     </div>
   );
 }

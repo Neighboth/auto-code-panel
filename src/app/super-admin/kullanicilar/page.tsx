@@ -4,15 +4,17 @@ import { customers, storeAdmins, stores } from "@/db/schema";
 import { getSuperSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { UserTabs } from "./tabs-client";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kullanıcılar" };
+export const metadata = { title: "x.kullanclar" };
 
 export default async function SuperUsersPage({
   searchParams,
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
   if (!session) redirect("/super-admin");
   const { tab } = await searchParams;
@@ -42,12 +44,9 @@ export default async function SuperUsersPage({
   return (
     <div className="mx-auto w-full max-w-6xl space-y-5">
       <div>
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Kullanıcılar</p>
-        <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">Platform kullanıcıları</h1>
-        <p className="mt-1 text-[12.5px] muted">
-          Bayi hesapları platform genelinde; mağaza müşterileri tenant bazında. Seçilen müşteriye
-          mağaza yöneticisinin yapabildiği tüm işlemler buradan uygulanabilir.
-        </p>
+        <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("x.kullanclar")}</p>
+        <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{" "}{t("x.platform-kullanclar")}</h1>
+        <p className="mt-1 text-[12.5px] muted">{t("x.bayi-hesaplar-platform-genelinde-magaza-musterileri-tena")}</p>
       </div>
 
       <UserTabs

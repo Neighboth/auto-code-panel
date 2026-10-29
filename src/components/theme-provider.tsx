@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useT } from "@/components/i18n-provider";
 
 export type Theme = "light" | "dark";
 const STORAGE_KEY = "pix-theme";
@@ -65,14 +66,15 @@ export function useTheme(): ThemeContextValue {
 }
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
+  const t = useT();
   const { theme, toggle } = useTheme();
   return (
     <button
       type="button"
       onClick={toggle}
       className={`flex h-8 w-8 items-center justify-center rounded-lg border hairline ${className}`}
-      aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-      title={theme === "dark" ? "Açık tema" : "Koyu tema"}
+      aria-label={theme === "dark" ? t("x.ack-temaya-gec") : t("x.koyu-temaya-gec")}
+      title={theme === "dark" ? t("x.ack-tema") : "Koyu tema"}
     >
       {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
     </button>

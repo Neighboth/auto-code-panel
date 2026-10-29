@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import { ArrowUpRight, ExternalLink, Gamepad2 } from "lucide-react";
@@ -30,6 +31,7 @@ const PAGE_SIZE = 24;
  * offscreen work is skipped by the browser.
  */
 export function GameGrid({ games }: { games: StoreGameCard[] }) {
+  const t = useT();
   const [active, setActive] = useState<StoreGameCard | null>(null);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const shown = games.slice(0, visible);
@@ -95,9 +97,7 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
                       target="_blank"
                       rel="noreferrer"
                       className="btn btn-primary btn-sm"
-                    >
-                      Satın al
-                      <ArrowUpRight size={12} />
+                    >{t("x.satn-al")}<ArrowUpRight size={12} />
                     </a>
                   </div>
                 </div>
@@ -111,20 +111,16 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
         open={active !== null}
         onClose={() => setActive(null)}
         title={active?.title}
-        description={active ? "Ürün detayı ve fiyat karşılaştırması" : undefined}
+        description={active ? t("x.urun-detay-ve-fiyat-karslastrmas") : undefined}
         size="lg"
         footer={
           active ? (
             <>
               {active.steamUrl ? (
                 <a href={active.steamUrl} target="_blank" rel="noreferrer" className="btn btn-outline">
-                  <ExternalLink size={13} />
-                  Steam Mağaza
-                </a>
+                  <ExternalLink size={13} />{t("x.steam-magaza")}</a>
               ) : null}
-              <a href={active.salesUrl || "#"} target="_blank" rel="noreferrer" className="btn btn-primary">
-                Satın alma ilanına git
-                <ArrowUpRight size={13} />
+              <a href={active.salesUrl || "#"} target="_blank" rel="noreferrer" className="btn btn-primary">{t("x.satn-alma-ilanna-git")}<ArrowUpRight size={13} />
               </a>
             </>
           ) : null
@@ -146,7 +142,7 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
                 </p>
               </div>
               <div className="p-3">
-                <p className="text-[10.5px] uppercase tracking-[0.08em] muted">Bizim fiyatımız</p>
+                <p className="text-[10.5px] uppercase tracking-[0.08em] muted">{" "}{t("x.bizim-fiyatmz")}</p>
                 <p className="mt-1 text-[14px] font-semibold">
                   {formatMoney(active.ourPrice, active.currency)}
                 </p>
@@ -165,9 +161,9 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
               </div>
             </div>
             <div>
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">Açıklama</p>
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">{t("x.acklama")}</p>
               <div className="mt-1.5">
-                <Markdown content={active.description || "Açıklama girilmedi."} />
+                <Markdown content={active.description || t("x.acklama-girilmedi")} />
               </div>
             </div>
           </div>

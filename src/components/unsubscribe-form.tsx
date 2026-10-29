@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -6,6 +7,7 @@ import { CheckCircle2, Loader2, MailX } from "lucide-react";
 import { unsubscribeByToken } from "@/app/actions/mail-prefs";
 
 export function UnsubscribeForm({ token }: { token: string }) {
+  const t = useT();
   const [pending, setPending] = useState<"announcements" | "all" | null>(null);
   const [done, setDone] = useState<string | null>(null);
 
@@ -14,10 +16,10 @@ export function UnsubscribeForm({ token }: { token: string }) {
     const result = await unsubscribeByToken(token, scope);
     setPending(null);
     if (!result.ok) {
-      toast.error(result.message ?? "İşlem başarısız");
+      toast.error(result.message ?? t("x.islem-basarsz"));
       return;
     }
-    setDone(result.message ?? "Tercihiniz kaydedildi.");
+    setDone(result.message ?? t("x.tercihiniz-kaydedildi"));
   }
 
   if (done) {
@@ -38,7 +40,7 @@ export function UnsubscribeForm({ token }: { token: string }) {
         disabled={pending !== null}
       >
         {pending === "announcements" ? <Loader2 size={14} className="animate-spin" /> : <MailX size={14} />}
-        Duyuru e-postalarını kapat
+        {t("x.duyuru-e-postalarn-kapat")}
       </button>
       <button
         type="button"
@@ -47,12 +49,9 @@ export function UnsubscribeForm({ token }: { token: string }) {
         disabled={pending !== null}
       >
         {pending === "all" ? <Loader2 size={14} className="animate-spin" /> : null}
-        Tüm e-posta bildirimlerini kapat
+        {t("x.tum-e-posta-bildirimlerini-kapat")}
       </button>
-      <p className="pt-1 text-[11px] leading-relaxed muted">
-        Hesap güvenliğiyle ilgili zorunlu bildirimler (şifre değişikliği, şüpheli giriş) mevzuat
-        gereği devam edebilir.
-      </p>
+      <p className="pt-1 text-[11px] leading-relaxed muted">{t("x.hesap-guvenligiyle-ilgili-zorunlu-bildirimler-sifre-degi")}</p>
     </div>
   );
 }

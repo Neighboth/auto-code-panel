@@ -7,11 +7,16 @@ import { getStoreState, getStoreBasePath } from "@/lib/tenant";
 import { getLocale } from "@/lib/i18n/server";
 import { decryptData } from "@/lib/secret-crypto";
 import { LibraryView, type LibraryItem } from "@/components/store/library-view";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kütüphanem" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.kutuphanem") };
+}
 
 export default async function LibraryPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const state = await getStoreState(magazaSlug);
   if (!state) notFound();
@@ -38,9 +43,9 @@ export default async function LibraryPage({ params }: { params: Promise<{ magaza
     entitlementId: entitlement.id,
     title: entitlement.title || game?.title || account?.platformLabel || "Teslimat",
     subtitle: account
-      ? `${account.platformLabel} hesabı`
+      ? t("x.platform-hesab", { platform: account.platformLabel })
       : game
-        ? "Oyun erişimi"
+        ? t("x.oyun-erisimi")
         : "Dijital teslimat",
     coverImage: game?.coverImage ?? "",
     platformLabel: account?.platformLabel ?? "Steam",

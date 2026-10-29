@@ -10,6 +10,7 @@ import {
   CustomerDetailActions,
   CustomerRemoveButton,
 } from "@/app/[magazaSlug]/admin/(panel)/kullanicilar/[customerId]/actions-client";
+import { getTranslator } from "@/lib/i18n/server";
 
 /**
  * Customer detail view shared by the store panel and the platform owner panel,
@@ -32,6 +33,7 @@ export async function CustomerDetailView({
   backLabel: string;
   listHref?: string;
 }) {
+  const { t } = await getTranslator();
   const rows = await db
     .select()
     .from(customers)
@@ -96,24 +98,24 @@ export async function CustomerDetailView({
             <div>
               <p className="text-[15px] font-semibold">{customer.username}</p>
               <p className="text-[11.5px] muted">
-                {customer.displayName} · {customer.email || "e-posta yok"} · kayıt:{" "}
+                {customer.displayName} · {customer.email || t("x.e-posta-yok")} · {t("x.kayt")}{" "}
                 {formatDate(customer.createdAt)}
               </p>
             </div>
           </div>
           <span className={`badge ${customer.status === "active" ? "badge-green" : "badge-red"}`}>
-            {customer.status === "active" ? "Aktif" : "Yasaklı"}
+            {customer.status === "active" ? "Aktif" : t("x.yasakl")}
           </span>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-1.5">
-          <span className="mr-1 text-[11px] uppercase tracking-[0.06em] muted">Güvenlik:</span>
+          <span className="mr-1 text-[11px] uppercase tracking-[0.06em] muted">{t("x.guvenlik-3")}</span>
           {factors.length === 0 ? (
-            <span className="text-[11.5px] muted">Yöntem kayıtlı değil</span>
+            <span className="text-[11.5px] muted">{t("x.yontem-kaytl-degil")}</span>
           ) : null}
           {factors.map((factor) => (
             <span key={factor.kind} className="badge">
-              {factor.kind === "totp" ? "TOTP 2FA" : factor.kind === "passkey" ? "Passkey" : "Güvenlik sorusu"}
+              {factor.kind === "totp" ? "TOTP 2FA" : factor.kind === "passkey" ? "Passkey" : t("x.guvenlik-sorusu")}
             </span>
           ))}
         </div>
@@ -130,23 +132,23 @@ export async function CustomerDetailView({
 
       <section className="card overflow-hidden">
         <div className="border-b px-4 py-3 hairline">
-          <h2 className="text-[13.5px] font-semibold">Kütüphane ({library.length})</h2>
+          <h2 className="text-[13.5px] font-semibold">{t("x.kutuphane-2")} ({library.length})</h2>
           <p className="text-[11px] muted">
-            Paylaşımlı hesaplar süresiz teslim edilir. Manuel ekleme, kaldırma ve hesap bilgileri burada.
+            {t("x.paylasml-hesaplar-suresiz-teslim-edilir")}
           </p>
         </div>
         {library.length === 0 ? (
-          <p className="px-4 py-6 text-center text-[12px] muted">Bu müşteride teslimat yok.</p>
+          <p className="px-4 py-6 text-center text-[12px] muted">{t("x.bu-musteride-teslimat-yok")}</p>
         ) : (
           <div className="overflow-x-auto scroll-thin">
             <table className="table min-w-[680px]">
               <thead>
                 <tr>
-                  <th>Ürün</th>
-                  <th>Hesap</th>
+                  <th>{t("x.urun-3")}</th>
+                  <th>{t("x.hesap-3")}</th>
                   <th>Platform</th>
-                  <th>Erişim</th>
-                  <th className="text-right">İşlem</th>
+                  <th>{t("x.erisim-3")}</th>
+                  <th className="text-right">{t("x.islem-3")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -154,19 +156,19 @@ export async function CustomerDetailView({
                   <tr key={item.entitlementId}>
                     <td>
                       <p className="text-[12.5px] font-medium">{item.title}</p>
-                      <p className="text-[10.5px] muted">{item.kind === "game" ? "Ürün" : "Hesap"}</p>
+                      <p className="text-[10.5px] muted">{item.kind === "game" ? t("x.urun-3") : t("x.hesap-3")}</p>
                     </td>
                     <td>
                       <p className="text-[12px]">{item.username ?? "—"}</p>
                       {item.password ? (
                         <p className="mono mt-0.5 text-[10.5px] muted">
-                          şifre: {item.password.length > 8 ? `••••${item.password.slice(-4)}` : item.password}
+                          {t("x.sifre-2")} {item.password.length > 8 ? `••••${item.password.slice(-4)}` : item.password}
                         </p>
                       ) : null}
                     </td>
                     <td className="text-[12px]">{item.platformLabel}</td>
                     <td className="text-[12px]">
-                      {item.expiresAt ? remainingLabel(item.expiresAt) : "Sınırsız erişim"}
+                      {item.expiresAt ? remainingLabel(item.expiresAt) : t("x.snrsz-erisim")}
                     </td>
                     <td>
                       <div className="flex justify-end">

@@ -4,9 +4,13 @@ import { db } from "@/db";
 import { games } from "@/db/schema";
 import { requireStoreAdmin } from "@/lib/tenant";
 import { GameManager, type AdminGame } from "@/components/admin/catalog";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Oyunlar & Ürünler" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.oyunlar-urunler") };
+}
 
 export default async function AdminGamesPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
   const { magazaSlug } = await params;

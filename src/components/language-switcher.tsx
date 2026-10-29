@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,7 +7,6 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { toast } from "sonner";
 import { setLocale } from "@/app/actions/locale";
 import { LOCALES, findLocale, flagUrl } from "@/lib/i18n/config";
-import { useT } from "@/components/i18n-provider";
 
 export function Flag({ flag, size = 20 }: { flag: string; size?: number }) {
   const [failed, setFailed] = useState(false);
@@ -120,7 +120,7 @@ export function LanguageSwitcher({
           </div>
           <div className="max-h-[280px] overflow-y-auto p-1 scroll-thin">
             {filtered.length === 0 ? (
-              <p className="px-2 py-3 text-[12px] muted">Sonuç yok</p>
+              <p className="px-2 py-3 text-[12px] muted">{" "}{t("x.sonuc-yok")}</p>
             ) : null}
             {filtered.map((item) => (
               <button

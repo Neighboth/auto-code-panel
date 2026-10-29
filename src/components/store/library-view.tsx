@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useMemo, useState } from "react";
 import { KeyRound, ShieldCheck } from "lucide-react";
@@ -63,12 +64,11 @@ export function LibraryView({
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("library.myAccount")}</p>
           <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.025em]">{t("library.title")}</h1>
           <p className="mt-1 text-[12.5px] muted">
-            {items.length} teslimat · Paylaşımlı hesaplar sınırsız süreyle kullanılabilir.
+            {t("x.count-teslimat-paylasml-hesaplar-snrsz-sureyle-kullanlab", { count: items.length })}
           </p>
         </div>
         <span className="badge badge-green">
-          <ShieldCheck size={11} /> Canlı kod üretimi aktif
-        </span>
+          <ShieldCheck size={11} />{t("x.canl-kod-uretimi-aktif")}</span>
       </div>
 
       {items.length === 0 ? (

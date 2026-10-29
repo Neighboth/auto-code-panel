@@ -13,43 +13,43 @@ export type PlatformPreset = {
  * form offers (Steam Guard vs. standard TOTP).
  */
 export const PLATFORM_PRESETS: PlatformPreset[] = [
-  { id: "steam", label: "Steam", kind: "steam", icon: "steam", hint: "Steam Guard / paylaşımlı hesap", group: "Oyun" },
-  { id: "epic", label: "Epic Games", kind: "generic", icon: "gamepad", hint: "Epic hesabı", group: "Oyun" },
-  { id: "riot", label: "Riot Games", kind: "generic", icon: "gamepad", hint: "Valorant / LoL hesapları", group: "Oyun" },
-  { id: "battlenet", label: "Battle.net", kind: "generic", icon: "gamepad", hint: "Blizzard hesapları", group: "Oyun" },
-  { id: "ea", label: "EA / Origin", kind: "generic", icon: "gamepad", hint: "EA App hesapları", group: "Oyun" },
-  { id: "ubisoft", label: "Ubisoft Connect", kind: "generic", icon: "gamepad", hint: "Ubisoft hesapları", group: "Oyun" },
-  { id: "xbox", label: "Xbox / Microsoft", kind: "generic", icon: "gamepad", hint: "Game Pass / Xbox hesapları", group: "Oyun" },
-  { id: "playstation", label: "PlayStation Network", kind: "generic", icon: "gamepad", hint: "PSN hesapları", group: "Oyun" },
-  { id: "nintendo", label: "Nintendo", kind: "generic", icon: "gamepad", hint: "Nintendo Switch hesapları", group: "Oyun" },
-  { id: "minecraft", label: "Minecraft", kind: "generic", icon: "gamepad", hint: "Mojang / Microsoft hesapları", group: "Oyun" },
-  { id: "roblox", label: "Roblox", kind: "generic", icon: "gamepad", hint: "Roblox hesapları", group: "Oyun" },
-  { id: "rockstar", label: "Rockstar", kind: "generic", icon: "gamepad", hint: "GTA / RDR hesapları", group: "Oyun" },
+  { id: "steam", label: "Steam", kind: "steam", icon: "steam", hint: "x.steam-guard-paylasml-hesap", group: "Oyun" },
+  { id: "epic", label: "Epic Games", kind: "generic", icon: "gamepad", hint: "x.epic-hesab", group: "Oyun" },
+  { id: "riot", label: "Riot Games", kind: "generic", icon: "gamepad", hint: "x.valorant-lol-hesaplar", group: "Oyun" },
+  { id: "battlenet", label: "Battle.net", kind: "generic", icon: "gamepad", hint: "x.blizzard-hesaplar", group: "Oyun" },
+  { id: "ea", label: "EA / Origin", kind: "generic", icon: "gamepad", hint: "x.ea-app-hesaplar", group: "Oyun" },
+  { id: "ubisoft", label: "Ubisoft Connect", kind: "generic", icon: "gamepad", hint: "x.ubisoft-hesaplar", group: "Oyun" },
+  { id: "xbox", label: "Xbox / Microsoft", kind: "generic", icon: "gamepad", hint: "x.game-pass-xbox-hesaplar", group: "Oyun" },
+  { id: "playstation", label: "PlayStation Network", kind: "generic", icon: "gamepad", hint: "x.psn-hesaplar", group: "Oyun" },
+  { id: "nintendo", label: "Nintendo", kind: "generic", icon: "gamepad", hint: "x.nintendo-switch-hesaplar", group: "Oyun" },
+  { id: "minecraft", label: "Minecraft", kind: "generic", icon: "gamepad", hint: "x.mojang-microsoft-hesaplar", group: "Oyun" },
+  { id: "roblox", label: "Roblox", kind: "generic", icon: "gamepad", hint: "x.roblox-hesaplar", group: "Oyun" },
+  { id: "rockstar", label: "Rockstar", kind: "generic", icon: "gamepad", hint: "x.gta-rdr-hesaplar", group: "Oyun" },
   { id: "hoyoverse", label: "HoYoverse", kind: "generic", icon: "gamepad", hint: "Genshin / HSR / ZZZ", group: "Oyun" },
-  { id: "supercell", label: "Supercell", kind: "generic", icon: "gamepad", hint: "Clash / Brawl hesapları", group: "Oyun" },
+  { id: "supercell", label: "Supercell", kind: "generic", icon: "gamepad", hint: "x.clash-brawl-hesaplar", group: "Oyun" },
   { id: "openai", label: "OpenAI / ChatGPT", kind: "generic", icon: "sparkles", hint: "ChatGPT Plus / API", group: "Yapay zekâ" },
-  { id: "anthropic", label: "Anthropic Claude", kind: "generic", icon: "sparkles", hint: "Claude Pro hesapları", group: "Yapay zekâ" },
+  { id: "anthropic", label: "Anthropic Claude", kind: "generic", icon: "sparkles", hint: "x.claude-pro-hesaplar", group: "Yapay zekâ" },
   { id: "gemini", label: "Google Gemini", kind: "generic", icon: "sparkles", hint: "Gemini Advanced", group: "Yapay zekâ" },
-  { id: "midjourney", label: "Midjourney", kind: "generic", icon: "sparkles", hint: "Midjourney planları", group: "Yapay zekâ" },
+  { id: "midjourney", label: "Midjourney", kind: "generic", icon: "sparkles", hint: "x.midjourney-planlar", group: "Yapay zekâ" },
   { id: "perplexity", label: "Perplexity", kind: "generic", icon: "sparkles", hint: "Perplexity Pro", group: "Yapay zekâ" },
   { id: "copilot", label: "Microsoft Copilot", kind: "generic", icon: "sparkles", hint: "Copilot Pro", group: "Yapay zekâ" },
-  { id: "netflix", label: "Netflix", kind: "generic", icon: "play", hint: "Profil bazlı erişim", group: "Yayın" },
-  { id: "disney", label: "Disney+", kind: "generic", icon: "play", hint: "Disney+ hesapları", group: "Yayın" },
-  { id: "primevideo", label: "Amazon Prime Video", kind: "generic", icon: "play", hint: "Prime Video", group: "Yayın" },
-  { id: "hbo", label: "HBO Max", kind: "generic", icon: "play", hint: "HBO Max hesapları", group: "Yayın" },
-  { id: "spotify", label: "Spotify", kind: "generic", icon: "music", hint: "Premium / aile planı", group: "Müzik" },
-  { id: "apple", label: "Apple Music / TV", kind: "generic", icon: "music", hint: "Apple servisleri", group: "Müzik" },
-  { id: "youtube", label: "YouTube Premium", kind: "generic", icon: "play", hint: "Premium / Music", group: "Yayın" },
-  { id: "adobe", label: "Adobe Creative Cloud", kind: "generic", icon: "box", hint: "Photoshop / CC", group: "Yazılım" },
-  { id: "canva", label: "Canva Pro", kind: "generic", icon: "box", hint: "Canva ekipleri", group: "Yazılım" },
-  { id: "office", label: "Microsoft 365", kind: "generic", icon: "box", hint: "Office / OneDrive", group: "Yazılım" },
-  { id: "capcut", label: "CapCut Pro", kind: "generic", icon: "box", hint: "CapCut hesapları", group: "Yazılım" },
-  { id: "vpn", label: "VPN / Proxy", kind: "generic", icon: "shield", hint: "NordVPN, ExpressVPN…", group: "Yazılım" },
-  { id: "iptv", label: "IPTV", kind: "generic", icon: "play", hint: "IPTV abonelikleri", group: "Yayın" },
-  { id: "duolingo", label: "Duolingo", kind: "generic", icon: "box", hint: "Duolingo Plus", group: "Eğitim" },
-  { id: "coursera", label: "Coursera / Udemy", kind: "generic", icon: "box", hint: "Eğitim hesapları", group: "Eğitim" },
-  { id: "linkedin", label: "LinkedIn", kind: "generic", icon: "box", hint: "LinkedIn Premium", group: "Eğitim" },
-  { id: "custom", label: "Özel platform", kind: "generic", icon: "box", hint: "Kendi platform adınızı girin", group: "Diğer" },
+  { id: "netflix", label: "Netflix", kind: "generic", icon: "play", hint: "x.profil-bazl-erisim", group: "x.yayn" },
+  { id: "disney", label: "Disney+", kind: "generic", icon: "play", hint: "x.disney-hesaplar", group: "x.yayn" },
+  { id: "primevideo", label: "Amazon Prime Video", kind: "generic", icon: "play", hint: "Prime Video", group: "x.yayn" },
+  { id: "hbo", label: "HBO Max", kind: "generic", icon: "play", hint: "x.hbo-max-hesaplar", group: "x.yayn" },
+  { id: "spotify", label: "Spotify", kind: "generic", icon: "music", hint: "x.premium-aile-plan", group: "x.muzik" },
+  { id: "apple", label: "Apple Music / TV", kind: "generic", icon: "music", hint: "Apple servisleri", group: "x.muzik" },
+  { id: "youtube", label: "YouTube Premium", kind: "generic", icon: "play", hint: "Premium / Music", group: "x.yayn" },
+  { id: "adobe", label: "Adobe Creative Cloud", kind: "generic", icon: "box", hint: "Photoshop / CC", group: "x.yazlm" },
+  { id: "canva", label: "Canva Pro", kind: "generic", icon: "box", hint: "Canva ekipleri", group: "x.yazlm" },
+  { id: "office", label: "Microsoft 365", kind: "generic", icon: "box", hint: "Office / OneDrive", group: "x.yazlm" },
+  { id: "capcut", label: "CapCut Pro", kind: "generic", icon: "box", hint: "x.capcut-hesaplar", group: "x.yazlm" },
+  { id: "vpn", label: "VPN / Proxy", kind: "generic", icon: "shield", hint: "NordVPN, ExpressVPN…", group: "x.yazlm" },
+  { id: "iptv", label: "IPTV", kind: "generic", icon: "play", hint: "IPTV abonelikleri", group: "x.yayn" },
+  { id: "duolingo", label: "Duolingo", kind: "generic", icon: "box", hint: "Duolingo Plus", group: "x.egitim" },
+  { id: "coursera", label: "Coursera / Udemy", kind: "generic", icon: "box", hint: "x.egitim-hesaplar", group: "x.egitim" },
+  { id: "linkedin", label: "LinkedIn", kind: "generic", icon: "box", hint: "LinkedIn Premium", group: "x.egitim" },
+  { id: "custom", label: "x.ozel-platform", kind: "generic", icon: "box", hint: "x.kendi-platform-adnz-girin", group: "x.diger" },
 ];
 
 export const PLATFORM_GROUPS = Array.from(new Set(PLATFORM_PRESETS.map((preset) => preset.group)));
@@ -64,12 +64,12 @@ export const PLATFORM_LABELS: Record<string, string> = PLATFORM_PRESETS.reduce<R
 
 /** Guard mechanisms an inventory account can expose. */
 export const GUARD_OPTIONS = [
-  { id: "none", label: "Korumasız", hint: "2FA / Guard yok, sadece kullanıcı adı + şifre." },
-  { id: "steam_guard", label: "Steam Guard (mobil authenticator)", hint: "base64 shared_secret ile 5 haneli kod." },
-  { id: "totp", label: "Standart 2FA (TOTP)", hint: "Google Authenticator uyumlu 6 haneli kod." },
-  { id: "email", label: "E-posta (IMAP) doğrulaması", hint: "Kod bağlı mail kutusundan okunur." },
-  { id: "steam_guard_email", label: "Steam Guard + e-posta (IMAP)", hint: "Guard kodu ve mail kodu birlikte." },
-  { id: "totp_email", label: "TOTP + e-posta (IMAP)", hint: "Authenticator kodu ve mail kodu birlikte." },
+  { id: "none", label: "x.korumasz", hint: "x.2fa-guard-yok-sadece-kullanc-ad-sifre" },
+  { id: "steam_guard", label: "x.steam-guard-mobil-authenticator", hint: "x.base64-shared-secret-ile-5-haneli-kod" },
+  { id: "totp", label: "x.standart-2fa-totp", hint: "x.google-authenticator-uyumlu-6-haneli-kod" },
+  { id: "email", label: "x.e-posta-imap-dogrulamas", hint: "x.kod-bagl-mail-kutusundan-okunur" },
+  { id: "steam_guard_email", label: "x.steam-guard-e-posta-imap", hint: "x.guard-kodu-ve-mail-kodu-birlikte" },
+  { id: "totp_email", label: "x.totp-e-posta-imap", hint: "x.authenticator-kodu-ve-mail-kodu-birlikte" },
 ] as const;
 
 export type GuardType = (typeof GUARD_OPTIONS)[number]["id"];
@@ -84,10 +84,6 @@ export function guardHasTotp(guard: string): boolean {
 
 export function guardHasEmail(guard: string): boolean {
   return guard === "email" || guard === "steam_guard_email" || guard === "totp_email";
-}
-
-export function guardLabel(guard: string): string {
-  return GUARD_OPTIONS.find((option) => option.id === guard)?.label ?? "2FA yok";
 }
 
 export type FontOption = { family: string; category: string };

@@ -1,5 +1,6 @@
 import { DEFAULT_LOCALE, findLocale } from "@/lib/i18n/config";
 import { UI_PACKS } from "@/lib/i18n/core-packs";
+import { EXTRA_EN, EXTRA_TR } from "@/lib/i18n/ui-extra";
 
 /**
  * Translation dictionaries.
@@ -28,7 +29,7 @@ const tr: Dictionary = {
   "common.password": "Şifre",
   "common.username": "Kullanıcı adı",
   "common.remaining": "Kalan süre",
-  "common.unlimited": "Sınırsız",
+  "common.unlimited": "x.snrsz",
   "common.active": "Aktif",
   "common.suspended": "Askıya alındı",
   "common.expired": "Süresi doldu",
@@ -125,7 +126,7 @@ const tr: Dictionary = {
   "library.emptySub": "Bir redeem kodu kullanarak oyun ve hesap teslimatı alabilirsiniz.",
   "library.getCode": "Kodu al",
   "library.details": "Hesap bilgilerini al",
-  "library.unlimited": "Sınırsız erişim",
+  "library.unlimited": "x.snrsz-erisim",
   "currency.label": "Para birimi",
   "home.badge": "Otomatik teslimat aktif",
   "home.explore": "Ürünleri keşfet",
@@ -495,14 +496,14 @@ const short: Record<string, Dictionary> = {
  * `createTranslator`, so a raw key can never reach the screen.
  */
 export const DICTIONARIES: Record<string, Dictionary> = {
-  tr,
-  en,
+  tr: { ...tr, ...EXTRA_TR },
+  en: { ...en, ...EXTRA_EN },
   ...short,
   ...UI_PACKS,
 };
 
 /** Keys translated into the reference language (used by the coverage report). */
-export const REFERENCE_KEY_COUNT = Object.keys(tr).length;
+export const REFERENCE_KEY_COUNT = Object.keys(DICTIONARIES.tr).length;
 
 export function dictionaryFor(locale: string): Dictionary {
   const base = locale.split("-")[0];

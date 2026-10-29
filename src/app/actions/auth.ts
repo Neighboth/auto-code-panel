@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
@@ -69,6 +71,7 @@ type PendingInput =
   | { t: "customer"; id: number; storeId: number; slug: string; username: string };
 
 async function startPendingOrSession(subject: PendingInput, redirectTo: string): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const methods = await factorMethods(subject.t, subject.id);
   if (!methods.totp && !methods.passkey && !methods.question && !methods.email) {
     if (subject.t === "super") {
@@ -102,7 +105,7 @@ async function startPendingOrSession(subject: PendingInput, redirectTo: string):
     needs2fa: true,
     methods,
     redirectTo,
-    message: "Hesabınız 2FA korumalı. İkinci adımda doğrulama yapın.",
+    message: t("x.hesabnz-2fa-korumal-ikinci-admda-dogrulama-yapn"),
   };
 }
 
@@ -110,19 +113,20 @@ async function startPendingOrSession(subject: PendingInput, redirectTo: string):
 
 /** Single login entry: platform owner or any store administrator (globally unique username). */
 export async function managerLogin(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const identifier = String(formData.get("username") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
 
   if (!identifier || !password) {
-    return { ok: false, message: "Kullanıcı adı veya e-posta ile şifre zorunludur." };
+    return { ok: false, message: t("x.kullanc-ad-veya-e-posta-ile-sifre-zorunludur") };
   }
   if (identifier.length > 254 || password.length > 256) {
-    return { ok: false, message: "Giriş bilgileri hatalı." };
+    return { ok: false, message: t("x.giris-bilgileri-hatal") };
   }
 
   const gate = hitRateLimit(`mgr:${identifier}`);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla deneme. ${gate.retryInSeconds} saniye tekrar deneyin.` };
+    return { ok: false, message: t("x.cok-fazla-deneme-seconds-saniye-tekrar-deneyin", { seconds: gate.retryInSeconds }) };
   }
 
   const ownerIdentifiers = [env.superAdminUsername, env.superAdminEmail]
@@ -161,7 +165,7 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
     .limit(21);
 
   if (candidates.length === 21) {
-    return { ok: false, message: "Giriş bilgileri çok fazla hesapta eşleşti. Daha spesifik bir kullanıcı adı girin." };
+    return { ok: false, message: t("x.giris-bilgileri-cok-fazla-hesapta-eslesti-daha-spesifik") };
   }
 
   const matches = candidates.filter(({ admin }) => verifyPassword(password, admin.passwordHash));
@@ -175,10 +179,10 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
       actorName: identifier.slice(0, 60),
       metadata: { identifier, reason: "invalid_credentials" },
     });
-    return { ok: false, message: "Kullanıcı adı, e-posta veya şifre hatalı." };
+    return { ok: false, message: t("x.kullanc-ad-e-posta-veya-sifre-hatal") };
   }
   if (matches.length > 1) {
-    return { ok: false, message: "Bu bilgiler birden fazla hesapta eşleşiyor. Lütfen tekrar deneyin." };
+    return { ok: false, message: t("x.bu-bilgiler-birden-fazla-hesapta-eslesiyor-lutfen-tekrar") };
   }
 
   const { admin, store } = matches[0];
@@ -204,6 +208,7 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
 /* --------------------------- Reseller activation --------------------------- */
 
 export async function activateReseller(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const keyCode = String(formData.get("resellerCode") ?? "").trim().toUpperCase();
   const storeName = String(formData.get("storeName") ?? "").trim();
@@ -213,33 +218,33 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
   const adminPassword = String(formData.get("adminPassword") ?? "");
 
   if (!keyCode) return { ok: false, message: "Bayilik kodu zorunludur." };
-  if (!storeName) return { ok: false, message: "Mağaza adı zorunludur." };
+  if (!storeName) return { ok: false, message: t("x.magaza-ad-zorunludur") };
 
   const slug = slugify(slugInput);
   if (!/^[a-z0-9][a-z0-9-]{2,29}$/.test(slug)) {
     return {
       ok: false,
-      message: "Mağaza ID 3-30 karakter olmalı; sadece küçük harf, rakam ve tire kullanılabilir.",
+      message: t("x.magaza-id-3-30-karakter-olmal-sadece-kucuk-harf-rakam-ve"),
     };
   }
   if (RESERVED_SLUGS.has(slug)) {
-    return { ok: false, message: "Bu mağaza ID sisteme ayrılmış durumda, başka bir ID seçin." };
+    return { ok: false, message: t("x.bu-magaza-id-sisteme-ayrlms-durumda-baska-bir-id-secin") };
   }
   if (adminUsername.length < 3) {
-    return { ok: false, message: "Yönetici kullanıcı adı en az 3 karakter olmalıdır." };
+    return { ok: false, message: t("x.yonetici-kullanc-ad-en-az-3-karakter-olmaldr") };
   }
   if (!EMAIL_RE.test(adminEmail)) {
-    return { ok: false, message: "Geçerli bir yönetici e-postası girin." };
+    return { ok: false, message: t("x.gecerli-bir-yonetici-e-postas-girin") };
   }
-  const reserved = managerIdentifierError(adminUsername, adminEmail);
+  const reserved = await managerIdentifierError(adminUsername, adminEmail);
   if (reserved) return { ok: false, message: reserved };
   if (adminPassword.length < 6) {
-    return { ok: false, message: "Şifre en az 6 karakter olmalıdır." };
+    return { ok: false, message: t("x.sifre-en-az-6-karakter-olmaldr") };
   }
 
   const existingSlug = await db.select({ id: stores.id }).from(stores).where(eq(stores.slug, slug)).limit(1);
   if (existingSlug.length > 0) {
-    return { ok: false, message: "Bu mağaza ID zaten kullanılıyor." };
+    return { ok: false, message: t("x.bu-magaza-id-zaten-kullanlyor") };
   }
 
   const takenUsername = await db
@@ -250,7 +255,7 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
   if (takenUsername.length > 0) {
     return {
       ok: false,
-      message: "Bu yönetici kullanıcı adı platformda zaten kullanılıyor. Yönetici kullanıcı adları tüm mağazalar arasında benzersizdir.",
+      message: t("x.bu-yonetici-kullanc-ad-platformda-zaten-kullanlyor-yonet"),
     };
   }
 
@@ -260,12 +265,12 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
     .where(eq(resellerKeys.code, keyCode))
     .limit(1);
   const resellerKey = keyRows[0];
-  if (!resellerKey) return { ok: false, message: "Bayilik kodu bulunamadı." };
+  if (!resellerKey) return { ok: false, message: t("x.bayilik-kodu-bulunamad") };
   if (resellerKey.status === "used") {
-    return { ok: false, message: "Bu bayilik kodu daha önce kullanılmış." };
+    return { ok: false, message: t("x.bu-bayilik-kodu-daha-once-kullanlms") };
   }
   if (resellerKey.status === "revoked") {
-    return { ok: false, message: "Bu bayilik kodu iptal edilmiş." };
+    return { ok: false, message: t("x.bu-bayilik-kodu-iptal-edilmis") };
   }
 
   const expiresAt =
@@ -281,7 +286,7 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
           slug,
           name: storeName,
           title: storeName,
-          subtitle: "Oyun ve hesap kodlarını saniyeler içinde teslim alın.",
+          subtitle: t("x.oyun-ve-hesap-kodlarn-saniyeler-icinde-teslim-aln"),
           primaryColor: "#0f1117",
           accentColor: "#6366f1",
           fontFamily: "Inter",
@@ -331,33 +336,34 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
     revalidatePath("/super-admin");
     return {
       ok: true,
-      message: "Mağazanız hazır. Yönetim paneline yönlendiriliyorsunuz.",
+      message: t("x.magazanz-hazr-yonetim-paneline-yonlendiriliyorsunuz"),
       redirectTo: `/${slug}/admin`,
     };
   } catch {
-    return { ok: false, message: "Mağaza oluşturulamadı. Lütfen tekrar deneyin." };
+    return { ok: false, message: t("x.magaza-olusturulamad-lutfen-tekrar-deneyin") };
   }
 }
 
 /* ----------------------------- Store admin auth ----------------------------- */
 
 export async function storeAdminLogin(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const identifier = String(formData.get("username") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   if (!slug || !identifier || !password) {
-    return { ok: false, message: "Tüm alanları doldurun." };
+    return { ok: false, message: t("x.tum-alanlar-doldurun") };
   }
 
   const gate = hitRateLimit(`st:${slug}:${identifier}`);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla deneme. ${gate.retryInSeconds} saniye tekrar deneyin.` };
+    return { ok: false, message: t("x.cok-fazla-deneme-seconds-saniye-tekrar-deneyin", { seconds: gate.retryInSeconds }) };
   }
 
   const storeRows = await db.select().from(stores).where(eq(stores.slug, slug)).limit(1);
   const store = storeRows[0];
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   const adminRows = await db
     .select()
@@ -381,7 +387,7 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
       actorName: identifier.slice(0, 60),
       metadata: { identifier, reason: "invalid_credentials" },
     });
-    return { ok: false, message: "Kullanıcı adı veya şifre hatalı." };
+    return { ok: false, message: t("x.kullanc-ad-veya-sifre-hatal") };
   }
   recordSuccess(`st:${slug}:${identifier}`);
   await logAudit({
@@ -403,13 +409,15 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
 }
 
 export async function storeAdminLogout(slug: string): Promise<ActionResult> {
-  await logAudit({ action: "auth.logout", entity: "store_admin", summary: "Mağaza panelinden çıkış yapıldı", storeSlug: slug });
+  const { t } = await getTranslator();
+  await logAudit({ action: "auth.logout", entity: "store_admin", summary: t("x.magaza-panelinden-cks-yapld"), storeSlug: slug });
   await clearSessionCookie(STORE_COOKIE);
   return { ok: true, redirectTo: `/${slug}/admin/giris` };
 }
 
 export async function superAdminLogout(): Promise<ActionResult> {
-  await logAudit({ action: "auth.logout", entity: "super_admin", summary: "Süper admin panelinden çıkış yapıldı", actorType: "super" });
+  const { t } = await getTranslator();
+  await logAudit({ action: "auth.logout", entity: "super_admin", summary: t("x.super-admin-panelinden-cks-yapld"), actorType: "super" });
   await clearSessionCookie(SUPER_COOKIE);
   return { ok: true, redirectTo: "/super-admin" };
 }
@@ -435,29 +443,30 @@ async function signCustomer(storeId: number, slug: string, customer: { id: numbe
 export async function customerRegister(
   formData: FormData,
 ): Promise<ActionResult<{ username: string; verificationId?: number; email?: string }>> {
+  const { t } = await getTranslator();
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const displayName = String(formData.get("displayName") ?? "").trim() || username;
   const email = String(formData.get("email") ?? "").trim();
 
-  if (!slug) return { ok: false, message: "Mağaza bilgisi eksik." };
+  if (!slug) return { ok: false, message: t("x.magaza-bilgisi-eksik") };
   if (!/^[a-zA-Z0-9._-]{3,24}$/.test(username)) {
     return {
       ok: false,
-      message: "Kullanıcı adı 3-24 karakter olmalı; harf, rakam, nokta, tire ve alt çizgi.",
+      message: t("x.kullanc-ad-3-24-karakter-olmal-harf-rakam-nokta-tire-ve"),
     };
   }
-  if (password.length < 6) return { ok: false, message: "Şifre en az 6 karakter olmalıdır." };
-  if (email && !EMAIL_RE.test(email)) return { ok: false, message: "Geçerli bir e-posta girin." };
+  if (password.length < 6) return { ok: false, message: t("x.sifre-en-az-6-karakter-olmaldr") };
+  if (email && !EMAIL_RE.test(email)) return { ok: false, message: t("x.gecerli-bir-e-posta-girin") };
 
   const store = await loadStore(slug);
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   // SMTP configured -> e-mail verification is mandatory before the account is usable.
   const verificationOn = mailVerificationEnabled();
   if (verificationOn && !email) {
-    return { ok: false, message: "E-posta doğrulaması açık. Kayıt için geçerli bir e-posta girin." };
+    return { ok: false, message: t("x.e-posta-dogrulamas-ack-kayt-icin-gecerli-bir-e-posta-gir") };
   }
 
   const exists = await db
@@ -467,7 +476,7 @@ export async function customerRegister(
       and(eq(customers.storeId, store.id), sql`lower(${customers.username}) = ${username.toLowerCase()}`),
     )
     .limit(1);
-  if (exists.length > 0) return { ok: false, message: "Bu kullanıcı adı zaten alınmış." };
+  if (exists.length > 0) return { ok: false, message: t("x.bu-kullanc-ad-zaten-alnms") };
 
   const [customer] = await db
     .insert(customers)
@@ -508,14 +517,14 @@ export async function customerRegister(
       ok: true,
       message:
         challenge.delivered === "sent"
-          ? "Doğrulama kodu e-postanıza gönderildi."
-          : "Doğrulama kaydı oluşturuldu ancak e-posta gönderilemedi. Yöneticiye bildirin.",
+          ? t("x.dogrulama-kodu-e-postanza-gonderildi")
+          : t("x.dogrulama-kayd-olusturuldu-ancak-e-posta-gonderilemedi-y"),
       data: { username: customer.username, verificationId: challenge.id, email },
     };
   }
 
   await signCustomer(store.id, store.slug, customer);
-  return { ok: true, message: "Hesabınız oluşturuldu.", data: { username: customer.username } };
+  return { ok: true, message: t("x.hesabnz-olusturuldu"), data: { username: customer.username } };
 }
 
 /**
@@ -527,15 +536,16 @@ export async function verifyCustomerEmail(
   identifier: { id?: number | null; token?: string | null },
   code: string,
 ): Promise<ActionResult<{ redirectTo: string }>> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const slug = slugRaw.trim().toLowerCase();
   const store = await loadStore(slug);
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   const outcome = await consumeVerification(identifier, code);
   if (!outcome.ok) return { ok: false, message: outcome.message };
-  if (outcome.storeId !== store.id) return { ok: false, message: "Bu kod bu mağaza için geçerli değil." };
-  if (!outcome.customerId) return { ok: false, message: "Doğrulama kaydı bir hesaba bağlı değil." };
+  if (outcome.storeId !== store.id) return { ok: false, message: t("x.bu-kod-bu-magaza-icin-gecerli-degil") };
+  if (!outcome.customerId) return { ok: false, message: t("x.dogrulama-kayd-bir-hesaba-bagl-degil") };
 
   const rows = await db
     .select()
@@ -543,8 +553,8 @@ export async function verifyCustomerEmail(
     .where(and(eq(customers.id, outcome.customerId), eq(customers.storeId, store.id)))
     .limit(1);
   const customer = rows[0];
-  if (!customer) return { ok: false, message: "Hesap bulunamadı." };
-  if (customer.status === "banned") return { ok: false, message: "Hesabınız yasaklanmış." };
+  if (!customer) return { ok: false, message: t("x.hesap-bulunamad") };
+  if (customer.status === "banned") return { ok: false, message: t("x.hesabnz-yasaklanms") };
 
   await db
     .update(customers)
@@ -561,7 +571,7 @@ export async function verifyCustomerEmail(
     summary: `${customer.username} e-postasını doğruladı`,
   });
 
-  return { ok: true, message: "E-posta doğrulandı, giriş yapıldı.", data: { redirectTo: `/${store.slug}/kutuphane` } };
+  return { ok: true, message: t("x.e-posta-dogruland-giris-yapld"), data: { redirectTo: `/${store.slug}/kutuphane` } };
 }
 
 /** Re-sends a fresh 6-digit code for a pending registration. */
@@ -569,12 +579,13 @@ export async function resendCustomerVerification(
   slugRaw: string,
   emailRaw: string,
 ): Promise<ActionResult<{ verificationId: number }>> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const slug = slugRaw.trim().toLowerCase();
   const email = emailRaw.trim();
   const store = await loadStore(slug);
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
-  if (!EMAIL_RE.test(email)) return { ok: false, message: "Geçerli bir e-posta girin." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
+  if (!EMAIL_RE.test(email)) return { ok: false, message: t("x.gecerli-bir-e-posta-girin") };
 
   const rows = await db
     .select()
@@ -582,11 +593,11 @@ export async function resendCustomerVerification(
     .where(and(eq(customers.storeId, store.id), sql`lower(${customers.email}) = ${email.toLowerCase()}`))
     .limit(1);
   const customer = rows[0];
-  if (!customer) return { ok: false, message: "Bu e-posta ile kayıtlı bir hesap yok." };
+  if (!customer) return { ok: false, message: t("x.bu-e-posta-ile-kaytl-bir-hesap-yok") };
 
   const gate = hitRateLimit(`resend:${store.id}:${email.toLowerCase()}`, 3, 300_000);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla kod isteği. ${gate.retryInSeconds} saniye sonra deneyin.` };
+    return { ok: false, message: t("x.cok-fazla-kod-istegi-seconds-saniye-sonra-deneyin", { seconds: gate.retryInSeconds }) };
   }
 
   const locale = await currentLocaleCode();
@@ -602,22 +613,23 @@ export async function resendCustomerVerification(
   });
   return {
     ok: true,
-    message: "Yeni doğrulama kodu gönderildi.",
+    message: t("x.yeni-dogrulama-kodu-gonderildi"),
     data: { verificationId: challenge.id },
   };
 }
 
 export async function customerLogin(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const store = await loadStore(slug);
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
-  if (!username || !password) return { ok: false, message: "Kullanıcı adı ve şifre zorunludur." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
+  if (!username || !password) return { ok: false, message: t("x.kullanc-ad-ve-sifre-zorunludur") };
 
   const gate = hitRateLimit(`cu:${slug}:${username.toLowerCase()}`);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla deneme. ${gate.retryInSeconds} saniye tekrar deneyin.` };
+    return { ok: false, message: t("x.cok-fazla-deneme-seconds-saniye-tekrar-deneyin", { seconds: gate.retryInSeconds }) };
   }
 
   const rows = await db
@@ -640,10 +652,10 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
       actorName: username.slice(0, 60),
       metadata: { reason: "invalid_credentials" },
     });
-    return { ok: false, message: "Kullanıcı adı veya şifre hatalı." };
+    return { ok: false, message: t("x.kullanc-ad-veya-sifre-hatal") };
   }
   if (customer.status === "banned") {
-    return { ok: false, message: "Hesabınız mağaza yöneticisi tarafından yasaklandı." };
+    return { ok: false, message: t("x.hesabnz-magaza-yoneticisi-tarafndan-yasakland") };
   }
   if (mailVerificationEnabled() && customer.email && !customer.emailVerifiedAt) {
     const locale = await currentLocaleCode();
@@ -659,7 +671,7 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
     });
     return {
       ok: true,
-      message: "E-posta adresiniz doğrulanmamış. Yeni bir doğrulama kodu gönderdik.",
+      message: t("x.e-posta-adresiniz-dogrulanmams-yeni-bir-dogrulama-kodu-g"),
       needsEmailVerification: true,
       verificationId: challenge.id,
       verificationEmail: customer.email,
@@ -684,8 +696,9 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
 }
 
 export async function customerLogout(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
-  await logAudit({ action: "auth.logout", entity: "customer", summary: "Müşteri çıkış yaptı", storeSlug: slug });
+  await logAudit({ action: "auth.logout", entity: "customer", summary: t("x.musteri-cks-yapt"), storeSlug: slug });
   await clearSessionCookie(CUSTOMER_COOKIE);
   if (slug) revalidatePath(`/${slug}`, "layout");
   return { ok: true, redirectTo: `/${slug}` };
@@ -694,9 +707,10 @@ export async function customerLogout(formData: FormData): Promise<ActionResult> 
 export async function updateCustomerProfile(
   formData: FormData,
 ): Promise<ActionResult<{ username: string }>> {
+  const { t } = await getTranslator();
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const store = await loadStore(slug);
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
 
   const rows = await db
     .select()
@@ -709,8 +723,8 @@ export async function updateCustomerProfile(
     )
     .limit(1);
   const current = rows[0];
-  if (!current) return { ok: false, message: "Oturum bulunamadı." };
-  if (current.status === "banned") return { ok: false, message: "Hesabınız yasaklı durumda." };
+  if (!current) return { ok: false, message: t("x.oturum-bulunamad") };
+  if (current.status === "banned") return { ok: false, message: t("x.hesabnz-yasakl-durumda") };
 
   const username = String(formData.get("username") ?? "").trim();
   const displayName = String(formData.get("displayName") ?? "").trim();
@@ -720,7 +734,7 @@ export async function updateCustomerProfile(
   const currentPassword = String(formData.get("currentPassword") ?? "");
 
   if (!/^[a-zA-Z0-9._-]{3,24}$/.test(username)) {
-    return { ok: false, message: "Kullanıcı adı 3-24 karakter olmalıdır." };
+    return { ok: false, message: t("x.kullanc-ad-3-24-karakter-olmaldr") };
   }
   if (username.toLowerCase() !== current.username.toLowerCase()) {
     const exists = await db
@@ -733,15 +747,15 @@ export async function updateCustomerProfile(
         ),
       )
       .limit(1);
-    if (exists.length > 0) return { ok: false, message: "Bu kullanıcı adı bu mağazada zaten kullanılıyor." };
+    if (exists.length > 0) return { ok: false, message: t("x.bu-kullanc-ad-bu-magazada-zaten-kullanlyor") };
   }
-  if (email && !EMAIL_RE.test(email)) return { ok: false, message: "Geçerli bir e-posta girin." };
-  if (avatarUrl && !/^https?:\/\//i.test(avatarUrl)) return { ok: false, message: "Profil fotoğrafı adresi http(s) ile başlamalıdır." };
+  if (email && !EMAIL_RE.test(email)) return { ok: false, message: t("x.gecerli-bir-e-posta-girin") };
+  if (avatarUrl && !/^https?:\/\//i.test(avatarUrl)) return { ok: false, message: t("x.profil-fotograf-adresi-http-s-ile-baslamaldr") };
   let passwordHash = current.passwordHash;
   if (newPassword) {
-    if (newPassword.length < 6) return { ok: false, message: "Yeni şifre en az 6 karakter olmalıdır." };
+    if (newPassword.length < 6) return { ok: false, message: t("x.yeni-sifre-en-az-6-karakter-olmaldr") };
     if (!verifyPassword(currentPassword, current.passwordHash)) {
-      return { ok: false, message: "Mevcut şifreniz hatalı." };
+      return { ok: false, message: t("x.mevcut-sifreniz-hatal") };
     }
     passwordHash = hashPassword(newPassword);
   }
@@ -758,7 +772,7 @@ export async function updateCustomerProfile(
     .where(eq(customers.id, current.id));
 
   await signCustomer(store.id, store.slug, { id: current.id, username });
-  return { ok: true, message: "Profil güncellendi.", data: { username } };
+  return { ok: true, message: t("x.profil-guncellendi-2"), data: { username } };
 }
 
 /** Frees accounts whose delivery window has ended before rendering storefront data. */

@@ -15,22 +15,26 @@ import path from "node:path";
 
 const dictFile = path.join("src", "lib", "i18n", "dictionaries.ts");
 const packFile = path.join("src", "lib", "i18n", "core-packs.ts");
+const extraFile = path.join("src", "lib", "i18n", "ui-extra.ts");
 const configFile = path.join("src", "lib", "i18n", "config.ts");
 
 const dict = fs.readFileSync(dictFile, "utf8");
 const packs = fs.readFileSync(packFile, "utf8");
 const config = fs.readFileSync(configFile, "utf8");
+const extra = fs.readFileSync(extraFile, "utf8");
 
-const keysIn = (block) => new Set([...block.matchAll(/"([a-zA-Z]+\.[a-zA-Z0-9_]+)"\s*:/g)].map((m) => m[1]));
+const keysIn = (block) => new Set([...block.matchAll(/"([a-zA-Z][a-zA-Z0-9._-]*)"\s*:/g)].map((m) => m[1]));
 
 const trBlock = dict.slice(dict.indexOf("const tr: Dictionary = {"), dict.indexOf("const en: Dictionary = {"));
 const enBlock = dict.slice(dict.indexOf("const en: Dictionary = {"), dict.indexOf("const short:"));
 const shortBlock = dict.slice(dict.indexOf("const short:"), dict.indexOf("export const DICTIONARIES"));
-const trKeys = keysIn(trBlock);
-const enKeys = keysIn(enBlock);
+const extraTr = keysIn(extra.slice(extra.indexOf("export const EXTRA_TR"), extra.indexOf("export const EXTRA_EN")));
+const extraEn = keysIn(extra.slice(extra.indexOf("export const EXTRA_EN")));
+const trKeys = new Set([...keysIn(trBlock), ...extraTr]);
+const enKeys = new Set([...keysIn(enBlock), ...extraEn]);
 
 const coreBlock = packs.slice(packs.indexOf("export const CORE_KEYS"), packs.indexOf("export const UI_PACKS"));
-const coreKeys = new Set([...coreBlock.matchAll(/"([a-zA-Z]+\.[a-zA-Z0-9_]+)"/g)].map((m) => m[1]));
+const coreKeys = new Set([...coreBlock.matchAll(/"([a-zA-Z][a-zA-Z0-9._-]*)"/g)].map((m) => m[1]));
 
 const packBlocks = new Map();
 const packsSection = packs.slice(packs.indexOf("export const UI_PACKS"));

@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,6 +9,7 @@ import { CopyButton } from "@/components/copy-button";
 import { Modal } from "@/components/modal";
 
 export function StoreAccountsButton({ storeId, storeName }: { storeId: number; storeName: string }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<StoreAccountView[] | null>(null);
@@ -19,7 +21,7 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
     const result = await viewStoreAccounts(storeId);
     setLoading(false);
     if (!result.ok || !result.data) {
-      toast.error(result.message ?? "Görüntülenemedi.");
+      toast.error(result.message ?? t("x.goruntulenemedi"));
       setAccounts(null);
       return;
     }
@@ -44,32 +46,25 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title={`${storeName} — envanter hesapları`}
-        description="Yalnızca platform sahibine açıktır."
+        title={t("x.store-envanter-hesaplar", { store: storeName })}
+        description={t("x.yalnzca-platform-sahibine-acktr")}
         size="lg"
       >
         <div className="note note-warn flex items-start gap-2.5">
           <ShieldAlert size={16} className="mt-0.5 shrink-0" />
-          <p className="text-[11.5px] font-medium leading-relaxed">
-            UYARI: Bu veriler yalnızca teknik destek amacıyla görüntülenmektedir. İzinsiz erişim,
-            kopyalama veya kullanım 5846 sayılı Fikir ve Sanat Eserleri Kanunu, 6102 sayılı Türk
-            Ticaret Kanunu (haksız rekabet) ve 5237 sayılı Türk Ceza Kanunu kapsamında suç teşkil
-            eder. İzinsiz almak suçtur; tüm görüntüleme işlemleri denetime tabidir.
-          </p>
+          <p className="text-[11.5px] font-medium leading-relaxed">{t("x.uyari-bu-veriler-yalnzca-teknik-destek-amacyla-goruntule")}</p>
         </div>
 
         {loading ? (
           <p className="flex items-center justify-center gap-2 py-8 text-[12.5px] muted">
-            <Loader2 size={14} className="animate-spin" />
-            Hesaplar çözülüyor...
-          </p>
+            <Loader2 size={14} className="animate-spin" />{t("x.hesaplar-cozuluyor")}</p>
         ) : accounts && accounts.length > 0 ? (
           <div className="mt-3 overflow-x-auto rounded-lg border hairline scroll-thin">
             <table className="table min-w-[640px]">
               <thead>
                 <tr>
-                  <th>Platform / kullanıcı</th>
-                  <th>Şifre</th>
+                  <th>{" "}{t("x.platform-kullanc")}</th>
+                  <th>{t("x.sifre")}</th>
                   <th>Koruma / secret</th>
                 </tr>
               </thead>
@@ -97,7 +92,7 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
                               ? `Steam Guard${shown && account.steamSecret ? ` · ••••${account.steamSecret.slice(-4)}` : ""}`
                               : account.guardType === "totp"
                                 ? `TOTP${shown && account.totpSecret ? ` · ••••${account.totpSecret.slice(-4)}` : ""}`
-                                : "Korumasız"}
+                                : t("x.korumasz")}
                           </span>
                           {account.steamSecret || account.totpSecret ? (
                             <CopyButton
@@ -111,7 +106,7 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
                             onClick={() => toggleReveal(account.id)}
                             className="text-[10.5px] font-medium underline underline-offset-2 muted"
                           >
-                            {shown ? "Gizle" : "Göster"}
+                            {shown ? "Gizle" : t("x.goster")}
                           </button>
                         </div>
                       </td>
@@ -122,7 +117,7 @@ export function StoreAccountsButton({ storeId, storeName }: { storeId: number; s
             </table>
           </div>
         ) : (
-          <p className="mt-3 py-6 text-center text-[12.5px] muted">Bu mağazada envanter hesabı yok.</p>
+          <p className="mt-3 py-6 text-center text-[12.5px] muted">{" "}{t("x.bu-magazada-envanter-hesab-yok")}</p>
         )}
       </Modal>
     </>

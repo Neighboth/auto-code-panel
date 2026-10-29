@@ -9,11 +9,16 @@ import { ProfileForm } from "@/components/store/profile-form";
 import { FactorSettings } from "@/components/security/factor-settings";
 import { CustomerMailPrefsCard } from "@/components/store/mail-prefs-card";
 import { getMailPrefs } from "@/lib/mail-prefs";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Profil Ayarları" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.profil-ayarlar") };
+}
 
 export default async function ProfilePage({ params }: { params: Promise<{ magazaSlug: string }> }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const state = await getStoreState(magazaSlug);
   if (!state) notFound();
@@ -34,10 +39,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ magaza
   return (
     <div className="mx-auto w-full max-w-3xl px-5 py-9">
       <div className="border-b pb-5 hairline">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Hesabım</p>
-        <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.025em]">Profil ayarları</h1>
+        <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("x.hesabm")}</p>
+        <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.025em]">{" "}{t("x.profil-ayarlar")}</h1>
         <p className="mt-1 text-[12.5px] muted">
-          Kullanıcı adınız {state.store.name} mağazasına özeldir ve benzersiz olmalıdır.
+          {t("x.kullanc-adnz-store-magazasna-ozeldir-ve-benzersiz-olmald", { store: state.store.name })}
         </p>
       </div>
       <div className="mt-6 space-y-5">

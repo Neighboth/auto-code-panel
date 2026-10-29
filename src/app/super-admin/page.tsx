@@ -12,16 +12,21 @@ import { ResellerKeyGenerator, RevokeKeyButton, StoreActions } from "@/component
 import { StoreAccountsButton } from "@/components/super-admin/store-accounts";
 import { BrandLogo } from "@/components/brand";
 import { Stat } from "@/components/ui";
+import { getTranslator } from "@/lib/i18n/server";
+import type { Translator } from "@/lib/i18n/translate";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Yönetici Girişi · Bayilik Yönetimi" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.yonetici-girisi-bayilik-yonetimi") };
+}
 
-function statusOf(store: { status: string; expiresAt: Date | null }) {
-  if (store.status === "suspended") return { label: "Askıda", tone: "badge-amber" as const };
+function statusOf(store: { status: string; expiresAt: Date | null }, t: Translator) {
+  if (store.status === "suspended") return { label: t("x.askda"), tone: "badge-amber" as const };
   if (store.expiresAt && new Date(store.expiresAt).getTime() <= Date.now()) {
-    return { label: "Süresi doldu", tone: "badge-red" as const };
+    return { label: t("x.suresi-doldu"), tone: "badge-red" as const };
   }
-  return { label: "Aktif", tone: "badge-green" as const };
+  return { label: t("x.aktif-2"), tone: "badge-green" as const };
 }
 
 function expiresSoon(expiresAt: Date | null): boolean {
@@ -31,6 +36,7 @@ function expiresSoon(expiresAt: Date | null): boolean {
 }
 
 export default async function SuperAdminPage() {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
   const settings = await getPlatformSettings();
 
@@ -47,19 +53,15 @@ export default async function SuperAdminPage() {
             </Link>
           </div>
           <div className="card p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">Tek noktadan erişim</p>
-            <h1 className="mt-2 text-[22px] font-semibold tracking-[-0.02em]">Yönetici girişi</h1>
-            <p className="mt-1.5 text-[12.5px] leading-relaxed muted">
-              Süper admin veya mağaza yöneticisi bilgilerinizle giriş yapın. Mağazanız bulunur ve
-              doğrudan kendi yönetim panelinize yönlendirilirsiniz.
-            </p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">{" "}{t("x.tek-noktadan-erisim")}</p>
+            <h1 className="mt-2 text-[22px] font-semibold tracking-[-0.02em]">{" "}{t("x.yonetici-girisi-2")}</h1>
+            <p className="mt-1.5 text-[12.5px] leading-relaxed muted">{t("x.super-admin-veya-magaza-yoneticisi-bilgilerinizle-giris")}</p>
             <div className="mt-5">
               <ManagerLoginForm />
             </div>
           </div>
           <p className="mt-4 text-center text-[11px] leading-relaxed muted">
-            Mağazanıza özel giriş ekranını tercih ederseniz{" "}
-            <span className="mono">/magaza-id/admin/giris</span> adresini de kullanabilirsiniz.
+            {t("x.magazanza-ozel-giris-ekrann-tercih-ederseniz-url-adresin", { url: "/magaza-id/admin/giris" })}
           </p>
         </div>
       </div>
@@ -103,7 +105,7 @@ export default async function SuperAdminPage() {
     .orderBy(desc(resellerKeys.createdAt))
     .limit(60);
 
-  const activeStores = storeRows.filter((store) => statusOf(store).label === "Aktif").length;
+  const activeStores = storeRows.filter((store) => statusOf(store, t).label === t("x.aktif-2")).length;
   const expiringSoon = storeRows.filter((store) => expiresSoon(store.expiresAt)).length;
   const availableKeys = keyRows.filter((key) => key.status === "available").length;
 
@@ -111,26 +113,24 @@ export default async function SuperAdminPage() {
     <div className="mx-auto w-full max-w-6xl space-y-7">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">Bayilik yönetimi</p>
-          <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">Platform kontrol paneli</h1>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">{" "}{t("x.bayilik-yonetimi")}</p>
+          <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{t("x.platform-kontrol-paneli")}</h1>
           <p className="mt-1 text-[12.5px] muted">
-            {brand.name} üzerinde {storeRows.length} bayi kayıtlı. Hoş geldiniz, {session.username}.
+            {t("x.brand-uzerinde-count-bayi-kaytl-hos-geldiniz-name", { brand: brand.name, count: storeRows.length, name: session.username })}
           </p>
         </div>
-        <Link href="/super-admin/ayarlar" className="btn btn-outline btn-sm">
-          Sistem ayarları
-          <ArrowUpRight size={13} />
+        <Link href="/super-admin/ayarlar" className="btn btn-outline btn-sm">{t("x.sistem-ayarlar")}<ArrowUpRight size={13} />
         </Link>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Toplam bayi" value={storeRows.length} sub="Tüm zamanlar" />
-        <Stat label="Aktif bayi" value={activeStores} sub={`${expiringSoon} bayi 7 gün içinde bitiyor`} />
-        <Stat label="Kullanılabilir kod" value={availableKeys} sub="Aktive edilmeyi bekliyor" />
+        <Stat label={t("x.toplam-bayi")} value={storeRows.length} sub={t("x.tum-zamanlar")} />
+        <Stat label={t("x.aktif-bayi")} value={activeStores} sub={t("x.count-bayi-7-gun-icinde-bitiyor", { count: expiringSoon })} />
+        <Stat label={t("x.kullanlabilir-kod")} value={availableKeys} sub="Aktive edilmeyi bekliyor" />
         <Stat
-          label="Toplam teslimat kodu"
+          label={t("x.toplam-teslimat-kodu")}
           value={storeRows.reduce((total, store) => total + store.codeCount, 0)}
-          sub="Tüm bayiler"
+          sub={t("x.tum-bayiler")}
         />
       </div>
 
@@ -138,35 +138,33 @@ export default async function SuperAdminPage() {
         <div className="card overflow-hidden">
           <div className="flex items-center justify-between gap-3 border-b px-4 py-3 hairline">
             <div>
-              <h2 className="text-[14px] font-semibold">Bayi listesi</h2>
-              <p className="text-[11.5px] muted">Kalan süre, hesap kullanımı ve mağaza linkleri</p>
+              <h2 className="text-[14px] font-semibold">{t("x.bayi-listesi")}</h2>
+              <p className="text-[11.5px] muted">{" "}{t("x.kalan-sure-hesap-kullanm-ve-magaza-linkleri")}</p>
             </div>
-            <span className="badge">{storeRows.length} mağaza</span>
+            <span className="badge">{t("x.count-magaza", { count: storeRows.length })}</span>
           </div>
           <div className="overflow-x-auto scroll-thin">
             <table className="table min-w-[860px]">
               <thead>
                 <tr>
-                  <th>Mağaza</th>
-                  <th>Durum</th>
-                  <th>Kalan süre</th>
-                  <th>Hesap</th>
-                  <th>Kod / Müşteri</th>
-                  <th className="text-right">İşlem</th>
+                  <th>{t("x.magaza")}</th>
+                  <th>{t("x.durum")}</th>
+                  <th>{" "}{t("x.kalan-sure")}</th>
+                  <th>{t("x.hesap-3")}</th>
+                  <th>{" "}{t("x.kod-musteri")}</th>
+                  <th className="text-right">{t("x.islem")}</th>
                 </tr>
               </thead>
               <tbody>
                 {storeRows.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-10 text-center text-[12.5px] muted">
-                      Henüz bayi yok. Sağdaki formdan bayilik kodu üretin.
-                    </td>
+                    <td colSpan={6} className="py-10 text-center text-[12.5px] muted">{t("x.henuz-bayi-yok-sagdaki-formdan-bayilik-kodu-uretin")}</td>
                   </tr>
                 ) : null}
                 {storeRows.map((store) => {
-                  const status = statusOf(store);
+                  const status = statusOf(store, t);
                   const remaining =
-                    store.expiresAt === null ? "Sınırsız" : remainingLabel(store.expiresAt);
+                    store.expiresAt === null ? t("x.snrsz") : remainingLabel(store.expiresAt);
                   const usage = store.maxAccounts
                     ? Math.min(100, Math.round((store.accountCount / store.maxAccounts) * 100))
                     : 8;
@@ -194,7 +192,7 @@ export default async function SuperAdminPage() {
                             />
                             {store.customDomain}
                             <span className="text-[9.5px] uppercase tracking-[0.06em]">
-                              {store.customDomainVerifiedAt ? "özel alan adı" : "doğrulama bekliyor"}
+                              {store.customDomainVerifiedAt ? t("x.ozel-alan-ad") : t("x.dogrulama-bekliyor-2")}
                             </span>
                           </p>
                         ) : null}
@@ -221,8 +219,8 @@ export default async function SuperAdminPage() {
                         </div>
                       </td>
                       <td>
-                        <p className="text-[12px]">{store.codeCount} kod</p>
-                        <p className="text-[10.5px] muted">{store.customerCount} müşteri</p>
+                        <p className="text-[12px]">{t("x.count-kod", { count: store.codeCount })}</p>
+                        <p className="text-[10.5px] muted">{t("x.count-musteri", { count: store.customerCount })}</p>
                       </td>
                       <td>
                         <div className="flex items-center justify-end gap-1.5">
@@ -253,8 +251,8 @@ export default async function SuperAdminPage() {
           <div className="flex items-center gap-2">
             <KeyRound size={15} />
             <div>
-              <h2 className="text-[14px] font-semibold">Bayilik kodları</h2>
-              <p className="text-[11.5px] muted">Son 60 kod · tek kullanımlık aktivasyon anahtarları</p>
+              <h2 className="text-[14px] font-semibold">{" "}{t("x.bayilik-kodlar")}</h2>
+              <p className="text-[11.5px] muted">{" "}{t("x.son-60-kod-tek-kullanmlk-aktivasyon-anahtarlar")}</p>
             </div>
           </div>
         </div>
@@ -262,20 +260,18 @@ export default async function SuperAdminPage() {
           <table className="table min-w-[820px]">
             <thead>
               <tr>
-                <th>Kod</th>
-                <th>Süre</th>
-                <th>Hesap limiti</th>
-                <th>Durum</th>
-                <th>Kullanan mağaza</th>
-                <th className="text-right">İşlem</th>
+                <th>{t("x.kod")}</th>
+                <th>{t("x.sure")}</th>
+                <th>{t("x.hesap-limiti")}</th>
+                <th>{t("x.durum")}</th>
+                <th>{" "}{t("x.kullanan-magaza")}</th>
+                <th className="text-right">{t("x.islem")}</th>
               </tr>
             </thead>
             <tbody>
               {keyRows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-[12.5px] muted">
-                    Henüz bayilik kodu üretilmedi.
-                  </td>
+                  <td colSpan={6} className="py-8 text-center text-[12.5px] muted">{t("x.henuz-bayilik-kodu-uretilmedi")}</td>
                 </tr>
               ) : null}
               {keyRows.map((key) => (
@@ -284,15 +280,15 @@ export default async function SuperAdminPage() {
                     <p className="mono text-[12px] font-medium">{key.code}</p>
                     {key.note ? <p className="mt-0.5 text-[10.5px] muted">{key.note}</p> : null}
                   </td>
-                  <td className="text-[12px]">{key.durationDays ? `${key.durationDays} gün` : "Sınırsız"}</td>
-                  <td className="text-[12px]">{key.maxAccounts ?? "Sınırsız"}</td>
+                  <td className="text-[12px]">{key.durationDays ? `${key.durationDays} gün` : t("x.snrsz")}</td>
+                  <td className="text-[12px]">{key.maxAccounts ?? t("x.snrsz")}</td>
                   <td>
                     <span
                       className={`badge ${
                         key.status === "available" ? "badge-blue" : key.status === "used" ? "badge-green" : "badge-red"
                       }`}
                     >
-                      {key.status === "available" ? "Kullanılabilir" : key.status === "used" ? "Kullanıldı" : "İptal"}
+                      {key.status === "available" ? t("x.kullanlabilir") : key.status === "used" ? t("x.kullanld") : t("x.iptal")}
                     </span>
                   </td>
                   <td className="text-[12px]">

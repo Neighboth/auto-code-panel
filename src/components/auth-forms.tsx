@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -54,6 +55,7 @@ function localizeStorePath(
 }
 
 export function ActivationForm() {
+  const t = useT();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -67,10 +69,10 @@ export function ActivationForm() {
     const result = await activateReseller(new FormData(event.currentTarget));
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Aktivasyon başarısız.");
+      setError(result.message ?? t("x.aktivasyon-basarsz"));
       return;
     }
-    toast.success(result.message ?? "Mağaza oluşturuldu");
+    toast.success(result.message ?? t("x.magaza-olusturuldu"));
     if (result.redirectTo) {
       router.push(result.redirectTo);
       router.refresh();
@@ -82,7 +84,7 @@ export function ActivationForm() {
       <Field
         label="Bayilik Kodu"
         htmlFor="resellerCode"
-        hint="Süper admin tarafından üretilen tek kullanımlık kod."
+        hint={t("x.super-admin-tarafndan-uretilen-tek-kullanmlk-kod")}
       >
         <input
           id="resellerCode"
@@ -95,12 +97,12 @@ export function ActivationForm() {
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Mağaza Adı" htmlFor="storeName">
+        <Field label={t("x.magaza-ad")} htmlFor="storeName">
           <input
             id="storeName"
             name="storeName"
             required
-            placeholder="Mağaza adı"
+            placeholder={t("x.magaza-ad-2")}
             className="input"
             onChange={(event) => {
               if (!slugTouched) setSlug(slugify(event.target.value));
@@ -108,7 +110,7 @@ export function ActivationForm() {
           />
         </Field>
         <Field
-          label="Mağaza ID (slug)"
+          label={t("x.magaza-id-slug")}
           htmlFor="slug"
           hint={`Adresiniz: /${slug || "magaza-id"}`}
         >
@@ -129,9 +131,9 @@ export function ActivationForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
-          label="Yönetici Kullanıcı Adı"
+          label={t("x.yonetici-kullanc-ad")}
           htmlFor="adminUsername"
-          hint="Tüm platformda benzersiz olmalıdır."
+          hint={t("x.tum-platformda-benzersiz-olmaldr")}
         >
           <input
             id="adminUsername"
@@ -143,7 +145,7 @@ export function ActivationForm() {
             autoComplete="username"
           />
         </Field>
-        <Field label="Yönetici E-posta" htmlFor="adminEmail">
+        <Field label={t("x.yonetici-e-posta")} htmlFor="adminEmail">
           <input
             id="adminEmail"
             name="adminEmail"
@@ -156,7 +158,7 @@ export function ActivationForm() {
         </Field>
       </div>
 
-      <Field label="Yönetici Şifresi" htmlFor="adminPassword" hint="En az 6 karakter.">
+      <Field label={t("x.yonetici-sifresi")} htmlFor="adminPassword" hint="En az 6 karakter.">
         <input
           id="adminPassword"
           name="adminPassword"
@@ -173,17 +175,16 @@ export function ActivationForm() {
 
       <button type="submit" className="btn btn-dark w-full btn-lg" disabled={pending}>
         {pending ? <Loader2 size={15} className="animate-spin" /> : null}
-        Mağazamı oluştur
+        {t("x.magazam-olustur")}
       </button>
-      <p className="text-center text-[11px] leading-relaxed muted">
-        Aktivasyonu tamamlayarak platform kullanım koşullarını kabul etmiş olursunuz.
-      </p>
+      <p className="text-center text-[11px] leading-relaxed muted">{t("x.aktivasyonu-tamamlayarak-platform-kullanm-kosullarn-kabu")}</p>
     </form>
   );
 }
 
 /** Tek giriş noktası: süper admin ve tüm mağaza yöneticileri bu formdan girer. */
 export function ManagerLoginForm() {
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
@@ -195,7 +196,7 @@ export function ManagerLoginForm() {
     try {
       const result = await managerLogin(new FormData(event.currentTarget));
       if (!result.ok) {
-        setError(result.message ?? "Giriş başarısız.");
+        setError(result.message ?? t("x.giris-basarsz"));
         return;
       }
       if (result.needs2fa && result.methods) {
@@ -205,7 +206,7 @@ export function ManagerLoginForm() {
         });
         return;
       }
-      toast.success("Giriş başarılı, paneliniz açılıyor.");
+      toast.success(t("x.giris-basarl-paneliniz-aclyor"));
       window.location.assign(result.redirectTo ?? "/super-admin");
     } finally {
       setPending(false);
@@ -214,17 +215,17 @@ export function ManagerLoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <Field label="Kullanıcı adı veya e-posta" htmlFor="username">
+      <Field label={t("x.kullanc-ad-veya-e-posta")} htmlFor="username">
         <input
           id="username"
           name="username"
           required
           className="input"
           autoComplete="username"
-          placeholder="Kullanıcı adı veya e-posta"
+          placeholder={t("x.kullanc-ad-veya-e-posta")}
         />
       </Field>
-      <Field label="Şifre" htmlFor="password">
+      <Field label={t("x.sifre")} htmlFor="password">
         <input
           id="password"
           name="password"
@@ -238,7 +239,7 @@ export function ManagerLoginForm() {
       <ErrorBox message={error} />
       <button type="submit" className="btn btn-gray w-full" disabled={pending}>
         {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-        Giriş yap
+        {t("x.giris-yap")}
       </button>
       {twoFa ? (
         <TwoFactorPrompt
@@ -278,7 +279,7 @@ export function StoreAdminLoginForm({
     const result = await storeAdminLogin(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Giriş başarısız.");
+      setError(result.message ?? t("x.giris-basarsz"));
       return;
     }
     if (result.needs2fa && result.methods) {
@@ -361,7 +362,7 @@ export function CustomerAuthForm({
       mode === "register" ? await customerRegister(formData) : await customerLogin(formData);
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "İşlem başarısız.");
+      setError(result.message ?? t("x.islem-basarsz-2"));
       return;
     }
     if (result.needsEmailVerification || result.verificationId) {
@@ -369,7 +370,7 @@ export function CustomerAuthForm({
         id: result.verificationId ?? null,
         email: result.verificationEmail ?? result.data?.email ?? null,
       });
-      toast.success(result.message ?? "Doğrulama kodu gönderildi");
+      toast.success(result.message ?? t("x.dogrulama-kodu-gonderildi"));
       return;
     }
     if (result.needs2fa && result.methods) {
@@ -379,7 +380,7 @@ export function CustomerAuthForm({
       });
       return;
     }
-    toast.success(result.message ?? "Giriş başarılı");
+    toast.success(result.message ?? t("x.giris-basarl"));
     router.push(fallback);
     router.refresh();
   }
@@ -532,7 +533,7 @@ export function LogoutButton({
   slug,
   basePath,
   className,
-  label = "Çıkış yap",
+  label,
 }: {
   kind: "super" | "store" | "customer";
   slug?: string;
@@ -541,6 +542,7 @@ export function LogoutButton({
   label?: string;
 }) {
   const router = useRouter();
+  const t = useT();
   const [pending, setPending] = useState(false);
 
   async function onClick() {
@@ -565,7 +567,7 @@ export function LogoutButton({
   return (
     <button type="button" onClick={onClick} disabled={pending} className={className ?? "btn btn-ghost btn-sm"}>
       {pending ? <Loader2 size={13} className="animate-spin" /> : null}
-      {label}
+      {label ?? t("x.cks-yap")}
     </button>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,12 +9,12 @@ import type { MailStats } from "@/app/actions/mail-admin";
 import { Badge } from "@/components/ui";
 
 const KIND_LABEL: Record<string, string> = {
-  verification: "Doğrulama",
-  welcome: "Karşılama",
-  license: "Lisans hatırlatma",
+  verification: "x.dogrulama",
+  welcome: "x.karslama",
+  license: "x.lisans-hatrlatma",
   announcement: "Duyuru",
-  delivery: "Teslim fişi",
-  security: "Güvenlik",
+  delivery: "x.teslim-fisi",
+  security: "x.guvenlik",
   test: "Test",
   generic: "Genel",
 };
@@ -26,6 +27,7 @@ const STATUS_TONE: Record<string, "green" | "amber" | "red" | "blue" | "neutral"
 };
 
 export function MailConsole({ stats }: { stats: MailStats }) {
+  const t = useT();
   const [to, setTo] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -34,22 +36,22 @@ export function MailConsole({ stats }: { stats: MailStats }) {
     const result = await sendTestMail(to);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Gönderilemedi");
+      toast.error(result.message ?? t("x.gonderilemedi"));
       return;
     }
-    toast.success(result.message ?? "Gönderildi");
+    toast.success(result.message ?? t("x.gonderildi"));
   }
 
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-4">
         <div className="card p-3.5">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">Toplam kayıt</p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{" "}{t("x.toplam-kayt")}</p>
           <p className="mt-1 text-[22px] font-semibold tabular-nums">{stats.total}</p>
         </div>
         {stats.byStatus.length === 0 ? (
           <div className="card p-3.5 sm:col-span-3">
-            <p className="text-[12px] muted">Henüz e-posta gönderilmedi.</p>
+            <p className="text-[12px] muted">{" "}{t("x.henuz-e-posta-gonderilmedi")}</p>
           </div>
         ) : (
           stats.byStatus.map((row) => (
@@ -62,11 +64,8 @@ export function MailConsole({ stats }: { stats: MailStats }) {
       </div>
 
       <div className="card p-4">
-        <h2 className="text-[13.5px] font-semibold">Test e-postası</h2>
-        <p className="mt-1 text-[11.5px] leading-relaxed muted">
-          SMTP bilgilerinin doğru olduğunu buradan kontrol edebilirsiniz. SMTP tanımlı değilse hiçbir
-          e-posta gönderilmez ve sistem çalışmaya devam eder.
-        </p>
+        <h2 className="text-[13.5px] font-semibold">{" "}{t("x.test-e-postas")}</h2>
+        <p className="mt-1 text-[11.5px] leading-relaxed muted">{t("x.smtp-bilgilerinin-dogru-oldugunu-buradan-kontrol-edebili")}</p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <input
             className="input max-w-xs"
@@ -78,32 +77,30 @@ export function MailConsole({ stats }: { stats: MailStats }) {
           />
           <button type="button" className="btn btn-dark btn-sm" onClick={send} disabled={pending}>
             {pending ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
-            Test gönder
+            {t("x.test-gonder")}
           </button>
         </div>
       </div>
 
       <div className="card overflow-hidden">
         <div className="border-b px-4 py-3 hairline">
-          <h2 className="text-[13.5px] font-semibold">Son gönderimler</h2>
+          <h2 className="text-[13.5px] font-semibold">{" "}{t("x.son-gonderimler")}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="table min-w-[720px]">
             <thead>
               <tr>
-                <th>Zaman</th>
-                <th>Tür</th>
-                <th>Durum</th>
-                <th>Alıcı</th>
-                <th>Detay</th>
+                <th>{t("x.zaman")}</th>
+                <th>{t("x.tur")}</th>
+                <th>{t("x.durum")}</th>
+                <th>{t("x.alc")}</th>
+                <th>{t("x.detay")}</th>
               </tr>
             </thead>
             <tbody>
               {stats.recent.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-10 text-center text-[12px] muted">
-                    Kayıt yok.
-                  </td>
+                  <td colSpan={5} className="py-10 text-center text-[12px] muted">{t("x.kayt-yok")}</td>
                 </tr>
               ) : null}
               {stats.recent.map((row) => (

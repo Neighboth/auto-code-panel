@@ -7,6 +7,7 @@ import { randomToken } from "@/lib/crypto";
 import { absoluteUrl } from "@/lib/mailer";
 import { deliver, verificationTemplate } from "@/lib/mail-templates";
 import { logAudit } from "@/lib/audit";
+import { createTranslator } from "@/lib/i18n/translate";
 
 /**
  * E-mail verification challenges.
@@ -119,15 +120,16 @@ export type VerificationLookup =
 
 /** Used by the magic-link page: resolves a token and decrypts the code. */
 export async function lookupByToken(token: string): Promise<VerificationLookup> {
+  const t = createTranslator("tr");
   await ensureDatabase();
-  if (!token) return { ok: false, message: "Bağlantı geçersiz." };
+  if (!token) return { ok: false, message: t("x.baglant-gecersiz") };
   const rows = await db
     .select()
     .from(emailVerifications)
     .where(eq(emailVerifications.token, token))
     .limit(1);
   const row = rows[0];
-  if (!row) return { ok: false, message: "Bağlantı bulunamadı veya iptal edilmiş." };
+  if (!row) return { ok: false, message: t("x.baglant-bulunamad-veya-iptal-edilmis") };
   const expired = new Date(row.expiresAt).getTime() <= Date.now();
   return {
     ok: true,
@@ -155,6 +157,7 @@ export async function consumeVerification(
   selector: { id?: number | null; token?: string | null },
   code: string,
 ): Promise<VerifyOutcome> {
+  const t = createTranslator("tr");
   await ensureDatabase();
   const trimmed = code.replace(/\s/g, "");
   if (!/^\d{6}$/.test(trimmed)) return { ok: false, message: "6 haneli kodu girin." };
@@ -165,13 +168,13 @@ export async function consumeVerification(
       ? await db.select().from(emailVerifications).where(eq(emailVerifications.id, selector.id)).limit(1)
       : [];
   const row = rows[0];
-  if (!row) return { ok: false, message: "Doğrulama kaydı bulunamadı. Yeni kod isteyin." };
-  if (row.usedAt) return { ok: false, message: "Bu kod zaten kullanıldı." };
+  if (!row) return { ok: false, message: t("x.dogrulama-kayd-bulunamad-yeni-kod-isteyin") };
+  if (row.usedAt) return { ok: false, message: t("x.bu-kod-zaten-kullanld") };
   if (new Date(row.expiresAt).getTime() <= Date.now()) {
-    return { ok: false, message: "Kodun süresi doldu. Yeni kod isteyin." };
+    return { ok: false, message: t("x.kodun-suresi-doldu-yeni-kod-isteyin") };
   }
   if (row.attempts >= MAX_ATTEMPTS) {
-    return { ok: false, message: "Çok fazla hatalı deneme. Yeni kod isteyin." };
+    return { ok: false, message: t("x.cok-fazla-hatal-deneme-yeni-kod-isteyin") };
   }
 
   const expected = decryptData(row.codeSecret);
@@ -190,7 +193,7 @@ export async function consumeVerification(
     });
     return {
       ok: false,
-      message: `Kod hatalı. Kalan deneme: ${Math.max(0, MAX_ATTEMPTS - row.attempts - 1)}`,
+      message: t("x.kod-hatal-kalan-deneme-remaining", { remaining: Math.max(0, MAX_ATTEMPTS - row.attempts - 1) }),
     };
   }
 
