@@ -62,7 +62,7 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
               <Clock3 size={16} />
             </span>
             <div>
-              <p className="text-[12.5px] font-semibold">Bayilik durumu</p>
+              <p className="text-[12.5px] font-semibold">{t("x.bayilik-durumu")}</p>
               <p className="mt-0.5 text-[11.5px] muted">{t("x.kalan-sure-2")}<span className="font-medium" style={{ color: "var(--fg)" }}>{store.expiresAt ? remainingLabel(store.expiresAt) : t("x.snrsz")}</span>{" "}
                 · {t("x.bitis-2")} {store.expiresAt ? formatDate(store.expiresAt) : "—"}
               </p>

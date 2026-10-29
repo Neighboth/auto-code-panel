@@ -41,7 +41,7 @@ export default async function LibraryPage({ params }: { params: Promise<{ magaza
 
   const items: LibraryItem[] = rows.map(({ entitlement, game, account }) => ({
     entitlementId: entitlement.id,
-    title: entitlement.title || game?.title || account?.platformLabel || "Teslimat",
+    title: entitlement.title || game?.title || account?.platformLabel || t("x.teslimat"),
     subtitle: account
       ? t("x.platform-hesab", { platform: account.platformLabel })
       : game

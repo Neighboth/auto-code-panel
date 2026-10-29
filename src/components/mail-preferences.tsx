@@ -57,7 +57,7 @@ export function MailPreferences({
         </span>
         <div>
           <h2 id="mail-prefs-title" className="text-[14px] font-semibold">
-            E-posta bildirimleri
+            {t("x.e-posta-bildirimleri")}
           </h2>
           <p className="mt-0.5 text-[11.5px] leading-relaxed muted">
             {audience === "customer"
@@ -74,15 +74,15 @@ export function MailPreferences({
             className="flex cursor-pointer items-start justify-between gap-3 px-3 py-2.5 transition hover:bg-[color-mix(in_srgb,var(--fg)_3%,transparent)]"
           >
             <span>
-              <span className="block text-[12.5px] font-medium">{item.label}</span>
-              <span className="mt-0.5 block text-[11px] muted">{item.hint}</span>
+              <span className="block text-[12.5px] font-medium">{t(item.label)}</span>
+              <span className="mt-0.5 block text-[11px] muted">{t(item.hint)}</span>
             </span>
             <input
               type="checkbox"
               className="checkbox mt-1"
               checked={prefs[item.key]}
               onChange={() => toggle(item.key)}
-              aria-label={item.label}
+              aria-label={t(item.label)}
             />
           </label>
         ))}
@@ -93,7 +93,7 @@ export function MailPreferences({
           <Mail size={12} />{t("x.zorunlu-guvenlik-uyarlar-hesap-guvenligi-icin-onerilir")}</p>
         <button type="button" className="btn btn-dark btn-sm" onClick={save} disabled={pending}>
           {pending ? <Loader2 size={13} className="animate-spin" /> : null}
-          Kaydet
+          {t("x.kaydet")}
         </button>
       </div>
     </section>

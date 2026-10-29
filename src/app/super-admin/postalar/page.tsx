@@ -31,7 +31,7 @@ export default async function SuperAdminMailPage() {
         <div className="card p-3.5">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">SMTP durumu</p>
           <p className="mt-1 text-[13px] font-medium">{status.enabled ? t("x.yapilandirildi") : t("x.kapal-opsiyonel")}</p>
-          <p className="mt-0.5 text-[11px] muted">{status.host || "SMTP_HOST boş"}</p>
+          <p className="mt-0.5 text-[11px] muted">{status.host || t("x.smtp-host-bos")}</p>
         </div>
         <div className="card p-3.5">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{t("x.gonderen")}</p>

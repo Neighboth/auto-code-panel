@@ -82,7 +82,7 @@ export function CustomerDetailActions({
         onClick={() => setDeleteOpen(true)}
       >
         <Trash2 size={12} />
-        Sil
+        {t("x.sil")}
       </button>
       {banOpen ? (
         <FactorResetModal
@@ -179,7 +179,7 @@ function FactorResetModal({
       title={t("x.2fa-sfrla")}
       footer={
         <button type="button" className="btn btn-outline" onClick={onClose}>
-          Kapat
+          {t("x.kapat")}
         </button>
       }
     >
@@ -267,7 +267,7 @@ function EditCustomerForm({
       <div className="flex justify-end gap-2 sm:col-span-2">
         <button type="submit" className="btn btn-primary" disabled={busy}>
         {busy ? <Loader2 size={14} className="animate-spin" /> : <KeySquare size={13} />}
-          Kaydet
+          {t("x.kaydet")}
       </button>
       </div>
     </form>
@@ -332,7 +332,7 @@ function AddDeliveryModal({
         <div className="flex justify-end">
           <button type="submit" className="btn btn-primary" disabled={busy || games.length === 0}>
             {busy ? <Loader2 size={14} className="animate-spin" /> : <Plus size={13} />}
-            Ekle
+            {t("x.ekle")}
           </button>
         </div>
       </form>

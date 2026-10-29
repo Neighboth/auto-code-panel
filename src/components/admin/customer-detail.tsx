@@ -146,7 +146,7 @@ export async function CustomerDetailView({
                 <tr>
                   <th>{t("x.urun-3")}</th>
                   <th>{t("x.hesap-3")}</th>
-                  <th>Platform</th>
+                  <th>{t("x.platform")}</th>
                   <th>{t("x.erisim-3")}</th>
                   <th className="text-right">{t("x.islem-3")}</th>
                 </tr>

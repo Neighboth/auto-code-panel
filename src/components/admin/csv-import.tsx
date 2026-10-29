@@ -85,7 +85,7 @@ export function CsvImportButton({
               <Download size={13} />{t("x.sablonu-indir")}</button>
             <span className="flex-1" />
             <button type="button" className="btn btn-outline" onClick={() => setOpen(false)} disabled={pending}>
-              Kapat
+              {t("x.kapat")}
             </button>
             <button type="button" className="btn btn-dark" onClick={submit} disabled={pending}>
               {pending ? <Loader2 size={13} className="animate-spin" /> : <FileUp size={13} />}

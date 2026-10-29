@@ -149,7 +149,7 @@ export async function revokeResellerKey(formData: FormData): Promise<ActionResul
     metadata: { code: key.code, note: key.note },
   });
   revalidatePath("/super-admin");
-  return { ok: true, message: "Bayilik kodu iptal edildi." };
+  return { ok: true, message: t("x.bayilik-kodu-iptal-edildi-2") };
 }
 
 export async function extendStoreLicense(formData: FormData): Promise<ActionResult> {

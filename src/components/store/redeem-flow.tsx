@@ -253,7 +253,7 @@ export function RedeemFlow({
           <div className="mt-5 flex justify-between gap-2">
             <button type="button" className="btn btn-ghost" onClick={() => { setStep("entry"); setPreview(null); }}>{t("x.kodu-degistir")}</button>
             <button type="button" className="btn btn-primary" onClick={proceedFromChoices}>
-              Devam et
+              {t("x.devam-et")}
               <ArrowRight size={14} />
             </button>
           </div>
@@ -426,7 +426,7 @@ export function RedeemFlow({
                 setStep("entry");
               }}
             >
-              Yeni kod kullan
+              {t("x.yeni-kod-kullan")}
             </button>
             {result.guest ? (
               <Link href={`${basePath}/kayit`} className="btn btn-primary">{t("x.hesap-olustur")}<ArrowRight size={14} />
@@ -453,7 +453,7 @@ export function RedeemFlow({
               disabled={pending}
             >
               {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-              Yine de devam et
+              {t("x.yine-de-devam-et")}
             </button>
           </>
         }

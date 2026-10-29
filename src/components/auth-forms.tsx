@@ -82,7 +82,7 @@ export function ActivationForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <Field
-        label="Bayilik Kodu"
+        label={t("x.bayilik-kodu")}
         htmlFor="resellerCode"
         hint={t("x.super-admin-tarafndan-uretilen-tek-kullanmlk-kod")}
       >

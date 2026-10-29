@@ -19,6 +19,13 @@ const KIND_LABEL: Record<string, string> = {
   generic: "x.genel",
 };
 
+const STATUS_LABEL: Record<string, string> = {
+  sent: "x.gonderildi",
+  skipped: "x.atlandi",
+  failed: "x.basarisiz",
+  duplicate: "x.zaten-gonderildi",
+};
+
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "blue" | "neutral"> = {
   sent: "green",
   skipped: "amber",
@@ -56,7 +63,7 @@ export function MailConsole({ stats }: { stats: MailStats }) {
         ) : (
           stats.byStatus.map((row) => (
             <div key={row.status} className="card p-3.5">
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{row.status}</p>
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{STATUS_LABEL[row.status] ? t(STATUS_LABEL[row.status]) : row.status}</p>
               <p className="mt-1 text-[22px] font-semibold tabular-nums">{row.count}</p>
             </div>
           ))
@@ -110,7 +117,9 @@ export function MailConsole({ stats }: { stats: MailStats }) {
                   </td>
                   <td className="text-[12px]">{KIND_LABEL[row.kind] ? t(KIND_LABEL[row.kind]) : row.kind}</td>
                   <td>
-                    <Badge tone={STATUS_TONE[row.status] ?? "neutral"}>{row.status}</Badge>
+                    <Badge tone={STATUS_TONE[row.status] ?? "neutral"}>
+                      {STATUS_LABEL[row.status] ? t(STATUS_LABEL[row.status]) : row.status}
+                    </Badge>
                   </td>
                   <td className="text-[11.5px]">{row.recipient || "—"}</td>
                   <td className="max-w-[280px] truncate text-[11px] muted">

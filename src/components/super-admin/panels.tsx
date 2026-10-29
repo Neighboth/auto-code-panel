@@ -256,7 +256,7 @@ export function StoreActions({
   return (
     <div className="flex items-center justify-end gap-1.5">
       <button type="button" className="btn btn-outline btn-sm" onClick={() => setOpen(true)}>
-        Lisans
+        {t("x.lisans")}
       </button>
       <button type="button" className="btn btn-ghost btn-sm" onClick={toggleSuspension} disabled={pending}>
         {suspended ? t("x.aktiflestir") : t("x.askya-al")}
@@ -297,7 +297,7 @@ export function StoreActions({
             <button type="button" className="btn btn-outline" onClick={() => setOpen(false)}>{t("x.vazgec")}</button>
             <button type="submit" className="btn btn-dark" disabled={pending}>
               {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-              Kaydet
+              {t("x.kaydet")}
             </button>
           </div>
         </form>

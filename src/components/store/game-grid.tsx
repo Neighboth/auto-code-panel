@@ -75,7 +75,7 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
               <div className="p-4">
                 <h3 className="text-[14px] font-semibold leading-tight tracking-[-0.01em]">{game.title}</h3>
                 <p className="mt-1.5 line-clamp-2 text-[12px] leading-relaxed muted">
-                  {game.description || "Dijital teslimat"}
+                  {game.description || t("x.dijital-teslimat")}
                 </p>
                 <div className="mt-3 flex items-end justify-between gap-2">
                   <div>
@@ -90,7 +90,7 @@ export function GameGrid({ games }: { games: StoreGameCard[] }) {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <button type="button" onClick={() => setActive(game)} className="btn btn-outline btn-sm">
-                      Detay
+                      {t("x.detay")}
                     </button>
                     <a
                       href={game.salesUrl || "#"}
