@@ -12,11 +12,11 @@ const KIND_LABEL: Record<string, string> = {
   verification: "x.dogrulama",
   welcome: "x.karslama",
   license: "x.lisans-hatrlatma",
-  announcement: "Duyuru",
+  announcement: "x.duyuru",
   delivery: "x.teslim-fisi",
   security: "x.guvenlik",
-  test: "Test",
-  generic: "Genel",
+  test: "x.test",
+  generic: "x.genel",
 };
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "blue" | "neutral"> = {
@@ -108,12 +108,14 @@ export function MailConsole({ stats }: { stats: MailStats }) {
                   <td className="whitespace-nowrap text-[11.5px] tabular-nums">
                     {new Date(row.createdAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}
                   </td>
-                  <td className="text-[12px]">{KIND_LABEL[row.kind] ?? row.kind}</td>
+                  <td className="text-[12px]">{KIND_LABEL[row.kind] ? t(KIND_LABEL[row.kind]) : row.kind}</td>
                   <td>
                     <Badge tone={STATUS_TONE[row.status] ?? "neutral"}>{row.status}</Badge>
                   </td>
                   <td className="text-[11.5px]">{row.recipient || "—"}</td>
-                  <td className="max-w-[280px] truncate text-[11px] muted">{row.detail || "—"}</td>
+                  <td className="max-w-[280px] truncate text-[11px] muted">
+                    {row.detail ? t(row.detail) : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>

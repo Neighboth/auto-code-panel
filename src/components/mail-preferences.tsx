@@ -46,7 +46,7 @@ export function MailPreferences({
       toast.error(result.message ?? t("x.kaydedilemedi"));
       return;
     }
-    toast.success(result.message ?? "Kaydedildi");
+    toast.success(result.message ?? t("x.kaydedildi"));
   }
 
   return (

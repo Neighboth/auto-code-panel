@@ -161,7 +161,7 @@ export function UserTabs({
                       <td className="text-[11.5px] muted">{formatDate(reseller.createdAt)}</td>
                       <td>
                         <span className={`badge ${storeBlocked ? "badge-red" : "badge-green"}`}>
-                          {storeBlocked ? t("x.magaza-kapal") : "Aktif"}
+                          {storeBlocked ? t("x.magaza-kapal") : t("x.aktif")}
                         </span>
                       </td>
                       <td>
@@ -199,7 +199,7 @@ export function UserTabs({
                   <td className="text-[11.5px] muted">{formatDate(customer.createdAt)}</td>
                   <td>
                     <span className={`badge ${customer.status === "active" ? "badge-green" : "badge-red"}`}>
-                      {customer.status === "active" ? "Aktif" : t("x.yasakl")}
+                      {customer.status === "active" ? t("x.aktif") : t("x.yasakl")}
                     </span>
                   </td>
                   <td>

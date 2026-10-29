@@ -30,7 +30,7 @@ export default async function SuperAdminMailPage() {
       <div className="grid gap-2.5 sm:grid-cols-3">
         <div className="card p-3.5">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">SMTP durumu</p>
-          <p className="mt-1 text-[13px] font-medium">{status.enabled ? "Yapılandırıldı" : t("x.kapal-opsiyonel")}</p>
+          <p className="mt-1 text-[13px] font-medium">{status.enabled ? t("x.yapilandirildi") : t("x.kapal-opsiyonel")}</p>
           <p className="mt-0.5 text-[11px] muted">{status.host || "SMTP_HOST boş"}</p>
         </div>
         <div className="card p-3.5">
@@ -41,7 +41,7 @@ export default async function SuperAdminMailPage() {
         <div className="card p-3.5">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{" "}{t("x.dogrulama-modu")}</p>
           <p className="mt-1 text-[13px] font-medium">
-            {status.verification ? "Aktif" : t("x.kapal")} · {env.mailVerificationMode}
+            {status.verification ? t("x.aktif") : t("x.kapal")} · {env.mailVerificationMode}
           </p>
           <p className="mt-0.5 text-[11px] muted">MAIL_VERIFICATION</p>
         </div>

@@ -26,7 +26,7 @@ const CONFIRM: Record<BulkAction, { title: string; body: string; cta: string; da
   ban: {
     title: "x.secili-musterileri-yasakla",
     body: "x.yasaklanan-musteriler-magazaya-giris-yapamaz-ancak-kaytl",
-    cta: "Yasakla",
+    cta: "x.yasakla",
     danger: false,
   },
   unban: {
@@ -80,6 +80,9 @@ export function CustomersTable({
     setSelected([]);
     router.refresh();
   }
+  // `danger` is a flag, not copy: reading it must not go through `t`, hence the
+  // explicit opt-out from the key-map check.
+  const confirmDanger = pendingAction ? CONFIRM[pendingAction].danger : false; // i18n-ignore
 
   return (
     <div className="space-y-3">
@@ -116,7 +119,7 @@ export function CustomersTable({
                 <th>{t("x.musteri")}</th>
                 <th>E-posta</th>
                 <th>{" "}{t("x.kayt-tarihi")}</th>
-                <th>Teslimat</th>
+                <th>{t("x.teslimat")}</th>
                 <th>{t("x.durum")}</th>
                 <th className="text-right">{t("x.islem")}</th>
               </tr>
@@ -144,7 +147,7 @@ export function CustomersTable({
                     <td className="text-[12px] tabular-nums">{row.deliveryCount}</td>
                     <td>
                       <span className={`badge ${row.status === "active" ? "badge-green" : "badge-red"}`}>
-                        {row.status === "active" ? "Aktif" : t("x.yasakl")}
+                        {row.status === "active" ? t("x.aktif") : t("x.yasakl")}
                       </span>
                     </td>
                     <td>
@@ -164,25 +167,25 @@ export function CustomersTable({
       <Modal
         open={pendingAction !== null}
         onClose={() => (busy ? undefined : setPendingAction(null))}
-        title={pendingAction ? CONFIRM[pendingAction].title : ""}
+        title={pendingAction ? t(CONFIRM[pendingAction].title) : ""}
         description={pendingAction ? t("x.count-musteri-names", { count: selectedRows.length, names: selectedRows.map((row) => row.username).join(", ") }) : undefined}
         footer={
           <>
             <button type="button" className="btn btn-outline" onClick={() => setPendingAction(null)} disabled={busy}>{t("x.vazgec")}</button>
             <button
               type="button"
-              className={pendingAction && CONFIRM[pendingAction].danger ? "btn btn-danger" : "btn btn-dark"}
+              className={confirmDanger ? "btn btn-danger" : "btn btn-dark"}
               onClick={() => pendingAction && run(pendingAction)}
               disabled={busy}
             >
               {busy ? <Loader2 size={13} className="animate-spin" /> : null}
-              {pendingAction ? CONFIRM[pendingAction].cta : ""}
+              {pendingAction ? t(CONFIRM[pendingAction].cta) : ""}
             </button>
           </>
         }
       >
         <p className="text-[12.5px] leading-relaxed muted">
-          {pendingAction ? CONFIRM[pendingAction].body : ""}
+          {pendingAction ? t(CONFIRM[pendingAction].body) : ""}
         </p>
       </Modal>
     </div>

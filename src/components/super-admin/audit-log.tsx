@@ -25,12 +25,12 @@ const ACTION_LABEL: Record<string, string> = {
   "store.product.create": "x.urun-eklendi",
   "store.product.update": "x.urun-guncellendi",
   "store.product.delete": "x.urun-silindi",
-  "store.account.create": "Hesap eklendi",
+  "store.account.create": "x.hesap-eklendi",
   "store.account.update": "x.hesap-guncellendi",
-  "store.account.delete": "Hesap silindi",
+  "store.account.delete": "x.hesap-silindi",
   "store.code.create": "x.kod-olusturuldu",
   "store.code.bulk": "x.toplu-kod-islemi",
-  "store.code.delete": "Kod silindi",
+  "store.code.delete": "x.kod-silindi",
   "store.settings.update": "x.magaza-ayarlar-guncellendi",
   "store.domain.add": "x.ozel-alan-ad-eklendi",
   "store.domain.remove": "x.ozel-alan-ad-kaldrld",
@@ -44,11 +44,11 @@ const ACTION_LABEL: Record<string, string> = {
   "super.accounts.reveal": "x.hesap-sifreleri-goruntulendi",
   "super.post.create": "x.duyuru-yaynland",
   "super.post.update": "x.duyuru-guncellendi",
-  "super.post.delete": "Duyuru silindi",
-  "super.post.pin": "Duyuru sabitlendi",
+  "super.post.delete": "x.duyuru-silindi",
+  "super.post.pin": "x.duyuru-sabitlendi",
   "super.settings.update": "x.sistem-ayarlar-guncellendi",
   "super.reseller_keys.create": "x.bayilik-kodu-uretildi",
-  "super.reseller_keys.revoke": "Bayilik kodu iptal edildi",
+  "super.reseller_keys.revoke": "x.bayilik-kodu-iptal-edildi",
   "super.user.update": "x.kullanc-guncellendi",
   "super.user.delete": "x.kullanc-silindi",
   "auth.login": "x.giris-yapld",
@@ -64,12 +64,26 @@ const ACTION_LABEL: Record<string, string> = {
   "code.redeem": "x.kod-kullanld",
 };
 
-function labelFor(action: string): string {
-  if (ACTION_LABEL[action]) return ACTION_LABEL[action];
-  return action
-    .split(".")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" · ");
+/**
+ * Label maps below store dictionary keys, never final copy. `pick` is the only
+ * way they reach the screen: it resolves a key through `t` and falls back to the
+ * raw value (which for unknown actions is a derived, already humanised string).
+ */
+function pick(t: (key: string) => string, map: Record<string, string>, id: string): string {
+  const key = map[id];
+  return key ? t(key) : id;
+}
+
+/** Renders an audit action id (`store.product.create`) in the reader's language. */
+function labelFor(t: (key: string) => string): (action: string) => string {
+  return (action) => {
+    const key = ACTION_LABEL[action];
+    if (key) return t(key);
+    return action
+      .split(".")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" · ");
+  };
 }
 
 export function AuditLogView({
@@ -87,6 +101,7 @@ export function AuditLogView({
   };
 }) {
   const t = useT();
+  const label = labelFor(t);
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -138,7 +153,7 @@ export function AuditLogView({
             <option value="">{" "}{t("x.tum-islemler")}</option>
             {pageData.actions.map((item) => (
               <option key={item.action} value={item.action}>
-                {labelFor(item.action)} ({item.count})
+                {label(item.action)} ({item.count})
               </option>
             ))}
           </select>
@@ -151,7 +166,7 @@ export function AuditLogView({
             <option value="">{" "}{t("x.tum-onemler")}</option>
             <option value="info">{t("x.bilgi")}</option>
             <option value="warn">{t("x.uyar")}</option>
-            <option value="critical">Kritik</option>
+            <option value="critical">{t("x.kritik")}</option>
           </select>
           <input
             className="input w-auto"
@@ -232,11 +247,11 @@ export function AuditLogView({
                         </td>
                         <td className="px-4 py-2.5">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">{labelFor(row.action)}</span>
+                            <span className="font-medium">{label(row.action)}</span>
                             {row.severity !== "info" ? (
                               <Badge tone={row.severity === "critical" ? "red" : "amber"}>
                                 {row.severity === "critical" ? <ShieldAlert size={11} /> : null}
-                                {SEVERITY_LABEL[row.severity] ?? row.severity}
+                                {SEVERITY_LABEL[row.severity] ? t(SEVERITY_LABEL[row.severity]) : row.severity}
                               </Badge>
                             ) : null}
                           </div>
@@ -245,7 +260,7 @@ export function AuditLogView({
                         <td className="px-4 py-2.5">
                           {row.actorName}
                           <span className="mt-0.5 block text-[10.5px] muted">
-                            {ACTOR_LABEL[row.actorType] ?? row.actorType}
+                            {pick(t, ACTOR_LABEL, row.actorType)}
                           </span>
                         </td>
                         <td className="px-4 py-2.5">

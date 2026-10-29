@@ -8,7 +8,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "i18n:coverage": "node scripts/i18n-coverage.mjs",
-    "i18n:hardcoded": "node scripts/i18n-hardcoded.mjs"
+    "i18n:hardcoded": "node scripts/i18n-hardcoded.mjs",
+    "i18n:check": "node scripts/i18n-hardcoded.mjs --strict",
+    "audit:backfill": "node scripts/audit-backfill.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

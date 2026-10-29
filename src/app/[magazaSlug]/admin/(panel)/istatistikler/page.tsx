@@ -150,7 +150,7 @@ export default async function AdminStatsPage({
     <div className="mx-auto w-full max-w-6xl space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Analitik</p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("x.analitik")}</p>
           <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{" "}{t("x.detayl-istatistikler")}</h1>
           <p className="mt-1 text-[12.5px] muted">
             {t("x.kod-kullanm-teslimat-hacmi-musteri-buyumesi-ve-envanter-")}
@@ -372,7 +372,7 @@ export default async function AdminStatsPage({
               <thead>
                 <tr>
                   <th>{t("x.urun")}</th>
-                  <th className="text-right">Teslimat</th>
+                  <th className="text-right">{t("x.teslimat")}</th>
                   <th className="text-right">{t("x.deger")}</th>
                 </tr>
               </thead>

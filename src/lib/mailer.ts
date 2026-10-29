@@ -35,7 +35,13 @@ export type MailPayload = {
   storeId?: number | null;
 };
 
-export type MailResult = { status: "sent" | "skipped" | "failed" | "duplicate"; detail: string };
+export type MailResult = {
+  status: "sent" | "skipped" | "failed" | "duplicate";
+  /** Dictionary key for the stored result (`x.gonderildi`, `x.smtp-yapilandirilmadi`, …). */
+  detailCode: string;
+  /** Technical text (message id or SMTP error). Server-side only. */
+  detail: string;
+};
 
 let transporter: Transporter | null = null;
 
@@ -73,8 +79,16 @@ export function absoluteUrl(path: string): string {
 async function recordEvent(
   payload: MailPayload,
   status: MailResult["status"],
+  /** Machine-readable reason code; the UI translates it. */
+  detailCode: string,
+  /** Free-form technical detail (SMTP server message). Never user-facing copy. */
   detail: string,
 ): Promise<void> {
+  // Only the reason code is stored: this column is rendered in the super-admin
+  // mail console, so it must stay translatable. The raw SMTP string is a
+  // technical artefact and goes to the server log instead.
+  const stored = detailCode.slice(0, 400);
+  if (status === "failed") console.error("[mail] delivery failed:", detail);
   try {
     await ensureDatabase();
     if (payload.dedupeRef) {
@@ -86,7 +100,7 @@ async function recordEvent(
           storeId: payload.storeId ?? null,
           recipient: payload.to.slice(0, 200),
           status,
-          detail: detail.slice(0, 400),
+          detail: stored,
         })
         .onConflictDoNothing({ target: [mailEvents.kind, mailEvents.ref] });
     } else {
@@ -96,7 +110,7 @@ async function recordEvent(
         storeId: payload.storeId ?? null,
         recipient: payload.to.slice(0, 200),
         status,
-        detail: detail.slice(0, 400),
+        detail: stored,
       });
     }
   } catch (error) {
@@ -118,18 +132,18 @@ export async function wasMailSent(kind: MailKind, ref: string): Promise<boolean>
 export async function sendMail(payload: MailPayload): Promise<MailResult> {
   const to = payload.to.trim();
   if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) {
-    return { status: "skipped", detail: "geçersiz alıcı adresi" };
+    return { status: "skipped", detailCode: "x.gecersiz-alici", detail: "invalid recipient address" };
   }
   if (!smtpConfigured()) {
-    await recordEvent(payload, "skipped", "SMTP yapılandırılmadı");
-    return { status: "skipped", detail: "SMTP yapılandırılmadı" };
+    await recordEvent(payload, "skipped", "x.smtp-yapilandirilmadi", "SMTP not configured");
+    return { status: "skipped", detailCode: "x.smtp-yapilandirilmadi", detail: "SMTP not configured" };
   }
   if (payload.dedupeRef && (await wasMailSent(payload.kind ?? "generic", payload.dedupeRef))) {
-    return { status: "duplicate", detail: "daha önce gönderildi" };
+    return { status: "duplicate", detailCode: "x.zaten-gonderildi", detail: "already delivered" };
   }
 
   const transport = getTransport();
-  if (!transport) return { status: "skipped", detail: "SMTP yapılandırılmadı" };
+  if (!transport) return { status: "skipped", detailCode: "x.smtp-yapilandirilmadi", detail: "SMTP not configured" };
 
   try {
     const info = await transport.sendMail({
@@ -140,7 +154,7 @@ export async function sendMail(payload: MailPayload): Promise<MailResult> {
       html: payload.html,
       replyTo: env.supportEmail || undefined,
     });
-    await recordEvent(payload, "sent", info.messageId ?? "");
+    await recordEvent(payload, "sent", "x.gonderildi", info.messageId ?? "");
     await logAudit({
       action: "mail.sent",
       entity: "mail",
@@ -149,10 +163,10 @@ export async function sendMail(payload: MailPayload): Promise<MailResult> {
       summary: `${payload.kind ?? "mail"} → ${to}`,
       metadata: { subject: payload.subject, messageId: info.messageId ?? "" },
     });
-    return { status: "sent", detail: info.messageId ?? "" };
+    return { status: "sent", detailCode: "x.gonderildi", detail: info.messageId ?? "" };
   } catch (error) {
     const detail = (error as Error).message.slice(0, 300);
-    await recordEvent(payload, "failed", detail);
+    await recordEvent(payload, "failed", "x.gonderim-hatasi", detail);
     await logAudit({
       action: "mail.failed",
       entity: "mail",
@@ -161,7 +175,7 @@ export async function sendMail(payload: MailPayload): Promise<MailResult> {
       summary: `${payload.kind ?? "mail"} → ${to}`,
       metadata: { detail },
     });
-    return { status: "failed", detail };
+    return { status: "failed", detailCode: "x.gonderim-hatasi", detail };
   }
 }
 

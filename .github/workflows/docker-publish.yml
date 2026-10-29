@@ -20,7 +20,7 @@ env:
 
 jobs:
   verify:
-    name: Typecheck, lint and build
+    name: Typecheck, lint, i18n and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,6 +40,12 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      # Hard gate: any hardcoded Turkish text (UI or server side) or any key used
+      # in code but missing from the dictionary fails the build. Both counters are
+      # at zero today, so a regression is caught in review instead of production.
+      - name: i18n gate (hardcoded text + missing keys)
+        run: npm run i18n:check
 
       - name: Build
         run: npm run build

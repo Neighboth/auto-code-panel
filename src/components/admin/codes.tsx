@@ -34,9 +34,14 @@ type AccountOption = { id: number; label: string };
 
 const typeLabels: Record<AdminCode["type"], string> = {
   choice: "x.secmeli-musteri-secer",
-  single: "Tekli teslimat",
+  single: "x.tekli-teslimat",
   bundle: "x.paket-coklu",
 };
+
+/** `typeLabels` holds dictionary keys, so every render goes through `t`. */
+function typeLabel(t: (key: string) => string, type: AdminCode["type"]): string {
+  return t(typeLabels[type]);
+}
 
 export function CodeManager({
   slug,
@@ -131,7 +136,7 @@ export function CodeManager({
       gameIds,
       accountIds,
       count,
-      label: `${typeLabels[type]}${type === "choice" ? ` (${choiceCount})` : ""} · ${t("x.snrsz")}`,
+      label: `${typeLabel(t, type)}${type === "choice" ? ` (${choiceCount})` : ""} · ${t("x.snrsz")}`,
     });
     setPending(false);
     if (!result.ok) {
@@ -210,7 +215,7 @@ export function CodeManager({
     <div className="mx-auto w-full max-w-6xl space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Teslimat</p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("x.teslimat")}</p>
           <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">{" "}{t("x.reedem-kodlar")}</h1>
           <p className="mt-1 text-[12.5px] muted">{t("x.kod-suresi-son-kullanma-tarihi-degildir-musteri-kodu-kul")}</p>
         </div>
@@ -222,7 +227,7 @@ export function CodeManager({
         {(
           [
             ["all", t("x.tumu"), counts.all],
-            ["active", "Aktif", counts.active],
+            ["active", t("x.aktif"), counts.active],
             ["used", t("x.kullanlms"), counts.used],
             ["expired", t("x.suresi-dolmus"), counts.expired],
           ] as const
@@ -305,7 +310,7 @@ export function CodeManager({
                     {code.targetSummary ? <p className="mt-0.5 text-[10.5px] muted">{code.targetSummary}</p> : null}
                   </td>
                   <td>
-                    <span className="badge">{typeLabels[code.type]}</span>
+                    <span className="badge">{typeLabel(t, code.type)}</span>
                     {code.type === "choice" ? (
                       <span className="ml-1 text-[10.5px] muted">{t("x.count-secim", { count: code.choiceCount })}</span>
                     ) : null}
@@ -318,7 +323,7 @@ export function CodeManager({
                         code.status === "active" ? "badge-blue" : code.status === "used" ? "badge-green" : "badge-red"
                       }`}
                     >
-                      {code.status === "active" ? "Aktif" : code.status === "used" ? t("x.kullanlms") : t("x.suresi-dolmus")}
+                      {code.status === "active" ? t("x.aktif") : code.status === "used" ? t("x.kullanlms") : t("x.suresi-dolmus")}
                     </span>
                   </td>
                   <td>
@@ -350,7 +355,7 @@ export function CodeManager({
         open={detail !== null}
         onClose={() => setDetail(null)}
         title={detail?.code}
-        description={detail ? `${typeLabels[detail.type]} · ${t("x.snrsz")}` : undefined}
+        description={detail ? `${typeLabel(t, detail.type)} · ${t("x.snrsz")}` : undefined}
         size="lg"
       >
         {detail ? (
@@ -580,7 +585,7 @@ export function CodeManager({
             <div className="rounded-lg border p-3 hairline">
               <p className="text-[11px] font-semibold uppercase tracking-[0.08em] muted">{t("x.ozet")}</p>
               <div className="mt-2 space-y-1.5 text-[12px]">
-                <SummaryRow label={t("x.tur")} value={typeLabels[type]} />
+                <SummaryRow label={t("x.tur")} value={typeLabel(t, type)} />
                 {type === "choice" ? <SummaryRow label={t("x.secim-hakk-2")} value={t("x.count-urun", { count: choiceCount })} /> : null}
                 {type !== "choice" ? <SummaryRow label={t("x.hedef-says")} value={t("x.count-oge", { count: targetCount })} /> : null}
                 <SummaryRow label={t("x.erisim-suresi")} value={t("x.snrsz")} />

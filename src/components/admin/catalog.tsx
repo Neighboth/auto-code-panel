@@ -222,7 +222,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
       setError(result.message ?? t("x.kaydedilemedi"));
       return;
     }
-    toast.success(result.message ?? "Kaydedildi");
+    toast.success(result.message ?? t("x.kaydedildi"));
     setOpen(false);
     router.refresh();
   }
@@ -770,7 +770,7 @@ export function AccountManager({
       setError(result.message ?? t("x.kaydedilemedi"));
       return;
     }
-    toast.success(result.message ?? "Kaydedildi");
+    toast.success(result.message ?? t("x.kaydedildi"));
     setOpen(false);
     router.refresh();
   }
@@ -892,7 +892,7 @@ export function AccountManager({
                     </td>
                     <td>
                       <span className={`badge ${account.status === "available" ? "badge-green" : ""}`}>
-                        {account.status === "available" ? "Aktif" : "Pasif"}
+                        {account.status === "available" ? t("x.aktif") : t("x.pasif")}
                       </span>
                     </td>
                     <td>

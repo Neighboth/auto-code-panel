@@ -42,7 +42,7 @@ export default async function StoreGamesPage({ params }: { params: Promise<{ mag
     <div className="mx-auto w-full max-w-6xl px-5 py-9">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-5 hairline">
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Katalog</p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{t("x.katalog")}</p>
           <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.025em]">{" "}{t("x.oyunlar-urunler")}</h1>
           <p className="mt-1 text-[12.5px] muted">
             {t("x.count-urun-listeleniyor-satn-alma-islemleri-magaza-ilan-", { count: rows.length })}

@@ -55,7 +55,7 @@ export async function saveCustomerMailPrefs(slug: string, formData: FormData): P
     metadata: prefs,
   });
   revalidatePath(`/${slug}/profil`);
-  return { ok: true, message: "Bildirim tercihleri kaydedildi." };
+  return { ok: true, message: t("x.bildirim-tercihleri-kaydedildi") };
 }
 
 /** Store panel → notification preferences of the signed-in manager. */
@@ -89,7 +89,7 @@ export async function saveStoreMailPrefs(slug: string, formData: FormData): Prom
     metadata: prefs,
   });
   revalidatePath(`/${slug}/admin/ayarlar`);
-  return { ok: true, message: "Bildirim tercihleri kaydedildi." };
+  return { ok: true, message: t("x.bildirim-tercihleri-kaydedildi") };
 }
 
 /** Public, token based: the link in the mail footer. Only the token's owner is touched. */
