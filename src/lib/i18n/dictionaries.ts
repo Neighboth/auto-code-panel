@@ -1,4 +1,5 @@
 import { DEFAULT_LOCALE, findLocale } from "@/lib/i18n/config";
+import { UI_PACKS } from "@/lib/i18n/core-packs";
 
 /**
  * Translation dictionaries.
@@ -69,6 +70,7 @@ const tr: Dictionary = {
   "super.navStores": "Bayilik Yönetimi",
   "super.navUsers": "Kullanıcılar",
   "super.navPosts": "Duyurular",
+  "super.navMail": "E-posta Merkezi",
   "super.navLogs": "İşlem Kayıtları",
   "super.navSettings": "Sistem Ayarları",
   "super.badge": "Süper Admin",
@@ -217,6 +219,7 @@ const en: Dictionary = {
   "super.navStores": "Licenses",
   "super.navUsers": "Users",
   "super.navPosts": "Announcements",
+  "super.navMail": "Mail centre",
   "super.navLogs": "Activity log",
   "super.navSettings": "System settings",
   "super.badge": "Super admin",
@@ -448,11 +451,20 @@ const short: Record<string, Dictionary> = {
   },
 };
 
+/**
+ * Final lookup table. Precedence: reference languages → full locale packs →
+ * the legacy "short" seeds. Anything still missing falls back to English inside
+ * `createTranslator`, so a raw key can never reach the screen.
+ */
 export const DICTIONARIES: Record<string, Dictionary> = {
   tr,
   en,
   ...short,
+  ...UI_PACKS,
 };
+
+/** Keys translated into the reference language (used by the coverage report). */
+export const REFERENCE_KEY_COUNT = Object.keys(tr).length;
 
 export function dictionaryFor(locale: string): Dictionary {
   const base = locale.split("-")[0];

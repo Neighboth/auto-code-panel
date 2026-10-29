@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
@@ -36,17 +36,51 @@ export function Modal({
     [],
   );
 
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+
   useEffect(() => {
     if (!open) return;
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
+
+    const focusable = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((element) => element.offsetParent !== null);
+
+    // Move focus into the dialog so keyboard and screen-reader users stay inside.
+    const first = focusable()[0];
+    (first ?? panelRef.current)?.focus();
+
     function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      if (items.length === 0) return;
+      const firstItem = items[0];
+      const lastItem = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === firstItem) {
+        event.preventDefault();
+        lastItem.focus();
+      } else if (!event.shiftKey && document.activeElement === lastItem) {
+        event.preventDefault();
+        firstItem.focus();
+      }
     }
+
     document.addEventListener("keydown", onKey);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previous;
+      restoreFocusRef.current?.focus();
     };
   }, [open, onClose]);
 
@@ -57,14 +91,19 @@ export function Modal({
       className="modal-backdrop"
       role="dialog"
       aria-modal="true"
+      aria-labelledby={title ? titleId : undefined}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className={`modal-panel ${widths[size]}`}>
+      <div ref={panelRef} tabIndex={-1} className={`modal-panel ${widths[size]}`}>
         <div className="flex items-start justify-between gap-4 border-b px-5 py-4 hairline">
           <div>
-            {title ? <h3 className="text-[15px] font-semibold tracking-[-0.01em]">{title}</h3> : null}
+            {title ? (
+              <h3 id={titleId} className="text-[15px] font-semibold tracking-[-0.01em]">
+                {title}
+              </h3>
+            ) : null}
             {description ? (
               <p className="mt-1 text-[12.5px] leading-relaxed muted">{description}</p>
             ) : null}

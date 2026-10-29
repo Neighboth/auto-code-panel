@@ -194,6 +194,8 @@ export function layout(options: {
   badge?: { text: string; color?: string };
   body: string;
   footerNote?: string;
+  /** One-click unsubscribe link (KVKK / GDPR, RFC 8058 friendly). */
+  unsubscribeUrl?: string;
 }): string {
   const badge = options.badge
     ? `<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:${options.badge.color ?? COLORS.accent}14;color:${options.badge.color ?? COLORS.accent};font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase">${escapeHtml(options.badge.text)}</span>`
@@ -216,6 +218,7 @@ ${options.body}
 </td></tr>
 <tr><td style="padding:16px 24px;border-top:1px solid ${COLORS.border};color:${COLORS.muted};font-size:11.5px;line-height:1.6">
 ${options.footerNote ? `<p style="margin:0 0 6px">${escapeHtml(options.footerNote)}</p>` : ""}
+${options.unsubscribeUrl ? `<p style="margin:0 0 6px"><a href="${escapeHtml(options.unsubscribeUrl)}" style="color:${COLORS.muted};text-decoration:underline">E-posta bildirimlerini kapat</a> — yalnızca bu adres için geçerlidir.</p>` : ""}
 <p style="margin:0">Bu e-posta ${escapeHtml(brand.name)} tarafından otomatik gönderildi. Yanıtlamayın; destek için
 <a href="mailto:${escapeHtml(env.supportEmail)}" style="color:${COLORS.accent}">${escapeHtml(env.supportEmail)}</a>.</p>
 </td></tr>

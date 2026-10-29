@@ -1192,3 +1192,205 @@ export async function bulkUpdateProductPrices(
 
   return { ok: true, message: `${updated} ürün fiyatı güncellendi.`, data: { updated } };
 }
+
+/* ----------------------------- CSV import ---------------------------- */
+
+/** Minimal RFC 4180 parser: handles quoted fields, escaped quotes and CRLF. */
+function parseCsv(input: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let inQuotes = false;
+  const text = input.replace(/^\uFEFF/, "");
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    if (inQuotes) {
+      if (char === '"' && text[i + 1] === '"') {
+        field += '"';
+        i += 1;
+      } else if (char === '"') {
+        inQuotes = false;
+      } else {
+        field += char;
+      }
+      continue;
+    }
+    if (char === '"') {
+      inQuotes = true;
+    } else if (char === "," || char === ";") {
+      row.push(field.trim());
+      field = "";
+    } else if (char === "\n") {
+      row.push(field.trim());
+      if (row.some((cell) => cell !== "")) rows.push(row);
+      row = [];
+      field = "";
+    } else if (char !== "\r") {
+      field += char;
+    }
+  }
+  row.push(field.trim());
+  if (row.some((cell) => cell !== "")) rows.push(row);
+  return rows;
+}
+
+function csvRecords(csv: string): Record<string, string>[] {
+  const [headerRow, ...rest] = parseCsv(csv);
+  if (!headerRow) return [];
+  const header = headerRow.map((cell) => cell.toLowerCase().replace(/\s+/g, ""));
+  return rest.map((cells) => {
+    const record: Record<string, string> = {};
+    header.forEach((key, index) => {
+      record[key] = cells[index] ?? "";
+    });
+    return record;
+  });
+}
+
+/** Bulk product import from CSV (title,ourPrice,currency,originalPrice,steamUrl,salesUrl,description). */
+export async function importProductsCsv(
+  slug: string,
+  csv: string,
+): Promise<ActionResult<{ created: number; skipped: number; errors: string[] }>> {
+  const guard = await requireStoreAdmin(slug);
+  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  const store = guard.state.store;
+  const records = csvRecords(csv).slice(0, 300);
+  if (records.length === 0) return { ok: false, message: "CSV boş görünüyor." };
+
+  const errors: string[] = [];
+  let created = 0;
+  let skipped = 0;
+
+  for (const [index, record] of records.entries()) {
+    const title = (record.title ?? "").slice(0, 120).trim();
+    if (!title) {
+      skipped += 1;
+      errors.push(`Satır ${index + 2}: başlık boş`);
+      continue;
+    }
+    const currency = (record.currency ?? "TRY").toUpperCase().slice(0, 3) || "TRY";
+    const ourPrice = parsePrice(record.ourprice || record.price || "0") ?? "0.00";
+    let originalPrice = parsePrice(record.originalprice ?? "") ?? null;
+    if (originalPrice !== null) {
+      const converted = await convertAmount(originalPrice, currency, currency);
+      originalPrice = converted ?? originalPrice;
+    }
+    const steamUrl = (record.steamurl ?? "").trim();
+    if (steamUrl && !/^https?:\/\//i.test(steamUrl)) {
+      skipped += 1;
+      errors.push(`Satır ${index + 2}: Steam linki http(s) ile başlamalı`);
+      continue;
+    }
+    await db.insert(games).values({
+      storeId: store.id,
+      title,
+      description: (record.description ?? "").slice(0, 2000),
+      salesUrl: (record.salesurl ?? "").slice(0, 500),
+      steamUrl,
+      steamAppId: steamUrl ? parseSteamAppId(steamUrl) : null,
+      originalPrice,
+      originalCurrency: currency,
+      ourPrice,
+      currency,
+      coverImage: "",
+      autoSync: false,
+    });
+    created += 1;
+  }
+
+  refreshStore(slug);
+  await logAudit({
+    action: "store.product.import",
+    entity: "game",
+    summary: `CSV içe aktarma: ${created} ürün eklendi, ${skipped} satır atlandı`,
+    storeId: store.id,
+    storeSlug: slug,
+    metadata: { created, skipped, errors: errors.slice(0, 20) },
+  });
+
+  return {
+    ok: created > 0,
+    message:
+      created > 0
+        ? `${created} ürün içe aktarıldı${skipped ? `, ${skipped} satır atlandı` : ""}.`
+        : "Hiçbir satır aktarılamadı.",
+    data: { created, skipped, errors: errors.slice(0, 20) },
+  };
+}
+
+/** Bulk account import from CSV. Secrets are encrypted exactly like the modal. */
+export async function importAccountsCsv(
+  slug: string,
+  csv: string,
+): Promise<ActionResult<{ created: number; skipped: number; errors: string[] }>> {
+  const guard = await requireStoreAdmin(slug);
+  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  const store = guard.state.store;
+  const records = csvRecords(csv).slice(0, 300);
+  if (records.length === 0) return { ok: false, message: "CSV boş görünüyor." };
+
+  const quota = await accountQuota(store);
+  let remaining = quota.reached ? 0 : quota.max === null ? records.length : quota.max - quota.used;
+
+  const errors: string[] = [];
+  let created = 0;
+  let skipped = 0;
+
+  for (const [index, record] of records.entries()) {
+    if (remaining <= 0) {
+      skipped += 1;
+      errors.push(`Satır ${index + 2}: hesap limiti dolu`);
+      continue;
+    }
+    const productLabel = (record.productlabel ?? record.product ?? "").slice(0, 120).trim();
+    const password = record.password ?? "";
+    if (!productLabel || !password) {
+      skipped += 1;
+      errors.push(`Satır ${index + 2}: ürün adı ve şifre zorunlu`);
+      continue;
+    }
+    const platform = (record.platform ?? "steam").toLowerCase().slice(0, 30) || "steam";
+    const guardType = (record.guardtype ?? "none").toLowerCase();
+    await db.insert(accounts).values({
+      storeId: store.id,
+      platform,
+      platformLabel: (record.platformlabel ?? platform).slice(0, 40) || platform,
+      username: (record.username ?? "").slice(0, 120) || null,
+      email: (record.email ?? "").slice(0, 160) || null,
+      password: encryptData(password),
+      productLabel,
+      linkedGameIds: [],
+      guardType,
+      steamSecret: guardHasSteam(guardType) && record.steamsecret ? encryptData(record.steamsecret) : null,
+      totpSecret: guardHasTotp(guardType) && record.totpsecret ? encryptData(record.totpsecret.toUpperCase()) : null,
+      mailEmail: (record.mailemail ?? "").slice(0, 160) || null,
+      mailPassword: record.mailpassword ? encryptData(record.mailpassword) : null,
+      mailProvider: "gmail",
+      mailSenderFilter: "",
+      notes: (record.notes ?? "").slice(0, 2000),
+      status: "available",
+    });
+    created += 1;
+    remaining -= 1;
+  }
+
+  refreshStore(slug);
+  await logAudit({
+    action: "store.account.import",
+    entity: "account",
+    summary: `CSV içe aktarma: ${created} hesap eklendi, ${skipped} satır atlandı`,
+    storeId: store.id,
+    storeSlug: slug,
+    metadata: { created, skipped, errors: errors.slice(0, 20) },
+  });
+
+  return {
+    ok: created > 0,
+    message:
+      created > 0
+        ? `${created} hesap içe aktarıldı${skipped ? `, ${skipped} satır atlandı` : ""}.`
+        : "Hiçbir satır aktarılamadı.",
+    data: { created, skipped, errors: errors.slice(0, 20) },
+  };
+}

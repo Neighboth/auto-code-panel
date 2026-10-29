@@ -10,6 +10,9 @@ import { getPlatformSettings } from "@/lib/tenant";
 import { brand } from "@/lib/brand";
 import { StoreCredentialsForm, StoreDomainForm, StoreSettingsForm } from "@/components/admin/settings";
 import { FactorSettings } from "@/components/security/factor-settings";
+import { StoreMailPrefsCard } from "@/components/store/mail-prefs-card";
+import { getMailPrefs } from "@/lib/mail-prefs";
+import { getStoreAdminSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Görünüm ve Ayarlar" };
@@ -27,6 +30,8 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
     .limit(1);
   const admin = adminRows[0];
   const settings = await getPlatformSettings();
+  const adminSession = await getStoreAdminSession();
+  const storeMailPrefs = adminSession ? await getMailPrefs("store_admin", adminSession.adminId) : null;
   const renewalUrl = store.renewalUrl || settings.renewalUrl;
   const basePath = await getStoreBasePath(store);
   const domainToken = store.customDomain
@@ -107,6 +112,7 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
         email={admin?.email ?? ""}
       />
 
+      {storeMailPrefs ? <StoreMailPrefsCard slug={store.slug} initial={storeMailPrefs} /> : null}
       <FactorSettings slug={store.slug} subjectType="store" rpName={brand.name} />
     </div>
   );

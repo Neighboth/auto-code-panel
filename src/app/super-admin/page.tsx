@@ -12,7 +12,6 @@ import { ResellerKeyGenerator, RevokeKeyButton, StoreActions } from "@/component
 import { StoreAccountsButton } from "@/components/super-admin/store-accounts";
 import { BrandLogo } from "@/components/brand";
 import { Stat } from "@/components/ui";
-import { sendLicenseReminders } from "@/lib/mail-events";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Yönetici Girişi · Bayilik Yönetimi" };
@@ -35,11 +34,6 @@ export default async function SuperAdminPage() {
   const session = await getSuperSession();
   const settings = await getPlatformSettings();
 
-  // Licence reminders (3 days / 1 day before expiry) are deduplicated in
-  // `mail_events`, so visiting the dashboard is enough of a scheduler.
-  if (session) {
-    await sendLicenseReminders().catch((err) => console.error("[reminders] failed", err));
-  }
 
   if (!session) {
     return (

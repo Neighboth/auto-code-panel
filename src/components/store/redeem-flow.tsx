@@ -234,7 +234,9 @@ export function RedeemFlow({
                   <span className="h-12 w-20 shrink-0 overflow-hidden rounded-md" style={{ background: "var(--bg)" }}>
                     {game.coverImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={game.coverImage} alt={game.title} className="h-full w-full object-cover" />
+                      <img
+                    loading="lazy"
+                    decoding="async" src={game.coverImage} alt={game.title} className="h-full w-full object-cover" />
                     ) : null}
                   </span>
                   <span className="min-w-0 flex-1">

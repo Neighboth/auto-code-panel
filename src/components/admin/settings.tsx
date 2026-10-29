@@ -138,7 +138,9 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
               <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border hairline">
                 {logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={logoUrl} alt="Logo" className="h-full w-full object-cover" />
+                  <img
+                    loading="lazy"
+                    decoding="async" src={logoUrl} alt="Logo" className="h-full w-full object-cover" />
                 ) : (
                   <span className="text-[10px] muted">yok</span>
                 )}
@@ -164,7 +166,9 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
               <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border hairline">
                 {faviconUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={faviconUrl} alt="Favicon" className="h-full w-full object-cover" />
+                  <img
+                    loading="lazy"
+                    decoding="async" src={faviconUrl} alt="Favicon" className="h-full w-full object-cover" />
                 ) : (
                   <span className="text-[10px] muted">yok</span>
                 )}

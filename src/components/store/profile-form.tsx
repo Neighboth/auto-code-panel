@@ -58,7 +58,9 @@ export function ProfileForm({
         >
           {avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
+            <img
+                    loading="lazy"
+                    decoding="async" src={avatar} alt="Avatar" className="h-full w-full object-cover" />
           ) : (
             customer.displayName.slice(0, 1).toUpperCase()
           )}

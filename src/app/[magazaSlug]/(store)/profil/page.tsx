@@ -7,6 +7,8 @@ import { getStoreState, getStoreBasePath } from "@/lib/tenant";
 import { brand } from "@/lib/brand";
 import { ProfileForm } from "@/components/store/profile-form";
 import { FactorSettings } from "@/components/security/factor-settings";
+import { CustomerMailPrefsCard } from "@/components/store/mail-prefs-card";
+import { getMailPrefs } from "@/lib/mail-prefs";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Profil Ayarları" };
@@ -27,6 +29,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ magaza
     .limit(1);
   const customer = rows[0];
   if (!customer) redirect(`${basePath}/giris`);
+  const mailPrefs = await getMailPrefs("customer", customer.id);
 
   return (
     <div className="mx-auto w-full max-w-3xl px-5 py-9">
@@ -47,6 +50,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ magaza
             avatarUrl: customer.avatarUrl,
           }}
         />
+        <CustomerMailPrefsCard slug={state.store.slug} initial={mailPrefs} />
         <FactorSettings slug={state.store.slug} subjectType="customer" rpName={brand.name} />
       </div>
     </div>

@@ -38,6 +38,38 @@
   border-color: var(--border);
 }
 
+/*
+ * Accessibility baseline
+ * ----------------------
+ * A single, high-contrast focus ring for every interactive element (mouse users
+ * never see it thanks to :focus-visible), plus an opt-out for users who ask the
+ * operating system to reduce motion.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--store-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+[data-theme="dark"] {
+  /* Slightly brighter muted text keeps AA contrast on the dark surfaces. */
+  --fg-muted: #b4b4bc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 html {
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -134,6 +166,34 @@ body {
   .textarea::placeholder {
     color: var(--fg-muted);
     opacity: 0.7;
+  }
+
+  /* Keyboard-first navigation: visible on focus, hidden otherwise. */
+  .skip-link {
+    position: absolute;
+    left: 12px;
+    top: -100px;
+    z-index: 100;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 13px;
+    font-weight: 600;
+    transition: top 0.15s ease;
+  }
+
+  .skip-link:focus-visible {
+    top: 12px;
+  }
+
+  /*
+   * Rendering hint for long lists (products, accounts, logs): the browser skips
+   * layout/paint for offscreen cards, so scrolling big catalogues stays smooth.
+   */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 320px;
   }
 
   /* Checkbox used by the bulk-selection toolbars. */

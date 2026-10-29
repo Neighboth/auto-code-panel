@@ -133,6 +133,72 @@ müşteri büyümesi, saatlik/günlük yoğunluk, ürün ve müşteri sıralamal
 yaklaşan teslimatlar ve son işlemler. "Tahmini teslim değeri" yalnızca oyunların mağaza liste fiyatına
 göre hesaplanır; gerçek tahsilat veya kâr raporu değildir.
 
+
+## E-posta, doğrulama ve bildirimler
+
+SMTP **opsiyoneldir**. `SMTP_HOST` + `SMTP_FROM` tanımlıysa:
+
+- Kayıtta e-posta doğrulama zorunlu olur (6 haneli kod, 15 dk, 6 deneme, magic link
+  `/{magaza}/dogrula?t=...` sadece kodu gösterir, otomatik oturum açmaz).
+- Girişte doğrulanmamış hesaba yeni kod gönderilir (3 istek / 5 dk).
+- E-posta ile 2FA faktörü kullanılabilir (4 istek / 5 dk).
+- Olay mailleri: mağaza açılışı, duyuru/güncelleme (yalnızca **aktif** mağazalara),
+  lisans bitimine 3 ve 1 gün kala hatırlatma, kod kullanımında teslim fişi.
+
+Tanımlı değilse hiçbir e-posta denenmez, akış kilitlenmez; panelde
+`/super-admin/postalar` üzerinden SMTP durumunu görüp test e-postası gönderebilirsiniz.
+
+### Zamanlanmış görevler
+
+```bash
+# Lisans hatırlatmaları — saatte bir çalıştırmak güvenli (mail_events tekilleştirir)
+curl -fsS "https://alan-adi/api/cron/reminders?secret=$CRON_SECRET"
+
+# Steam fiyat/kapak senkronizasyonu — 6 saatte bir
+curl -fsS "https://alan-adi/api/cron/steam-sync?secret=$CRON_SECRET"
+```
+
+### Bildirim tercihleri (KVKK / GDPR)
+
+Her e-postanın altında o adrese özel, imzalı tek tıkla kapatma bağlantısı bulunur
+(`/abonelik?t=...`). Müşteriler tercihlerini **Profil → E-posta bildirimleri**,
+mağaza yöneticileri **Ayarlar → E-posta bildirimleri** altından da yönetebilir.
+
+## Toplu işlemler ve içe aktarma
+
+- Ürünler / hesaplar: **CSV içe aktar** (şablon indirilebilir, en fazla 300 satır).
+- Kodlar: çoklu seçim, kopyalama, seçilenleri silme (kullanılmış kodlar korunur).
+- Müşteriler: çoklu yasaklama / yasak kaldırma / kalıcı silme.
+- Ürünler: yüzde veya tutar bazlı toplu fiyat güncelleme.
+
+## Denetim kaydı
+
+Her işlem (girişler, CRUD, toplu işlemler, ayarlar, mail gönderimleri, şifre
+görüntüleme) aktör, IP ve tarayıcı bilgisiyle saklanır. `/super-admin/loglar`
+üzerinden filtrelenir, satır detayında JSON görüntülenir ve CSV indirilebilir.
+
+## Erişilebilirlik ve performans
+
+- Klavye ile tam gezinme: "İçeriğe geç" bağlantısı, `:focus-visible` halkaları,
+  modal içinde odak tuzağı ve kapanışta odağın geri verilmesi, `aria-current` ve
+  `aria-labelledby` etiketleri, `prefers-reduced-motion` desteği.
+- Uzun listelerde `content-visibility: auto`, ürün ızgarasında kademeli render
+  (ilk 24 kart), görsellerde `loading="lazy"` + `decoding="async"`.
+- Sıcak sorgular için indeksler (`games`, `codes`, `customers`, `entitlements`…).
+- `/api/health?verbose=1` sürüm, commit, çalışma süresi ve mail durumunu döndürür.
+
+## Çeviri kapsamı
+
+```bash
+npm run i18n:coverage          # dil dil kapsam raporu
+npm run i18n:coverage -- --json
+```
+
+`tr` ve `en` referanstır (tam). 29 dil, mağaza arayüzünün tamamını kapsayan
+"çekirdek paket" ile gelir; kalan diller İngilizceye düşer ve ham anahtar adı asla
+görünmez. Yeni dil eklemek için `src/lib/i18n/core-packs.ts` dosyasına bir nesne
+eklemek yeterlidir. Kapsam ayrıca `/super-admin/ayarlar` sayfasında gösterilir.
+
 ## Lisans
 
 Kaynak dosyalardaki lisans blokları kaldırıldı. Tek kaynak artık **`src/LICENSE`** dosyasıdır.

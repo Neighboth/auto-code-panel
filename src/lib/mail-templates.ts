@@ -268,12 +268,24 @@ export async function deliver(options: {
   kind: Parameters<typeof sendMail>[0]["kind"];
   dedupeRef?: string;
   storeId?: number | null;
+  /** One-click unsubscribe target; appended to both HTML and plain text parts. */
+  unsubscribeUrl?: string;
 }): Promise<MailResult> {
+  let html = options.template.html;
+  let text = options.template.text;
+  if (options.unsubscribeUrl) {
+    const link = `<p style="margin:0 0 8px"><a href="${options.unsubscribeUrl}" style="color:#6b7280;text-decoration:underline">E-posta bildirimlerini kapat</a></p>`;
+    html = html.replace(
+      '<p style="margin:0">Bu e-posta',
+      `${link}<p style="margin:0">Bu e-posta`,
+    );
+    text = `${text}\n\nBildirimleri kapat: ${options.unsubscribeUrl}`;
+  }
   return sendMail({
     to: options.to,
     subject: options.template.subject,
-    html: options.template.html,
-    text: options.template.text,
+    html,
+    text,
     kind: options.kind,
     dedupeRef: options.dedupeRef,
     storeId: options.storeId ?? null,

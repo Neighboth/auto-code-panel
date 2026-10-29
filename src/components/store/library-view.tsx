@@ -95,7 +95,9 @@ export function LibraryView({
               <div className="relative aspect-[460/215]" style={{ background: "var(--bg)" }}>
                 {entry.coverImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={entry.coverImage} alt={entry.title} className="h-full w-full object-cover" />
+                  <img
+                    loading="lazy"
+                    decoding="async" src={entry.coverImage} alt={entry.title} className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex h-full items-center justify-center muted">
                     <KeyRound size={24} />

@@ -32,6 +32,11 @@ ENV NODE_ENV=production \
     SQLITE_PATH=/data/app.db \
     NEXT_TELEMETRY_DISABLED=1
 
+# Build provenance, surfaced by /api/health so a container can be matched to the
+# exact commit that produced it.
+ARG GIT_COMMIT=dev
+ENV GIT_COMMIT=${GIT_COMMIT}
+
 # Runtime dependencies only (no build tooling in the final image).
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { Activity, ExternalLink, Megaphone, Settings2, Store, Users } from "lucide-react";
+import { Activity, ExternalLink, Mail, Megaphone, Settings2, Store, Users } from "lucide-react";
 import { LogoutButton } from "@/components/auth-forms";
 import { BrandLogo } from "@/components/brand";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -30,6 +30,7 @@ export function SuperAdminShell({
     { href: "/super-admin/kullanicilar", label: t("super.navUsers"), icon: Users },
     { href: "/super-admin/duyurular", label: t("super.navPosts"), icon: Megaphone },
     { href: "/super-admin/loglar", label: t("super.navLogs"), icon: Activity },
+    { href: "/super-admin/postalar", label: t("super.navMail"), icon: Mail },
     { href: "/super-admin/ayarlar", label: t("super.navSettings"), icon: Settings2 },
   ];
 
@@ -51,13 +52,14 @@ export function SuperAdminShell({
             <ThemeToggle />
           </div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-3 py-3 lg:flex-col">
+        <nav aria-label="Süper admin" className="flex gap-1 overflow-x-auto px-3 py-3 lg:flex-col">
           {nav.map((item) => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium transition"
                 style={{
                   background: active ? "color-mix(in srgb, var(--fg) 7%, transparent)" : "transparent",
@@ -91,7 +93,12 @@ export function SuperAdminShell({
           </div>
         </div>
       </aside>
-      <main className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-8">{children}</main>
+      <a href="#main" className="skip-link">
+        İçeriğe geç
+      </a>
+      <main id="main" tabIndex={-1} className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-8">
+        {children}
+      </main>
     </div>
   );
 }

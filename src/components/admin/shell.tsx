@@ -78,7 +78,9 @@ export function AdminShell({
           <Link href={basePath || "/"} className="flex min-w-0 items-center gap-2">
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={logoUrl} alt={storeName} className="h-7 w-7 shrink-0 rounded-md object-cover" />
+              <img
+                    loading="lazy"
+                    decoding="async" src={logoUrl} alt={storeName} className="h-7 w-7 shrink-0 rounded-md object-cover" />
             ) : (
               <span
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[12px] font-bold text-white"
@@ -143,7 +145,7 @@ export function AdminShell({
           </div>
         </div>
 
-        <nav className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible">
+        <nav aria-label="Mağaza yönetimi" className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible">
           {nav.map((item) => {
             const href = item.href ? `${basePath}/admin/${item.href}` : `${basePath}/admin`;
             const active = pathname === href;
@@ -175,6 +177,7 @@ export function AdminShell({
               <Link
                 key={item.href || "dashboard"}
                 href={href}
+                aria-current={active ? "page" : undefined}
                 className="flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-[12.5px] font-medium transition"
                 style={{
                   background: active ? "color-mix(in srgb, var(--fg) 7%, transparent)" : "transparent",
@@ -212,7 +215,10 @@ export function AdminShell({
         </div>
       </aside>
 
-      <main className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-7">
+      <a href="#main" className="skip-link">
+        İçeriğe geç
+      </a>
+      <main id="main" tabIndex={-1} className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-7">
         {superView ? (
           <div className="note note-info mb-4">
             {t("admin.superView")} · <span className="mono">{storeName}</span>
