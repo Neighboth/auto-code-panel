@@ -402,7 +402,7 @@ export async function customerLibraryPayload(
   return {
     ok: true,
     data: rows.map(({ entitlement, game, account }) => ({
-      title: entitlement.title || game?.title || "Teslimat",
+      title: entitlement.title || game?.title || t("x.teslimat"),
       kind: entitlement.kind,
       username: account?.username ?? null,
       email: account?.email ?? null,

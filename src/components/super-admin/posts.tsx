@@ -172,7 +172,7 @@ export function PostManager({ posts }: { posts: PostItem[] }) {
                 }}
               >
                 <Megaphone size={13} />
-                Duyuru
+                {t("x.duyuru")}
               </button>
               <button
                 type="button"

@@ -329,7 +329,7 @@ export function CodeManager({
                   <td>
                     <div className="flex items-center justify-end gap-1">
                       <button type="button" className="btn btn-ghost btn-sm" onClick={() => setDetail(code)}>
-                        Detay
+                        {t("x.detay")}
                       </button>
                       {code.status === "active" ? (
                         <button
@@ -401,7 +401,7 @@ export function CodeManager({
             <button type="button" className="btn btn-outline" onClick={() => setDeleting(null)}>{t("x.vazgec")}</button>
             <button type="button" className="btn btn-danger" onClick={onDelete} disabled={pending}>
               {pending ? <Loader2 size={13} className="animate-spin" /> : null}
-              Sil
+              {t("x.sil")}
             </button>
           </>
         }
@@ -442,17 +442,17 @@ export function CodeManager({
             <div className="flex items-center gap-2">
               {step > 1 && step < 4 ? (
                 <button type="button" className="btn btn-outline" onClick={() => setStep(step - 1)}>
-                  Geri
+                  {t("x.geri")}
                 </button>
               ) : null}
               {step === 1 ? (
                 <button type="button" className="btn btn-dark" onClick={() => setStep(2)} disabled={!canContinue}>
-                  Devam
+                  {t("x.devam")}
                 </button>
               ) : null}
               {step === 2 ? (
                 <button type="button" className="btn btn-dark" onClick={() => setStep(3)}>
-                  Devam
+                  {t("x.devam")}
                 </button>
               ) : null}
         {step === 3 ? (
@@ -463,7 +463,7 @@ export function CodeManager({
               ) : null}
               {step === 4 ? (
                 <button type="button" className="btn btn-dark" onClick={() => setWizardOpen(false)}>
-                  Tamam
+                  {t("x.tamam")}
                 </button>
               ) : null}
             </div>

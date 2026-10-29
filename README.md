@@ -198,10 +198,10 @@ Durum (v1.4.0):
 
 | Katman | Anahtar | Dil |
 | --- | --- | --- |
-| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1344 | `tr`, `en` (tam) |
+| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1378 | `tr`, `en` (tam) |
 | Çekirdek paket (`core-packs.ts`) | 39 | 80 dilin **tamamı** |
 
-`tr` ve `en` 1344 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
+`tr` ve `en` 1378 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
 giriş/kayıt, kod girme, "kalan süre", "kopyala", "çıkış" gibi her ekranda görünen
 39 anahtarı **kendi dilinde** gösterir; bu anahtarlarda İngilizceye düşme yoktur.
 Çekirdek pakette bulunmayan uzun kuyruk anahtarlar (panel tabloları, form
@@ -268,25 +268,30 @@ npm run i18n:hardcoded -- --json
 sıfırdan farklıysa iş kırmızı olur. Böylece yeni bir sabit metin ya da sözlükte
 olmayan anahtar incelemeye değil, doğrudan CI'a takılır.
 
-Denetim üç sayı verir:
+Denetim dört sayı verir:
 
 - **Sabit (çevrilmemiş) Türkçe metin** — JSX içinde doğrudan yazılmış metin.
   v1.4.0 itibarıyla **0**.
 - **Sunucu tarafı Türkçe metin** — audit özetleri (`summary:`) ve aksiyon
   mesajları. v1.4.0 itibarıyla **0**.
+- **Çevrilmeden basılan etiket haritası** — değerleri sözlük anahtarı olan bir
+  nesne/dizi (`{ sent: "x.gonderildi" }`, `["Pzt", "x.sal", …]`) `t()` olmadan
+  basılıyorsa ya da **yarı yarıya** çevrilmişse (bir kısmı anahtar, bir kısmı düz
+  metin) raporlanır. v1.4.0 itibarıyla **0**.
 - **Sözlükte eksik anahtar** — kodda `t("…")` ile istenen ama sözlükte olmayan
   anahtar. v1.4.0 itibarıyla **0** (bu sayı sıfır değilse kullanıcı ham anahtar
   görür, yani gerçek bir hatadır).
-- **Çevrilmeden basılan etiket haritası** — değerleri sözlük anahtarı olan bir
-  nesnenin (`{ sent: "x.gonderildi" }`) `t()`/`pick()` olmadan doğrudan
-  basılması. v1.4.0 itibarıyla **0**; bu denetim olmadan haritadaki anahtarlar
-  ekrana ham hâlde çıkıyordu.
 
-Denetim yalnızca JSX metnini değil, etiket haritalarındaki (`{ sent: "Gönderildi" }`)
-ve `summary:` alanlarındaki metinleri de tarar — bu sayede "haritada anahtar
-tutup `t()` çağırmayı unutma" hatası (ham `x.…` anahtarının ekrana basılması)
-yakalanır. CSS değerleri (`var(--fg)`) ve kod belirteçleri yanlış pozitif
-üretmemesi için ayrıca elenir.
+
+Denetim yalnızca JSX metnini değil; `aria-label` gibi öznitelikleri, `? "…" :`,
+`?? "…"`, `|| "…"` varsayılanlarını, kendi satırındaki JSX metin düğümlerini
+(`<button>⏎ Kaydet ⏎</button>`), nesne/dizi sabitlerini ve `summary:` alanlarını da
+tarar. CSS değerleri (`var(--fg)`) ve veri alanları (`actorName`, `slug`, `ref` …)
+yanlış pozitif üretmemesi için elenir.
+
+Bilinçli istisna: süper yönetici log ekranı satırın **teknik aksiyon kimliğini**
+(`store.product.create`) monospace olarak gösterir; bu bir tanılama alanıdır,
+çeviri metni değildir.
 
 E-posta şablonları (`mail-templates.ts`, `mailer.ts`) bilinçli olarak denetim
 dışıdır: işlemsel mailler arayüz dilinde değil **mağazanın dilinde** gönderilir.

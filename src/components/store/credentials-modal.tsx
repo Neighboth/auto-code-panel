@@ -115,12 +115,12 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
                 onClick={() => setStep(step === "code" ? "notes" : "credentials")}
               >
                 <ArrowLeft size={12} />
-                Geri
+                {t("x.geri")}
               </button>
             ) : null}
             {step === "credentials" ? (
               <button type="button" className="btn btn-primary btn-sm" onClick={() => setStep("notes")}>
-                Devam et
+                {t("x.devam-et")}
                 <ArrowRight size={12} />
               </button>
             ) : null}
@@ -214,7 +214,7 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
                   {t("x.seconds-saniye-icinde-yenilenecek", { seconds })}
                 </p>
               ) : code?.kind === "email" ? (
-                <p className="mt-3 text-[11.5px] muted">{code.detail || "En yeni mailden alındı"}</p>
+                <p className="mt-3 text-[11.5px] muted">{code.detail || t("x.en-yeni-mailden-alindi")}</p>
               ) : null}
             </div>
             <div className="flex items-center justify-between gap-2">

@@ -296,7 +296,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
             disabled={contacts.length >= 6}
           >
             <Plus size={12} />
-            Link ekle
+            {t("x.link-ekle")}
           </button>
         </div>
         <div className="mt-3 space-y-2">
@@ -461,7 +461,7 @@ export function StoreDomainForm({
         <div className="flex gap-2">
           <button type="submit" className="btn btn-dark" disabled={pending || verifying}>
             {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-            Kaydet
+            {t("x.kaydet")}
           </button>
           {savedDomain ? (
             <button

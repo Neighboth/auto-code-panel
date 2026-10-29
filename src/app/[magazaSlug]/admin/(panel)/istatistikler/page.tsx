@@ -20,7 +20,7 @@ import { computeStoreStats } from "@/lib/store-stats";
 import { getStoreBasePath, getStoreState, requireStoreAdmin } from "@/lib/tenant";
 import { BarChart, HourHeatmap, ProgressRow, UsageDonut } from "@/components/admin/stats";
 import { Stat } from "@/components/ui";
-import { getTranslator } from "@/lib/i18n/server";
+import { currentLocaleCode, getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata() {
@@ -135,6 +135,9 @@ export default async function AdminStatsPage({
       accounts: accountRows,
     },
     rangeDays,
+    new Date(),
+    t,
+    (await currentLocaleCode()),
   );
 
   const deliveredValue = stats.deliveredValue.length
@@ -169,7 +172,7 @@ export default async function AdminStatsPage({
                 color: rangeDays === item.days ? "var(--fg)" : "var(--fg-muted)",
               }}
             >
-              {item.label}
+              {t(item.label)}
             </Link>
           ))}
         </div>
@@ -442,7 +445,7 @@ export default async function AdminStatsPage({
                   <th>{t("x.kod")}</th>
                   <th>{t("x.alc")}</th>
                   <th>{t("x.urun")}</th>
-                  <th>Tarih</th>
+                  <th>{t("x.tarih")}</th>
                   <th>{t("x.erisim")}</th>
                 </tr>
               </thead>

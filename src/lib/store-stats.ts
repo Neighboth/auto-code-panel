@@ -1,5 +1,4 @@
 ﻿const DAY_MS = 86_400_000;
-import { createTranslator } from "@/lib/i18n/translate";
 const WEEK_MS = 7 * DAY_MS;
 
 export type StatsCode = {
@@ -108,11 +107,12 @@ export type StoreStats = {
   peakWeekday: { label: string; count: number };
 };
 
-const WEEKDAY_LABELS = ["Pzt", "Sal", "x.car", "Per", "Cum", "Cmt", "Paz"];
+/** Monday-first dictionary keys for the weekly heatmap. */
+const WEEKDAY_LABELS = ["x.pzt", "x.sal", "x.car", "x.per", "x.cum", "x.cmt", "x.paz"];
 const CODE_TYPE_LABELS: Record<string, string> = {
-  single: "Tekli",
+  single: "x.tekli",
   choice: "x.secmeli",
-  bundle: "Paket",
+  bundle: "x.paket",
 };
 
 function startOfDay(value: Date): Date {
@@ -127,16 +127,22 @@ function dayKey(value: Date): string {
   ).padStart(2, "0")}`;
 }
 
-function shortDay(value: Date): string {
-  return value.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
+function shortDay(value: Date, locale: string): string {
+  return value.toLocaleDateString(locale, { day: "2-digit", month: "short" });
 }
 
 export async function computeStoreStats(
   input: StoreStatsInput,
   requestedRange: number,
   now: Date = new Date(),
+  /**
+   * Translator injected by the caller so the fallback labels (`Dijital teslimat`,
+   * `Misafir`) follow the interface language. Defaults to identity for scripts.
+   */
+  t: (key: string) => string = (key) => key,
+  /** BCP-47 tag used for day labels (`29 Eki` / `29 Oct`). */
+  locale = "tr",
 ): Promise<StoreStats> {
-  const t = createTranslator("tr");
   const rangeDays = [7, 30, 90].includes(requestedRange) ? requestedRange : 30;
   const nowMs = now.getTime();
   const today = startOfDay(now);
@@ -178,7 +184,7 @@ export async function computeStoreStats(
   for (let index = 0; index < rangeDays; index += 1) {
     const date = new Date(rangeStart.getTime() + index * DAY_MS);
     const key = dayKey(date);
-    dailyMap.set(key, { key, label: shortDay(date), redemptions: 0, customers: 0, deliveries: 0 });
+    dailyMap.set(key, { key, label: shortDay(date, locale), redemptions: 0, customers: 0, deliveries: 0 });
   }
   for (const row of redemptionsInRange) {
     const bucket = dailyMap.get(dayKey(row.createdAt));
@@ -199,7 +205,7 @@ export async function computeStoreStats(
     const redeemed = rows.filter((code) => code.redeemedAt !== null).length;
     return {
       type,
-      label: CODE_TYPE_LABELS[type] ?? type,
+      label: t(CODE_TYPE_LABELS[type] ?? type),
       total: rows.length,
       redeemed,
       rate: rows.length ? Math.round((redeemed / rows.length) * 100) : 0,
@@ -214,7 +220,7 @@ export async function computeStoreStats(
     const game = row.gameId ? gameById.get(row.gameId) : undefined;
     const account = row.accountId ? accountById.get(row.accountId) : undefined;
     const key = game ? `g:${game.id}` : account ? `a:${account.id}` : `t:${row.title}`;
-    const title = game?.title || account?.platformLabel || row.title || "Dijital teslimat";
+    const title = game?.title || account?.platformLabel || row.title || t("x.dijital-teslimat");
     const current = productMap.get(key) ?? {
       title,
       count: 0,
@@ -244,7 +250,7 @@ export async function computeStoreStats(
     .slice(0, 6);
 
   const hours = Array.from({ length: 24 }, () => 0);
-  const weekdays = WEEKDAY_LABELS.map((label) => ({ label, count: 0 }));
+  const weekdays = WEEKDAY_LABELS.map((key) => ({ label: t(key), count: 0 }));
   for (const row of redemptionsInRange) {
     hours[row.createdAt.getHours()] += 1;
     weekdays[(row.createdAt.getDay() + 6) % 7].count += 1;
@@ -325,8 +331,8 @@ export async function computeStoreStats(
       const customer = row.customerId !== null ? customerById.get(row.customerId) : undefined;
       return {
         id: row.id,
-        title: game?.title || row.title || account?.platformLabel || "Teslimat",
-        buyer: customer?.displayName || customer?.username || "Misafir",
+        title: game?.title || row.title || account?.platformLabel || t("x.teslimat"),
+        buyer: customer?.displayName || customer?.username || t("x.misafir"),
         expiresAt: row.expiresAt as Date,
       };
     });

@@ -44,7 +44,7 @@ export default async function SuperAdminAuditPage({ searchParams }: { searchPara
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">Denetim</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">{t("x.denetim")}</p>
         <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{" "}{t("x.islem-kaytlar")}</h1>
         <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed muted">{t("x.girisler-urun-ve-hesap-degisiklikleri-kod-islemleri-topl")}</p>
       </div>

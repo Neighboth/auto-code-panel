@@ -13,8 +13,8 @@
 | Derleme / tip / lint | ✅ temiz | `npm run build`, `npm run typecheck`, `npm run lint` → 0 hata |
 | 80 dil kaydı | ✅ | `src/lib/i18n/config.ts` |
 | 80 dilde yerel menü/UI çekirdeği | ✅ | `src/lib/i18n/core-packs.ts` (39 anahtar × 80 dil) |
-| tr/en referans sözlük | ✅ **1344 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
-| Sabit metin denetimi | ✅ **0 UI + 0 sunucu + 0 eksik anahtar** | `npm run i18n:check` (CI kapısı) |
+| tr/en referans sözlük | ✅ **1378 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
+| Sabit metin denetimi | ✅ **0 / 0 / 0 / 0** (UI · sunucu · eksik anahtar · ham harita) | `npm run i18n:check` (CI kapısı) |
 | Lisans hatırlatma cron'u | ✅ | `/api/cron/reminders?secret=…` |
 | CSV/Excel içe aktarma | ✅ | `importProductsCsv`, `importAccountsCsv` |
 | Bildirim tercihleri + tek tık abonelikten çıkma | ✅ | `/abonelik?t=…`, `/demo/profil` kartı |
@@ -112,7 +112,7 @@ npm run typecheck      → 0 hata
 npm run lint           → 0 hata / 0 uyarı
 npm run build          → ✓ Compiled successfully
 npm run i18n:check     → UI 0 · sunucu tarafı 0 · eksik anahtar 0 (exit 0)
-sözlük                 → EXTRA_TR 1344 / EXTRA_EN 1344 (eksik çeviri 0)
+sözlük                 → EXTRA_TR 1378 / EXTRA_EN 1378 (eksik çeviri 0)
 ```
 
 Canlı doğrulama (`node server.js`):
@@ -244,6 +244,65 @@ npm run audit:backfill → 6/7 satır çevrildi, 1 dokunulmadı, tekrar çalış
 
 Etiket haritalarının tamamı (`ACTION_LABEL` 49, `ACTOR_LABEL` 4, `KIND_LABEL` 8,
 `typeLabels` 3) iki dilde de sözlükte karşılığını buluyor (otomatik kontrol, 0 sorun).
+
+---
+
+## 0.4 Derin test turu: gerçek oturumlarla ekran doğrulaması
+
+Önceki tur "bitti" dedikten sonra şüphe üzerine **gerçek oturum çerezleri üretilip**
+(süper yönetici / mağaza yöneticisi / müşteri) ekranlar tarayıcı HTML'i üzerinden
+tek tek okundu. Sonuç: denetim aracı yeşil olmasına rağmen **ekranda hâlâ Türkçe ve
+ham anahtar vardı**. Aşağıdaki 8 sınıf bulundu ve kapatıldı.
+
+| # | Bulgu | Nerede görünüyordu | Düzeltme |
+| --- | --- | --- | --- |
+| 1 | `Denetim`, `Tarih`, `Platform` ×2, `Bayilik durumu`, `Kalan bayilik`, `Bayilik Kodu` sabit metin | süper yönetici log ekranı, istatistik tablosu, katalog, ayarlar, kayıt formu | 7 anahtar + `t()` |
+| 2 | Sunucu mesajı "Bayilik kodu iptal edildi." | bayi kodu iptal toast'ı | `x.bayilik-kodu-iptal-edildi-2` |
+| 3 | `|| "…"` varsayılanları: "Dijital teslimat", "Teslimat" ×3, "Misafir", "En yeni mailden alındı" | kütüphane, oyun kartları, kimlik modalı | anahtar + `t()`; **araç `||` desenini artık tarıyor** |
+| 4 | `mail-preferences.tsx`: `label`/`hint`/`aria-label` anahtar tutuyor ama `t()` yok | **`/demo/profil` ve `/demo/admin/ayarlar`, TR ve EN'de 8 ham anahtar** | `t(item.label)` |
+| 5 | `istatistikler`: `RANGES` etiketleri (`x.7-gun`…), boş grafik metni, kod tipi etiketleri, hafta günleri | istatistik ekranı, TR ve EN'de 6 ham anahtar | hepsi `t()`; hafta günleri tam 7 anahtar (önceden 6 Türkçe + 1 anahtar karışıktı) |
+| 6 | `store-stats.ts` içinde **sabit `createTranslator("tr")`** ve `toLocaleDateString("tr-TR")` | tüm istatistik etiketleri, dil ne olursa olsun Türkçe | çevirici + locale çağırandan enjekte ediliyor |
+| 7 | Postalar ekranında durum rozetleri ham enum (`sent`, `failed`, `skipped`, `duplicate`) | `/super-admin/postalar` | `STATUS_LABEL` + `t()` |
+| 8 | Kendi satırındaki 25 JSX metin düğümü (`Sil`, `Kapat`, `Kaydet`, `Devam et`, `Geri`, `Tamam`, `Lisans`, `Duyuru`, `Detay`, …) | kod tablosu, müşteri detayı, redeem akışı, CSV import, paneller | 25 anahtar + `t()` |
+
+### Denetim aracına eklenen geçişler
+
+- `|| "…"` varsayılanları ve kendi satırındaki JSX metin düğümü deseni.
+- **Karışık kap (mixed container)**: değerleri hem sözlük anahtarı hem düz Türkçe
+  olan nesne/dizi (`["Pzt","Sal","x.car",…]`) raporlanır.
+- Veri anahtarları (`actorName`, `slug`, `ref`, `email` …) ve CSS değerleri için
+  yanlış pozitif filtresi; Türkçe sözcük listesi hafta günleri, aylar ve para/zaman
+  terimleriyle genişletildi.
+- Her yeni geçiş **enjeksiyonla** doğrulandı (boz → `exit 1`, geri al → `exit 0`).
+
+### Kanıt (gerçek oturum, canlı sunucu)
+
+```
+19 rota × 2 dil (tr/en) → hepsi 200 · görünür metinde ham anahtar 0
+  · süper yönetici: /super-admin, /loglar, /postalar, /ayarlar, /duyurular
+  · mağaza yöneticisi: /istatistikler, /kodlar, /kullanicilar, /ayarlar
+  · müşteri: /kutuphane, /profil   · halka açık: /, /bayi, /abonelik, /demo/*
+/super-admin/loglar (EN): Product deleted · Store settings updated · Reseller key revoked
+                          · Store admin · Critical  (eylem/aktör/şiddet etiketleri çevrili)
+/super-admin/postalar (EN): Verification · Delivery receipt · SMTP is not configured
+                          · Delivery failed · Already sent · Invalid recipient address
+/demo/profil (EN): Announcements and updates · Delivery receipts · Licence alerts · Save
+istatistik (EN): 7 days / 30 days / 90 days · Mon … Sun   · (TR: 7 gün · Pzt … Paz)
+backfill sonrası aynı EN log ekranı: 4 eski satır İngilizceye döndü, eşleşmeyen 1 satır
+                          bilinçli olarak Türkçe kaldı
+```
+
+Sözlük: **1378 TR / 1378 EN**. `i18n:check` → `0 / 0 / 0 / 0`, typecheck 0, lint 0, build ✓.
+
+### Hâlâ yapılamayanlar (dürüst sınırlar)
+
+- **Tarayıcı/piksel testi yok**: doğrulama sunucunun ürettiği HTML üzerinden yapıldı;
+  modal açma, toast, hover gibi etkileşimler otomatik test edilmedi.
+- **Veri akışına bağlı ham basım statik olarak yakalanamıyor**: bir anahtarın diziye
+  konup başka bir dosyada `t()` olmadan render edilmesi ancak sayfa açılarak
+  görülebiliyor. Bu turda 5 böyle hata **ekranı okuyarak** bulundu; statik geçişler
+  bunların bir kısmını (karışık kaplar) yakalıyor, tamamını değil.
+- Gerçek e-posta sağlayıcısında (Postmark/Mailtrap) bounce/complaint webhook'u denenmedi.
 
 ---
 
@@ -453,7 +512,7 @@ Demo kimlikleri: `demo` mağazası (`demo_admin` / `Demo12345!`), müşteri `tes
 ## E. Dürüstçe kalanlar / riskler
 
 1. ~~Panel içi sabit Türkçe metin: 489 / 49 dosya.~~ **Kapandı** → 0 UI + 0 sunucu tarafı (§0.1, §0.2).
-2. **Uzun kuyruk anahtarlar (1344'un 1300'ü) 78 dilde İngilizceye düşüyor.** Çekirdek 39 anahtar 80 dilde yerel;
+2. **Uzun kuyruk anahtarlar (1378'un 1300'ü) 78 dilde İngilizceye düşüyor.** Çekirdek 39 anahtar 80 dilde yerel;
    ham anahtar hiçbir dilde görünmüyor. Gerçek çeviri maliyeti insan emeği gerektiriyor.
 3. ~~**Gerçek SMTP teslimatı** test edilmedi.~~ **Kapandı** → yerel SMTP sink ile
    `sent`/`duplicate`/`skipped`/`failed` dört yolun tamamı doğrulandı (§0.3c). Gerçek bir

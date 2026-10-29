@@ -236,7 +236,7 @@ export default async function LandingPage() {
               </div>
             </div>
             <div className="card absolute -bottom-6 -left-4 hidden w-52 p-3 sm:block">
-              <p className="text-[10px] uppercase tracking-[0.08em] muted">Kalan bayilik</p>
+              <p className="text-[10px] uppercase tracking-[0.08em] muted">{t("x.kalan-bayilik")}</p>
               <p className="mt-1 text-[15px] font-semibold tracking-[-0.01em]">{" "}{t("x.21-gun-4-saat")}</p>
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
                 <div className="h-full w-[68%] rounded-full" style={{ background: "var(--fg)" }} />
@@ -366,7 +366,7 @@ export default async function LandingPage() {
           <div className="max-w-2xl">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">{t("x.fiyatlandrma")}</p>
             <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em] sm:text-[38px]">
-              Bayilik paketleri.
+              {t("x.bayilik-paketleri")}
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed muted">{t("x.her-paket-tek-magaza-icindir-bayilik-kodu-satn-alma-sonr")}</p>
           </div>
@@ -444,7 +444,7 @@ export default async function LandingPage() {
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Link href="/bayi" className="btn btn-dark btn-lg">
-                  Bayilik Aktivasyonu
+                  {t("x.bayilik-aktivasyonu")}
                   <ArrowRight size={15} />
                 </Link>
                 <Link href="/super-admin" className="btn btn-gray btn-lg">{t("x.yonetici-girisi")}<ArrowRight size={15} />
@@ -466,7 +466,7 @@ export default async function LandingPage() {
           </div>
           <div className="flex flex-wrap items-center gap-5 text-[11.5px] muted">
             <Link href="/bayi" className="hover:opacity-70">
-              Bayilik
+              {t("x.bayilik")}
             </Link>
             <Link href="/super-admin" className="hover:opacity-70">{t("x.yonetici-girisi")}</Link>
           </div>

@@ -56,7 +56,16 @@ const TURKISH_WORDS = new Set(
    kullanildi kullanıldı uretildi üretildi gonderildi gönderildi acildi açıldı kapatildi kapatıldı
    guncel güncel surum sürüm yedek geri ileri devam bitir tamam iptal kayitli kayıtlı
    genel duyuru lisans dogrulama doğrulama karslama karşılama guvenlik güvenlik
-   teslim gonderim gönderim hata bildirim mesaj konu icerik baslik başlık`
+   teslim gonderim gönderim hata bildirim mesaj konu icerik baslik başlık
+   denetim kayitlar kayıtlar hareket hareketler ayar ayarlari abonelik duyuru icerik
+   gorunum görünüm kapsam sure süre tarih tutar birim ulke ülke bolge bölge telefon
+   eposta parola oturum izin yetki ekip davet baglanti bağlantı dosya boyut sayfa
+   siralama filtre disa dışa ice içe aktar yedekle yedekleme bildirimler tercihler
+   profil hesabim hesabım kutuphane kütüphane siparis sipariş odeme ödeme fatura
+   indirim kampanya stok platform magazalar mağazalar bayilik lisans sunucu veritabani
+   pzt sal per cum cmt paz pazartesi sali persembe cuma cumartesi pazar carsamba
+   ocak subat mart nisan mayis haziran temmuz agustos eylul ekim kasim aralik
+   gunluk haftalik aylik yillik ortalama toplam adet tutar miktar`
     .split(/\s+/)
     .filter(Boolean),
 );
@@ -77,17 +86,17 @@ const UI_PATTERNS = [
   /(?:toast\.(?:success|error|info|warning)|setError)\(\s*"([^"]+)"/g,
   /(?:toast\.(?:success|error|info|warning)|setError)\(\s*`([^`]+)`/g,
   /\?\?\s*"([^"]+)"/g,
+  /\|\|\s*"([^"]{2,})"/g,
+  /**
+   * A JSX text node on its own line (`<button>…\n  Kaydet\n</button>`). No `>` or
+   * `<` on the line, so the generic child pattern cannot see it.
+   */
+  /^\s{6,}([A-ZÇĞİÖŞÜ][^<>{}"=;:,]*?)\s*$/gm,
   /**
    * Inline ternaries in JSX: `{active ? "Aktif" : t("x.pasif")}`. The literal is
    * neither an attribute nor a child text node, so it needs its own pattern.
    */
   /\?\s*"([^"]{2,})"\s*:/g,
-  /**
-   * Object-literal maps such as `{ announcement: "Duyuru" }`. Without this the
-   * label tables (kind/status maps) slipped through: the values are neither JSX
-   * children nor attributes, so nothing else matched them.
-   */
-  /^\s*(?:[A-Za-z_$][\w$]*|"[^"]{1,40}")\s*:\s*"([^"]{2,})",?\s*$/gm,
 ];
 const SERVER_PATTERNS = [/(?:message|error|summary|title|subtitle|description)\s*:\s*[`"']([^`"']+)[`"']/g];
 /**
@@ -103,6 +112,20 @@ const KEY_PATTERN = /\bt\(\s*"([^"]+)"/g;
  * to KEY_PATTERN but break the UI just the same, so every `x.`-prefixed string
  * literal is treated as a key that must resolve.
  */
+/**
+ * Object-literal maps such as `{ announcement: "Duyuru" }`. Without this the
+ * label tables (kind/status maps) slipped through: the values are neither JSX
+ * children nor attributes, so nothing else matched them. Applied to `.tsx` only
+ * and never to data keys, because server code writes plenty of Turkish *data*
+ * (`actorName: "abonelik"`) that is not interface copy.
+ */
+const OBJECT_PATTERN = /^\s*(?:[A-Za-z_$][\w$]*|"[^"]{1,40}")\s*:\s*"([^"]{2,})",?\s*$/gm;
+const DATA_KEYS = new Set([
+  "actorName", "slug", "ref", "email", "username", "ip", "userAgent", "password",
+  "reason", "detail", "code", "key", "url", "href", "id", "metadata",
+]);
+const OBJECT_LINE = /^\s*"?([A-Za-z_$][\w$]*)"?\s*:/;
+
 const KEY_LITERAL_PATTERN = /"((?:x|common|redeem|library)\.[a-z0-9.-]+)"/g;
 
 function* walk(dir) {
@@ -156,6 +179,37 @@ function labelMapsIn(source) {
 
 const rawMapHits = [];
 
+/**
+ * A container (object or array) that holds dictionary keys but also raw Turkish
+ * strings is half-migrated: some entries render translated, others leak Turkish
+ * into every language. `WEEKDAY_LABELS = ["Pzt", "Sal", "x.car", …]` was exactly
+ * that. Mixed containers are reported as a separate counter.
+ */
+function mixedContainers(source, rel) {
+  const hits = [];
+  for (const decl of source.matchAll(/const\s+([A-Za-z_$][\w$]*)\s*(?::[^=]+)?=\s*([\[{])/g)) {
+    const open = decl.index + decl[0].length - 1;
+    const closeChar = decl[2] === "{" ? "}" : "]";
+    let depth = 0;
+    let end = open;
+    for (let i = open; i < source.length; i += 1) {
+      if (source[i] === decl[2]) depth += 1;
+      else if (source[i] === closeChar) {
+        depth -= 1;
+        if (depth === 0) { end = i; break; }
+      }
+    }
+    const body = source.slice(open, end);
+    const values = [...body.matchAll(/"((?:[^"\\]|\\.){2,})"/g)].map((m) => m[1]);
+    const keys = values.filter((v) => /^x\.[a-z0-9.-]+$/.test(v));
+    const copy = values.filter((v) => !/^x\./.test(v) && isTurkish(v));
+    if (keys.length && copy.length) {
+      hits.push({ file: rel, line: `${decl[1]} → ${copy.slice(0, 3).join(" · ")}` });
+    }
+  }
+  return hits;
+}
+
 for (const file of walk(SRC)) {
   const rel = relative(ROOT, file);
   if (SKIP_FILES.has(rel)) {
@@ -185,6 +239,16 @@ for (const file of walk(SRC)) {
         hits.push(text);
       }
     }
+    const objectMatch = file.endsWith(".tsx") ? OBJECT_LINE.exec(line) : null;
+    if (objectMatch && !DATA_KEYS.has(objectMatch[1])) {
+      for (const match of line.matchAll(OBJECT_PATTERN)) {
+        const text = (match[1] ?? "").trim();
+        if (!isTurkish(text) || text.startsWith("x.")) continue;
+        if (/^(?:var\(--|#[0-9a-f]{3,8}$|-?\d)/i.test(text)) continue;
+        if (/^[a-z0-9._/#@%:-]+$/.test(text) && !TURKISH_WORDS.has(text)) continue;
+        hits.push(text);
+      }
+    }
     if (SUMMARY_KEY_PATTERN.test(line)) return;
     for (const pattern of SERVER_PATTERNS) {
       for (const match of line.matchAll(pattern)) {
@@ -195,6 +259,7 @@ for (const file of walk(SRC)) {
       }
     }
   });
+  rawMapHits.push(...mixedContainers(source, rel));
   for (const mapName of labelMapsIn(source)) {
     for (const line of lines) {
       if (!line.includes(`${mapName}[`)) continue;

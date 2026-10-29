@@ -827,7 +827,7 @@ export function AccountManager({
             title={quota.reached ? "Hesap limiti dolu" : undefined}
           >
             <Plus size={13} />
-            Yeni hesap
+            {t("x.yeni-hesap")}
           </button>
         </div>
       </div>
@@ -929,7 +929,7 @@ export function AccountManager({
       >
         <form onSubmit={onSubmit} className="space-y-3.5">
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Platform">
+            <Field label={t("x.platform")}>
               <select
                 value={form.platform}
                 onChange={(event) => onPlatformChange(event.target.value)}

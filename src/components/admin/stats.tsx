@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { getTranslator } from "@/lib/i18n/server";
 
-export function BarChart({
+export async function BarChart({
   data,
   height = 132,
   tone = "var(--store-accent)",
@@ -12,6 +12,7 @@ export function BarChart({
   tone?: string;
   emptyText?: string;
 }) {
+  const { t } = await getTranslator();
   const max = Math.max(1, ...data.map((point) => point.value));
   const total = data.reduce((sum, point) => sum + point.value, 0);
   const hasData = total > 0;
@@ -44,7 +45,7 @@ export function BarChart({
           ) : null,
         )}
       </div>
-      {!hasData ? <p className="mt-2 text-center text-[11px] muted">{emptyText}</p> : null}
+      {!hasData ? <p className="mt-2 text-center text-[11px] muted">{t(emptyText)}</p> : null}
     </div>
   );
 }
