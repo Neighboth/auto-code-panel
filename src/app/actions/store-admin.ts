@@ -34,6 +34,7 @@ import { MAIL_PRESETS, resolveMailPreset } from "@/lib/imap";
 import { managerIdentifierError } from "@/lib/admin-guard";
 import { fetchSteamAppDetails, parseSteamAppId, syncSteamGames } from "@/lib/steam";
 import { hitRateLimit } from "@/lib/rate-limit";
+import { logAudit } from "@/lib/audit";
 import { accountQuota, requireStoreAdmin } from "@/lib/tenant";
 import { generateSteamGuardCode, generateTotpCode, isValidSteamSecret, isValidTotpSecret, secondsRemaining } from "@/lib/totp";
 import { fetchLatestMailCode } from "@/lib/imap";
@@ -183,6 +184,15 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
       .returning({ id: games.id });
     if (updated.length === 0) return { ok: false, message: "Ürün bulunamadı." };
     refreshStore(slug);
+    await logAudit({
+      action: "store.product.update",
+      entity: "game",
+      entityId: id,
+      summary: `${title} ürünü güncellendi`,
+      storeId: store.id,
+      storeSlug: slug,
+      metadata: { title, ourPrice, currency, steamAppId },
+    });
     return { ok: true, message: "Ürün güncellendi.", data: { id } };
   }
 
@@ -191,6 +201,15 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
     .values({ ...payload, storeId: store.id })
     .returning({ id: games.id });
   refreshStore(slug);
+  await logAudit({
+    action: "store.product.create",
+    entity: "game",
+    entityId: created.id,
+    summary: `${title} ürünü eklendi`,
+    storeId: store.id,
+    storeSlug: slug,
+    metadata: { title, ourPrice, currency, steamAppId, originalPrice },
+  });
   return { ok: true, message: "Ürün eklendi.", data: { id: created.id } };
 }
 
@@ -215,6 +234,15 @@ export async function deleteGame(formData: FormData): Promise<ActionResult> {
 
   await db.delete(games).where(and(eq(games.id, id), eq(games.storeId, guard.state.store.id)));
   refreshStore(slug);
+  await logAudit({
+    action: "store.product.delete",
+    entity: "game",
+    entityId: id,
+    summary: "Ürün silindi",
+    severity: "warn",
+    storeId: guard.state.store.id,
+    storeSlug: slug,
+  });
   return { ok: true, message: "Ürün silindi." };
 }
 
@@ -224,6 +252,15 @@ export async function syncSteamNow(formData: FormData): Promise<ActionResult<{ u
   if (!guard) return { ok: false, message: "Yetkiniz yok." };
   const result = await syncSteamGames(guard.state.store.id);
   refreshStore(slug);
+  await logAudit({
+    action: "store.product.sync",
+    entity: "store",
+    entityId: guard.state.store.id,
+    summary: `Steam senkronizasyonu: ${result.updated}/${result.checked} ürün güncellendi`,
+    storeId: guard.state.store.id,
+    storeSlug: slug,
+    metadata: { checked: result.checked, updated: result.updated, failed: result.failed },
+  });
   if (result.checked === 0) {
     return { ok: false, message: "Senkronizasyon açık ve Steam linki olan ürün bulunamadı." };
   }
@@ -358,6 +395,16 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
       .returning({ id: accounts.id });
     if (updated.length === 0) return { ok: false, message: "Hesap bulunamadı." };
     refreshStore(slug);
+    await logAudit({
+      action: "store.account.update",
+      entity: "account",
+      entityId: id,
+      summary: `${productLabel} hesabı güncellendi`,
+      storeId: store.id,
+      storeSlug: slug,
+      // Never log secrets: only which guard types are configured.
+      metadata: { platform, guardType, hasMail: Boolean(mailEmail) },
+    });
     return { ok: true, message: "Hesap güncellendi.", data: { id } };
   }
 
@@ -374,6 +421,15 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
     .values({ ...payload, storeId: store.id, status: "available" })
     .returning({ id: accounts.id });
   refreshStore(slug);
+  await logAudit({
+    action: "store.account.create",
+    entity: "account",
+    entityId: created.id,
+    summary: `${productLabel} hesabı envantere eklendi`,
+    storeId: store.id,
+    storeSlug: slug,
+    metadata: { platform, guardType, hasMail: Boolean(mailEmail) },
+  });
   return { ok: true, message: "Hesap envantere eklendi.", data: { id: created.id } };
 }
 
@@ -499,6 +555,15 @@ export async function deleteAccount(formData: FormData): Promise<ActionResult> {
     .delete(accounts)
     .where(and(eq(accounts.id, id), eq(accounts.storeId, guard.state.store.id)));
   refreshStore(slug);
+  await logAudit({
+    action: "store.account.delete",
+    entity: "account",
+    entityId: id,
+    summary: "Hesap silindi",
+    severity: "warn",
+    storeId: guard.state.store.id,
+    storeSlug: slug,
+  });
   return { ok: true, message: "Hesap silindi." };
 }
 
@@ -516,6 +581,15 @@ export async function setAccountStatus(formData: FormData): Promise<ActionResult
     .set({ status, updatedAt: new Date() })
     .where(and(eq(accounts.id, id), eq(accounts.storeId, guard.state.store.id)));
   refreshStore(slug);
+  await logAudit({
+    action: "store.account.status",
+    entity: "account",
+    entityId: id,
+    summary: status === "retired" ? "Hesap pasife alındı" : "Hesap aktifleştirildi",
+    storeId: guard.state.store.id,
+    storeSlug: slug,
+    metadata: { status },
+  });
   return { ok: true, message: status === "retired" ? "Hesap pasife alındı." : "Hesap aktifleştirildi." };
 }
 
@@ -617,6 +691,21 @@ export async function createCodes(
 
   const inserted = await db.insert(codes).values(values).returning({ code: codes.code });
   refreshStore(payload.slug);
+  await logAudit({
+    action: "store.code.create",
+    entity: "code",
+    summary: `${inserted.length} kod üretildi (${payload.type})`,
+    storeId: store.id,
+    storeSlug: payload.slug,
+    metadata: {
+      count: inserted.length,
+      type: payload.type,
+      choiceCount,
+      gameIds,
+      accountIds,
+      label: payload.label,
+    },
+  });
   return {
     ok: true,
     message: `${inserted.length} kod üretildi.`,
@@ -641,6 +730,15 @@ export async function deleteCode(formData: FormData): Promise<ActionResult> {
   }
   await db.delete(codes).where(and(eq(codes.id, id), eq(codes.storeId, guard.state.store.id)));
   refreshStore(slug);
+  await logAudit({
+    action: "store.code.delete",
+    entity: "code",
+    entityId: id,
+    summary: "Kod silindi",
+    severity: "warn",
+    storeId: guard.state.store.id,
+    storeSlug: slug,
+  });
   return { ok: true, message: "Kod silindi." };
 }
 
@@ -725,6 +823,18 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   revalidatePath(`/${store.slug}`, "layout");
   revalidatePath(`/${nextSlug}`, "layout");
   revalidatePath(`/${nextSlug}/admin`, "layout");
+  await logAudit({
+    action: "store.settings.update",
+    entity: "store",
+    entityId: store.id,
+    summary:
+      nextSlug !== store.slug
+        ? `Mağaza ayarları güncellendi, ID ${store.slug} → ${nextSlug}`
+        : "Mağaza ayarları güncellendi",
+    storeId: store.id,
+    storeSlug: nextSlug,
+    metadata: { nextSlug, title, fontFamily, contactLinks, logoUrl, primaryColor, accentColor },
+  });
   return {
     ok: true,
     message: nextSlug !== store.slug ? "Ayarlar kaydedildi, mağaza ID güncellendi." : "Ayarlar kaydedildi.",
@@ -750,6 +860,15 @@ export async function saveStoreDomain(
       .where(eq(stores.id, store.id));
     revalidatePath(`/${store.slug}`, "layout");
     revalidatePath(`/${store.slug}/admin`, "layout");
+    await logAudit({
+      action: "store.domain.remove",
+      entity: "store",
+      entityId: store.id,
+      summary: `${store.customDomain ?? "Özel alan adı"} kaldırıldı`,
+      severity: "warn",
+      storeId: store.id,
+      storeSlug: store.slug,
+    });
     return { ok: true, message: "Özel alan adı kaldırıldı.", data: { domain: "", token: "" } };
   }
 
@@ -792,6 +911,15 @@ export async function saveStoreDomain(
 
   revalidatePath(`/${store.slug}`, "layout");
   revalidatePath(`/${store.slug}/admin`, "layout");
+  await logAudit({
+    action: "store.domain.add",
+    entity: "store",
+    entityId: store.id,
+    summary: unchanged ? `${domain} tekrar kaydedildi` : `${domain} özel alan adı olarak kaydedildi`,
+    storeId: store.id,
+    storeSlug: store.slug,
+    metadata: { domain, unchanged },
+  });
   return {
     ok: true,
     message: unchanged
@@ -887,6 +1015,15 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
 
   revalidatePath(`/${store.slug}`, "layout");
   revalidatePath(`/${store.slug}/admin`, "layout");
+  await logAudit({
+    action: "store.domain.verify",
+    entity: "store",
+    entityId: store.id,
+    summary: `${domain} alan adı doğrulandı`,
+    storeId: store.id,
+    storeSlug: store.slug,
+    metadata: { domain, recordName },
+  });
   return {
     ok: true,
     message: `${domain} doğrulandı. Alan adı birkaç saniye içinde mağazanıza yönlenecek.`,
@@ -940,5 +1077,118 @@ export async function saveStoreCredentials(formData: FormData): Promise<ActionRe
     .set({ username, email, passwordHash })
     .where(eq(storeAdmins.id, admin.id));
 
+  await logAudit({
+    action: "store.credentials.update",
+    entity: "store_admin",
+    entityId: admin.id,
+    summary:
+      newPassword.length > 0
+        ? "Yönetici kullanıcı adı, e-postası ve şifresi güncellendi"
+        : "Yönetici kullanıcı adı ve e-postası güncellendi",
+    severity: newPassword ? "warn" : "info",
+    storeId: guard.state.store.id,
+    storeSlug: slug,
+    metadata: { username, email, passwordChanged: newPassword.length > 0 },
+  });
+
   return { ok: true, message: "Yönetici bilgileri güncellendi." };
+}
+
+/**
+ * Bulk code cleanup.
+ *
+ * Redeemed codes are never deleted (they are the audit trail of a delivery), so
+ * they are reported back separately instead of failing the whole batch.
+ */
+export async function bulkDeleteCodes(
+  slug: string,
+  ids: number[],
+): Promise<ActionResult<{ deleted: number; skipped: number }>> {
+  const guard = await requireStoreAdmin(slug);
+  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  const store = guard.state.store;
+  const unique = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))].slice(0, 500);
+  if (unique.length === 0) return { ok: false, message: "Seçim yapılmadı." };
+
+  const rows = await db
+    .select({ id: codes.id, code: codes.code, redeemedAt: codes.redeemedAt })
+    .from(codes)
+    .where(and(eq(codes.storeId, store.id), inArray(codes.id, unique)));
+
+  const deletable = rows.filter((row) => !row.redeemedAt).map((row) => row.id);
+  const skipped = rows.length - deletable.length;
+
+  if (deletable.length > 0) {
+    await db.delete(codes).where(and(eq(codes.storeId, store.id), inArray(codes.id, deletable)));
+  }
+  refreshStore(slug);
+
+  await logAudit({
+    action: "store.code.bulk_delete",
+    entity: "code",
+    summary: `${deletable.length} kod silindi, ${skipped} kullanılmış kod korundu`,
+    severity: "warn",
+    storeId: store.id,
+    storeSlug: slug,
+    metadata: {
+      requested: unique.length,
+      deleted: deletable.length,
+      skipped,
+      codes: rows.map((row) => row.code).slice(0, 50),
+    },
+  });
+
+  return {
+    ok: true,
+    message: `${deletable.length} kod silindi${skipped ? `, ${skipped} kullanılmış kod korundu` : ""}.`,
+    data: { deleted: deletable.length, skipped },
+  };
+}
+
+/** Bulk price update for products (percentage or absolute delta in store currency). */
+export async function bulkUpdateProductPrices(
+  slug: string,
+  ids: number[],
+  mode: "percent" | "amount",
+  value: number,
+): Promise<ActionResult<{ updated: number }>> {
+  const guard = await requireStoreAdmin(slug);
+  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  const store = guard.state.store;
+  const unique = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))].slice(0, 500);
+  if (unique.length === 0) return { ok: false, message: "Ürün seçilmedi." };
+  if (!Number.isFinite(value) || value === 0) return { ok: false, message: "Geçerli bir değer girin." };
+  if (mode === "percent" && (value <= -100 || value > 500)) {
+    return { ok: false, message: "Yüzde değeri -99 ile 500 arasında olmalıdır." };
+  }
+
+  const rows = await db
+    .select({ id: games.id, ourPrice: games.ourPrice, currency: games.currency })
+    .from(games)
+    .where(and(eq(games.storeId, store.id), inArray(games.id, unique)));
+
+  let updated = 0;
+  for (const row of rows) {
+    const current = Number(row.ourPrice ?? 0);
+    if (!Number.isFinite(current)) continue;
+    const next = mode === "percent" ? current * (1 + value / 100) : current + value;
+    if (next <= 0) continue;
+    await db
+      .update(games)
+      .set({ ourPrice: next.toFixed(2), updatedAt: new Date() })
+      .where(and(eq(games.id, row.id), eq(games.storeId, store.id)));
+    updated += 1;
+  }
+  refreshStore(slug);
+
+  await logAudit({
+    action: "store.product.bulk_price",
+    entity: "game",
+    summary: `${updated} ürünün fiyatı toplu güncellendi (${mode === "percent" ? `${value}%` : `${value}`})`,
+    storeId: store.id,
+    storeSlug: slug,
+    metadata: { mode, value, ids: unique.slice(0, 50), updated },
+  });
+
+  return { ok: true, message: `${updated} ürün fiyatı güncellendi.`, data: { updated } };
 }

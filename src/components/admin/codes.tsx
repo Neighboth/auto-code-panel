@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Check, Copy, Download, Loader2, Plus, Trash2, Wand2 } from "lucide-react";
-import { createCodes, deleteCode } from "@/app/actions/store-admin";
+import { bulkDeleteCodes, createCodes, deleteCode } from "@/app/actions/store-admin";
 import { Modal } from "@/components/modal";
 import { Field } from "@/components/ui";
 import { formatDateTime } from "@/lib/format";
@@ -55,6 +55,8 @@ export function CodeManager({
   const [wizardOpen, setWizardOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const [step, setStep] = useState(1);
   const [type, setType] = useState<AdminCode["type"]>("choice");
@@ -172,6 +174,33 @@ export function CodeManager({
     router.refresh();
   }
 
+  function toggleSelect(id: number) {
+    setSelected((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
+  }
+
+  async function onBulkDelete() {
+    setPending(true);
+    const result = await bulkDeleteCodes(slug, selected);
+    setPending(false);
+    setBulkOpen(false);
+    if (!result.ok) {
+      toast.error(result.message ?? "Silinemedi");
+      return;
+    }
+    toast.success(result.message ?? "Kodlar silindi");
+    setSelected([]);
+    router.refresh();
+  }
+
+  async function copySelected() {
+    const codes = filtered.filter((code) => selected.includes(code.id)).map((code) => code.code);
+    if (codes.length === 0) return;
+    await navigator.clipboard.writeText(codes.join("\n"));
+    toast.success(`${codes.length} kod kopyalandı`);
+  }
+
+  const allVisibleSelected = filtered.length > 0 && filtered.every((code) => selected.includes(code.id));
+
   const targetCount = gameIds.length + accountIds.length;
   const canContinue = type === "choice" || targetCount > 0;
 
@@ -215,11 +244,36 @@ export function CodeManager({
         ))}
       </div>
 
+      {selected.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-[var(--surface)] px-3 py-2.5 hairline">
+          <span className="text-[12px] font-medium">{selected.length} kod seçildi</span>
+          <span className="flex-1" />
+          <button type="button" className="btn btn-outline btn-sm" onClick={copySelected}>
+            <Copy size={12} /> Kopyala
+          </button>
+          <button type="button" className="btn btn-danger btn-sm" onClick={() => setBulkOpen(true)}>
+            <Trash2 size={12} /> Seçilenleri sil
+          </button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelected([])}>
+            Temizle
+          </button>
+        </div>
+      ) : null}
+
       <div className="card overflow-hidden">
         <div className="overflow-x-auto scroll-thin">
-          <table className="table min-w-[860px]">
+          <table className="table min-w-[900px]">
             <thead>
               <tr>
+                <th className="w-9">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    aria-label="Görünen kodları seç"
+                    checked={allVisibleSelected}
+                    onChange={(event) => setSelected(event.target.checked ? filtered.map((code) => code.id) : [])}
+                  />
+                </th>
                 <th>Kod</th>
                 <th>Tür</th>
                 <th>Erişim süresi</th>
@@ -231,7 +285,7 @@ export function CodeManager({
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center">
+                  <td colSpan={7} className="py-12 text-center">
                     <Wand2 size={20} className="mx-auto muted" />
                     <p className="mt-2 text-[12.5px] font-medium">Kod bulunamadı</p>
                     <p className="mt-1 text-[11.5px] muted">Kod sihirbazı ile toplu üretim yapabilirsiniz.</p>
@@ -239,7 +293,16 @@ export function CodeManager({
                 </tr>
               ) : null}
               {filtered.map((code) => (
-                <tr key={code.id}>
+                <tr key={code.id} className={selected.includes(code.id) ? "bg-[color-mix(in_srgb,var(--fg)_4%,transparent)]" : undefined}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      aria-label={`${code.code} seç`}
+                      checked={selected.includes(code.id)}
+                      onChange={() => toggleSelect(code.id)}
+                    />
+                  </td>
                   <td>
                     <p className="mono text-[11.5px] font-medium">{code.code}</p>
                     {code.targetSummary ? <p className="mt-0.5 text-[10.5px] muted">{code.targetSummary}</p> : null}
@@ -346,6 +409,30 @@ export function CodeManager({
         <p className="text-[13px]">
           <span className="mono">{deleting?.code}</span> kodunu silmek istediğinize emin misiniz? Kullanılmış
           kodlar arşiv için saklanır.
+        </p>
+      </Modal>
+
+      {/* Bulk delete */}
+      <Modal
+        open={bulkOpen}
+        onClose={() => (pending ? undefined : setBulkOpen(false))}
+        title="Seçili kodları sil"
+        description={`${selected.length} kod seçildi`}
+        footer={
+          <>
+            <button type="button" className="btn btn-outline" onClick={() => setBulkOpen(false)} disabled={pending}>
+              Vazgeç
+            </button>
+            <button type="button" className="btn btn-danger" onClick={onBulkDelete} disabled={pending}>
+              {pending ? <Loader2 size={13} className="animate-spin" /> : null}
+              Seçilenleri sil
+            </button>
+          </>
+        }
+      >
+        <p className="text-[13px] leading-relaxed">
+          Seçili kodlar silinecek. Kullanılmış kodlar teslimat kaydı olduğu için arşivde kalır, bu yüzden
+          yalnızca hiç kullanılmamış kodlar kaldırılır. Bu işlem geri alınamaz.
         </p>
       </Modal>
 

@@ -17,6 +17,7 @@ import {
 import { slugify } from "@/lib/format";
 import { Field } from "@/components/ui";
 import { TwoFactorPrompt } from "@/components/security/two-factor-prompt";
+import { EmailVerifyCard } from "@/components/store/email-verify";
 import { createTranslator } from "@/lib/i18n/translate";
 
 function ErrorBox({ message }: { message: string | null }) {
@@ -344,6 +345,10 @@ export function CustomerAuthForm({
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
   const [showPassword, setShowPassword] = useState(false);
+  const [verification, setVerification] = useState<{
+    id: number | null;
+    email: string | null;
+  } | null>(null);
   const fallback = `${basePath}/kutuphane`;
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -359,6 +364,14 @@ export function CustomerAuthForm({
       setError(result.message ?? "İşlem başarısız.");
       return;
     }
+    if (result.needsEmailVerification || result.verificationId) {
+      setVerification({
+        id: result.verificationId ?? null,
+        email: result.verificationEmail ?? result.data?.email ?? null,
+      });
+      toast.success(result.message ?? "Doğrulama kodu gönderildi");
+      return;
+    }
     if (result.needs2fa && result.methods) {
       setTwoFa({
         methods: result.methods,
@@ -369,6 +382,18 @@ export function CustomerAuthForm({
     toast.success(result.message ?? "Giriş başarılı");
     router.push(fallback);
     router.refresh();
+  }
+
+  if (verification) {
+    return (
+      <EmailVerifyCard
+        slug={slug}
+        basePath={basePath}
+        email={verification.email ?? undefined}
+        verificationId={verification.id}
+        redirectTo={fallback}
+      />
+    );
   }
 
   return (

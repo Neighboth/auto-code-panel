@@ -1,6 +1,6 @@
 "use server";
 
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
 import {
@@ -20,6 +20,7 @@ import {
   resolveStoreState,
   sweepExpiredEntitlements,
 } from "@/lib/tenant";
+import { logAudit } from "@/lib/audit";
 import type { ActionResult } from "@/lib/types";
 
 /** Store admins and the platform owner can manage tenant customers. */
@@ -60,6 +61,15 @@ export async function setCustomerBan(slug: string, customerId: number, banned: b
     .set({ status: banned ? "banned" : "active" })
     .where(and(eq(customers.storeId, g.storeId), eq(customers.id, customerId)));
   refresh(g.slug);
+  await logAudit({
+    action: banned ? "store.customer.ban" : "store.customer.unban",
+    entity: "customer",
+    entityId: customerId,
+    summary: `${customer.username} ${banned ? "yasaklandı" : "yasağı kaldırıldı"}`,
+    severity: banned ? "warn" : "info",
+    storeId: g.storeId,
+    storeSlug: g.slug,
+  });
   return { ok: true, message: banned ? "Müşteri yasaklandı." : "Müşterinin yasağı kaldırıldı." };
 }
 
@@ -80,6 +90,16 @@ export async function deleteCustomer(slug: string, customerId: number): Promise<
     .where(and(eq(customers.storeId, g.storeId), eq(customers.id, customerId)));
   await sweepExpiredEntitlements(g.storeId);
   refresh(g.slug);
+  await logAudit({
+    action: "store.customer.delete",
+    entity: "customer",
+    entityId: customerId,
+    summary: `${customer.username} müşterisi ve kütüphanesi silindi`,
+    severity: "critical",
+    storeId: g.storeId,
+    storeSlug: g.slug,
+    metadata: { username: customer.username, email: customer.email },
+  });
   return { ok: true, message: "Müşteri ve kütüphanesi silindi." };
 }
 
@@ -122,6 +142,20 @@ export async function editCustomer(slug: string, customerId: number, formData: F
     })
     .where(and(eq(customers.storeId, g.storeId), eq(customers.id, customerId)));
   refresh(g.slug);
+  await logAudit({
+    action: "store.customer.update",
+    entity: "customer",
+    entityId: customerId,
+    summary: `${customer.username} müşterisi güncellendi`,
+    storeId: g.storeId,
+    storeSlug: g.slug,
+    metadata: {
+      username,
+      email,
+      passwordChanged: Boolean(newPassword),
+      before: { username: customer.username, email: customer.email },
+    },
+  });
   return { ok: true, message: "Müşteri bilgileri güncellendi." };
 }
 
@@ -140,6 +174,16 @@ export async function resetCustomerFactors(slug: string, customerId: number, kin
       ),
     );
   refresh(g.slug);
+  await logAudit({
+    action: "store.customer.factor_reset",
+    entity: "customer",
+    entityId: customerId,
+    summary: `${customer.username} için ${kind} güvenlik yöntemi sıfırlandı`,
+    severity: "warn",
+    storeId: g.storeId,
+    storeSlug: g.slug,
+    metadata: { kind },
+  });
   return { ok: true, message: "Güvenlik yöntemi sıfırlandı." };
 }
 
@@ -167,6 +211,16 @@ export async function removeCustomerEntitlement(
   await db.delete(entitlements).where(and(eq(entitlements.id, entitlementId), eq(entitlements.storeId, g.storeId)));
   await sweepExpiredEntitlements(g.storeId);
   refresh(g.slug);
+  await logAudit({
+    action: "store.customer.entitlement_remove",
+    entity: "entitlement",
+    entityId: entitlementId,
+    summary: `${customer.username} kütüphanesinden teslimat kaldırıldı`,
+    severity: "warn",
+    storeId: g.storeId,
+    storeSlug: g.slug,
+    metadata: { title: rows[0].title },
+  });
   return { ok: true, message: "Teslimat kütüphaneden kaldırıldı." };
 }
 
@@ -218,11 +272,80 @@ export async function addCustomerEntitlement(
     });
   });
   refresh(g.slug);
+  await logAudit({
+    action: "store.customer.entitlement_add",
+    entity: "customer",
+    entityId: customerId,
+    summary: `${customer.username} kütüphanesine ${gameRow.title} eklendi`,
+    storeId: g.storeId,
+    storeSlug: g.slug,
+    metadata: { gameId, gameTitle: gameRow.title, accountId: candidate?.id ?? null },
+  });
   return {
     ok: true,
     message: candidate
       ? "Ürün kütüphaneye eklendi, hesap tanımlandı."
       : "Ürün kütüphaneye eklendi (eşleşen hesap bulunamadı).",
+  };
+}
+
+/**
+ * Bulk customer actions used by the checkbox toolbar on the customers table.
+ * Every branch is audited with the affected usernames.
+ */
+export async function bulkCustomerAction(
+  slug: string,
+  customerIds: number[],
+  action: "ban" | "unban" | "delete",
+): Promise<ActionResult<{ affected: number }>> {
+  const g = await guard(slug);
+  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  const unique = [...new Set(customerIds.filter((id) => Number.isInteger(id) && id > 0))].slice(0, 500);
+  if (unique.length === 0) return { ok: false, message: "Müşteri seçilmedi." };
+
+  const rows = await db
+    .select({ id: customers.id, username: customers.username, status: customers.status })
+    .from(customers)
+    .where(and(eq(customers.storeId, g.storeId), inArray(customers.id, unique)));
+  if (rows.length === 0) return { ok: false, message: "Müşteri bulunamadı." };
+  const ids = rows.map((row) => row.id);
+
+  if (action === "delete") {
+    await db.delete(entitlements).where(and(eq(entitlements.storeId, g.storeId), inArray(entitlements.customerId, ids)));
+    await db
+      .delete(securityFactors)
+      .where(and(eq(securityFactors.subjectType, "customer"), inArray(securityFactors.subjectId, ids)));
+    await db.delete(customers).where(and(eq(customers.storeId, g.storeId), inArray(customers.id, ids)));
+    await sweepExpiredEntitlements(g.storeId);
+  } else {
+    await db
+      .update(customers)
+      .set({ status: action === "ban" ? "banned" : "active" })
+      .where(and(eq(customers.storeId, g.storeId), inArray(customers.id, ids)));
+  }
+
+  refresh(g.slug);
+  await logAudit({
+    action: action === "delete" ? "store.customer.bulk_delete" : `store.customer.bulk_${action}`,
+    entity: "customer",
+    summary: `${ids.length} müşteri için toplu işlem: ${
+      action === "delete" ? "silindi" : action === "ban" ? "yasaklandı" : "yasak kaldırıldı"
+    }`,
+    severity: action === "delete" ? "critical" : "warn",
+    storeId: g.storeId,
+    storeSlug: g.slug,
+    metadata: { action, customers: rows.map((row) => row.username).slice(0, 50), count: ids.length },
+  });
+
+  return {
+    ok: true,
+    message:
+      action === "delete"
+        ? `${ids.length} müşteri silindi.`
+        : action === "ban"
+          ? `${ids.length} müşteri yasaklandı.`
+          : `${ids.length} müşterinin yasağı kaldırıldı.`,
+    data: { affected: ids.length },
   };
 }
 

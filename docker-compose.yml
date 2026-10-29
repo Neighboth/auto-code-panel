@@ -1,8 +1,15 @@
-# Production compose file: pulls the image that GitHub Actions publishes to
-# GHCR. Use `docker compose up -d --build` if you prefer building locally.
+# Üretim compose dosyası.
+#
+# Tüm değerler doğrudan yazılıdır: `${DEGISKEN:-varsayilan}` kalıbı YOKTUR.
+# Aşağıdaki değerleri kendi kurulumunuza göre düzenleyip
+# `docker compose up -d` çalıştırmanız yeterlidir.
+#
+# İmaj GitHub Actions tarafından GHCR'ye gönderilir:
+#   ghcr.io/neighboth/auto-code-panel:latest
+# Yerelde derlemek isterseniz `docker compose up -d --build` kullanın.
 services:
   app:
-    image: ${APP_IMAGE:-ghcr.io/neighboth/auto-code-panel:latest}
+    image: ghcr.io/neighboth/auto-code-panel:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,39 +17,49 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    env_file:
-      - path: .env
-        required: false
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: "3000"
       SQLITE_PATH: /data/app.db
-      AUTH_SECRET: ${AUTH_SECRET:-change-me-please-use-a-long-random-secret}
-      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:-change-me-please-use-a-long-random-secret}
-      SUPER_ADMIN_USERNAME: ${SUPER_ADMIN_USERNAME:-admin}
-      SUPER_ADMIN_PASSWORD: ${SUPER_ADMIN_PASSWORD:-Admin12345!}
-      SUPER_ADMIN_EMAIL: ${SUPER_ADMIN_EMAIL:-owner@example.com}
-      BRAND_NAME: ${BRAND_NAME:-Nexora}
-      BRAND_TAGLINE: ${BRAND_TAGLINE:-Dijital hesap & kod teslimat altyapısı}
-      BRAND_LOGO_URL: ${BRAND_LOGO_URL:-}
-      RENEWAL_URL: ${RENEWAL_URL:-https://t.me/ornek_destek}
-      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-destek@example.com}
-      CRON_SECRET: ${CRON_SECRET:-change-me-cron-secret}
+
+      # --- Oturum ve şifreleme anahtarları (MUTLAKA DEĞİŞTİRİN) -----------
+      AUTH_SECRET: degistirin-uzun-rastgele-bir-oturum-anahtari
+      DATA_ENCRYPTION_KEY: degistirin-uzun-rastgele-bir-veri-anahtari
+
+      # --- Platform sahibi (süper admin) ----------------------------------
+      SUPER_ADMIN_USERNAME: admin
+      SUPER_ADMIN_PASSWORD: Admin12345!
+      SUPER_ADMIN_EMAIL: owner@example.com
+
+      # --- Marka -----------------------------------------------------------
+      BRAND_NAME: Pixelith
+      BRAND_TAGLINE: Dijital hesap ve kod teslimat altyapisi
+      BRAND_LOGO_URL: ""
+
+      # --- Süre uzatma ve destek ------------------------------------------
+      RENEWAL_URL: https://t.me/ornek_destek
+      SUPPORT_EMAIL: destek@example.com
+      CRON_SECRET: degistirin-uzun-rastgele-bir-cron-anahtari
+
+      # --- Uygulamanın dış adresi (mail içindeki bağlantılar için) --------
+      APP_URL: http://localhost:3000
+
+      # --- SMTP (opsiyonel) ------------------------------------------------
+      # Doldurulursa e-posta doğrulama, magic link ve bildirim mailleri aktif
+      # olur. Boş bırakılırsa hiçbir mail gönderilmez ve kayıt akışı doğrulama
+      # istemeden çalışmaya devam eder.
+      SMTP_HOST: ""
+      SMTP_PORT: "587"
+      SMTP_SECURE: "false"
+      SMTP_USER: ""
+      SMTP_PASSWORD: ""
+      SMTP_FROM: ""
+      SMTP_FROM_NAME: Pixelith
+      # auto | on | off  (auto: SMTP varsa açık)
+      MAIL_VERIFICATION: auto
     volumes:
       - app-data:/data
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 25s
 
 volumes:
   app-data:

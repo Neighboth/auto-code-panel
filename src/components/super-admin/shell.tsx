@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { ExternalLink, Megaphone, Settings2, Store, Users } from "lucide-react";
+import { Activity, ExternalLink, Megaphone, Settings2, Store, Users } from "lucide-react";
 import { LogoutButton } from "@/components/auth-forms";
 import { BrandLogo } from "@/components/brand";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -29,6 +29,7 @@ export function SuperAdminShell({
     { href: "/super-admin", label: t("super.navStores"), icon: Store },
     { href: "/super-admin/kullanicilar", label: t("super.navUsers"), icon: Users },
     { href: "/super-admin/duyurular", label: t("super.navPosts"), icon: Megaphone },
+    { href: "/super-admin/loglar", label: t("super.navLogs"), icon: Activity },
     { href: "/super-admin/ayarlar", label: t("super.navSettings"), icon: Settings2 },
   ];
 

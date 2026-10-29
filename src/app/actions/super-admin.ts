@@ -9,6 +9,8 @@ import { decryptData } from "@/lib/secret-crypto";
 import { getSuperSession } from "@/lib/session";
 import { env } from "@/lib/env";
 import { managerIdentifierError } from "@/lib/admin-guard";
+import { logAudit } from "@/lib/audit";
+import { sendAnnouncementMails, sendLicenseReminders } from "@/lib/mail-events";
 import type { ActionResult } from "@/lib/types";
 
 export type StoreAccountView = {
@@ -32,6 +34,17 @@ export async function viewStoreAccounts(storeId: number): Promise<ActionResult<S
     .select()
     .from(accounts)
     .where(eq(accounts.storeId, storeId));
+
+  await logAudit({
+    action: "super.accounts.reveal",
+    entity: "store",
+    entityId: storeId,
+    summary: `${storeRows[0].name} mağazasının ${rows.length} hesabının şifreleri görüntülendi`,
+    severity: "warn",
+    storeId,
+    storeSlug: storeRows[0].slug,
+    metadata: { accounts: rows.map((row) => row.id) },
+  });
   return {
     ok: true,
     data: rows.map((row) => ({
@@ -88,6 +101,18 @@ export async function createResellerKeys(
   }));
 
   const inserted = await db.insert(resellerKeys).values(values).returning({ code: resellerKeys.code });
+  await logAudit({
+    action: "super.reseller_keys.create",
+    entity: "reseller_key",
+    summary: `${inserted.length} bayilik kodu oluşturuldu`,
+    metadata: {
+      count: inserted.length,
+      durationDays,
+      maxAccounts,
+      renewalUrl: renewalUrl || null,
+      note: payload.note.slice(0, 160),
+    },
+  });
   revalidatePath("/super-admin");
   return {
     ok: true,
@@ -107,6 +132,14 @@ export async function revokeResellerKey(formData: FormData): Promise<ActionResul
     return { ok: false, message: "Kullanılmış kod iptal edilemez. Bayiyi askıya alabilirsiniz." };
   }
   await db.update(resellerKeys).set({ status: "revoked" }).where(eq(resellerKeys.id, id));
+  await logAudit({
+    action: "super.reseller_keys.revoke",
+    entity: "reseller_key",
+    entityId: id,
+    summary: `${key.code} bayilik kodu iptal edildi`,
+    severity: "warn",
+    metadata: { code: key.code, note: key.note },
+  });
   revalidatePath("/super-admin");
   return { ok: true, message: "Bayilik kodu iptal edildi." };
 }
@@ -156,6 +189,21 @@ export async function extendStoreLicense(formData: FormData): Promise<ActionResu
     return { ok: false, message: "Süre eklendi ancak lisans hâlâ geçmiş tarihte. Daha fazla gün ekleyin." };
   }
 
+  await logAudit({
+    action: "super.store.extend",
+    entity: "store",
+    entityId: store.id,
+    summary: `${store.name} lisansı güncellendi (${daysRaw || "0"} gün, limit: ${maxAccountsRaw || "değişmedi"})`,
+    severity: "info",
+    storeId: store.id,
+    storeSlug: store.slug,
+    metadata: {
+      days: daysRaw,
+      maxAccounts: maxAccountsRaw,
+      renewalUrl: renewalUrl || null,
+      expiresAt: refreshed[0]?.expiresAt ?? null,
+    },
+  });
   revalidatePath("/super-admin");
   revalidatePath(`/${store.slug}`, "layout");
   return { ok: true, message: "Bayi lisansı güncellendi." };
@@ -187,6 +235,16 @@ export async function setStoreSuspension(formData: FormData): Promise<ActionResu
     .update(stores)
     .set({ status: suspended ? "suspended" : "active", updatedAt: new Date() })
     .where(eq(stores.id, store.id));
+
+  await logAudit({
+    action: suspended ? "super.store.suspend" : "super.store.resume",
+    entity: "store",
+    entityId: store.id,
+    summary: `${store.name} mağazası ${suspended ? "askıya alındı" : "yeniden aktifleştirildi"}`,
+    severity: suspended ? "warn" : "info",
+    storeId: store.id,
+    storeSlug: store.slug,
+  });
 
   revalidatePath("/super-admin");
   revalidatePath(`/${store.slug}`, "layout");
@@ -228,6 +286,13 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
       .where(eq(platformPosts.id, id))
       .returning({ id: platformPosts.id });
     if (updated.length === 0) return { ok: false, message: "Kayıt bulunamadı." };
+    await logAudit({
+      action: "super.post.update",
+      entity: "platform_post",
+      entityId: id,
+      summary: `${kind === "update" ? "Güncelleme" : "Duyuru"} düzenlendi: ${title}`,
+      metadata: { kind, version, pinned },
+    });
     revalidatePath("/super-admin");
     revalidatePath("/super-admin/duyurular");
     return { ok: true, message: "Kayıt güncellendi.", data: { id: updated[0].id } };
@@ -236,12 +301,27 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
   const [created] = await db
     .insert(platformPosts)
     .values({ ...values, publishedAt: new Date() })
-    .returning({ id: platformPosts.id });
+    .returning();
+
+  await logAudit({
+    action: "super.post.create",
+    entity: "platform_post",
+    entityId: created.id,
+    summary: `${kind === "update" ? "Güncelleme" : "Duyuru"} yayınlandı: ${title}`,
+    metadata: { kind, version, pinned, bodyLength: body.length },
+  });
+
+  // Broadcast to every ACTIVE store manager; suspended/expired stores are skipped.
+  const broadcast = await sendAnnouncementMails(created).catch((err) => {
+    console.error("[post] announcement mails failed", err);
+    return { sent: 0, skipped: 0 };
+  });
+
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/duyurular");
   return {
     ok: true,
-    message: kind === "update" ? "Güncelleme notu yayınlandı." : "Duyuru yayınlandı.",
+    message: `${kind === "update" ? "Güncelleme notu yayınlandı" : "Duyuru yayınlandı"} — ${broadcast.sent} mağazaya e-posta gönderildi.`,
     data: { id: created.id },
   };
 }
@@ -250,7 +330,16 @@ export async function deletePlatformPost(formData: FormData): Promise<ActionResu
   if (!(await guard())) return { ok: false, message: "Yetkiniz yok." };
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id)) return { ok: false, message: "Geçersiz kayıt." };
+  const removed = await db.select().from(platformPosts).where(eq(platformPosts.id, id)).limit(1);
   await db.delete(platformPosts).where(eq(platformPosts.id, id));
+  await logAudit({
+    action: "super.post.delete",
+    entity: "platform_post",
+    entityId: id,
+    summary: `Duyuru silindi: ${removed[0]?.title ?? id}`,
+    severity: "warn",
+    metadata: { kind: removed[0]?.kind ?? null },
+  });
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/duyurular");
   return { ok: true, message: "Kayıt silindi." };
@@ -262,6 +351,13 @@ export async function setPlatformPostPinned(formData: FormData): Promise<ActionR
   const pinned = String(formData.get("pinned")) === "true";
   if (!Number.isInteger(id)) return { ok: false, message: "Geçersiz kayıt." };
   await db.update(platformPosts).set({ pinned, updatedAt: new Date() }).where(eq(platformPosts.id, id));
+  await logAudit({
+    action: "super.post.pin",
+    entity: "platform_post",
+    entityId: id,
+    summary: pinned ? "Duyuru sabitlendi" : "Sabitleme kaldırıldı",
+    metadata: { pinned },
+  });
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/duyurular");
   return { ok: true, message: pinned ? "Kayıt sabitlendi." : "Sabitleme kaldırıldı." };
@@ -294,6 +390,13 @@ export async function updatePlatformSettings(formData: FormData): Promise<Action
       set: { renewalUrl: env.renewalUrl, supportEmail: env.supportEmail, defaultPlanNote, updatedAt: new Date() },
     });
 
+  await logAudit({
+    action: "super.settings.update",
+    entity: "platform_settings",
+    entityId: 1,
+    summary: "Sistem ayarları güncellendi",
+    metadata: { defaultPlanNoteLength: defaultPlanNote.length },
+  });
   revalidatePath("/super-admin");
   revalidatePath("/super-admin/ayarlar");
   revalidatePath("/", "layout");

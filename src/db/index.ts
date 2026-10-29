@@ -102,6 +102,7 @@ const DDL = [
     avatar_url text not null default '',
     password_hash text not null,
     status text not null default 'active',
+    email_verified_at integer,
     created_at integer not null
   )`,
   `create unique index if not exists customers_store_username_uq on customers (store_id, username)`,
@@ -200,6 +201,54 @@ const DDL = [
     expires_at integer
   )`,
   `create index if not exists entitlements_customer_idx on entitlements (store_id, customer_id)`,
+  `create table if not exists email_verifications (
+    id integer primary key autoincrement,
+    store_id integer not null,
+    customer_id integer,
+    subject_type text not null default 'customer',
+    subject_id integer,
+    email text not null,
+    purpose text not null default 'signup',
+    code_secret text not null,
+    token text not null,
+    attempts integer not null default 0,
+    expires_at integer not null,
+    used_at integer,
+    created_at integer not null
+  )`,
+  `create unique index if not exists email_verifications_token_uq on email_verifications (token)`,
+  `create index if not exists email_verifications_subject_idx on email_verifications (subject_type, subject_id)`,
+  `create table if not exists mail_events (
+    id integer primary key autoincrement,
+    kind text not null,
+    ref text not null,
+    store_id integer,
+    recipient text,
+    status text not null default 'sent',
+    detail text not null default '',
+    created_at integer not null
+  )`,
+  `create unique index if not exists mail_events_kind_ref_uq on mail_events (kind, ref)`,
+  `create table if not exists audit_logs (
+    id integer primary key autoincrement,
+    actor_type text not null default 'system',
+    actor_id integer,
+    actor_name text not null default '',
+    store_id integer,
+    store_slug text not null default '',
+    action text not null,
+    entity text not null default '',
+    entity_id text not null default '',
+    severity text not null default 'info',
+    summary text not null default '',
+    metadata text not null default '{}',
+    ip text not null default '',
+    user_agent text not null default '',
+    created_at integer not null
+  )`,
+  `create index if not exists audit_logs_created_idx on audit_logs (created_at)`,
+  `create index if not exists audit_logs_store_idx on audit_logs (store_id, created_at)`,
+  `create index if not exists audit_logs_action_idx on audit_logs (action)`,
 ];
 
 async function bootstrap(): Promise<void> {
@@ -221,6 +270,7 @@ async function bootstrap(): Promise<void> {
     "update store_admins set status = 'active' where status = 'banned'",
     "alter table stores add column custom_domain text",
     "alter table stores add column custom_domain_verified_at integer",
+    "alter table customers add column email_verified_at integer",
     "drop index if exists stores_custom_domain_uq",
     "create unique index if not exists stores_custom_domain_verified_uq on stores (custom_domain) where custom_domain is not null and custom_domain_verified_at is not null",
   ];

@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { KeyRound, Lock, QrCode, ShieldCheck, Smartphone } from "lucide-react";
+import { KeyRound, Lock, Mail, QrCode, ShieldCheck, Smartphone } from "lucide-react";
 import {
   beginPasskeyRegistration,
   beginTotpSetup,
   confirmTotpSetup,
+  enableEmailFactor,
   listFactors,
   removeFactor,
   savePasskeyRegistration,
@@ -15,7 +16,14 @@ import {
 import { Field } from "@/components/ui";
 
 type SubjectType = "super" | "store" | "customer";
-type FactorState = { totp: boolean; passkey: boolean; question: boolean; questionText: string };
+type FactorState = {
+  totp: boolean;
+  passkey: boolean;
+  question: boolean;
+  email: boolean;
+  emailAddress: string;
+  questionText: string;
+};
 
 function b64urlToBuf(value: string): ArrayBuffer {
   const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -46,6 +54,8 @@ export function FactorSettings({
     totp: false,
     passkey: false,
     question: false,
+    email: false,
+    emailAddress: "",
     questionText: "",
   });
   const [pending, setPending] = useState(false);
@@ -54,7 +64,7 @@ export function FactorSettings({
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [answerConfirm, setAnswerConfirm] = useState("");
-  const [confirmKind, setConfirmKind] = useState<"totp" | "passkey" | "question" | null>(null);
+  const [confirmKind, setConfirmKind] = useState<"totp" | "passkey" | "question" | "email" | null>(null);
 
   const load = useCallback(async () => {
     const result = await listFactors(slug, subjectType);
@@ -181,7 +191,19 @@ export function FactorSettings({
     await load();
   }
 
-  async function remove(kind: "totp" | "passkey" | "question") {
+  async function toggleEmail() {
+    setPending(true);
+    const result = await enableEmailFactor(slug, subjectType);
+    setPending(false);
+    if (!result.ok) {
+      toast.error(result.message ?? "Etkinleştirilemedi.");
+      return;
+    }
+    toast.success(result.message ?? "E-posta 2FA açıldı");
+    await load();
+  }
+
+  async function remove(kind: "totp" | "passkey" | "question" | "email") {
     if (confirmKind !== kind) {
       setConfirmKind(kind);
       return;
@@ -265,6 +287,31 @@ export function FactorSettings({
               </div>
             </form>
           ) : null}
+        </div>
+
+        <div className="rounded-lg border p-3.5 hairline">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Mail size={15} />
+              <p className="text-[12.5px] font-medium">E-posta ile 2FA</p>
+            </div>
+            {state.email ? (
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("email")} disabled={pending}>
+                Kaldır
+              </button>
+            ) : (
+              <button type="button" className="btn btn-primary btn-sm" onClick={toggleEmail} disabled={pending}>
+                Etkinleştir
+              </button>
+            )}
+          </div>
+          <p className="mt-1.5 text-[11px] muted">
+            Her girişte hesabınıza bağlı e-posta adresine 6 haneli kod gönderilir.
+            {state.emailAddress ? ` (${state.emailAddress})` : " Hesabınıza e-posta eklemeniz gerekir."}
+          </p>
+          <p className="mt-1 text-[10.5px] muted">
+            Not: e-posta ile 2FA, sunucuda SMTP yapılandırıldığında çalışır.
+          </p>
         </div>
 
         <div className="rounded-lg border p-3.5 hairline">

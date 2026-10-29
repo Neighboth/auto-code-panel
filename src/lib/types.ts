@@ -4,7 +4,11 @@ export type ActionResult<T = undefined> = {
   data?: T;
   redirectTo?: string;
   needs2fa?: boolean;
-  methods?: { totp: boolean; passkey: boolean; question: boolean };
+  methods?: { totp: boolean; passkey: boolean; question: boolean; email?: boolean };
+  /** Registration / sign-in is waiting for the e-mailed 6-digit code. */
+  needsEmailVerification?: boolean;
+  verificationId?: number;
+  verificationEmail?: string;
 };
 
 export type SteamPreview = {
