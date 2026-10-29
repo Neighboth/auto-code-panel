@@ -5,9 +5,13 @@ import { getStoreState, getStoreBasePath } from "@/lib/tenant";
 import { lookupByToken } from "@/lib/verification";
 import { mailEnabled } from "@/lib/mailer";
 import { EmailVerifyCard } from "@/components/store/email-verify";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "E-posta Doğrulama" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.e-posta-dogrulama") };
+}
 
 /**
  * Magic-link landing page.
@@ -25,18 +29,19 @@ export default async function VerifyEmailPage({
   searchParams: Promise<{ t?: string }>;
 }) {
   const { magazaSlug } = await params;
-  const { t } = await searchParams;
+  const { t: token } = await searchParams;
+  const { t } = await getTranslator();
   const state = await getStoreState(magazaSlug);
   if (!state) notFound();
   const basePath = await getStoreBasePath(state.store);
 
-  const lookup = t ? await lookupByToken(t) : { ok: false as const, message: "Bağlantı eksik veya geçersiz." };
+  const lookup = token ? await lookupByToken(token) : { ok: false as const, message: t("x.baglant-eksik-veya-gecersiz") };
   const invalidReason = !lookup.ok
     ? lookup.message
     : lookup.used
-      ? "Bu doğrulama bağlantısı daha önce kullanıldı."
+      ? t("x.bu-dogrulama-baglants-daha-once-kullanld")
       : lookup.expired
-        ? "Bağlantının süresi doldu. Yeni kod isteyin."
+        ? t("x.baglantnn-suresi-doldu-yeni-kod-isteyin")
         : null;
 
   return (
@@ -52,10 +57,8 @@ export default async function VerifyEmailPage({
         <span className="flex h-9 w-9 items-center justify-center rounded-lg border hairline">
           <MailCheck size={16} />
         </span>
-        <h1 className="mt-3.5 text-[21px] font-semibold tracking-[-0.02em]">E-posta doğrulama</h1>
-        <p className="mt-1.5 text-[12.5px] leading-relaxed muted">
-          Bağlantı yalnızca kodunuzu gösterir; sizi kendi başına giriş yaptırmaz.
-        </p>
+        <h1 className="mt-3.5 text-[21px] font-semibold tracking-[-0.02em]">{t("x.e-posta-dogrulama")}</h1>
+        <p className="mt-1.5 text-[12.5px] leading-relaxed muted">{t("x.baglant-yalnzca-kodunuzu-gosterir-sizi-kendi-basna-giris")}</p>
 
         <div className="mt-5">
           {lookup.ok && !invalidReason ? (
@@ -64,24 +67,19 @@ export default async function VerifyEmailPage({
               slug={state.store.slug}
               basePath={basePath}
               email={lookup.email}
-              token={t}
+              token={token}
               initialCode={lookup.code}
             />
           ) : (
             <div className="space-y-3">
-              <p className="note note-danger text-[12px]">{invalidReason ?? "Bağlantı geçersiz."}</p>
-              <Link href={`${basePath}/giris`} className="btn btn-outline w-full">
-                Giriş ekranına dön
-              </Link>
+              <p className="note note-danger text-[12px]">{invalidReason ?? t("x.baglant-gecersiz")}</p>
+              <Link href={`${basePath}/giris`} className="btn btn-outline w-full">{t("x.giris-ekranna-don")}</Link>
             </div>
           )}
         </div>
 
         {!mailEnabled() ? (
-          <p className="note note-warn mt-4 text-[11.5px]">
-            SMTP yapılandırılmadığı için doğrulama e-postaları gönderilmiyor. Yönetici panelinden
-            sunucu bilgilerini kontrol edin.
-          </p>
+          <p className="note note-warn mt-4 text-[11.5px]">{t("x.smtp-yaplandrlmadg-icin-dogrulama-e-postalar-gonderilmiy")}</p>
         ) : null}
       </div>
     </div>

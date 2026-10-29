@@ -6,15 +6,20 @@ import { getStoreState, getStoreBasePath } from "@/lib/tenant";
 import { StoreAdminLoginForm } from "@/components/auth-forms";
 import { BrandMark } from "@/components/brand";
 import { getLocale } from "@/lib/i18n/server";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Mağaza Yönetimi Girişi" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.magaza-yonetimi-girisi") };
+}
 
 export default async function StoreAdminLoginPage({
   params,
 }: {
   params: Promise<{ magazaSlug: string }>;
 }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const state = await getStoreState(magazaSlug);
   if (!state) notFound();
@@ -32,7 +37,7 @@ export default async function StoreAdminLoginPage({
             <BrandMark size={24} />
             <span>
               <span className="block text-[13.5px] font-semibold leading-tight">{state.store.name}</span>
-              <span className="block text-[10px] uppercase tracking-[0.1em] muted">Mağaza yönetimi</span>
+              <span className="block text-[10px] uppercase tracking-[0.1em] muted">{" "}{t("x.magaza-yonetimi")}</span>
             </span>
           </Link>
         </div>
@@ -40,9 +45,9 @@ export default async function StoreAdminLoginPage({
           <span className="flex h-9 w-9 items-center justify-center rounded-lg border hairline">
             <ShieldCheck size={16} />
           </span>
-          <h1 className="mt-3.5 text-[21px] font-semibold tracking-[-0.02em]">Yönetim paneline giriş</h1>
+          <h1 className="mt-3.5 text-[21px] font-semibold tracking-[-0.02em]">{" "}{t("x.yonetim-paneline-giris")}</h1>
           <p className="mt-1.5 text-[12.5px] leading-relaxed muted">
-            Bu panel yalnızca {state.store.name} mağaza sahibine aittir. Bayilik menüsü içermez.
+            {t("x.bu-panel-yalnzca-store-magaza-sahibine-aittir-bayilik-me", { store: state.store.name })}
           </p>
           {!state.active ? (
             <div
@@ -53,8 +58,7 @@ export default async function StoreAdminLoginPage({
                 color: "color-mix(in srgb, #b45309 70%, var(--fg))",
               }}
             >
-              Mağaza şu anda {state.suspended ? "askıda" : "süresi dolmuş"} durumda. Panele giriş yapıp
-              lisans durumunuzu görüntüleyebilirsiniz.
+              {t("x.magaza-su-anda-state-durumda-panele-giris-yapp-lisans-du", { state: state.suspended ? t("x.askda-2") : t("x.suresi-dolmus-2") })}
             </div>
           ) : null}
           <div className="mt-5">
@@ -68,9 +72,7 @@ export default async function StoreAdminLoginPage({
 
         </div>
         <Link href={basePath || "/"} className="mt-4 inline-flex items-center justify-center gap-1.5 text-[11.5px] muted">
-          <ArrowLeft size={12} />
-          Mağaza vitrinine dön
-        </Link>
+          <ArrowLeft size={12} />{t("x.magaza-vitrinine-don")}</Link>
       </div>
     </div>
   );

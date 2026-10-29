@@ -4,15 +4,17 @@ import { db } from "@/db";
 import { stores } from "@/db/schema";
 import { getSuperSession } from "@/lib/session";
 import { CustomerDetailView } from "@/components/admin/customer-detail";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Müşteri Yönetimi" };
+export const metadata = { title: "x.musteri-yonetimi" };
 
 export default async function SuperCustomerDetailPage({
   params,
 }: {
   params: Promise<{ slug: string; customerId: string }>;
 }) {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
   if (!session) redirect("/super-admin");
   const { slug, customerId } = await params;
@@ -29,7 +31,7 @@ export default async function SuperCustomerDetailPage({
       basePath={`/super-admin/kullanicilar`}
       customerId={id}
       backHref="/super-admin/kullanicilar?tab=customers"
-      backLabel="Mağaza müşterileri"
+      backLabel={t("x.magaza-musterileri")}
       listHref="/super-admin/kullanicilar?tab=customers"
     />
   );

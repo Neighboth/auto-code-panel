@@ -198,28 +198,42 @@ Durum (v1.4.0):
 
 | Katman | Anahtar | Dil |
 | --- | --- | --- |
-| Referans sözlük (`dictionaries.ts`) | 163 | `tr`, `en` (tam) |
+| Referans sözlük (`dictionaries.ts` + `ui-extra.ts`) | 1230 | `tr`, `en` (tam) |
 | Çekirdek paket (`core-packs.ts`) | 39 | 80 dilin **tamamı** |
 
-Yani kayıtlı 80 dilin her biri menü, giriş/kayıt, sepet-kod girme, "kalan süre",
-"kopyala", "çıkış" gibi ekranın her yerinde görünen 39 anahtarı **kendi dilinde**
-gösterir; bu anahtarlar için İngilizceye düşme yoktur. Çekirdek pakette olmayan
-uzun kuyruk anahtarlar (panel tabloları, form etiketleri) `tr` ve `en` dışındaki
-dillerde İngilizceye düşer — ham anahtar adı hiçbir koşulda görünmez.
+`tr` ve `en` 1230 anahtarın tamamına sahiptir. Kayıtlı 80 dilin her biri menü,
+giriş/kayıt, kod girme, "kalan süre", "kopyala", "çıkış" gibi her ekranda görünen
+39 anahtarı **kendi dilinde** gösterir; bu anahtarlarda İngilizceye düşme yoktur.
+Çekirdek pakette bulunmayan uzun kuyruk anahtarlar (panel tabloları, form
+etiketleri) `tr`/`en` dışındaki dillerde **İngilizceye** düşer — ham anahtar adı
+hiçbir koşulda görünmez.
 
 Çeviri eklemek için `src/lib/i18n/core-packs.ts` içindeki ilgili dil nesnesine
 anahtar eklemek yeterlidir (`tr`/`en` dışındaki dillerde eksik anahtar otomatik
-olarak İngilizceye düşer).
+olarak İngilizceye düşer). Şablon değişkenleri `{ad}` biçimindedir:
+
+```ts
+t("x.kod-email-adresine-gonderildi", { email: "a@b.c" });
+```
 
 ```bash
-npm run i18n:hardcoded       # hâlâ JSX içinde sabit yazılmış Türkçe metinler
+npm run i18n:coverage        # dil dil kapsam raporu
+npm run i18n:hardcoded       # sabit metin denetimi (UI + sunucu tarafı)
 npm run i18n:hardcoded -- --json
 ```
 
-`i18n:hardcoded` bir denetim aracıdır, derlemeyi düşürmez: hangi dosyada kaç sabit
-metin kaldığını listeler (v1.4.0 itibarıyla 489 metin / 49 dosya, ağırlıklı olarak
-mağaza ve süper yönetici panelleri). Kapsam ayrıca `/super-admin/ayarlar`
-sayfasındaki "Dil kapsamı" kartında canlı olarak gösterilir.
+`i18n:hardcoded` bir denetim aracıdır, derlemeyi düşürmez. İki sayı verir:
+
+- **Sabit (çevrilmemiş) Türkçe metin** — JSX içinde doğrudan yazılmış metin.
+  v1.4.0 itibarıyla **0**.
+- **Sunucu tarafı Türkçe metin** — yalnızca süper yönetici panelinde görünen
+  audit-log özetleri (`summary:`) ve birkaç iç yardımcı mesajı. v1.4.0
+  itibarıyla 43 metin / 11 dosya. Bunlar veritabanına yazıldığı için çeviri
+  yazma anında değil, gösterim anında yapılmalıdır; yapılandırılmış log
+  (`summary_key` + `summary_params`) işi sonraki sürüme bırakıldı.
+
+Kapsam ayrıca `/super-admin/ayarlar` sayfasındaki "Dil kapsamı" kartında canlı
+olarak gösterilir.
 
 ## Lisans
 

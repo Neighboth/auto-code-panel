@@ -4,11 +4,13 @@ import { db } from "@/db";
 import { accounts, codes, customers, entitlements, games, redemptions } from "@/db/schema";
 import { requireStoreAdmin } from "@/lib/tenant";
 import { CodeManager, type AdminCode } from "@/components/admin/codes";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Kodlar" };
 
 export default async function AdminCodesPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const guard = await requireStoreAdmin(magazaSlug);
   if (!guard) notFound();
@@ -72,7 +74,7 @@ export default async function AdminCodesPage({ params }: { params: Promise<{ mag
 
     const targetSummary =
       code.type === "choice"
-        ? "Müşteri seçimli oyunlar"
+        ? t("x.musteri-secimli-oyunlar")
         : [...code.gameIds.map((id) => gameTitleById.get(id)).filter(Boolean), ...code.accountIds.map((id) => `Hesap #${id}`)]
             .slice(0, 3)
             .join(", ");
@@ -90,7 +92,7 @@ export default async function AdminCodesPage({ params }: { params: Promise<{ mag
       targetSummary,
       detail: redemption
         ? {
-            customerUsername: redemption.customerUsername ?? "Misafir kullanıcı",
+            customerUsername: redemption.customerUsername ?? t("x.misafir-kullanc"),
             grantedAt: new Date(redemption.redemption.createdAt).toISOString(),
             accessExpiresAt: accessExpiresAt ? new Date(accessExpiresAt).toISOString() : null,
             items: (itemsByRedemption.get(redemption.redemption.id) ?? []).map((entitlement) => ({

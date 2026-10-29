@@ -18,99 +18,100 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { brand } from "@/lib/brand";
 import { BrandLogo, BrandMark } from "@/components/brand";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: `${brand.name} — ${brand.tagline}`,
   description:
-    "Kendi mağazanı aç, oyun ve hesap envanterini yönet, kod sihirbazıyla anında teslimat yap. 2FA ve Steam Guard kodları sunucu tarafında üretilir.",
+    "x.kendi-magazan-ac-oyun-ve-hesap-envanterini-yonet-kod-sih",
 };
 
 const features = [
   {
     icon: Store,
-    title: "Tenant bazlı mağaza izolasyonu",
-    text: "Her bayi kendi slug'ı, kendi müşterileri ve kendi envanteriyle çalışır. Sorgular tenant_id ile filtrelenir; bir mağaza diğerinin verisini göremez.",
+    title: "x.tenant-bazl-magaza-izolasyonu",
+    text: "x.her-bayi-kendi-slug-kendi-musterileri-ve-kendi-envanteri",
   },
   {
     icon: Timer,
-    title: "Steam otomatik senkronizasyon",
-    text: "Steam linkindeki appId ayrıştırılır; başlık, kapak ve resmi TR fiyatı çekilir. Auto-Sync açık ürünler cron job ile güncel kalır.",
+    title: "x.steam-otomatik-senkronizasyon",
+    text: "x.steam-linkindeki-appid-ayrstrlr-baslk-kapak-ve-resmi-tr",
   },
   {
     icon: Boxes,
-    title: "Hesap limiti ve envanter",
-    text: "Bayilik paketinizdeki maksimum hesap sayısı panelde anlık sayılır. Limit dolduğunda yeni hesap ekleme sunucu tarafında engellenir.",
+    title: "x.hesap-limiti-ve-envanter",
+    text: "x.bayilik-paketinizdeki-maksimum-hesap-says-panelde-anlk-s",
   },
   {
     icon: Fingerprint,
-    title: "Canlı 2FA & Steam Guard",
-    text: "TOTP secret ve Steam shared_secret asla tarayıcıya gitmez. Kodlar HMAC-SHA1 tabanlı olarak backend'de üretilir, ekranda 30 saniyelik sayaçla döner.",
+    title: "x.canl-2fa-steam-guard",
+    text: "x.totp-secret-ve-steam-shared-secret-asla-taraycya-gitmez",
   },
   {
     icon: Code2,
-    title: "3 modlu kod sihirbazı",
-    text: "İstediğin X oyun, tekli hedef veya çoklu paket. Kullanım süresi kodun son kullanma tarihi değil, kullanıldığı andan itibaren erişim süresidir.",
+    title: "x.3-modlu-kod-sihirbaz",
+    text: "x.istedigin-x-oyun-tekli-hedef-veya-coklu-paket-kullanm-su",
   },
   {
     icon: Palette,
-    title: "Tam marka kontrolü",
-    text: "Tema rengi, logo, duyuru bandı ve Google Fonts üzerinden canlı önizlemeli font seçimi. Tüm mağaza arayüzü CSS değişkenleriyle anında güncellenir.",
+    title: "x.tam-marka-kontrolu",
+    text: "x.tema-rengi-logo-duyuru-band-ve-google-fonts-uzerinden-ca",
   },
 ];
 
 const steps = [
   {
-    title: "Bayilik kodunu satın al",
-    text: "Süre ve hesap limiti tanımlı tek kullanımlık bir kod alın.",
+    title: "x.bayilik-kodunu-satn-al",
+    text: "x.sure-ve-hesap-limiti-tanml-tek-kullanmlk-bir-kod-aln",
     icon: Layers,
   },
   {
-    title: "Mağazanı saniyeler içinde aç",
-    text: "Slug, yönetici kullanıcı adı ve şifre belirleyin. Panel anında hazır.",
+    title: "x.magazan-saniyeler-icinde-ac",
+    text: "x.slug-yonetici-kullanc-ad-ve-sifre-belirleyin-panel-annda",
     icon: Terminal,
   },
   {
-    title: "Ürün ekle, kod üret, teslim et",
-    text: "Steam linkini yapıştırın, envanteri girin, kod sihirbazıyla satışa başlayın.",
+    title: "x.urun-ekle-kod-uret-teslim-et",
+    text: "x.steam-linkini-yapstrn-envanteri-girin-kod-sihirbazyla-sa",
     icon: LibraryBig,
   },
 ];
 
 const plans = [
   {
-    name: "Başlangıç",
-    duration: "1 Ay",
+    name: "x.baslangc",
+    duration: "x.1-ay",
     price: "₺249",
-    limit: "40 hesap limiti",
-    features: ["Tek mağaza", "Steam auto-sync", "2FA / Steam Guard kodu", "Kod sihirbazı"],
+    limit: "x.40-hesap-limiti",
+    features: ["x.tek-magaza", "x.steam-auto-sync", "x.2fa-steam-guard-kodu", "x.kod-sihirbaz"],
     highlight: false,
   },
   {
-    name: "Profesyonel",
-    duration: "3 Ay",
+    name: "x.profesyonel",
+    duration: "x.3-ay",
     price: "₺599",
-    limit: "150 hesap limiti",
+    limit: "x.150-hesap-limiti",
     features: [
-      "Tek mağaza + özel slug",
-      "Steam auto-sync ve cron",
-      "Müşteri kütüphanesi",
-      "Font ve tema özelleştirme",
-      "Süre uzatma önceliği",
+      "x.tek-magaza-ozel-slug",
+      "x.steam-auto-sync-ve-cron",
+      "x.musteri-kutuphanesi",
+      "x.font-ve-tema-ozellestirme",
+      "x.sure-uzatma-onceligi",
     ],
     highlight: true,
   },
   {
-    name: "Ölçek",
-    duration: "1 Yıl",
+    name: "x.olcek",
+    duration: "x.1-yl",
     price: "₺1.899",
-    limit: "Sınırsız hesap",
+    limit: "x.snrsz-hesap",
     features: [
-      "Sınırsız envanter",
-      "500'lük toplu kod üretimi",
-      "Kullanılmış kod detay raporu",
-      "Öncelikli destek",
+      "x.snrsz-envanter",
+      "x.500-luk-toplu-kod-uretimi",
+      "x.kullanlms-kod-detay-raporu",
+      "x.oncelikli-destek",
     ],
     highlight: false,
   },
@@ -118,28 +119,29 @@ const plans = [
 
 const faqs = [
   {
-    q: "Kod kullanım süresi ne zaman başlar?",
-    a: "Kodun üzerinde tanımlı süre, kodun son kullanma tarihi değildir. Müşteri kodu kullandığı saniyede başlar; örneğin 30 günlük kod, teslimat anından 30 gün sonra otomatik olarak imha edilir.",
+    q: "x.kod-kullanm-suresi-ne-zaman-baslar",
+    a: "x.kodun-uzerinde-tanml-sure-kodun-son-kullanma-tarihi-degi",
   },
   {
-    q: "2FA ve Steam Guard kodları güvenli mi?",
-    a: "Secret anahtarları hiçbir zaman frontend'e gönderilmez. Kütüphane ekranındaki buton, sunucuda HMAC-SHA1 tabanlı kod üretip yalnızca o anki 5 haneli Steam Guard veya 6 haneli TOTP kodunu döner.",
+    q: "x.2fa-ve-steam-guard-kodlar-guvenli-mi",
+    a: "x.secret-anahtarlar-hicbir-zaman-frontend-e-gonderilmez-ku",
   },
   {
-    q: "Süresi dolan bayiler ne olur?",
-    a: "Bayilik süresi bittiğinde mağaza vitrini otomatik olarak 'Süresi Dolmuş - Askıda' moduna geçer, teslimat durur. Süper admin panelinden süre eklenerek mağaza yeniden aktifleştirilir.",
+    q: "x.suresi-dolan-bayiler-ne-olur",
+    a: "x.bayilik-suresi-bittiginde-magaza-vitrini-otomatik-olarak",
   },
   {
-    q: "Müşteriler üye olmadan kod kullanabilir mi?",
-    a: "Evet. Misafir olarak teslimat alınabilir ancak sayfa kapandığında hesap bilgileri ve canlı kodlar bir daha görüntülenemez. Kalıcı erişim için yalnızca kullanıcı adı ve şifre ile hesap oluşturmak yeterlidir.",
+    q: "x.musteriler-uye-olmadan-kod-kullanabilir-mi",
+    a: "x.evet-misafir-olarak-teslimat-alnabilir-ancak-sayfa-kapan",
   },
   {
-    q: "Steam fiyatları otomatik güncelleniyor mu?",
-    a: "Steam linki girilen ve Auto-Sync seçeneği açık ürünler için zamanlanmış görev, Steam Store API üzerinden başlık, kapak görseli ve resmi TR fiyatını çekerek veritabanını günceller.",
+    q: "x.steam-fiyatlar-otomatik-guncelleniyor-mu",
+    a: "x.steam-linki-girilen-ve-auto-sync-secenegi-ack-urunler-ic",
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { t } = await getTranslator();
   return (
     <div className="min-h-dvh">
       <SiteHeader name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} />
@@ -158,34 +160,22 @@ export default function LandingPage() {
           <div className="fade-up">
             <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 hairline">
               <span className="live-dot" style={{ color: "#16a34a" }} />
-              <span className="text-[11.5px] font-medium tracking-[0.02em] muted">
-                Multi-tenant teslimat altyapısı · v2.4
-              </span>
+              <span className="text-[11.5px] font-medium tracking-[0.02em] muted">{t("x.multi-tenant-teslimat-altyaps-v2-4")}</span>
             </div>
-            <h1 className="mt-5 text-[28px] font-semibold leading-[1.08] tracking-[-0.035em] sm:text-[38px] lg:text-[52px]">
-              Dijital hesap satışını
-              <br />
-              <span className="muted">tek panelden yönetin.</span>
+            <h1 className="mt-5 text-[28px] font-semibold leading-[1.08] tracking-[-0.035em] sm:text-[38px] lg:text-[52px]">{t("x.dijital-hesap-satsn")}<br />
+              <span className="muted">{" "}{t("x.tek-panelden-yonetin")}</span>
             </h1>
-            <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed muted">
-              Oyun, hesap ve redeem kodu teslimatını uçtan uca otomatikleştirin. Steam Guard ve
-              TOTP kodları sunucuda üretilir, erişim süresi dolan hesaplar müşteri kütüphanesinden
-              otomatik olarak imha edilir.
-            </p>
+            <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed muted">{t("x.oyun-hesap-ve-redeem-kodu-teslimatn-uctan-uca-otomatikle")}</p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
-              <Link href="/bayi" className="btn btn-dark btn-lg">
-                Bayilik kodunu aktifleştir
-                <ArrowRight size={15} />
+              <Link href="/bayi" className="btn btn-dark btn-lg">{t("x.bayilik-kodunu-aktiflestir")}<ArrowRight size={15} />
               </Link>
-              <Link href="/super-admin" className="btn btn-gray btn-lg">
-                Yönetici Girişi
-                <ArrowRight size={15} />
+              <Link href="/super-admin" className="btn btn-gray btn-lg">{t("x.yonetici-girisi")}<ArrowRight size={15} />
               </Link>
             </div>
             <div className="mt-8 grid max-w-lg grid-cols-3 gap-4 border-t pt-5 hairline">
               {[
-                { value: "3 mod", label: "Kod sihirbazı" },
-                { value: "30 sn", label: "Canlı kod sayacı" },
+                { value: "3 mod", label: t("x.kod-sihirbaz") },
+                { value: "30 sn", label: t("x.canl-kod-sayac") },
                 { value: "%100", label: "Tenant izolasyonu" },
               ].map((stat) => (
                 <div key={stat.label}>
@@ -202,7 +192,7 @@ export default function LandingPage() {
               <div className="flex items-center justify-between border-b px-4 py-3 hairline">
                 <div className="flex items-center gap-2">
                   <BrandMark size={18} />
-                  <span className="text-[12px] font-semibold">magaza / kodlar</span>
+                  <span className="text-[12px] font-semibold">magaza / kodlar{/* i18n-ignore */}</span>
                 </div>
                 <span className="badge badge-green">
                   <span className="live-dot" /> aktif
@@ -222,9 +212,9 @@ export default function LandingPage() {
               </div>
               <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                 {[
-                  { code: "KEYR-8FA2K-P4M7Q", type: "İstediğin 2 oyun", status: "Aktif", tone: "badge-blue" },
-                  { code: "KEYR-QP93M-2XK7A", type: "Elden Ring · 30 gün", status: "Kullanıldı", tone: "badge-green" },
-                  { code: "KEYR-Z7LDM-93PQT", type: "RDR2 + ITT · 7 gün", status: "Süresi doldu", tone: "badge-red" },
+                  { code: "KEYR-8FA2K-P4M7Q", type: t("x.istedigin-2-oyun"), status: "Aktif", tone: "badge-blue" },
+                  { code: "KEYR-QP93M-2XK7A", type: t("x.elden-ring-30-gun"), status: t("x.kullanld"), tone: "badge-green" },
+                  { code: "KEYR-Z7LDM-93PQT", type: t("x.rdr2-itt-7-gun"), status: t("x.suresi-doldu"), tone: "badge-red" },
                 ].map((row) => (
                   <div key={row.code} className="flex items-center justify-between gap-3 px-4 py-3">
                     <div className="min-w-0">
@@ -247,7 +237,7 @@ export default function LandingPage() {
             </div>
             <div className="card absolute -bottom-6 -left-4 hidden w-52 p-3 sm:block">
               <p className="text-[10px] uppercase tracking-[0.08em] muted">Kalan bayilik</p>
-              <p className="mt-1 text-[15px] font-semibold tracking-[-0.01em]">21 gün 4 saat</p>
+              <p className="mt-1 text-[15px] font-semibold tracking-[-0.01em]">{" "}{t("x.21-gun-4-saat")}</p>
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
                 <div className="h-full w-[68%] rounded-full" style={{ background: "var(--fg)" }} />
               </div>
@@ -276,23 +266,18 @@ export default function LandingPage() {
       <section id="ozellikler" className="border-b py-16 hairline lg:py-24">
         <div className="mx-auto w-full max-w-6xl px-5">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">Özellikler</p>
-            <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em] sm:text-[38px]">
-              Teslimat operasyonunun tamamı tek altyapıda.
-            </h2>
-            <p className="mt-3 text-[14px] leading-relaxed muted">
-              Vitrin, envanter, kod üretimi, canlı 2FA ve marka yönetimi birbirine bağlı çalışır.
-              Her modül çoklu mağaza mantığıyla tasarlandı.
-            </p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">{t("x.ozellikler")}</p>
+            <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em] sm:text-[38px]">{t("x.teslimat-operasyonunun-tamam-tek-altyapda")}</h2>
+            <p className="mt-3 text-[14px] leading-relaxed muted">{t("x.vitrin-envanter-kod-uretimi-canl-2fa-ve-marka-yonetimi-b")}</p>
           </div>
           <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border hairline sm:grid-cols-2 lg:grid-cols-3" style={{ background: "var(--border)" }}>
             {features.map((feature) => (
-              <div key={feature.title} className="p-6" style={{ background: "var(--bg-elevated)" }}>
+              <div key={t(feature.title)} className="p-6" style={{ background: "var(--bg-elevated)" }}>
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg border hairline">
                   <feature.icon size={16} strokeWidth={1.7} />
                 </div>
-                <h3 className="mt-4 text-[14px] font-semibold tracking-[-0.01em]">{feature.title}</h3>
-                <p className="mt-2 text-[12.8px] leading-relaxed muted">{feature.text}</p>
+                <h3 className="mt-4 text-[14px] font-semibold tracking-[-0.01em]">{t(feature.title)}</h3>
+                <p className="mt-2 text-[12.8px] leading-relaxed muted">{t(feature.text)}</p>
               </div>
             ))}
           </div>
@@ -304,10 +289,8 @@ export default function LandingPage() {
         <div className="mx-auto w-full max-w-6xl px-5">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">Nasıl çalışır</p>
-              <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em] sm:text-[38px]">
-                Üç adımda satışa hazır.
-              </h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">{" "}{t("x.nasl-calsr")}</p>
+              <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em] sm:text-[38px]">{t("x.uc-admda-satsa-hazr")}</h2>
             </div>
             <Link href="/bayi" className="btn btn-outline">
               Aktivasyona git
@@ -316,14 +299,14 @@ export default function LandingPage() {
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {steps.map((step, index) => (
-              <div key={step.title} className="card relative p-6">
+              <div key={t(step.title)} className="card relative p-6">
                 <div className="flex items-center justify-between">
                   <span className="mono text-[11px] muted">0{index + 1}</span>
                   <step.icon size={17} strokeWidth={1.7} className="muted" />
                 </div>
                 <div className="mt-6 h-px w-full" style={{ background: "var(--border)" }} />
-                <h3 className="mt-4 text-[15px] font-semibold tracking-[-0.01em]">{step.title}</h3>
-                <p className="mt-2 text-[13px] leading-relaxed muted">{step.text}</p>
+                <h3 className="mt-4 text-[15px] font-semibold tracking-[-0.01em]">{t(step.title)}</h3>
+                <p className="mt-2 text-[13px] leading-relaxed muted">{t(step.text)}</p>
               </div>
             ))}
           </div>
@@ -331,25 +314,16 @@ export default function LandingPage() {
           <div className="mt-14 grid gap-6 rounded-2xl border p-6 hairline lg:grid-cols-[0.95fr_1.05fr] lg:p-9">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] muted hairline">
-                <Clock3 size={12} />
-                Erişim süresi kuralı
-              </div>
-              <h3 className="mt-4 text-[22px] font-semibold leading-snug tracking-[-0.02em]">
-                Süre kodun raf ömrü değil, müşterinin erişim hakkıdır.
-              </h3>
-              <p className="mt-3 text-[13.5px] leading-relaxed muted">
-                Kod oluştururken seçtiğiniz 1 gün, 1 ay veya özel saat değeri, müşteri kodu
-                kullandığı saniyede başlar. Süre bittiğinde backend her istekte
-                <span className="mono mx-1 rounded px-1.5 py-0.5 text-[11.5px]" style={{ background: "color-mix(in srgb, var(--fg) 6%, transparent)" }}>
+                <Clock3 size={12} />{t("x.erisim-suresi-kural")}</div>
+              <h3 className="mt-4 text-[22px] font-semibold leading-snug tracking-[-0.02em]">{t("x.sure-kodun-raf-omru-degil-musterinin-erisim-hakkdr")}</h3>
+              <p className="mt-3 text-[13.5px] leading-relaxed muted">{t("x.kod-olustururken-sectiginiz-1-gun-1-ay-veya-ozel-saat-de")}<span className="mono mx-1 rounded px-1.5 py-0.5 text-[11.5px]" style={{ background: "color-mix(in srgb, var(--fg) 6%, transparent)" }}>
                   expiresAt &lt; now()
-                </span>
-                kontrolü yapar; hesap şifresi ve 2FA kodu bir daha dönmez.
-              </p>
+                </span>{t("x.kontrolu-yapar-hesap-sifresi-ve-2fa-kodu-bir-daha-donmez")}</p>
               <ul className="mt-5 space-y-2">
                 {[
-                  "Kullanılmış kod detayında atanan hesap ID'leri ve bitiş tarihi",
-                  "Süresi dolan teslimat otomatik imha",
-                  "Misafir teslimat için kalıcı olmayan sonuç ekranı",
+                  t("x.kullanlms-kod-detaynda-atanan-hesap-id-leri-ve-bitis-tar"),
+                  t("x.suresi-dolan-teslimat-otomatik-imha"),
+                  t("x.misafir-teslimat-icin-kalc-olmayan-sonuc-ekran"),
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-[12.8px] muted">
                     <Check size={14} className="mt-0.5 shrink-0" />
@@ -361,15 +335,15 @@ export default function LandingPage() {
             <div className="rounded-xl border p-4 hairline" style={{ background: "var(--bg)" }}>
               <div className="flex items-center justify-between">
                 <p className="mono text-[11.5px] font-medium">KEYR-DEMO-BUNDLE</p>
-                <span className="badge badge-blue">Kullanıldı</span>
+                <span className="badge badge-blue">{t("x.kullanld")}</span>
               </div>
               <div className="mt-4 space-y-3">
                 {[
-                  { label: "Müşteri", value: "demo" },
-                  { label: "Ürünler", value: "Red Dead Redemption 2, It Takes Two" },
+                  { label: t("x.musteri"), value: "demo" },
+                  { label: t("x.urunler"), value: "Red Dead Redemption 2, It Takes Two" },
                   { label: "Atanan hesaplar", value: "#12 · #18" },
-                  { label: "Başlangıç", value: "12.03.2026 14:22" },
-                  { label: "Bitiş", value: "19.03.2026 14:22" },
+                  { label: t("x.baslangc"), value: "12.03.2026 14:22" },
+                  { label: t("x.bitis"), value: "19.03.2026 14:22" },
                 ].map((row) => (
                   <div key={row.label} className="flex items-start justify-between gap-4 border-b pb-2.5 last:border-0 hairline">
                     <span className="text-[11px] uppercase tracking-[0.06em] muted">{row.label}</span>
@@ -390,19 +364,16 @@ export default function LandingPage() {
       <section id="fiyatlandirma" className="border-b py-16 hairline lg:py-24">
         <div className="mx-auto w-full max-w-6xl px-5">
           <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">Fiyatlandırma</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">{t("x.fiyatlandrma")}</p>
             <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em] sm:text-[38px]">
               Bayilik paketleri.
             </h2>
-            <p className="mt-3 text-[14px] leading-relaxed muted">
-              Her paket tek mağaza içindir. Bayilik kodu, satın alma sonrası süper admin tarafından
-              üretilir ve tek kullanımlıktır.
-            </p>
+            <p className="mt-3 text-[14px] leading-relaxed muted">{t("x.her-paket-tek-magaza-icindir-bayilik-kodu-satn-alma-sonr")}</p>
           </div>
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {plans.map((plan) => (
               <div
-                key={plan.name}
+                key={t(plan.name)}
                 className="card relative flex flex-col p-6"
                 style={
                   plan.highlight
@@ -411,19 +382,19 @@ export default function LandingPage() {
                 }
               >
                 {plan.highlight ? (
-                  <span className="absolute right-5 top-5 badge badge-blue">En çok tercih edilen</span>
+                  <span className="absolute right-5 top-5 badge badge-blue">{" "}{t("x.en-cok-tercih-edilen")}</span>
                 ) : null}
-                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] muted">{plan.name}</p>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] muted">{t(plan.name)}</p>
                 <div className="mt-3 flex items-baseline gap-1.5">
-                  <span className="text-[30px] font-semibold tracking-[-0.03em]">{plan.price}</span>
-                  <span className="text-[12px] muted">/ {plan.duration}</span>
+                  <span className="text-[30px] font-semibold tracking-[-0.03em]">{t(plan.price)}</span>
+                  <span className="text-[12px] muted">/ {t(plan.duration)}</span>
                 </div>
-                <p className="mt-2 text-[12px] muted">{plan.limit}</p>
+                <p className="mt-2 text-[12px] muted">{t(plan.limit)}</p>
                 <ul className="mt-5 flex-1 space-y-2.5">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2 text-[12.8px]">
                       <Check size={14} className="mt-0.5 shrink-0" />
-                      <span>{feature}</span>
+                      <span>{t(feature)}</span>
                     </li>
                   ))}
                 </ul>
@@ -444,21 +415,17 @@ export default function LandingPage() {
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] muted">SSS</p>
-            <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em]">
-              Sık sorulan sorular.
-            </h2>
-            <p className="mt-3 text-[13px] leading-relaxed muted">
-              Aradığınız cevabı bulamadıysanız destek ekibimiz Telegram üzerinden ulaşılabilir.
-            </p>
+            <h2 className="mt-3 text-[30px] font-semibold leading-tight tracking-[-0.03em]">{t("x.sk-sorulan-sorular")}</h2>
+            <p className="mt-3 text-[13px] leading-relaxed muted">{t("x.aradgnz-cevab-bulamadysanz-destek-ekibimiz-telegram-uzer")}</p>
           </div>
           <div className="divide-y hairline">
             {faqs.map((faq) => (
-              <details key={faq.q} className="group py-4">
+              <details key={t(faq.q)} className="group py-4">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-                  <span className="text-[13.5px] font-medium">{faq.q}</span>
+                  <span className="text-[13.5px] font-medium">{t(faq.q)}</span>
                   <span className="text-[18px] leading-none muted transition group-open:rotate-45">+</span>
                 </summary>
-                <p className="mt-2.5 pr-8 text-[12.8px] leading-relaxed muted">{faq.a}</p>
+                <p className="mt-2.5 pr-8 text-[12.8px] leading-relaxed muted">{t(faq.a)}</p>
               </details>
             ))}
           </div>
@@ -472,22 +439,15 @@ export default function LandingPage() {
             <div className="pointer-events-none absolute inset-0 dot-grid opacity-40" />
             <div className="relative flex flex-wrap items-center justify-between gap-6">
               <div>
-                <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">
-                  Mağazanızı bu dakika açın.
-                </h2>
-                <p className="mt-2 max-w-lg text-[13px] leading-relaxed muted">
-                  Bayilik kodunuzu ve mağaza slug&apos;ınızı girin. Kurulum, ürün ekleme ve ilk
-                  teslimatınız dahil her şey tek ekranda.
-                </p>
+                <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">{t("x.magazanz-bu-dakika-acn")}</h2>
+                <p className="mt-2 max-w-lg text-[13px] leading-relaxed muted">{t("x.bayilik-kodunuzu-ve-magaza-slug-nz-girin-kurulum-urun-ek")}</p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Link href="/bayi" className="btn btn-dark btn-lg">
                   Bayilik Aktivasyonu
                   <ArrowRight size={15} />
                 </Link>
-                <Link href="/super-admin" className="btn btn-gray btn-lg">
-                  Yönetici Girişi
-                  <ArrowRight size={15} />
+                <Link href="/super-admin" className="btn btn-gray btn-lg">{t("x.yonetici-girisi")}<ArrowRight size={15} />
                 </Link>
               </div>
             </div>
@@ -508,12 +468,10 @@ export default function LandingPage() {
             <Link href="/bayi" className="hover:opacity-70">
               Bayilik
             </Link>
-            <Link href="/super-admin" className="hover:opacity-70">
-              Yönetici Girişi
-            </Link>
+            <Link href="/super-admin" className="hover:opacity-70">{t("x.yonetici-girisi")}</Link>
           </div>
           <p className="w-full text-[10.5px] muted sm:w-auto">
-            © {new Date().getFullYear()} {brand.name}. Tüm hakları saklıdır.
+            © {new Date().getFullYear()} {brand.name}. {t("x.tum-haklar-sakldr")}
           </p>
         </div>
       </footer>

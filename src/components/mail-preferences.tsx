@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -7,10 +8,10 @@ import type { ActionResult } from "@/lib/types";
 import type { MailPrefs } from "@/lib/mail-prefs";
 
 const ITEMS: { key: keyof MailPrefs; label: string; hint: string }[] = [
-  { key: "announcements", label: "Duyurular ve güncellemeler", hint: "Yeni özellik, bakım ve sürüm notları." },
-  { key: "delivery", label: "Teslimat fişleri", hint: "Kod kullandığınızda ürün özeti e-postası." },
-  { key: "license", label: "Lisans uyarıları", hint: "Bayilik süresi dolmadan 3 ve 1 gün önce." },
-  { key: "security", label: "Güvenlik bildirimleri", hint: "Giriş, şifre ve 2FA değişiklikleri." },
+  { key: "announcements", label: "x.duyurular-ve-guncellemeler", hint: "x.yeni-ozellik-bakm-ve-surum-notlar" },
+  { key: "delivery", label: "x.teslimat-fisleri", hint: "x.kod-kullandgnzda-urun-ozeti-e-postas" },
+  { key: "license", label: "x.lisans-uyarlar", hint: "x.bayilik-suresi-dolmadan-3-ve-1-gun-once" },
+  { key: "security", label: "x.guvenlik-bildirimleri", hint: "x.giris-sifre-ve-2fa-degisiklikleri" },
 ];
 
 /**
@@ -27,6 +28,7 @@ export function MailPreferences({
   initial: MailPrefs;
   action: (formData: FormData) => Promise<ActionResult>;
 }) {
+  const t = useT();
   const [prefs, setPrefs] = useState<MailPrefs>(initial);
   const [pending, setPending] = useState(false);
 
@@ -41,7 +43,7 @@ export function MailPreferences({
     const result = await action(formData);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Kaydedilemedi");
+      toast.error(result.message ?? t("x.kaydedilemedi"));
       return;
     }
     toast.success(result.message ?? "Kaydedildi");
@@ -59,8 +61,8 @@ export function MailPreferences({
           </h2>
           <p className="mt-0.5 text-[11.5px] leading-relaxed muted">
             {audience === "customer"
-              ? "Hangi e-postaları almak istediğinizi seçin. Her mesajın altında tek tıkla kapatma bağlantısı da bulunur."
-              : "Mağaza yöneticisi adresinize hangi e-postaların gideceğini seçin."}
+              ? t("x.hangi-e-postalar-almak-istediginizi-secin-her-mesajn-alt")
+              : t("x.magaza-yoneticisi-adresinize-hangi-e-postalarn-gidecegin")}
           </p>
         </div>
       </div>
@@ -88,8 +90,7 @@ export function MailPreferences({
 
       <div className="mt-3 flex items-center justify-between gap-2">
         <p className="flex items-center gap-1.5 text-[11px] muted">
-          <Mail size={12} /> Zorunlu güvenlik uyarıları hesap güvenliği için önerilir.
-        </p>
+          <Mail size={12} />{t("x.zorunlu-guvenlik-uyarlar-hesap-guvenligi-icin-onerilir")}</p>
         <button type="button" className="btn btn-dark btn-sm" onClick={save} disabled={pending}>
           {pending ? <Loader2 size={13} className="animate-spin" /> : null}
           Kaydet

@@ -1,4 +1,5 @@
 ﻿const DAY_MS = 86_400_000;
+import { createTranslator } from "@/lib/i18n/translate";
 const WEEK_MS = 7 * DAY_MS;
 
 export type StatsCode = {
@@ -107,10 +108,10 @@ export type StoreStats = {
   peakWeekday: { label: string; count: number };
 };
 
-const WEEKDAY_LABELS = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+const WEEKDAY_LABELS = ["Pzt", "Sal", "x.car", "Per", "Cum", "Cmt", "Paz"];
 const CODE_TYPE_LABELS: Record<string, string> = {
   single: "Tekli",
-  choice: "Seçmeli",
+  choice: "x.secmeli",
   bundle: "Paket",
 };
 
@@ -130,11 +131,12 @@ function shortDay(value: Date): string {
   return value.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
 }
 
-export function computeStoreStats(
+export async function computeStoreStats(
   input: StoreStatsInput,
   requestedRange: number,
   now: Date = new Date(),
-): StoreStats {
+): Promise<StoreStats> {
+  const t = createTranslator("tr");
   const rangeDays = [7, 30, 90].includes(requestedRange) ? requestedRange : 30;
   const nowMs = now.getTime();
   const today = startOfDay(now);
@@ -258,7 +260,7 @@ export function computeStoreStats(
     { platform: string; available: number; assigned: number; retired: number; total: number }
   >();
   for (const row of input.accounts) {
-    const platform = row.platformLabel || "Diğer";
+    const platform = row.platformLabel || t("x.diger");
     const current = inventoryMap.get(platform) ?? {
       platform,
       available: 0,

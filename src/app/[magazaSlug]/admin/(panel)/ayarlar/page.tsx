@@ -13,11 +13,16 @@ import { FactorSettings } from "@/components/security/factor-settings";
 import { StoreMailPrefsCard } from "@/components/store/mail-prefs-card";
 import { getMailPrefs } from "@/lib/mail-prefs";
 import { getStoreAdminSession } from "@/lib/session";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Görünüm ve Ayarlar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.gorunum-ve-ayarlar") };
+}
 
 export default async function AdminSettingsPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const guard = await requireStoreAdmin(magazaSlug);
   if (!guard) notFound();
@@ -42,15 +47,11 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
     <div className="mx-auto w-full max-w-4xl space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Mağaza yönetimi</p>
-          <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">Görünüm ve ayarlar</h1>
-          <p className="mt-1 text-[12.5px] muted">
-            Marka, tema, font ve mağaza ID ayarları. Değişiklikler kaydedildiğinde vitrin anında güncellenir.
-          </p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">{" "}{t("x.magaza-yonetimi")}</p>
+          <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">{" "}{t("x.gorunum-ve-ayarlar")}</h1>
+          <p className="mt-1 text-[12.5px] muted">{t("x.marka-tema-font-ve-magaza-id-ayarlar-degisiklikler-kayde")}</p>
         </div>
-        <a href={basePath || "/"} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
-          Vitrini aç
-          <ArrowUpRight size={12} />
+        <a href={basePath || "/"} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">{t("x.vitrini-ac")}<ArrowUpRight size={12} />
         </a>
       </div>
 
@@ -62,19 +63,16 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
             </span>
             <div>
               <p className="text-[12.5px] font-semibold">Bayilik durumu</p>
-              <p className="mt-0.5 text-[11.5px] muted">
-                Kalan süre: <span className="font-medium" style={{ color: "var(--fg)" }}>{store.expiresAt ? remainingLabel(store.expiresAt) : "Sınırsız"}</span>{" "}
-                · Bitiş: {store.expiresAt ? formatDate(store.expiresAt) : "—"}
+              <p className="mt-0.5 text-[11.5px] muted">{t("x.kalan-sure-2")}<span className="font-medium" style={{ color: "var(--fg)" }}>{store.expiresAt ? remainingLabel(store.expiresAt) : t("x.snrsz")}</span>{" "}
+                · {t("x.bitis-2")} {store.expiresAt ? formatDate(store.expiresAt) : "—"}
               </p>
               <p className="mt-0.5 text-[11px] muted">
-                Hesap limiti: {store.maxAccounts ?? "Sınırsız"} · Durum:{" "}
-                {guard.state.suspended ? "Askıda" : guard.state.expired ? "Süresi doldu" : "Aktif"}
+                Hesap limiti: {store.maxAccounts ?? t("x.snrsz")} · Durum:{" "}
+                {guard.state.suspended ? t("x.askda") : guard.state.expired ? t("x.suresi-doldu") : "Aktif"}
               </p>
             </div>
           </div>
-          <a href={renewalUrl} target="_blank" rel="noreferrer" className="btn btn-dark btn-sm">
-            Süre Uzat (İlan Linki)
-            <ArrowUpRight size={12} />
+          <a href={renewalUrl} target="_blank" rel="noreferrer" className="btn btn-dark btn-sm">{t("x.sure-uzat-ilan-linki")}<ArrowUpRight size={12} />
           </a>
         </div>
         {settings.defaultPlanNote ? (

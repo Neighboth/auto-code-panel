@@ -26,7 +26,7 @@ import { remainingLabel } from "@/lib/format";
 /** 1. Store created (reseller activation). */
 export async function sendWelcomeMail(store: Store, admin: { id: number; email: string; username: string }) {
   if (!admin.email) return;
-  const template = welcomeTemplate({
+  const template = await welcomeTemplate({
     storeName: store.name,
     adminUsername: admin.username,
     loginUrl: absoluteUrl(`/${store.slug}/admin/giris`),

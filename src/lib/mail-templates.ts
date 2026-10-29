@@ -1,6 +1,7 @@
 import { brand } from "@/lib/brand";
 import { env } from "@/lib/env";
 import { formatDateTime, remainingLabel } from "@/lib/format";
+import { createTranslator } from "@/lib/i18n/translate";
 import {
   absoluteUrl,
   button,
@@ -82,15 +83,16 @@ export function verificationTemplate(options: {
 
 /* ----------------------------- 2. Karşılama ----------------------------- */
 
-export function welcomeTemplate(options: {
+export async function welcomeTemplate(options: {
   storeName: string;
   adminUsername: string;
   loginUrl: string;
   storeSlug?: string;
   expiresAt: Date | null;
   planNote?: string;
-}): Template {
-  const remaining = options.expiresAt ? remainingLabel(options.expiresAt) : "Sınırsız";
+}): Promise<Template> {
+  const t = createTranslator("tr");
+  const remaining = options.expiresAt ? remainingLabel(options.expiresAt, t) : t("x.snrsz");
   const body = [
     paragraph(
       `Merhaba <strong>${escape(options.adminUsername)}</strong>, <strong>${escape(options.storeName)}</strong> mağazanız hazır. Panelinize giriş yapıp ürünlerinizi ekleyebilirsiniz.`,

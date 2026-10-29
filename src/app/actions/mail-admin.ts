@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { desc, sql } from "drizzle-orm";
 import { db, ensureDatabase } from "@/db";
 import { mailEvents } from "@/db/schema";
@@ -28,7 +30,10 @@ export type MailStats = {
 /** Delivery ledger for the super admin (mail_events is the source of truth). */
 export async function getMailStats(): Promise<ActionResult<MailStats>> {
   const session = await getSuperSession();
-  if (!session) return { ok: false, message: "Yetkiniz yok." };
+  if (!session) {
+    const { t } = await getTranslator();
+    return { ok: false, message: t("x.yetkiniz-yok") };
+  }
   await ensureDatabase();
   const [totalRows, statusRows, kindRows, recentRows] = await Promise.all([
     db.select({ value: sql<number>`count(*)` }).from(mailEvents),
@@ -61,12 +66,16 @@ export async function getMailStats(): Promise<ActionResult<MailStats>> {
 
 /** Sends a real test message to verify SMTP credentials from the panel. */
 export async function sendTestMail(toRaw: string): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
-  if (!session) return { ok: false, message: "Yetkiniz yok." };
+  if (!session) {
+    const { t } = await getTranslator();
+    return { ok: false, message: t("x.yetkiniz-yok") };
+  }
   const to = toRaw.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) return { ok: false, message: "Geçerli bir e-posta girin." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) return { ok: false, message: t("x.gecerli-bir-e-posta-girin") };
   if (!mailEnabled()) {
-    return { ok: false, message: "SMTP yapılandırılmadı. .env dosyasına SMTP_HOST ve SMTP_FROM ekleyin." };
+    return { ok: false, message: t("x.smtp-yaplandrlmad-env-dosyasna-smtp-host-ve-smtp-from-ek") };
   }
   const result = await deliver({
     to,
@@ -85,7 +94,7 @@ export async function sendTestMail(toRaw: string): Promise<ActionResult> {
     ok: result.status === "sent",
     message:
       result.status === "sent"
-        ? "Test e-postası gönderildi."
+        ? t("x.test-e-postas-gonderildi")
         : `Gönderilemedi: ${result.detail || result.status}`,
   };
 }

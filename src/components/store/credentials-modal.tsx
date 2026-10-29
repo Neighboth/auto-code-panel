@@ -1,7 +1,7 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useT } from "@/components/i18n-provider";
 import { ArrowLeft, ArrowRight, Clock3, Fingerprint, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 import { getTwoFactorCode, type AccessCode } from "@/app/actions/storefront";
 import { CopyButton } from "@/components/copy-button";
@@ -65,13 +65,13 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
       const response = await getTwoFactorCode(slug, item.entitlementId, item.accessToken ?? undefined);
       setLoading(false);
       if (!response.ok || !response.data) {
-        if (!autoRefresh) setError(response.message ?? "Kod üretilemedi.");
+        if (!autoRefresh) setError(response.message ?? t("x.kod-uretilemedi"));
         return;
       }
       setCode(response.data);
       setSeconds(response.data.secondsRemaining);
     },
-    [item, slug],
+    [item, slug, t],
   );
 
   useEffect(() => {
@@ -92,7 +92,7 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
   }, [step, code, loadCode]);
 
   if (!item) return null;
-  const guardLabel = GUARD_OPTIONS.find((option) => option.id === item.guardType)?.label ?? "2FA yok";
+  const guardLabel = t(GUARD_OPTIONS.find((option) => option.id === item.guardType)?.label ?? "x.2fa-yok");
 
   return (
     <Modal
@@ -151,18 +151,12 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
         {step === "credentials" ? (
           <>
             <div className="grid gap-2.5">
-              {item.username ? <Credential label="Kullanıcı adı" value={item.username} /> : null}
+              {item.username ? <Credential label={t("x.kullanc-ad-2")} value={item.username} /> : null}
               {item.email ? <Credential label="E-posta" value={item.email} /> : null}
-              {item.password ? <Credential label="Şifre" value={item.password} mono /> : null}
+              {item.password ? <Credential label={t("x.sifre")} value={item.password} mono /> : null}
             </div>
-            <p className="note note-warn">
-              Bu hesap paylaşımlıdır. Başka kullanıcılar da aynı hesabı kullanabilir. Şifreyi veya
-              güvenlik bilgilerini değiştirmeyin.
-            </p>
-            <p className="text-[11px] muted">
-              Devam ettiğinizde hesap bilgileri ekrandan kalkar, yerine bu hesabın kullanım notları
-              gelir.
-            </p>
+            <p className="note note-warn">{t("x.bu-hesap-paylasmldr-baska-kullanclar-da-ayn-hesab-kullan")}</p>
+            <p className="text-[11px] muted">{t("x.devam-ettiginizde-hesap-bilgileri-ekrandan-kalkar-yerine")}</p>
           </>
         ) : null}
 
@@ -170,9 +164,7 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
           <>
             {item.notes ? (
               <div className="rounded-xl border p-3.5 hairline">
-                <p className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">
-                  Kullanım notları
-                </p>
+                <p className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">{t("x.kullanm-notlar")}</p>
                 <Markdown content={item.notes} />
               </div>
             ) : (
@@ -180,9 +172,9 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
             )}
             {item.mailEmail ? (
               <div className="grid gap-2.5">
-                <Credential label="Bağlı e-posta" value={item.mailEmail} />
+                <Credential label={t("x.bagl-e-posta")} value={item.mailEmail} />
                 {item.mailPassword ? (
-                  <Credential label="E-posta şifresi" value={item.mailPassword} mono />
+                  <Credential label={t("x.e-posta-sifresi")} value={item.mailPassword} mono />
                 ) : null}
               </div>
             ) : null}
@@ -190,9 +182,7 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
               <Fingerprint size={14} />
               <div>
                 <p className="text-[12px] font-medium">{guardLabel}</p>
-                <p className="text-[10.5px] muted">
-                  Kod sunucuda üretilir · secret tarayıcıya gönderilmez
-                </p>
+                <p className="text-[10.5px] muted">{t("x.kod-sunucuda-uretilir-secret-taraycya-gonderilmez")}</p>
               </div>
             </div>
           </>
@@ -201,9 +191,7 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
         {step === "code" ? (
           <>
             {item.guardType === "none" ? (
-              <p className="note note-warn">
-                Bu hesapta 2FA / Guard tanımlı değil. Kullanıcı adı ve şifre ile giriş yapabilirsiniz.
-              </p>
+              <p className="note note-warn">{t("x.bu-hesapta-2fa-guard-tanml-degil-kullanc-ad-ve-sifre-ile")}</p>
             ) : null}
             {error ? <p className="note note-danger">{error}</p> : null}
             <div
@@ -223,16 +211,14 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
               {code && code.secondsRemaining > 0 ? (
                 <p className="mt-3 inline-flex items-center gap-1.5 text-[11.5px] muted">
                   <Clock3 size={12} />
-                  {seconds} saniye içinde yenilenecek
+                  {t("x.seconds-saniye-icinde-yenilenecek", { seconds })}
                 </p>
               ) : code?.kind === "email" ? (
                 <p className="mt-3 text-[11.5px] muted">{code.detail || "En yeni mailden alındı"}</p>
               ) : null}
             </div>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[11px] muted">
-                Kodu giriş ekranındaki doğrulama alanına yapıştırın. Süre bitince otomatik yenilenir.
-              </p>
+              <p className="text-[11px] muted">{t("x.kodu-giris-ekranndaki-dogrulama-alanna-yapstrn-sure-biti")}</p>
               {code ? <CopyButton value={code.code} /> : null}
             </div>
           </>

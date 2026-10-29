@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,9 +33,9 @@ type GameOption = { id: number; title: string };
 type AccountOption = { id: number; label: string };
 
 const typeLabels: Record<AdminCode["type"], string> = {
-  choice: "Seçmeli (müşteri seçer)",
+  choice: "x.secmeli-musteri-secer",
   single: "Tekli teslimat",
-  bundle: "Paket (çoklu)",
+  bundle: "x.paket-coklu",
 };
 
 export function CodeManager({
@@ -48,6 +49,7 @@ export function CodeManager({
   games: GameOption[];
   accounts: AccountOption[];
 }) {
+  const t = useT();
   const router = useRouter();
   const [filter, setFilter] = useState<"all" | AdminCode["status"]>("all");
   const [detail, setDetail] = useState<AdminCode | null>(null);
@@ -129,22 +131,22 @@ export function CodeManager({
       gameIds,
       accountIds,
       count,
-      label: `${typeLabels[type]}${type === "choice" ? ` (${choiceCount})` : ""} · ${"Sınırsız"}`,
+      label: `${typeLabels[type]}${type === "choice" ? ` (${choiceCount})` : ""} · ${t("x.snrsz")}`,
     });
     setPending(false);
     if (!result.ok) {
-      setError(result.message ?? "Kod üretilemedi.");
+      setError(result.message ?? t("x.kod-uretilemedi"));
       return;
     }
     setGenerated(result.data?.codes ?? []);
     setStep(4);
-    toast.success(result.message ?? "Kodlar üretildi");
+    toast.success(result.message ?? t("x.kodlar-uretildi"));
     router.refresh();
   }
 
   async function copyAll() {
     await navigator.clipboard.writeText(generated.join("\n"));
-    toast.success("Tüm kodlar kopyalandı");
+    toast.success(t("x.tum-kodlar-kopyaland"));
   }
 
   function download() {
@@ -166,10 +168,10 @@ export function CodeManager({
     const result = await deleteCode(formData);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Silinemedi");
+      toast.error(result.message ?? t("x.silinemedi"));
       return;
     }
-    toast.success(result.message ?? "Silindi");
+    toast.success(result.message ?? t("x.silindi"));
     setDeleting(null);
     router.refresh();
   }
@@ -184,10 +186,10 @@ export function CodeManager({
     setPending(false);
     setBulkOpen(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Silinemedi");
+      toast.error(result.message ?? t("x.silinemedi"));
       return;
     }
-    toast.success(result.message ?? "Kodlar silindi");
+    toast.success(result.message ?? t("x.kodlar-silindi"));
     setSelected([]);
     router.refresh();
   }
@@ -196,7 +198,7 @@ export function CodeManager({
     const codes = filtered.filter((code) => selected.includes(code.id)).map((code) => code.code);
     if (codes.length === 0) return;
     await navigator.clipboard.writeText(codes.join("\n"));
-    toast.success(`${codes.length} kod kopyalandı`);
+    toast.success(t("x.count-kod-kopyaland", { count: codes.length }));
   }
 
   const allVisibleSelected = filtered.length > 0 && filtered.every((code) => selected.includes(code.id));
@@ -209,24 +211,20 @@ export function CodeManager({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] muted">Teslimat</p>
-          <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">Reedem kodları</h1>
-          <p className="mt-1 text-[12.5px] muted">
-            Kod süresi son kullanma tarihi değildir; müşteri kodu kullandığı anda başlar.
-          </p>
+          <h1 className="mt-1.5 text-[23px] font-semibold tracking-[-0.025em]">{" "}{t("x.reedem-kodlar")}</h1>
+          <p className="mt-1 text-[12.5px] muted">{t("x.kod-suresi-son-kullanma-tarihi-degildir-musteri-kodu-kul")}</p>
         </div>
         <button type="button" className="btn btn-dark btn-sm" onClick={() => { resetWizard(); setWizardOpen(true); }}>
-          <Plus size={13} />
-          Kod oluştur
-        </button>
+          <Plus size={13} />{t("x.kod-olustur")}</button>
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
         {(
           [
-            ["all", "Tümü", counts.all],
+            ["all", t("x.tumu"), counts.all],
             ["active", "Aktif", counts.active],
-            ["used", "Kullanılmış", counts.used],
-            ["expired", "Süresi dolmuş", counts.expired],
+            ["used", t("x.kullanlms"), counts.used],
+            ["expired", t("x.suresi-dolmus"), counts.expired],
           ] as const
         ).map(([key, label, value]) => (
           <button
@@ -246,14 +244,13 @@ export function CodeManager({
 
       {selected.length > 0 ? (
         <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-[var(--surface)] px-3 py-2.5 hairline">
-          <span className="text-[12px] font-medium">{selected.length} kod seçildi</span>
+          <span className="text-[12px] font-medium">{t("x.count-kod-secildi", { count: selected.length })}</span>
           <span className="flex-1" />
           <button type="button" className="btn btn-outline btn-sm" onClick={copySelected}>
             <Copy size={12} /> Kopyala
           </button>
           <button type="button" className="btn btn-danger btn-sm" onClick={() => setBulkOpen(true)}>
-            <Trash2 size={12} /> Seçilenleri sil
-          </button>
+            <Trash2 size={12} />{t("x.secilenleri-sil")}</button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelected([])}>
             Temizle
           </button>
@@ -269,17 +266,17 @@ export function CodeManager({
                   <input
                     type="checkbox"
                     className="checkbox"
-                    aria-label="Görünen kodları seç"
+                    aria-label={t("x.gorunen-kodlar-sec")}
                     checked={allVisibleSelected}
                     onChange={(event) => setSelected(event.target.checked ? filtered.map((code) => code.id) : [])}
                   />
                 </th>
-                <th>Kod</th>
-                <th>Tür</th>
-                <th>Erişim süresi</th>
-                <th>Oluşturulma</th>
-                <th>Durum</th>
-                <th className="text-right">İşlem</th>
+                <th>{t("x.kod")}</th>
+                <th>{t("x.tur")}</th>
+                <th>{" "}{t("x.erisim-suresi")}</th>
+                <th>{t("x.olusturulma")}</th>
+                <th>{t("x.durum")}</th>
+                <th className="text-right">{t("x.islem")}</th>
               </tr>
             </thead>
             <tbody>
@@ -287,8 +284,8 @@ export function CodeManager({
                 <tr>
                   <td colSpan={7} className="py-12 text-center">
                     <Wand2 size={20} className="mx-auto muted" />
-                    <p className="mt-2 text-[12.5px] font-medium">Kod bulunamadı</p>
-                    <p className="mt-1 text-[11.5px] muted">Kod sihirbazı ile toplu üretim yapabilirsiniz.</p>
+                    <p className="mt-2 text-[12.5px] font-medium">{" "}{t("x.kod-bulunamad")}</p>
+                    <p className="mt-1 text-[11.5px] muted">{" "}{t("x.kod-sihirbaz-ile-toplu-uretim-yapabilirsiniz")}</p>
                   </td>
                 </tr>
               ) : null}
@@ -298,7 +295,7 @@ export function CodeManager({
                     <input
                       type="checkbox"
                       className="checkbox"
-                      aria-label={`${code.code} seç`}
+                      aria-label={t("x.name-sec", { name: code.code })}
                       checked={selected.includes(code.id)}
                       onChange={() => toggleSelect(code.id)}
                     />
@@ -310,10 +307,10 @@ export function CodeManager({
                   <td>
                     <span className="badge">{typeLabels[code.type]}</span>
                     {code.type === "choice" ? (
-                      <span className="ml-1 text-[10.5px] muted">{code.choiceCount} seçim</span>
+                      <span className="ml-1 text-[10.5px] muted">{t("x.count-secim", { count: code.choiceCount })}</span>
                     ) : null}
                   </td>
-                  <td className="text-[12px]">Sınırsız</td>
+                  <td className="text-[12px]">{t("x.snrsz")}</td>
                   <td className="text-[11px] muted">{formatDateTime(code.createdAt)}</td>
                   <td>
                     <span
@@ -321,7 +318,7 @@ export function CodeManager({
                         code.status === "active" ? "badge-blue" : code.status === "used" ? "badge-green" : "badge-red"
                       }`}
                     >
-                      {code.status === "active" ? "Aktif" : code.status === "used" ? "Kullanılmış" : "Süresi dolmuş"}
+                      {code.status === "active" ? "Aktif" : code.status === "used" ? t("x.kullanlms") : t("x.suresi-dolmus")}
                     </span>
                   </td>
                   <td>
@@ -353,34 +350,34 @@ export function CodeManager({
         open={detail !== null}
         onClose={() => setDetail(null)}
         title={detail?.code}
-        description={detail ? `${typeLabels[detail.type]} · Sınırsız` : undefined}
+        description={detail ? `${typeLabels[detail.type]} · ${t("x.snrsz")}` : undefined}
         size="lg"
       >
         {detail ? (
           <div className="space-y-3.5">
             <div className="grid gap-2.5 sm:grid-cols-2">
-              <InfoRow label="Durum" value={detail.status === "active" ? "Kullanılmamış" : detail.status === "used" ? "Kullanılmış" : "Süresi dolmuş"} />
-              <InfoRow label="Kullanan müşteri" value={detail.detail?.customerUsername ?? "Misafir kullanıcı"} />
-              <InfoRow label="Kullanım tarihi" value={formatDateTime(detail.detail?.grantedAt)} />
-              <InfoRow label="Erişim bitişi" value={formatDateTime(detail.detail?.accessExpiresAt)} />
+              <InfoRow label={t("x.durum")} value={detail.status === "active" ? t("x.kullanlmams") : detail.status === "used" ? t("x.kullanlms") : t("x.suresi-dolmus")} />
+              <InfoRow label={t("x.kullanan-musteri")} value={detail.detail?.customerUsername ?? t("x.misafir-kullanc")} />
+              <InfoRow label={t("x.kullanm-tarihi")} value={formatDateTime(detail.detail?.grantedAt)} />
+              <InfoRow label={t("x.erisim-bitisi")} value={formatDateTime(detail.detail?.accessExpiresAt)} />
             </div>
             <div>
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">Teslim edilen ürünler</p>
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] muted">{" "}{t("x.teslim-edilen-urunler")}</p>
               <div className="mt-2 divide-y rounded-lg border hairline">
                 {(detail.detail?.items ?? []).length === 0 ? (
-                  <p className="px-3 py-3 text-[12px] muted">Henüz teslimat yapılmadı.</p>
+                  <p className="px-3 py-3 text-[12px] muted">{" "}{t("x.henuz-teslimat-yaplmad")}</p>
                 ) : null}
                 {detail.detail?.items.map((item, index) => (
                   <div key={`${item.title}-${index}`} className="flex items-center justify-between gap-2 px-3 py-2.5">
                     <div>
                       <p className="text-[12.5px] font-medium">{item.title}</p>
                       <p className="text-[10.5px] muted">
-                        {item.kind === "game" ? "Ürün" : "Hesap"}
-                        {item.gameId ? ` · ürün #${item.gameId}` : ""}
+                        {item.kind === "game" ? t("x.urun") : "Hesap"}
+                        {item.gameId ? ` · ${t("x.urun-id", { id: item.gameId })}` : ""}
                         {item.accountId ? ` · atanan hesap #${item.accountId}` : ""}
                       </p>
                     </div>
-                    <span className="badge">{item.accountId ? `Hesap #${item.accountId}` : "Hesap atanmadı"}</span>
+                    <span className="badge">{item.accountId ? `Hesap #${item.accountId}` : t("x.hesap-atanmad")}</span>
                   </div>
                 ))}
               </div>
@@ -393,12 +390,10 @@ export function CodeManager({
       <Modal
         open={deleting !== null}
         onClose={() => setDeleting(null)}
-        title="Kodu sil"
+        title={t("x.kodu-sil")}
         footer={
           <>
-            <button type="button" className="btn btn-outline" onClick={() => setDeleting(null)}>
-              Vazgeç
-            </button>
+            <button type="button" className="btn btn-outline" onClick={() => setDeleting(null)}>{t("x.vazgec")}</button>
             <button type="button" className="btn btn-danger" onClick={onDelete} disabled={pending}>
               {pending ? <Loader2 size={13} className="animate-spin" /> : null}
               Sil
@@ -407,45 +402,38 @@ export function CodeManager({
         }
       >
         <p className="text-[13px]">
-          <span className="mono">{deleting?.code}</span> kodunu silmek istediğinize emin misiniz? Kullanılmış
-          kodlar arşiv için saklanır.
-        </p>
+          <span className="mono">{deleting?.code}</span>{t("x.kodunu-silmek-istediginize-emin-misiniz-kullanlms-kodlar")}</p>
       </Modal>
 
       {/* Bulk delete */}
       <Modal
         open={bulkOpen}
         onClose={() => (pending ? undefined : setBulkOpen(false))}
-        title="Seçili kodları sil"
-        description={`${selected.length} kod seçildi`}
+        title={t("x.secili-kodlar-sil")}
+        description={t("x.count-kod-secildi", { count: selected.length })}
         footer={
           <>
-            <button type="button" className="btn btn-outline" onClick={() => setBulkOpen(false)} disabled={pending}>
-              Vazgeç
-            </button>
+            <button type="button" className="btn btn-outline" onClick={() => setBulkOpen(false)} disabled={pending}>{t("x.vazgec")}</button>
             <button type="button" className="btn btn-danger" onClick={onBulkDelete} disabled={pending}>
               {pending ? <Loader2 size={13} className="animate-spin" /> : null}
-              Seçilenleri sil
+              {t("x.secilenleri-sil")}
             </button>
           </>
         }
       >
-        <p className="text-[13px] leading-relaxed">
-          Seçili kodlar silinecek. Kullanılmış kodlar teslimat kaydı olduğu için arşivde kalır, bu yüzden
-          yalnızca hiç kullanılmamış kodlar kaldırılır. Bu işlem geri alınamaz.
-        </p>
+        <p className="text-[13px] leading-relaxed">{t("x.secili-kodlar-silinecek-kullanlms-kodlar-teslimat-kayd-o")}</p>
       </Modal>
 
       {/* Wizard */}
       <Modal
         open={wizardOpen}
         onClose={() => setWizardOpen(false)}
-        title="Kod oluştur"
-        description="4 adımda teslimat kodu üretin. Erişim süresizdir."
+        title={t("x.kod-olustur")}
+        description={t("x.4-admda-teslimat-kodu-uretin-erisim-suresizdir")}
         size="lg"
         footer={
           <div className="flex w-full items-center justify-between gap-2">
-            <span className="text-[11px] muted">Adım {step} / 4</span>
+            <span className="text-[11px] muted">{t("x.adm-step-4", { step })}</span>
             <div className="flex items-center gap-2">
               {step > 1 && step < 4 ? (
                 <button type="button" className="btn btn-outline" onClick={() => setStep(step - 1)}>
@@ -465,7 +453,7 @@ export function CodeManager({
         {step === 3 ? (
                 <button type="button" className="btn btn-dark" onClick={onGenerate} disabled={pending}>
                   {pending ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={13} />}
-                  Oluştur
+                  {t("x.olustur")}
                 </button>
               ) : null}
               {step === 4 ? (
@@ -487,9 +475,9 @@ export function CodeManager({
           <div className="space-y-3">
             {(
               [
-                { id: "choice", title: "Seçmeli Kod", text: "Müşteri mağazadaki ürünler arasından hakkı kadar seçim yapar." },
-                { id: "single", title: "Tekli Teslimat", text: "Kod tek bir ürün veya hesap grubuna bağlanır." },
-                { id: "bundle", title: "Paket Teslimat", text: "Tek koda birden fazla ürün veya hesap tanımlanır." },
+                { id: "choice", title: t("x.secmeli-kod"), text: t("x.musteri-magazadaki-urunler-arasndan-hakk-kadar-secim-yap") },
+                { id: "single", title: "Tekli Teslimat", text: t("x.kod-tek-bir-urun-veya-hesap-grubuna-baglanr") },
+                { id: "bundle", title: "Paket Teslimat", text: t("x.tek-koda-birden-fazla-urun-veya-hesap-tanmlanr") },
               ] as const
             ).map((option) => (
               <button
@@ -516,7 +504,7 @@ export function CodeManager({
             ))}
 
             {type === "choice" ? (
-              <Field label="Seçim Hakkı" hint="Müşterinin koddan alabileceği ürün adedi (1-20).">
+              <Field label={t("x.secim-hakk")} hint={t("x.musterinin-koddan-alabilecegi-urun-adedi-1-20")}>
                 <select
                   value={choiceCount}
                   onChange={(event) => setChoiceCount(Number(event.target.value))}
@@ -524,18 +512,18 @@ export function CodeManager({
                 >
                   {Array.from({ length: 20 }, (_, index) => index + 1).map((value) => (
                     <option key={value} value={value}>
-                      {value} ürün
+                      {t("x.count-urun", { count: value })}
                     </option>
                   ))}
                 </select>
               </Field>
             ) : (
               <div>
-                <p className="label">Hedef seçimi ({type === "single" ? "yalnızca 1" : "çoklu"})</p>
+                <p className="label">{t("x.hedef-secimi-mode", { mode: type === "single" ? t("x.yalnzca-1") : t("x.coklu") })}</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div className="max-h-44 overflow-y-auto rounded-lg border p-2 hairline scroll-thin">
-                    <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">Ürünler</p>
-                    {games.length === 0 ? <p className="px-1 py-1 text-[11px] muted">Ürün yok</p> : null}
+                    <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">{t("x.urunler")}</p>
+                    {games.length === 0 ? <p className="px-1 py-1 text-[11px] muted">{" "}{t("x.urun-yok")}</p> : null}
                     {games.map((game) => (
                       <label key={game.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-[11.5px]">
                         <input
@@ -548,10 +536,8 @@ export function CodeManager({
                     ))}
                   </div>
                   <div className="max-h-44 overflow-y-auto rounded-lg border p-2 hairline scroll-thin">
-                    <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">
-                      Hesap grupları
-                    </p>
-                    {accounts.length === 0 ? <p className="px-1 py-1 text-[11px] muted">Hesap yok</p> : null}
+                    <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">{t("x.hesap-gruplar")}</p>
+                    {accounts.length === 0 ? <p className="px-1 py-1 text-[11px] muted">{t("x.hesap-yok")}</p> : null}
                     {accounts.map((account) => (
                       <label key={account.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-[11.5px]">
                         <input
@@ -572,22 +558,16 @@ export function CodeManager({
         {step === 2 ? (
           <div className="space-y-3">
             <div className="rounded-xl border p-3.5 hairline">
-              <p className="text-[12.5px] font-medium">Sınırsız erişim</p>
-              <p className="mt-1 text-[11.5px] leading-relaxed muted">
-                Bu platform paylaşımlı hesap satışı yapar: kod kullanıldığında erişim kalıcı olarak
-                açılır. Teslimatın süresi dolmaz ve hesap “teslim edildi / durdu” moduna geçmez.
-              </p>
+              <p className="text-[12.5px] font-medium">{" "}{t("x.snrsz-erisim")}</p>
+              <p className="mt-1 text-[11.5px] leading-relaxed muted">{t("x.bu-platform-paylasml-hesap-sats-yapar-kod-kullanldgnda-e")}</p>
             </div>
-            <p className="text-[11.5px] leading-relaxed muted">
-              Seçmeli kodlarda müşteri, koddaki seçim hakkı kadar ürünü kendisi seçer. Tüm ürünler
-              süresiz erişimle kütüphaneye eklenir.
-            </p>
+            <p className="text-[11.5px] leading-relaxed muted">{t("x.secmeli-kodlarda-musteri-koddaki-secim-hakk-kadar-urunu")}</p>
           </div>
         ) : null}
 
         {step === 3 ? (
           <div className="space-y-3">
-            <Field label="Kod Adedi" hint="1 ile 500 arasında toplu üretim yapılabilir.">
+            <Field label={t("x.kod-adedi")} hint={t("x.1-ile-500-arasnda-toplu-uretim-yaplabilir")}>
               <input
                 type="number"
                 min={1}
@@ -598,13 +578,13 @@ export function CodeManager({
               />
             </Field>
             <div className="rounded-lg border p-3 hairline">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] muted">Özet</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] muted">{t("x.ozet")}</p>
               <div className="mt-2 space-y-1.5 text-[12px]">
-                <SummaryRow label="Tür" value={typeLabels[type]} />
-                {type === "choice" ? <SummaryRow label="Seçim hakkı" value={`${choiceCount} ürün`} /> : null}
-                {type !== "choice" ? <SummaryRow label="Hedef sayısı" value={`${targetCount} öğe`} /> : null}
-                <SummaryRow label="Erişim süresi" value="Sınırsız" />
-                <SummaryRow label="Adet" value={`${count} kod`} />
+                <SummaryRow label={t("x.tur")} value={typeLabels[type]} />
+                {type === "choice" ? <SummaryRow label={t("x.secim-hakk-2")} value={t("x.count-urun", { count: choiceCount })} /> : null}
+                {type !== "choice" ? <SummaryRow label={t("x.hedef-says")} value={t("x.count-oge", { count: targetCount })} /> : null}
+                <SummaryRow label={t("x.erisim-suresi")} value={t("x.snrsz")} />
+                <SummaryRow label={t("x.adet")} value={`${count} kod`} />
               </div>
             </div>
           </div>
@@ -614,14 +594,13 @@ export function CodeManager({
           <div className="space-y-3">
             <div className="flex items-center gap-2 rounded-lg border px-3 py-2 hairline" style={{ background: "color-mix(in srgb, #16a34a 8%, transparent)" }}>
               <Check size={15} style={{ color: "#16a34a" }} />
-              <p className="text-[12px] font-medium">{generated.length} kod üretildi ve listeye eklendi.</p>
+              <p className="text-[12px] font-medium">{t("x.count-kod-uretildi-ve-listeye-eklendi", { count: generated.length })}</p>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[11px] muted">Her satırda bir kod</p>
+              <p className="text-[11px] muted">{" "}{t("x.her-satrda-bir-kod")}</p>
               <div className="flex items-center gap-1.5">
                 <button type="button" className="btn btn-outline btn-sm" onClick={copyAll}>
-                  <Copy size={12} /> Tümünü kopyala
-                </button>
+                  <Copy size={12} />{t("x.tumunu-kopyala")}</button>
                 <button type="button" className="btn btn-outline btn-sm" onClick={download}>
                   <Download size={12} /> .TXT indir
                 </button>

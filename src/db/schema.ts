@@ -37,10 +37,10 @@ export const stores = sqliteTable(
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull(),
     name: text("name").notNull(),
-    title: text("title").notNull().default("Dijital Hesap Mağazası"),
+    title: text("title").notNull().default("x.dijital-hesap-magazas"),
     subtitle: text("subtitle")
       .notNull()
-      .default("Oyun ve hesap kodlarını saniyeler içinde teslim alın."),
+      .default("x.oyun-ve-hesap-kodlarn-saniyeler-icinde-teslim-aln"),
     announcement: text("announcement").notNull().default(""),
     footerText: text("footer_text").notNull().default(""),
     logoUrl: text("logo_url").notNull().default(""),

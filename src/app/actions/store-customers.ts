@@ -1,5 +1,9 @@
 "use server";
 
+import { currentLocaleCode } from "@/lib/i18n/server";
+import { getTranslator } from "@/lib/i18n/server";
+import { createTranslator } from "@/lib/i18n/translate";
+
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
@@ -52,10 +56,11 @@ async function loadCustomer(storeId: number, customerId: number) {
 }
 
 export async function setCustomerBan(slug: string, customerId: number, banned: boolean): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
   await db
     .update(customers)
     .set({ status: banned ? "banned" : "active" })
@@ -65,19 +70,20 @@ export async function setCustomerBan(slug: string, customerId: number, banned: b
     action: banned ? "store.customer.ban" : "store.customer.unban",
     entity: "customer",
     entityId: customerId,
-    summary: `${customer.username} ${banned ? "yasaklandı" : "yasağı kaldırıldı"}`,
+    summary: `${customer.username} ${banned ? t("x.yasakland") : t("x.yasag-kaldrld")}`,
     severity: banned ? "warn" : "info",
     storeId: g.storeId,
     storeSlug: g.slug,
   });
-  return { ok: true, message: banned ? "Müşteri yasaklandı." : "Müşterinin yasağı kaldırıldı." };
+  return { ok: true, message: banned ? t("x.musteri-yasakland") : t("x.musterinin-yasag-kaldrld") };
 }
 
 export async function deleteCustomer(slug: string, customerId: number): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
 
   await db
     .delete(entitlements)
@@ -100,14 +106,15 @@ export async function deleteCustomer(slug: string, customerId: number): Promise<
     storeSlug: g.slug,
     metadata: { username: customer.username, email: customer.email },
   });
-  return { ok: true, message: "Müşteri ve kütüphanesi silindi." };
+  return { ok: true, message: t("x.musteri-ve-kutuphanesi-silindi") };
 }
 
 export async function editCustomer(slug: string, customerId: number, formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
 
   const username = String(formData.get("username") ?? "").trim();
   const displayName = String(formData.get("displayName") ?? "").trim();
@@ -115,7 +122,7 @@ export async function editCustomer(slug: string, customerId: number, formData: F
   const newPassword = String(formData.get("newPassword") ?? "");
 
   if (!/^[a-zA-Z0-9._-]{3,24}$/.test(username)) {
-    return { ok: false, message: "Kullanıcı adı 3-24 karakter olmalıdır." };
+    return { ok: false, message: t("x.kullanc-ad-3-24-karakter-olmaldr") };
   }
   if (username.toLowerCase() !== customer.username.toLowerCase()) {
     const taken = await db
@@ -123,13 +130,13 @@ export async function editCustomer(slug: string, customerId: number, formData: F
       .from(customers)
       .where(and(eq(customers.storeId, g.storeId), eq(customers.username, username)))
       .limit(1);
-    if (taken.length > 0) return { ok: false, message: "Bu kullanıcı adı bu mağazada alınmış." };
+    if (taken.length > 0) return { ok: false, message: t("x.bu-kullanc-ad-bu-magazada-alnms") };
   }
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-    return { ok: false, message: "Geçerli bir e-posta girin." };
+    return { ok: false, message: t("x.gecerli-bir-e-posta-girin") };
   }
   if (newPassword && newPassword.length < 6) {
-    return { ok: false, message: "Yeni şifre en az 6 karakter olmalıdır." };
+    return { ok: false, message: t("x.yeni-sifre-en-az-6-karakter-olmaldr") };
   }
 
   await db
@@ -156,14 +163,15 @@ export async function editCustomer(slug: string, customerId: number, formData: F
       before: { username: customer.username, email: customer.email },
     },
   });
-  return { ok: true, message: "Müşteri bilgileri güncellendi." };
+  return { ok: true, message: t("x.musteri-bilgileri-guncellendi") };
 }
 
 export async function resetCustomerFactors(slug: string, customerId: number, kind: string): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
   await db
     .delete(securityFactors)
     .where(
@@ -184,7 +192,7 @@ export async function resetCustomerFactors(slug: string, customerId: number, kin
     storeSlug: g.slug,
     metadata: { kind },
   });
-  return { ok: true, message: "Güvenlik yöntemi sıfırlandı." };
+  return { ok: true, message: t("x.guvenlik-yontemi-sfrland") };
 }
 
 export async function removeCustomerEntitlement(
@@ -192,10 +200,11 @@ export async function removeCustomerEntitlement(
   entitlementId: number,
   customerId: number,
 ): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
   const rows = await db
     .select()
     .from(entitlements)
@@ -207,7 +216,7 @@ export async function removeCustomerEntitlement(
       ),
     )
     .limit(1);
-  if (rows.length === 0) return { ok: false, message: "Teslimat bulunamadı." };
+  if (rows.length === 0) return { ok: false, message: t("x.teslimat-bulunamad") };
   await db.delete(entitlements).where(and(eq(entitlements.id, entitlementId), eq(entitlements.storeId, g.storeId)));
   await sweepExpiredEntitlements(g.storeId);
   refresh(g.slug);
@@ -221,7 +230,7 @@ export async function removeCustomerEntitlement(
     storeSlug: g.slug,
     metadata: { title: rows[0].title },
   });
-  return { ok: true, message: "Teslimat kütüphaneden kaldırıldı." };
+  return { ok: true, message: t("x.teslimat-kutuphaneden-kaldrld") };
 }
 
 export async function addCustomerEntitlement(
@@ -230,13 +239,14 @@ export async function addCustomerEntitlement(
   gameId: number,
   durationMinutes: number | null,
 ): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
   const game = await db.select().from(games).where(and(eq(games.storeId, g.storeId), eq(games.id, gameId))).limit(1);
   const gameRow = game[0];
-  if (!gameRow) return { ok: false, message: "Ürün bulunamadı." };
+  if (!gameRow) return { ok: false, message: t("x.urun-bulunamad") };
 
   const candidates = await db
     .select()
@@ -255,7 +265,7 @@ export async function addCustomerEntitlement(
         storeId: g.storeId,
         codeId: 0,
         customerId,
-        guestUsername: "Yönetici tarafından eklendi",
+        guestUsername: t("x.yonetici-tarafndan-eklendi"),
         accessExpiresAt: expiresAt,
       })
       .returning();
@@ -284,8 +294,8 @@ export async function addCustomerEntitlement(
   return {
     ok: true,
     message: candidate
-      ? "Ürün kütüphaneye eklendi, hesap tanımlandı."
-      : "Ürün kütüphaneye eklendi (eşleşen hesap bulunamadı).",
+      ? t("x.urun-kutuphaneye-eklendi-hesap-tanmland")
+      : t("x.urun-kutuphaneye-eklendi-eslesen-hesap-bulunamad"),
   };
 }
 
@@ -298,16 +308,17 @@ export async function bulkCustomerAction(
   customerIds: number[],
   action: "ban" | "unban" | "delete",
 ): Promise<ActionResult<{ affected: number }>> {
+  const { t } = await getTranslator();
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const unique = [...new Set(customerIds.filter((id) => Number.isInteger(id) && id > 0))].slice(0, 500);
-  if (unique.length === 0) return { ok: false, message: "Müşteri seçilmedi." };
+  if (unique.length === 0) return { ok: false, message: t("x.musteri-secilmedi") };
 
   const rows = await db
     .select({ id: customers.id, username: customers.username, status: customers.status })
     .from(customers)
     .where(and(eq(customers.storeId, g.storeId), inArray(customers.id, unique)));
-  if (rows.length === 0) return { ok: false, message: "Müşteri bulunamadı." };
+  if (rows.length === 0) return { ok: false, message: t("x.musteri-bulunamad") };
   const ids = rows.map((row) => row.id);
 
   if (action === "delete") {
@@ -329,7 +340,7 @@ export async function bulkCustomerAction(
     action: action === "delete" ? "store.customer.bulk_delete" : `store.customer.bulk_${action}`,
     entity: "customer",
     summary: `${ids.length} müşteri için toplu işlem: ${
-      action === "delete" ? "silindi" : action === "ban" ? "yasaklandı" : "yasak kaldırıldı"
+      action === "delete" ? "silindi" : action === "ban" ? t("x.yasakland") : t("x.yasak-kaldrld")
     }`,
     severity: action === "delete" ? "critical" : "warn",
     storeId: g.storeId,
@@ -368,10 +379,11 @@ export async function customerLibraryPayload(
     }[]
   >
 > {
+  const t = createTranslator(await currentLocaleCode());
   const g = await guard(slug);
-  if (!g) return { ok: false, message: "Yetkiniz yok." };
+  if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
-  if (!customer) return { ok: false, message: "Müşteri bulunamadı." };
+  if (!customer) return { ok: false, message: t("x.musteri-bulunamad") };
   const rows = await db
     .select({ entitlement: entitlements, game: games, account: accounts })
     .from(entitlements)

@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -23,21 +24,21 @@ type BulkAction = "ban" | "unban" | "delete";
 
 const CONFIRM: Record<BulkAction, { title: string; body: string; cta: string; danger: boolean }> = {
   ban: {
-    title: "Seçili müşterileri yasakla",
-    body: "Yasaklanan müşteriler mağazaya giriş yapamaz ancak kayıtları ve teslimatları silinmez. İşlemi istediğiniz zaman geri alabilirsiniz.",
+    title: "x.secili-musterileri-yasakla",
+    body: "x.yasaklanan-musteriler-magazaya-giris-yapamaz-ancak-kaytl",
     cta: "Yasakla",
     danger: false,
   },
   unban: {
-    title: "Yasağı kaldır",
-    body: "Seçili müşteriler yeniden giriş yapabilecek. Mevcut teslimatları etkilenmez.",
-    cta: "Yasağı kaldır",
+    title: "x.yasag-kaldr",
+    body: "x.secili-musteriler-yeniden-giris-yapabilecek-mevcut-tesli",
+    cta: "x.yasag-kaldr",
     danger: false,
   },
   delete: {
-    title: "Müşterileri kalıcı olarak sil",
-    body: "Seçili müşteriler, kütüphaneleri ve 2FA kayıtları kalıcı olarak silinir. Bu işlem geri alınamaz.",
-    cta: "Kalıcı olarak sil",
+    title: "x.musterileri-kalc-olarak-sil",
+    body: "x.secili-musteriler-kutuphaneleri-ve-2fa-kaytlar-kalc-olar",
+    cta: "x.kalc-olarak-sil",
     danger: true,
   },
 };
@@ -53,6 +54,7 @@ export function CustomersTable({
   rows: CustomerRow[];
   formattedDates: Record<number, string>;
 }) {
+  const t = useT();
   const router = useRouter();
   const [selected, setSelected] = useState<number[]>([]);
   const [pendingAction, setPendingAction] = useState<BulkAction | null>(null);
@@ -71,10 +73,10 @@ export function CustomersTable({
     setBusy(false);
     setPendingAction(null);
     if (!result.ok) {
-      toast.error(result.message ?? "İşlem başarısız");
+      toast.error(result.message ?? t("x.islem-basarsz"));
       return;
     }
-    toast.success(result.message ?? "İşlem tamamlandı");
+    toast.success(result.message ?? t("x.islem-tamamland"));
     setSelected([]);
     router.refresh();
   }
@@ -83,20 +85,17 @@ export function CustomersTable({
     <div className="space-y-3">
       {selected.length > 0 ? (
         <div className="sticky top-2 z-10 flex flex-wrap items-center gap-2 rounded-xl border bg-[var(--surface)] px-3 py-2.5 shadow-sm hairline">
-          <span className="text-[12px] font-medium">{selected.length} müşteri seçildi</span>
+          <span className="text-[12px] font-medium">{t("x.count-musteri-secildi", { count: selected.length })}</span>
           <span className="flex-1" />
           <button type="button" className={buttonClass("outline", "sm")} onClick={() => setPendingAction("unban")}>
-            <CheckCircle2 size={13} /> Yasağı kaldır
-          </button>
+            <CheckCircle2 size={13} />{t("x.yasag-kaldr")}</button>
           <button type="button" className={buttonClass("outline", "sm")} onClick={() => setPendingAction("ban")}>
             <Ban size={13} /> Yasakla
           </button>
           <button type="button" className={buttonClass("danger", "sm")} onClick={() => setPendingAction("delete")}>
             <Trash2 size={13} /> Sil
           </button>
-          <button type="button" className={buttonClass("ghost", "sm")} onClick={() => setSelected([])}>
-            Seçimi temizle
-          </button>
+          <button type="button" className={buttonClass("ghost", "sm")} onClick={() => setSelected([])}>{t("x.secimi-temizle")}</button>
         </div>
       ) : null}
 
@@ -109,17 +108,17 @@ export function CustomersTable({
                   <input
                     type="checkbox"
                     className="checkbox"
-                    aria-label="Tümünü seç"
+                    aria-label={t("x.tumunu-sec")}
                     checked={allSelected}
                     onChange={(event) => setSelected(event.target.checked ? rows.map((row) => row.id) : [])}
                   />
                 </th>
-                <th>Müşteri</th>
+                <th>{t("x.musteri")}</th>
                 <th>E-posta</th>
-                <th>Kayıt tarihi</th>
+                <th>{" "}{t("x.kayt-tarihi")}</th>
                 <th>Teslimat</th>
-                <th>Durum</th>
-                <th className="text-right">İşlem</th>
+                <th>{t("x.durum")}</th>
+                <th className="text-right">{t("x.islem")}</th>
               </tr>
             </thead>
             <tbody>
@@ -131,7 +130,7 @@ export function CustomersTable({
                       <input
                         type="checkbox"
                         className="checkbox"
-                        aria-label={`${row.username} seç`}
+                        aria-label={t("x.name-sec", { name: row.username })}
                         checked={checked}
                         onChange={() => toggle(row.id)}
                       />
@@ -145,15 +144,13 @@ export function CustomersTable({
                     <td className="text-[12px] tabular-nums">{row.deliveryCount}</td>
                     <td>
                       <span className={`badge ${row.status === "active" ? "badge-green" : "badge-red"}`}>
-                        {row.status === "active" ? "Aktif" : "Yasaklı"}
+                        {row.status === "active" ? "Aktif" : t("x.yasakl")}
                       </span>
                     </td>
                     <td>
                       <div className="flex justify-end">
                         <Link href={`${basePath}/admin/kullanicilar/${row.id}`} className="btn btn-outline btn-sm">
-                          <Users size={12} />
-                          Yönet
-                        </Link>
+                          <Users size={12} />{t("x.yonet")}</Link>
                       </div>
                     </td>
                   </tr>
@@ -168,12 +165,10 @@ export function CustomersTable({
         open={pendingAction !== null}
         onClose={() => (busy ? undefined : setPendingAction(null))}
         title={pendingAction ? CONFIRM[pendingAction].title : ""}
-        description={pendingAction ? `${selectedRows.length} müşteri: ${selectedRows.map((row) => row.username).join(", ")}` : undefined}
+        description={pendingAction ? t("x.count-musteri-names", { count: selectedRows.length, names: selectedRows.map((row) => row.username).join(", ") }) : undefined}
         footer={
           <>
-            <button type="button" className="btn btn-outline" onClick={() => setPendingAction(null)} disabled={busy}>
-              Vazgeç
-            </button>
+            <button type="button" className="btn btn-outline" onClick={() => setPendingAction(null)} disabled={busy}>{t("x.vazgec")}</button>
             <button
               type="button"
               className={pendingAction && CONFIRM[pendingAction].danger ? "btn btn-danger" : "btn btn-dark"}

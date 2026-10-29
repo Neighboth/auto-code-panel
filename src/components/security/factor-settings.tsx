@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
@@ -50,6 +51,7 @@ export function FactorSettings({
   subjectType: SubjectType;
   rpName: string;
 }) {
+  const t = useT();
   const [state, setState] = useState<FactorState>({
     totp: false,
     passkey: false,
@@ -87,7 +89,7 @@ export function FactorSettings({
     const result = await beginTotpSetup(slug, subjectType);
     setPending(false);
     if (!result.ok || !result.data) {
-      toast.error(result.message ?? "TOTP başlatılamadı.");
+      toast.error(result.message ?? t("x.totp-baslatlamad"));
       return;
     }
     setTotpSetup({ secret: result.data.secret, qr: result.data.qr });
@@ -101,7 +103,7 @@ export function FactorSettings({
     const result = await confirmTotpSetup(slug, subjectType, totpSetup.secret, totpCode);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Doğrulanamadı.");
+      toast.error(result.message ?? t("x.dogrulanamad"));
       return;
     }
     toast.success(result.message ?? "2FA aktif edildi");
@@ -115,7 +117,7 @@ export function FactorSettings({
     const result = await beginPasskeyRegistration(slug, subjectType);
     if (!result.ok || !result.data) {
       setPending(false);
-      toast.error(result.message ?? "Passkey başlatılamadı.");
+      toast.error(result.message ?? t("x.passkey-baslatlamad"));
       return;
     }
     const options = result.data.options as {
@@ -145,7 +147,7 @@ export function FactorSettings({
         | null;
       if (!credential) {
         setPending(false);
-        toast.error("Passkey oluşturulamadı.");
+        toast.error(t("x.passkey-olusturulamad"));
         return;
       }
       const payload = {
@@ -164,14 +166,14 @@ export function FactorSettings({
       );
       setPending(false);
       if (!save.ok) {
-        toast.error(save.message ?? "Passkey kaydedilemedi.");
+        toast.error(save.message ?? t("x.passkey-kaydedilemedi"));
         return;
       }
-      toast.success(save.message ?? "Passkey kaydedildi");
+      toast.success(save.message ?? t("x.passkey-kaydedildi"));
       await load();
     } catch {
       setPending(false);
-      toast.error("Passkey kurulumu sırasında hata oluştu.");
+      toast.error(t("x.passkey-kurulumu-srasnda-hata-olustu"));
     }
   }
 
@@ -181,10 +183,10 @@ export function FactorSettings({
     const result = await setSecurityQuestion(slug, subjectType, question, answer, answerConfirm);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Kaydedilemedi.");
+      toast.error(result.message ?? t("x.kaydedilemedi"));
       return;
     }
-    toast.success(result.message ?? "Güvenlik sorusu kaydedildi");
+    toast.success(result.message ?? t("x.guvenlik-sorusu-kaydedildi"));
     setQuestion("");
     setAnswer("");
     setAnswerConfirm("");
@@ -196,10 +198,10 @@ export function FactorSettings({
     const result = await enableEmailFactor(slug, subjectType);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Etkinleştirilemedi.");
+      toast.error(result.message ?? t("x.etkinlestirilemedi"));
       return;
     }
-    toast.success(result.message ?? "E-posta 2FA açıldı");
+    toast.success(result.message ?? t("x.e-posta-2fa-acld"));
     await load();
   }
 
@@ -213,10 +215,10 @@ export function FactorSettings({
     const result = await removeFactor(slug, subjectType, kind);
     setPending(false);
     if (!result.ok) {
-      toast.error(result.message ?? "Kaldırılamadı.");
+      toast.error(result.message ?? t("x.kaldrlamad-2"));
       return;
     }
-    toast.success(result.message ?? "Kaldırıldı");
+    toast.success(result.message ?? t("x.kaldrld"));
     await load();
   }
 
@@ -224,12 +226,9 @@ export function FactorSettings({
     <section className="card p-5">
       <div className="flex items-center gap-2">
         <ShieldCheck size={16} />
-        <h2 className="text-[14px] font-semibold">Hesap güvenliği (2FA)</h2>
+        <h2 className="text-[14px] font-semibold">{" "}{t("x.hesap-guvenligi-2fa")}</h2>
       </div>
-      <p className="mt-1 text-[11.5px] muted">
-        TOTP uygulaması, Passkey veya güvenlik sorusu. En az biri etkin olduğunda girişte ikinci
-        doğrulama adımı istenir.
-      </p>
+      <p className="mt-1 text-[11.5px] muted">{t("x.totp-uygulamas-passkey-veya-guvenlik-sorusu-en-az-biri-e")}</p>
 
       <div className="mt-4 space-y-3">
         <div className="rounded-lg border p-3.5 hairline">
@@ -239,13 +238,9 @@ export function FactorSettings({
               <p className="text-[12.5px] font-medium">TOTP (Google Authenticator)</p>
             </div>
             {state.totp ? (
-              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("totp")} disabled={pending}>
-                Kaldır
-              </button>
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("totp")} disabled={pending}>{t("x.kaldr")}</button>
             ) : (
-              <button type="button" className="btn btn-primary btn-sm" onClick={startTotp} disabled={pending}>
-                Etkinleştir
-              </button>
+              <button type="button" className="btn btn-primary btn-sm" onClick={startTotp} disabled={pending}>{t("x.etkinlestir")}</button>
             )}
           </div>
           {totpSetup ? (
@@ -273,18 +268,16 @@ export function FactorSettings({
                 <input
                   value={totpCode}
                   onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="6 haneli kod"
+                  placeholder={t("x.6-haneli-kod")}
                   className="input mono text-center text-[15px] tracking-[0.35em]"
                   inputMode="numeric"
                   required
                 />
                 <div className="flex gap-2">
                   <button type="submit" className="btn btn-primary btn-sm flex-1" disabled={pending || totpCode.length !== 6}>
-                    {pending ? "Doğrulanıyor..." : "Doğrula ve kaydet"}
+                    {pending ? t("x.dogrulanyor") : t("x.dogrula-ve-kaydet")}
                   </button>
-                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setTotpSetup(null)}>
-                    Vazgeç
-                  </button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setTotpSetup(null)}>{t("x.vazgec")}</button>
                 </div>
               </div>
             </form>
@@ -298,22 +291,16 @@ export function FactorSettings({
               <p className="text-[12.5px] font-medium">E-posta ile 2FA</p>
             </div>
             {state.email ? (
-              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("email")} disabled={pending}>
-                Kaldır
-              </button>
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("email")} disabled={pending}>{t("x.kaldr")}</button>
             ) : (
-              <button type="button" className="btn btn-primary btn-sm" onClick={toggleEmail} disabled={pending}>
-                Etkinleştir
-              </button>
+              <button type="button" className="btn btn-primary btn-sm" onClick={toggleEmail} disabled={pending}>{t("x.etkinlestir")}</button>
             )}
           </div>
           <p className="mt-1.5 text-[11px] muted">
-            Her girişte hesabınıza bağlı e-posta adresine 6 haneli kod gönderilir.
-            {state.emailAddress ? ` (${state.emailAddress})` : " Hesabınıza e-posta eklemeniz gerekir."}
+            {t("x.her-giriste-hesabnza-bagl-e-posta-adresine-6-haneli-kod-")}
+            {state.emailAddress ? ` (${state.emailAddress})` : t("x.hesabnza-e-posta-eklemeniz-gerekir")}
           </p>
-          <p className="mt-1 text-[10.5px] muted">
-            Not: e-posta ile 2FA, sunucuda SMTP yapılandırıldığında çalışır.
-          </p>
+          <p className="mt-1 text-[10.5px] muted">{t("x.not-e-posta-ile-2fa-sunucuda-smtp-yaplandrldgnda-calsr")}</p>
         </div>
 
         <div className="rounded-lg border p-3.5 hairline">
@@ -323,30 +310,24 @@ export function FactorSettings({
               <p className="text-[12.5px] font-medium">Passkey (WebAuthn)</p>
             </div>
             {state.passkey ? (
-              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("passkey")} disabled={pending}>
-                Kaldır
-              </button>
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("passkey")} disabled={pending}>{t("x.kaldr")}</button>
             ) : (
               <button type="button" className="btn btn-primary btn-sm" onClick={registerPasskey} disabled={pending}>
                 {pending ? "Kaydediliyor..." : "Kaydet"}
               </button>
             )}
           </div>
-          <p className="mt-1.5 text-[11px] muted">
-            Parmak izi, Face ID veya PIN ile parola gerektirmeyen giriş doğrulaması.
-          </p>
+          <p className="mt-1.5 text-[11px] muted">{t("x.parmak-izi-face-id-veya-pin-ile-parola-gerektirmeyen-gir")}</p>
         </div>
 
         <div className="rounded-lg border p-3.5 hairline">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Lock size={15} />
-              <p className="text-[12.5px] font-medium">Güvenlik sorusu</p>
+              <p className="text-[12.5px] font-medium">{" "}{t("x.guvenlik-sorusu")}</p>
             </div>
             {state.question ? (
-              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("question")} disabled={pending}>
-                Kaldır
-              </button>
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("question")} disabled={pending}>{t("x.kaldr")}</button>
             ) : null}
           </div>
           {state.question && state.questionText ? (
@@ -358,20 +339,20 @@ export function FactorSettings({
             </p>
           ) : null}
           <form onSubmit={submitQuestion} className="mt-3 grid gap-3 sm:grid-cols-2">
-            <Field label={state.question ? "Yeni güvenlik sorusu" : "Güvenlik sorusu"} className="sm:col-span-2">
+            <Field label={state.question ? t("x.yeni-guvenlik-sorusu") : t("x.guvenlik-sorusu")} className="sm:col-span-2">
               <input
                 value={question}
                 onChange={(event) => setQuestion(event.target.value)}
                 className="input"
                 required
                 minLength={5}
-                placeholder="Örn. İlk oyun karakterinizin adı neydi?"
+                placeholder={t("x.orn-ilk-oyun-karakterinizin-ad-neydi")}
               />
             </Field>
             <Field label="Cevap">
               <input value={answer} onChange={(event) => setAnswer(event.target.value)} className="input" required minLength={3} />
             </Field>
-            <Field label="Cevap onayı">
+            <Field label={t("x.cevap-onay")}>
               <input
                 value={answerConfirm}
                 onChange={(event) => setAnswerConfirm(event.target.value)}
@@ -381,7 +362,7 @@ export function FactorSettings({
               />
             </Field>
             <button type="submit" className="btn btn-primary btn-sm sm:col-span-2" disabled={pending}>
-              {pending ? "Kaydediliyor..." : "Güvenlik sorusunu kaydet"}
+              {pending ? "Kaydediliyor..." : t("x.guvenlik-sorusunu-kaydet")}
             </button>
           </form>
         </div>

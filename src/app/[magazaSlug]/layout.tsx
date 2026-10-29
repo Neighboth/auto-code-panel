@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { googleFontHref } from "@/lib/fonts";
 import { getStoreState } from "@/lib/tenant";
 import { normalizeDomain, normalizeHost } from "@/lib/domain";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +15,10 @@ type StoreLayoutProps = {
 };
 
 export async function generateMetadata({ params }: StoreLayoutProps): Promise<Metadata> {
+  const { t } = await getTranslator();
   const { magazaSlug } = await params;
   const state = await getStoreState(magazaSlug);
-  if (!state) return { title: "Mağaza bulunamadı" };
+  if (!state) return { title: t("x.magaza-bulunamad") };
   const { store } = state;
   return {
     title: { default: `${store.title} · ${store.name}`, template: `%s · ${store.name}` },

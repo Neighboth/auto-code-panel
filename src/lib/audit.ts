@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { db, ensureDatabase } from "@/db";
 import { auditLogs } from "@/db/schema";
 import { getCustomerSession, getStoreAdminSession, getSuperSession } from "@/lib/session";
+import { createTranslator } from "@/lib/i18n/translate";
 
 /**
  * Audit trail.
@@ -115,6 +116,7 @@ function serializeMetadata(metadata: Record<string, unknown> | null | undefined)
 
 /** Writes one audit row. Never throws. */
 export async function logAudit(input: AuditInput): Promise<void> {
+  const t = createTranslator("tr");
   try {
     await ensureDatabase();
     const actor = await resolveActor();
@@ -134,7 +136,7 @@ export async function logAudit(input: AuditInput): Promise<void> {
       userAgent: actor.userAgent,
     });
   } catch (error) {
-    console.error("[audit] kayıt yazılamadı", error);
+    console.error(t("x.audit-kayt-yazlamad"), error);
   }
 }
 

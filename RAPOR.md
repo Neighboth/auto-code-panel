@@ -2,7 +2,7 @@
 
 > Bu rapor, "kalanları hallet + §6 listesi + bitir" talebinin ne olduğunu, nerede
 > durduğunu, nasıl doğrulandığını ve **dürüstçe** neyin eksik kaldığını anlatır.
-> Tarih: 2026-10-29 · Branch: `arena/90473209-auto-code-panel` → `main` (PR #3, PR #4)
+> Tarih: 2026-10-29 · Branch: `arena/9cd566a9-auto-code-panel` → `main` (PR #6: site geneli i18n)
 
 ---
 
@@ -13,8 +13,8 @@
 | Derleme / tip / lint | ✅ temiz | `npm run build`, `npm run typecheck`, `npm run lint` → 0 hata |
 | 80 dil kaydı | ✅ | `src/lib/i18n/config.ts` |
 | 80 dilde yerel menü/UI çekirdeği | ✅ | `src/lib/i18n/core-packs.ts` (39 anahtar × 80 dil) |
-| tr/en referans sözlük | ✅ 163 anahtar | `src/lib/i18n/dictionaries.ts` |
-| Sabit metin denetimi | ⚠️ 489 metin / 49 dosya | `npm run i18n:hardcoded` |
+| tr/en referans sözlük | ✅ **1237 anahtar** | `dictionaries.ts` + `ui-extra.ts` |
+| Sabit metin denetimi | ✅ **0 metin / 0 dosya** | `npm run i18n:hardcoded` |
 | Lisans hatırlatma cron'u | ✅ | `/api/cron/reminders?secret=…` |
 | CSV/Excel içe aktarma | ✅ | `importProductsCsv`, `importAccountsCsv` |
 | Bildirim tercihleri + tek tık abonelikten çıkma | ✅ | `/abonelik?t=…`, `/demo/profil` kartı |
@@ -22,8 +22,54 @@
 | Gözlemlenebilirlik | ✅ kısmi | `/api/health`, `/super-admin/postalar` |
 | Sanallaştırma / görsel optimizasyonu | ⚠️ kısmi | ilk 24 kart, `loading="lazy"` |
 | Sentry / OpenTelemetry | ❌ yok | — |
+| Ham anahtar sızıntısı | ✅ 0 (canlı SSR taraması) | `i18n:hardcoded` 3. geçiş |
 
 Sıfır `alert` / `confirm`: tüm akışlar `Modal`, `toast` ve satır içi hata mesajlarıyla çalışıyor.
+
+---
+
+## 0.1 Bu tur: i18n %100 (site geneli)
+
+Talep: *"kalan tüm hardcoded yerleri düzelt ve tüm siteyi i18n uyumlu hale getir, bu turda bitsin."*
+
+### Ne yapıldı
+
+| Adım | Sonuç |
+| --- | --- |
+| Uzun kuyruk sözlüğü | `src/lib/i18n/ui-extra.ts` → **EXTRA_TR 1237 + EXTRA_EN 1237** (birebir eşit, eksik çeviri yok) |
+| Panel iç yüzeyleri | `admin/catalog`, `codes`, `settings`, `istatistikler`, `kullanicilar/*`, `super-admin/*`, `security/*`, `store/*`, `auth-forms` → tümü `t()`/`useT()` |
+| Tanıtım + bayi + abonelik | `src/app/page.tsx`, `bayi`, `abonelik`, `dogrula`, `oyunlar`, `profil`, `kutuphane` |
+| Server component'ler | `generateMetadata()` + `getTranslator()`; 13 sayfa başlığı artık çevriliyor (önceden `<title>x.giris-yap</title>` görünüyordu) |
+| Sunucu aksiyonları | `auth`, `security`, `storefront`, `store-admin`, `super-admin`, `imap`, `verification`, `admin-guard` mesajları sözlükten |
+| Şablon değişkenleri | `t("x.key", { ad: deger })` desteği `createTranslator`'a eklendi (`{ad}` yerleşimi) |
+| Dizin/genel metinler | `GUARD_OPTIONS`, `DURATION_PRESETS`, landing `features/steps/plans/faqs`, adım etiketleri |
+| Denetim aracı | `i18n:hardcoded` artık **ASCII Türkçeyi de** yakalıyor ("Bayi listesi", "Durum") + **3. geçiş: kodda kullanılan ama sözlükte olmayan anahtar** + sunucu tarafı sayacı ayrı raporluyor |
+
+### Kanıt
+
+```
+npm run typecheck      → 0 hata
+npm run lint           → 0 hata / 0 uyarı
+npm run build          → ✓ Compiled successfully
+npm run i18n:hardcoded → Sabit metin: 0 · Sözlükte eksik anahtar: 0
+npm run i18n:coverage  → Referans (tr): 1237 anahtar · 80 dil · çekirdek 78/78
+```
+
+Canlı SSR taraması (`Accept-Language: en`, `node server.js`): `/`, `/bayi`, `/demo`, `/demo/giris`,
+`/demo/kayit`, `/demo/dogrula`, `/super-admin`, `/demo/admin/giris` → **200**, görünen metinde
+**0 ham anahtar**. Türkçe kalan tek şey mağaza sahibinin girdiği **veri** (mağaza adı/başlığı,
+ürün açıklamaları) ve operatörün `.env` ile verdiği **marka sloganı** — bunlar çeviri metni değil, veri.
+
+### Dürüstçe kalan
+
+- **47 sunucu tarafı Türkçe metin / 11 dosya**: ağırlıklı olarak audit-log `summary` alanları
+  (`${title} ürünü eklendi` gibi). Bunlar veritabanına **yazıldığı anda** Türkçe kaydedilir ve
+  yalnızca süper yönetici panelinde görünür. Doğru çözüm yapılandırılmış log
+  (`summary_key` + `summary_params`) ve gösterim anında çeviri; bu, şema değişikliği + geçmiş
+  kayıt migrasyonu gerektirdiği için bu tura alınmadı. Sayı `npm run i18n:hardcoded` çıktısında
+  ayrı satırda görünür, yani gizlenmiyor.
+- 80 dilin 78'i **çekirdek 39 anahtar**ta tam; uzun kuyruk (1237 anahtar) yalnızca `tr`/`en`.
+  Diğer dillerde İngilizceye düşer (ham anahtar asla görünmez).
 
 ---
 

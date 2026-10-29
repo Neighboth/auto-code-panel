@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db, ensureDatabase } from "@/db";
@@ -22,16 +24,17 @@ function patchFrom(formData: FormData): MailPreferenceUpdate {
 
 /** Customer profile → notification preferences. */
 export async function saveCustomerMailPrefs(slug: string, formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const session = await getCustomerSession();
-  if (!session) return { ok: false, message: "Oturum bulunamadı." };
+  if (!session) return { ok: false, message: t("x.oturum-bulunamad") };
   const rows = await db
     .select({ id: customers.id, storeId: customers.storeId, email: customers.email, username: customers.username })
     .from(customers)
     .where(eq(customers.id, session.customerId))
     .limit(1);
   const customer = rows[0];
-  if (!customer || customer.storeId !== session.storeId) return { ok: false, message: "Hesap bulunamadı." };
+  if (!customer || customer.storeId !== session.storeId) return { ok: false, message: t("x.hesap-bulunamad") };
 
   const patch = patchFrom(formData);
   const prefs = await setMailPrefs("customer", customer.id, patch, {
@@ -56,17 +59,18 @@ export async function saveCustomerMailPrefs(slug: string, formData: FormData): P
 
 /** Store panel → notification preferences of the signed-in manager. */
 export async function saveStoreMailPrefs(slug: string, formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const session = await getStoreAdminSession();
-  if (!session) return { ok: false, message: "Oturum bulunamadı." };
+  if (!session) return { ok: false, message: t("x.oturum-bulunamad") };
   const rows = await db
     .select({ id: storeAdmins.id, email: storeAdmins.email, username: storeAdmins.username })
     .from(storeAdmins)
     .where(eq(storeAdmins.id, session.adminId))
     .limit(1);
   const admin = rows[0];
-  if (!admin) return { ok: false, message: "Yönetici bulunamadı." };
+  if (!admin) return { ok: false, message: t("x.yonetici-bulunamad") };
 
   const patch = patchFrom(formData);
   const prefs = await setMailPrefs("store_admin", admin.id, patch, {
@@ -91,9 +95,10 @@ export async function unsubscribeByToken(
   token: string,
   scope: "announcements" | "all" = "announcements",
 ): Promise<ActionResult<{ email: string }>> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const resolved = readUnsubscribeToken(token);
-  if (!resolved) return { ok: false, message: "Bağlantı geçersiz veya süresi dolmuş." };
+  if (!resolved) return { ok: false, message: t("x.baglant-gecersiz-veya-suresi-dolmus") };
   const { audience, subjectId } = resolved;
 
   const rows =
@@ -112,14 +117,14 @@ export async function unsubscribeByToken(
     action: "mail.prefs.unsubscribe",
     entity: audience,
     entityId: subjectId,
-    summary: `${email || "adres"} ${scope === "all" ? "tüm e-posta bildirimlerini" : "duyuru e-postalarını"} kapattı`,
+    summary: `${email || "adres"} ${scope === "all" ? t("x.tum-e-posta-bildirimlerini") : t("x.duyuru-e-postalarn")} kapattı`,
     severity: "warn",
     actorType: "system",
     actorName: "abonelik",
     metadata: { scope, prefs },
   });
 
-  return { ok: true, message: "Tercihiniz kaydedildi. Bu adrese duyuru e-postası gönderilmeyecek.", data: { email } };
+  return { ok: true, message: t("x.tercihiniz-kaydedildi-bu-adrese-duyuru-e-postas-gonderil"), data: { email } };
 }
 
 /** Read-only helper used by the profile / settings UI. */

@@ -2,9 +2,10 @@ import { redirect } from "next/navigation";
 import { getSuperSession } from "@/lib/session";
 import { queryAudit } from "@/lib/audit";
 import { AuditLogView } from "@/components/super-admin/audit-log";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "İşlem Kayıtları" };
+export const metadata = { title: "x.islem-kaytlar" };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -13,6 +14,7 @@ function single(value: string | string[] | undefined): string {
 }
 
 export default async function SuperAdminAuditPage({ searchParams }: { searchParams: SearchParams }) {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
   if (!session) redirect("/super-admin");
 
@@ -40,12 +42,8 @@ export default async function SuperAdminAuditPage({ searchParams }: { searchPara
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] muted">Denetim</p>
-        <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">İşlem kayıtları</h1>
-        <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed muted">
-          Girişler, ürün ve hesap değişiklikleri, kod işlemleri, toplu işlemler, mail gönderimleri ve
-          sistem ayarları dâhil her işlem yönetici, IP ve tarayıcı bilgisiyle saklanır. Kayıtlar
-          silinemez; CSV olarak dışa aktarabilirsiniz.
-        </p>
+        <h1 className="mt-1.5 text-[24px] font-semibold tracking-[-0.025em]">{" "}{t("x.islem-kaytlar")}</h1>
+        <p className="mt-1 max-w-2xl text-[12.5px] leading-relaxed muted">{t("x.girisler-urun-ve-hesap-degisiklikleri-kod-islemleri-topl")}</p>
       </div>
 
       <AuditLogView pageData={pageData} filters={{ q, action, severity, actor, from, to }} />

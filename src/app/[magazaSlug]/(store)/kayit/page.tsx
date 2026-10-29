@@ -6,7 +6,10 @@ import { CustomerAuthForm } from "@/components/auth-forms";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kayıt Ol" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.kayt-ol") };
+}
 
 export default async function StoreRegisterPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
   const { magazaSlug } = await params;

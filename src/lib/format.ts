@@ -1,3 +1,8 @@
+import { createTranslator, type Translator } from "@/lib/i18n/translate";
+
+/** Turkish translator used when a caller does not pass one in. */
+const tr = createTranslator("tr");
+
 export function parsePrice(value: FormDataEntryValue | null | undefined): string | null {
   if (value === null || value === undefined) return null;
   const raw = String(value).trim().replace(/\s/g, "").replace(",", ".");
@@ -70,24 +75,24 @@ export function discountPercent(original: string | number | null, ours: string |
 }
 
 export const DURATION_PRESETS: { label: string; minutes: number | null }[] = [
-  { label: "Süresiz / Sınırsız", minutes: null },
-  { label: "1 Gün", minutes: 60 * 24 },
-  { label: "2 Gün", minutes: 60 * 24 * 2 },
-  { label: "3 Gün", minutes: 60 * 24 * 3 },
-  { label: "1 Hafta", minutes: 60 * 24 * 7 },
-  { label: "1 Ay", minutes: 60 * 24 * 30 },
-  { label: "3 Ay", minutes: 60 * 24 * 90 },
-  { label: "6 Ay", minutes: 60 * 24 * 180 },
-  { label: "1 Yıl", minutes: 60 * 24 * 365 },
+  { label: "x.suresiz-snrsz", minutes: null },
+  { label: "x.1-gun", minutes: 60 * 24 },
+  { label: "x.2-gun", minutes: 60 * 24 * 2 },
+  { label: "x.3-gun", minutes: 60 * 24 * 3 },
+  { label: "x.1-hafta", minutes: 60 * 24 * 7 },
+  { label: "x.1-ay", minutes: 60 * 24 * 30 },
+  { label: "x.3-ay", minutes: 60 * 24 * 90 },
+  { label: "x.6-ay", minutes: 60 * 24 * 180 },
+  { label: "x.1-yl", minutes: 60 * 24 * 365 },
 ];
 
-export function formatDuration(minutes: number | null): string {
-  if (minutes === null) return "Sınırsız erişim";
+export function formatDuration(minutes: number | null, t: Translator = tr): string {
+  if (minutes === null) return t("x.snrsz-erisim");
   const preset = DURATION_PRESETS.find((p) => p.minutes === minutes);
-  if (preset) return preset.label;
-  if (minutes < 60) return `${minutes} dakika`;
-  if (minutes < 60 * 24) return `${Math.round(minutes / 60)} saat`;
-  return `${Math.round(minutes / (60 * 24))} gün`;
+  if (preset) return t(preset.label);
+  if (minutes < 60) return `${minutes} ${t("x.dakika")}`;
+  if (minutes < 60 * 24) return `${Math.round(minutes / 60)} ${t("x.saat")}`;
+  return `${Math.round(minutes / (60 * 24))} ${t("x.gun")}`;
 }
 
 export function formatDate(value: Date | string | null | undefined): string {
@@ -106,37 +111,37 @@ export function formatDateTime(value: Date | string | null | undefined): string 
   })} ${date.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}`;
 }
 
-export function remainingLabel(target: Date | string | null | undefined): string {
-  if (!target) return "Sınırsız";
+export function remainingLabel(target: Date | string | null | undefined, t: Translator = tr): string {
+  if (!target) return t("x.snrsz");
   const date = typeof target === "string" ? new Date(target) : target;
   const diff = date.getTime() - Date.now();
-  if (diff <= 0) return "Süresi doldu";
+  if (diff <= 0) return t("x.suresi-doldu");
   const totalSeconds = Math.floor(diff / 1000);
   const days = Math.floor(totalSeconds / 86_400);
   const hours = Math.floor((totalSeconds % 86_400) / 3_600);
   const minutes = Math.floor((totalSeconds % 3_600) / 60);
   const seconds = totalSeconds % 60;
-  // Minutes are always part of the label: "2 gün 3 saat 14 dk" reads better than
-  // a bare "2 gün 3 saat" and matches the "kalan süre" expectations.
-  if (days > 0) return `${days} gün ${hours} saat ${minutes} dk`;
-  if (hours > 0) return `${hours} saat ${minutes} dk ${seconds} sn`;
-  if (minutes > 0) return `${minutes} dk ${seconds} sn`;
-  return `${seconds} sn`;
+  // Minutes are always part of the label: t("x.2-gun-3-saat-14-dk") reads better than
+  // a bare t("x.2-gun-3-saat") and matches the t("x.kalan-sure") expectations.
+  if (days > 0) return `${days} ${t("x.gun")} ${hours} ${t("x.saat")} ${minutes} ${t("x.dk")}`;
+  if (hours > 0) return `${hours} ${t("x.saat")} ${minutes} ${t("x.dk")} ${seconds} ${t("x.sn")}`;
+  if (minutes > 0) return `${minutes} ${t("x.dk")} ${seconds} ${t("x.sn")}`;
+  return `${seconds} ${t("x.sn")}`;
 }
 
 /** Compact variant used in dense UI (badges, sidebars). */
-export function remainingShort(target: Date | string | null | undefined): string {
-  if (!target) return "Sınırsız";
+export function remainingShort(target: Date | string | null | undefined, t: Translator = tr): string {
+  if (!target) return t("x.snrsz");
   const date = typeof target === "string" ? new Date(target) : target;
   const diff = date.getTime() - Date.now();
-  if (diff <= 0) return "Süresi doldu";
+  if (diff <= 0) return t("x.suresi-doldu");
   const totalMinutes = Math.floor(diff / 60_000);
   const days = Math.floor(totalMinutes / 1_440);
   const hours = Math.floor((totalMinutes % 1_440) / 60);
   const minutes = totalMinutes % 60;
-  if (days > 0) return `${days}g ${hours}s ${minutes}dk`;
-  if (hours > 0) return `${hours}s ${minutes}dk`;
-  return `${minutes} dk`;
+  if (days > 0) return `${days}${t("x.g")} ${hours}${t("x.s")} ${minutes}${t("x.dk")}`;
+  if (hours > 0) return `${hours}${t("x.s")} ${minutes}${t("x.dk")}`;
+  return `${minutes} ${t("x.dk")}`;
 }
 
 export function accessExpired(expiresAt: Date | string | null): boolean {

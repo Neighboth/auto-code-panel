@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
@@ -50,15 +52,16 @@ export type RedeemPayload = {
 class RedeemError extends Error {}
 
 async function activeStore(slug: string) {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const store = await findStoreBySlug(slug);
-  if (!store) return { error: "Mağaza bulunamadı." as const, store: null };
+  if (!store) return { error: t("x.magaza-bulunamad-2"), store: null };
   const state = resolveStoreState(store);
   if (!state.active) {
     return {
       error: state.suspended
-        ? "Mağaza geçici olarak askıya alındı."
-        : "Mağazanın bayilik süresi doldu, teslimat yapılamıyor.",
+        ? t("x.magaza-gecici-olarak-askya-alnd")
+        : t("x.magazann-bayilik-suresi-doldu-teslimat-yaplamyor"),
       store: null,
     };
   }
@@ -66,6 +69,7 @@ async function activeStore(slug: string) {
 }
 
 async function loadCode(storeId: number, rawCode: string) {
+  const { t } = await getTranslator();
   const normalized = rawCode.trim().toUpperCase();
   if (!normalized) return { error: "Kod girin.", code: null };
   const rows = await db
@@ -74,19 +78,20 @@ async function loadCode(storeId: number, rawCode: string) {
     .where(and(eq(codes.storeId, storeId), eq(codes.code, normalized)))
     .limit(1);
   const row = rows[0];
-  if (!row) return { error: "Kod bulunamadı. Lütfen kodu kontrol edin.", code: null };
+  if (!row) return { error: t("x.kod-bulunamad-lutfen-kodu-kontrol-edin"), code: null };
   if (row.redeemedAt) {
-    return { error: "Bu kod daha önce kullanılmış. Her kod yalnızca bir kez geçerlidir.", code: null };
+    return { error: t("x.bu-kod-daha-once-kullanlms-her-kod-yalnzca-bir-kez-gecer"), code: null };
   }
   return { error: null, code: row };
 }
 
 export async function previewCode(slug: string, rawCode: string): Promise<ActionResult<CodePreview>> {
+  const { t } = await getTranslator();
   const { error, store } = await activeStore(slug);
-  if (!store) return { ok: false, message: error ?? "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: error ?? t("x.magaza-bulunamad-2") };
 
   const loaded = await loadCode(store.id, rawCode);
-  if (!loaded.code) return { ok: false, message: loaded.error ?? "Kod geçersiz." };
+  if (!loaded.code) return { ok: false, message: loaded.error ?? t("x.kod-gecersiz") };
   const code = loaded.code;
 
   const storeGames = await db.select().from(games).where(eq(games.storeId, store.id));
@@ -101,7 +106,7 @@ export async function previewCode(slug: string, rawCode: string): Promise<Action
         kind: "game",
         id: game.id,
         title: game.title,
-        subtitle: "Oyun erişimi + atanmış hesap",
+        subtitle: t("x.oyun-erisimi-atanms-hesap"),
         coverImage: game.coverImage,
       });
     }
@@ -118,7 +123,7 @@ export async function previewCode(slug: string, rawCode: string): Promise<Action
             storeGames.find((game) => account.linkedGameIds.includes(game.id))?.title ??
             account.productLabel ??
             account.platformLabel,
-          subtitle: `${account.platformLabel} hesabı`,
+          subtitle: t("x.platform-hesab", { platform: account.platformLabel }),
           coverImage:
             storeGames.find((game) => account.linkedGameIds.includes(game.id))?.coverImage ?? "",
         });
@@ -137,7 +142,7 @@ export async function previewCode(slug: string, rawCode: string): Promise<Action
       choiceCount: code.choiceCount,
       durationMinutes: code.durationMinutes,
       // Shared accounts are never time-limited: the customer keeps unlimited access.
-      durationLabel: "Sınırsız erişim",
+      durationLabel: t("x.snrsz-erisim"),
       items,
       selectableGames: storeGames.map((game) => ({
         id: game.id,
@@ -152,11 +157,12 @@ export async function previewCode(slug: string, rawCode: string): Promise<Action
 }
 
 export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<RedeemResult>> {
+  const { t } = await getTranslator();
   const { error, store } = await activeStore(payload.slug);
-  if (!store) return { ok: false, message: error ?? "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: error ?? t("x.magaza-bulunamad-2") };
 
   const loaded = await loadCode(store.id, payload.code);
-  if (!loaded.code) return { ok: false, message: loaded.error ?? "Kod geçersiz." };
+  if (!loaded.code) return { ok: false, message: loaded.error ?? t("x.kod-gecersiz") };
   const code = loaded.code;
 
   const tenantId = store.id;
@@ -181,10 +187,10 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
   if (!customerId && payload.auth && payload.auth.username.trim()) {
     const username = payload.auth.username.trim();
     if (!/^[a-zA-Z0-9._-]{3,24}$/.test(username)) {
-      return { ok: false, message: "Kullanıcı adı 3-24 karakter olmalıdır." };
+      return { ok: false, message: t("x.kullanc-ad-3-24-karakter-olmaldr") };
     }
     if (payload.auth.password.length < 6) {
-      return { ok: false, message: "Şifre en az 6 karakter olmalıdır." };
+      return { ok: false, message: t("x.sifre-en-az-6-karakter-olmaldr") };
     }
     const existingRows = await db
       .select()
@@ -197,7 +203,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
 
     if (payload.auth.mode === "login") {
       if (!existing || !verifyPassword(payload.auth.password, existing.passwordHash)) {
-        return { ok: false, message: "Kullanıcı adı veya şifre hatalı." };
+        return { ok: false, message: t("x.kullanc-ad-veya-sifre-hatal") };
       }
       customerId = existing.id;
       customerUsername = existing.username;
@@ -205,7 +211,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
       if (existing) {
         return {
           ok: false,
-          message: "Bu kullanıcı adı alınmış. Giriş yapmayı deneyin veya farklı bir ad seçin.",
+          message: t("x.bu-kullanc-ad-alnms-giris-yapmay-deneyin-veya-farkl-bir"),
         };
       }
       const [created] = await db
@@ -242,7 +248,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
     if (chosen.length !== code.choiceCount) {
       return {
         ok: false,
-        message: `Bu kod için tam olarak ${code.choiceCount} oyun seçmelisiniz.`,
+        message: t("x.bu-kod-icin-tam-olarak-count-oyun-secmelisiniz", { count: code.choiceCount }),
       };
     }
     targetGameIds = chosen;
@@ -254,7 +260,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
   if (targetGameIds.length + targetAccountIds.length === 0) {
     return {
       ok: false,
-      message: "Bu kodun hedef ürünleri mağazada bulunamadı. Lütfen mağaza yönetimiyle iletişime geçin.",
+      message: t("x.bu-kodun-hedef-urunleri-magazada-bulunamad-lutfen-magaza"),
     };
   }
 
@@ -276,7 +282,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
         .where(and(eq(codes.id, code.id), sql`${codes.redeemedAt} is null`))
         .returning({ id: codes.id });
       if (claim.length === 0) {
-        throw new RedeemError("Kod birkaç saniye önce kullanıldı. Lütfen yeni bir kod deneyin.");
+        throw new RedeemError(t("x.kod-birkac-saniye-once-kullanld-lutfen-yeni-bir-kod-dene"));
       }
 
       const [redemption] = await tx
@@ -285,7 +291,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           storeId: tenantId,
           codeId: code.id,
           customerId,
-          guestUsername: customerId ? null : "Misafir kullanıcı",
+          guestUsername: customerId ? null : t("x.misafir-kullanc"),
           guestToken,
           accessExpiresAt,
         })
@@ -329,7 +335,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
         outputs.push({
           entitlementId: entitlement.id,
           title: game.title,
-          subtitle: game.steamUrl ? "Steam oyun erişimi" : "Dijital ürün",
+          subtitle: game.steamUrl ? t("x.steam-oyun-erisimi") : t("x.dijital-urun"),
           kind: "game",
           username: account?.username ?? null,
           email: account?.email ?? null,
@@ -352,9 +358,9 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           .where(and(eq(accounts.id, accountId), eq(accounts.storeId, tenantId)))
           .limit(1);
         const account = rows[0];
-        if (!account) throw new RedeemError("Koda bağlı hesap bulunamadı.");
+        if (!account) throw new RedeemError(t("x.koda-bagl-hesap-bulunamad"));
         if (account.status === "retired") {
-          throw new RedeemError(`${account.platformLabel} hesabı mağaza yönetimi tarafından kapatılmış.`);
+          throw new RedeemError(t("x.platform-hesab-magaza-yonetimi-tarafndan-kapatlms", { platform: account.platformLabel }));
         }
         // Shared account: no state change, the customer gets unlimited access.
         const linkedGame = storeGames.find((game) => account.linkedGameIds.includes(game.id));
@@ -376,7 +382,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
         outputs.push({
           entitlementId: entitlement.id,
           title,
-          subtitle: `${account.platformLabel} hesabı`,
+          subtitle: t("x.platform-hesab", { platform: account.platformLabel }),
           kind: "account",
           username: account.username,
           email: account.email,
@@ -400,14 +406,14 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
       }
 
       if (outputs.length === 0) {
-        throw new RedeemError("Kod için teslim edilecek ürün bulunamadı.");
+        throw new RedeemError(t("x.kod-icin-teslim-edilecek-urun-bulunamad"));
       }
       return outputs;
     });
   } catch (err) {
     if (err instanceof RedeemError) return { ok: false, message: err.message };
     console.error("[redeem] failed", err);
-    return { ok: false, message: "Kod kullanılamadı. Lütfen tekrar deneyin." };
+    return { ok: false, message: t("x.kod-kullanlamad-lutfen-tekrar-deneyin") };
   }
 
   await logAudit({
@@ -439,8 +445,8 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
   return {
     ok: true,
     message: customerId
-      ? "Kod kullanıldı. Ürünler kütüphanenize eklendi."
-      : "Kod kullanıldı. Bilgileri hemen kaydedin!",
+      ? t("x.kod-kullanld-urunler-kutuphanenize-eklendi")
+      : t("x.kod-kullanld-bilgileri-hemen-kaydedin"),
     data: {
       code: code.code,
       expiresAt: null,
@@ -471,11 +477,12 @@ export async function getTwoFactorCode(
   entitlementId: number,
   guestToken?: string | null,
 ): Promise<ActionResult<AccessCode>> {
+  const { t } = await getTranslator();
   await ensureDatabase();
   const store = await findStoreBySlug(slug);
-  if (!store) return { ok: false, message: "Mağaza bulunamadı." };
+  if (!store) return { ok: false, message: t("x.magaza-bulunamad-2") };
   const state = resolveStoreState(store);
-  if (!state.active) return { ok: false, message: "Mağazanın erişimi aktif değil." };
+  if (!state.active) return { ok: false, message: t("x.magazann-erisimi-aktif-degil") };
 
   const session = await getCustomerSession();
   const customerSession = session && session.storeId === store.id ? session : null;
@@ -489,18 +496,18 @@ export async function getTwoFactorCode(
     .limit(1);
 
   const row = rows[0];
-  if (!row) return { ok: false, message: "Bu ürün bulunamadı." };
+  if (!row) return { ok: false, message: t("x.bu-urun-bulunamad") };
 
   const ownedByCustomer = Boolean(
     customerSession && row.entitlement.customerId === customerSession.customerId,
   );
   const ownedByGuest = Boolean(guestToken && row.redemption?.guestToken === guestToken);
   if (!ownedByCustomer && !ownedByGuest) {
-    return { ok: false, message: "Kod almak için giriş yapmalısınız veya teslimat bağlantısını kullanmalısınız." };
+    return { ok: false, message: t("x.kod-almak-icin-giris-yapmalsnz-veya-teslimat-baglantsn-k") };
   }
 
   const account = row.account;
-  if (!account) return { ok: false, message: "Bu ürüne atanmış bir hesap yok." };
+  if (!account) return { ok: false, message: t("x.bu-urune-atanms-bir-hesap-yok") };
 
   const guardType = account.guardType || "none";
   const steamSecret = account.steamSecret ? decryptData(account.steamSecret) : "";
@@ -540,7 +547,7 @@ export async function getTwoFactorCode(
       senderFilter: account.mailSenderFilter || "steam",
       sinceMinutes: 180,
     });
-    if (!mail.ok) return { ok: false, message: `Mail kodu alınamadı: ${mail.message}` };
+    if (!mail.ok) return { ok: false, message: t("x.mail-kodu-alnamad-detail", { detail: mail.message }) };
     return {
       ok: true,
       data: {
@@ -553,10 +560,10 @@ export async function getTwoFactorCode(
       },
     };
   }
-  return { ok: false, message: "Bu hesap için 2FA/Guard kodu tanımlı değil." };
+  return { ok: false, message: t("x.bu-hesap-icin-2fa-guard-kodu-tanml-degil") };
 }
 
-/** Shared helper used by the library page for "kalan süre" labels. */
+/** Shared helper used by the library page for t("x.kalan-sure") labels. */
 export async function describeRemaining(expiresAt: Date | string | null): Promise<string> {
   return remainingLabel(expiresAt);
 }

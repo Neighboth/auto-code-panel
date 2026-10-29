@@ -2,11 +2,14 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCustomerSession, getStoreAdminSession } from "@/lib/session";
 import { getStoreState, getStoreBasePath } from "@/lib/tenant";
-import { getTranslator } from "@/lib/i18n/server";
 import { StoreLoginTabs } from "@/components/auth-forms";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Giriş Yap" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.giris-yap") };
+}
 
 export default async function StoreLoginPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
   const { magazaSlug } = await params;

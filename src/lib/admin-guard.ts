@@ -1,4 +1,5 @@
 import { env } from "@/lib/env";
+import { createTranslator } from "@/lib/i18n/translate";
 
 /**
  * The platform owner (super admin) authenticates from the same unified login
@@ -34,17 +35,18 @@ export function isOwnerIdentifier(value: string): boolean {
  * platform owner, otherwise null. Usernames are globally unique in the system,
  * so this check has to run on every create/update path.
  */
-export function managerIdentifierError(username: string, email?: string): string | null {
+export async function managerIdentifierError(username: string, email?: string): Promise<string | null> {
+  const t = createTranslator("tr");
   const usernameValue = username.trim().toLowerCase();
   const emailValue = (email ?? "").trim().toLowerCase();
   if (RESERVED_MANAGER_IDENTIFIERS.has(usernameValue)) {
-    return `"${username.trim()}" platform yöneticisine ayrılmış bir kullanıcı adıdır. Lütfen farklı bir yönetici adı seçin.`;
+    return t("x.name-platform-yoneticisine-ayrlms-bir-kullanc-addr-lutfe", { name: username.trim() });
   }
   if (isOwnerIdentifier(usernameValue)) {
-    return "Bu kullanıcı adı platform sahibine ait. Mağaza yöneticisi için farklı bir ad seçin.";
+    return t("x.bu-kullanc-ad-platform-sahibine-ait-magaza-yoneticisi-ic");
   }
   if (emailValue && isOwnerIdentifier(emailValue)) {
-    return "Bu e-posta platform sahibine ait. Mağaza yöneticisi için farklı bir e-posta kullanın.";
+    return t("x.bu-e-posta-platform-sahibine-ait-magaza-yoneticisi-icin");
   }
   return null;
 }

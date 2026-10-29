@@ -1,7 +1,7 @@
 "use client";
+import { useT } from "@/components/i18n-provider";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { useT } from "@/components/i18n-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -51,7 +51,7 @@ export function RedeemFlow({
   async function loadPreview(raw: string) {
     const value = raw.trim().toUpperCase();
     if (!value) {
-      setError("Lütfen bir kod girin.");
+      setError(t("x.lutfen-bir-kod-girin"));
       return;
     }
     setPending(true);
@@ -59,7 +59,7 @@ export function RedeemFlow({
     const response = await previewCode(slug, value);
     setPending(false);
     if (!response.ok || !response.data) {
-      setError(response.message ?? "Kod doğrulanamadı.");
+      setError(response.message ?? t("x.kod-dogrulanamad"));
       setPreview(null);
       setStep("entry");
       return;
@@ -85,7 +85,7 @@ export function RedeemFlow({
     setSelected((current) => {
       if (current.includes(id)) return current.filter((item) => item !== id);
       if (current.length >= preview.choiceCount) {
-        toast.error(`Bu kod için en fazla ${preview.choiceCount} oyun seçebilirsiniz.`);
+        toast.error(t("x.bu-kod-icin-en-fazla-count-oyun-secebilirsiniz", { count: preview.choiceCount }));
         return current;
       }
       return [...current, id];
@@ -108,21 +108,21 @@ export function RedeemFlow({
     const response = await redeemCode(payload);
     setPending(false);
     if (!response.ok || !response.data) {
-      setError(response.message ?? "Kod kullanılamadı.");
+      setError(response.message ?? t("x.kod-kullanlamad"));
       return;
     }
     setResult(response.data);
     setStep("result");
     setGuestWarning(false);
     if (!response.data.guest) setLoggedIn(true);
-    toast.success(response.message ?? "Kod kullanıldı");
+    toast.success(response.message ?? t("x.kod-kullanld"));
     router.refresh();
   }
 
   function proceedFromChoices() {
     if (!preview) return;
     if (selected.length !== preview.choiceCount) {
-      setError(`Tam olarak ${preview.choiceCount} oyun seçmelisiniz.`);
+      setError(t("x.tam-olarak-count-oyun-secmelisiniz", { count: preview.choiceCount }));
       return;
     }
     setError(null);
@@ -132,11 +132,11 @@ export function RedeemFlow({
 
   const durationText = preview?.durationLabel ?? "";
   const stepLabels: Record<Step, string> = {
-    entry: "Kod girişi",
-    choices: "Oyun seçimi",
-    auth: "Hesap",
-    confirm: "Onay",
-    result: "Teslimat",
+    entry: t("x.kod-girisi"),
+    choices: t("x.oyun-secimi"),
+    auth: "x.hesap",
+    confirm: "x.onay",
+    result: "x.teslimat",
   };
 
   return (
@@ -178,10 +178,7 @@ export function RedeemFlow({
             <KeyRound size={17} />
           </span>
           <h1 className="mt-4 text-[22px] font-semibold tracking-[-0.02em]">Redeem kodunu kullan</h1>
-          <p className="mt-1.5 text-[13px] leading-relaxed muted">
-            Satın aldığınız kodu girin. Seçmeli kodlarda oyunlarınızı kendiniz seçersiniz. Kod her
-            hesapta yalnızca bir kez kullanılabilir.
-          </p>
+          <p className="mt-1.5 text-[13px] leading-relaxed muted">{t("x.satn-aldgnz-kodu-girin-secmeli-kodlarda-oyunlarnz-kendin")}</p>
           <form onSubmit={onSubmitCode} className="mt-5 flex flex-col gap-2 sm:flex-row">
             <input
               value={codeInput}
@@ -193,14 +190,11 @@ export function RedeemFlow({
             />
             <button type="submit" className="btn btn-primary btn-lg" disabled={pending}>
               {pending ? <Loader2 size={15} className="animate-spin" /> : <ArrowRight size={15} />}
-              Kodu doğrula
+              {t("x.kodu-dogrula")}
             </button>
           </form>
           <div className="mt-5 rounded-lg border px-3.5 py-3 hairline">
-            <p className="text-[11.5px] leading-relaxed muted">
-              Kodunuz mağaza sahibinden aldığınız KEYR-XXXXX-XXXXX formatındaki teslimat kodudur. Her kod
-              yalnızca bir kez kullanılabilir.
-            </p>
+            <p className="text-[11.5px] leading-relaxed muted">{t("x.kodunuz-magaza-sahibinden-aldgnz-keyr-xxxxx-xxxxx-format")}</p>
           </div>
         </div>
       ) : null}
@@ -212,11 +206,11 @@ export function RedeemFlow({
               <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] muted">{t("redeem.kind")}</p>
               <h1 className="mt-1 text-[20px] font-semibold tracking-[-0.02em]">{t("redeem.choose")}</h1>
               <p className="mt-1 text-[12.5px] muted">
-                {preview.choiceCount} oyun hakkınız var · Erişim süresi: {durationText}
+                {t("x.count-oyun-hakknz-var-erisim-suresi-duration", { count: preview.choiceCount, duration: durationText })}
               </p>
             </div>
             <span className="badge badge-blue">
-              {selected.length} / {preview.choiceCount} seçildi
+              {t("x.selected-total-secildi", { selected: selected.length, total: preview.choiceCount })}
             </span>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -243,7 +237,7 @@ export function RedeemFlow({
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[12.5px] font-medium">{game.title}</span>
-                    <span className="mt-0.5 block text-[10.5px] muted">Dijital teslimat</span>
+                    <span className="mt-0.5 block text-[10.5px] muted">{t("x.dijital-teslimat")}</span>
                   </span>
                   <span
                     className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border hairline"
@@ -256,9 +250,7 @@ export function RedeemFlow({
             })}
           </div>
           <div className="mt-5 flex justify-between gap-2">
-            <button type="button" className="btn btn-ghost" onClick={() => { setStep("entry"); setPreview(null); }}>
-              Kodu değiştir
-            </button>
+            <button type="button" className="btn btn-ghost" onClick={() => { setStep("entry"); setPreview(null); }}>{t("x.kodu-degistir")}</button>
             <button type="button" className="btn btn-primary" onClick={proceedFromChoices}>
               Devam et
               <ArrowRight size={14} />
@@ -272,13 +264,8 @@ export function RedeemFlow({
           <span className="flex h-10 w-10 items-center justify-center rounded-xl border hairline">
             <Lock size={16} />
           </span>
-          <h1 className="mt-4 text-[21px] font-semibold tracking-[-0.02em]">
-            Teslimatı kaydetmek için hesap oluştur
-          </h1>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed muted">
-            Kütüphanenize kaydetmek için sadece kullanıcı adı ve şifre yeterli. E-posta zorunlu
-            değildir.
-          </p>
+          <h1 className="mt-4 text-[21px] font-semibold tracking-[-0.02em]">{t("x.teslimat-kaydetmek-icin-hesap-olustur")}</h1>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed muted">{t("x.kutuphanenize-kaydetmek-icin-sadece-kullanc-ad-ve-sifre")}</p>
 
           <div className="mt-4 flex items-center gap-1 rounded-lg border p-1 hairline">
             {(["register", "login"] as const).map((mode) => (
@@ -292,13 +279,13 @@ export function RedeemFlow({
                   color: authMode === mode ? "#fff" : "var(--fg-muted)",
                 }}
               >
-                {mode === "register" ? "Hesap oluştur" : "Giriş yap"}
+                {mode === "register" ? t("x.hesap-olustur") : t("x.giris-yap")}
               </button>
             ))}
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Field label="Kullanıcı Adı">
+            <Field label={t("x.kullanc-ad")}>
               <input
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
@@ -307,7 +294,7 @@ export function RedeemFlow({
                 autoComplete="username"
               />
             </Field>
-            <Field label="Şifre" hint="En az 6 karakter.">
+            <Field label={t("x.sifre")} hint="En az 6 karakter.">
               <div className="relative">
                 <input
                   value={password}
@@ -321,7 +308,7 @@ export function RedeemFlow({
                   onClick={() => setShowPassword((value) => !value)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
                 >
-                  {showPassword ? "Gizle" : "Göster"}
+                  {showPassword ? "Gizle" : t("x.goster")}
                 </button>
               </div>
             </Field>
@@ -332,9 +319,7 @@ export function RedeemFlow({
               type="button"
               onClick={() => setGuestWarning(true)}
               className="btn btn-outline"
-            >
-              Üye olmadan es geç
-            </button>
+            >{t("x.uye-olmadan-es-gec")}</button>
             <button
               type="button"
               className="btn btn-primary"
@@ -342,23 +327,17 @@ export function RedeemFlow({
               disabled={pending || !username.trim() || password.length < 6}
             >
               {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-              {authMode === "register" ? "Hesap oluştur ve kodu kullan" : "Giriş yap ve kodu kullan"}
+              {authMode === "register" ? t("x.hesap-olustur-ve-kodu-kullan") : t("x.giris-yap-ve-kodu-kullan")}
             </button>
           </div>
-          <p className="mt-3 text-[10.5px] leading-relaxed muted">
-            Hesap oluşturmazsanız teslimat tek seferlik görüntülenir. Kütüphaneye eklenmesi için
-            hesap oluşturmanız şiddetle önerilir.
-          </p>
+          <p className="mt-3 text-[10.5px] leading-relaxed muted">{t("x.hesap-olusturmazsanz-teslimat-tek-seferlik-goruntulenir")}</p>
         </div>
       ) : null}
 
       {step === "confirm" && preview ? (
         <div className="card p-6">
           <h1 className="text-[21px] font-semibold tracking-[-0.02em]">{t("redeem.confirm")}</h1>
-          <p className="mt-1.5 text-[12.5px] muted">
-            Paylaşımlı hesap teslimatı: kod kullanıldığında erişim sınırsız süreyle açılır ve
-            kütüphanenize eklenir.
-          </p>
+          <p className="mt-1.5 text-[12.5px] muted">{t("x.paylasml-hesap-teslimat-kod-kullanldgnda-erisim-snrsz-su")}</p>
           <div className="mt-4 divide-y rounded-lg border hairline">
             {preview.items.map((item) => (
               <div key={`${item.kind}-${item.id}`} className="flex items-center justify-between gap-3 px-3.5 py-3">
@@ -373,9 +352,7 @@ export function RedeemFlow({
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
             <span className="badge badge-blue">{t("library.unlimited")}</span>
             <div className="flex items-center gap-2">
-              <button type="button" className="btn btn-outline" onClick={() => setStep("entry")}>
-                Vazgeç
-              </button>
+              <button type="button" className="btn btn-outline" onClick={() => setStep("entry")}>{t("x.vazgec")}</button>
               <button type="button" className="btn btn-primary" onClick={() => commit(false)} disabled={pending}>
                 {pending ? <Loader2 size={14} className="animate-spin" /> : null}
                 Kodu kullan
@@ -396,21 +373,17 @@ export function RedeemFlow({
             </span>
             <h1 className="mt-4 text-[22px] font-semibold tracking-[-0.02em]">{t("redeem.result")}</h1>
             <p className="mt-1.5 text-[12.5px] muted">
-              <span className="mono">{result.code}</span> kodu kullanıldı ·{" "}
+              {t("x.code-kodu-kullanld", { code: result.code })} ·{" "}
               {result.expiresAt
-                ? `Erişim bitişi: ${new Date(result.expiresAt).toLocaleString("tr-TR")}`
-                : "Sınırsız erişim"}
+                ? t("x.erisim-bitisi-when", { when: new Date(result.expiresAt).toLocaleString() })
+                : t("x.snrsz-erisim")}
             </p>
             {result.guest ? (
               <div
                 className="mt-4 flex items-start gap-2 rounded-lg border px-3.5 py-3"
               >
                 <ShieldAlert size={16} className="mt-0.5 shrink-0" />
-                <p className="text-[12px] font-medium leading-relaxed">
-                  DİKKAT! Hesap oluşturmadan devam ettiğiniz için bu sayfayı kapattığınızda hesap
-                  bilgileri, şifreler ve canlı 2FA kodları bir daha görüntülenemez. Bilgileri şimdi
-                  kopyalayın.
-                </p>
+                <p className="text-[12px] font-medium leading-relaxed">{t("x.dikkat-hesap-olusturmadan-devam-ettiginiz-icin-bu-sayfay")}</p>
               </div>
             ) : null}
           </div>
@@ -427,9 +400,7 @@ export function RedeemFlow({
                 <span className="badge">{item.kind === "game" ? "Ürün" : "Hesap"}</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3.5">
-                <p className="text-[11.5px] muted">
-                  Kullanıcı adı, şifre, notlar ve canlı kod sırayla gösterilir.
-                </p>
+                <p className="text-[11.5px] muted">{t("x.kullanc-ad-sifre-notlar-ve-canl-kod-srayla-gosterilir")}</p>
                 <button
                   type="button"
                   className="btn btn-primary btn-sm"
@@ -457,14 +428,10 @@ export function RedeemFlow({
               Yeni kod kullan
             </button>
             {result.guest ? (
-              <Link href={`${basePath}/kayit`} className="btn btn-primary">
-                Hesap oluştur
-                <ArrowRight size={14} />
+              <Link href={`${basePath}/kayit`} className="btn btn-primary">{t("x.hesap-olustur")}<ArrowRight size={14} />
               </Link>
             ) : (
-              <Link href={`${basePath}/kutuphane`} className="btn btn-primary">
-                Kütüphaneme git
-                <ArrowRight size={14} />
+              <Link href={`${basePath}/kutuphane`} className="btn btn-primary">{t("x.kutuphaneme-git")}<ArrowRight size={14} />
               </Link>
             )}
           </div>
@@ -477,9 +444,7 @@ export function RedeemFlow({
         title={t("redeem.guestTitle")}
         footer={
           <>
-            <button type="button" className="btn btn-outline" onClick={() => setGuestWarning(false)}>
-              Hesap oluşturayım
-            </button>
+            <button type="button" className="btn btn-outline" onClick={() => setGuestWarning(false)}>{t("x.hesap-olusturaym")}</button>
             <button
               type="button"
               className="btn btn-danger"
@@ -496,11 +461,7 @@ export function RedeemFlow({
           className="flex items-start gap-3 rounded-lg border p-3.5"
         >
           <AlertTriangle size={20} className="mt-0.5 shrink-0" />
-          <p className="text-[12.5px] font-medium leading-relaxed">
-            DİKKAT! Hesap oluşturmadan devam ederseniz, bu sayfayı kapattığınızda hesap bilgilerinizi,
-            şifrelerinizi ve canlı 2FA / Steam Guard kodlarınızı BİR DAHA ASLA GÖREMEZSİNİZ! Kütüphanenize
-            kaydetmek için sadece 5 saniyede kullanıcı adı ve şifre belirlemeniz şiddetle önerilir.
-          </p>
+          <p className="text-[12.5px] font-medium leading-relaxed">{t("x.dikkat-hesap-olusturmadan-devam-ederseniz-bu-sayfay-kapa")}</p>
         </div>
       </Modal>
 

@@ -11,7 +11,7 @@
  */
 
 export const CURRENCY_OPTIONS = [
-  { code: "TRY", label: "Türk Lirası", symbol: "₺" },
+  { code: "TRY", label: "x.turk-liras", symbol: "₺" },
   { code: "USD", label: "US Dollar", symbol: "$" },
   { code: "EUR", label: "Euro", symbol: "€" },
   { code: "GBP", label: "British Pound", symbol: "£" },

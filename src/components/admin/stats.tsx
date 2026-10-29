@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
+import { getTranslator } from "@/lib/i18n/server";
 
 export function BarChart({
   data,
   height = 132,
   tone = "var(--store-accent)",
-  emptyText = "Bu aralıkta veri yok",
+  emptyText = "x.bu-aralkta-veri-yok",
 }: {
   data: { key?: string; label: string; value: number }[];
   height?: number;
@@ -72,7 +73,7 @@ export function HourHeatmap({ hours }: { hours: number[] }) {
   );
 }
 
-export function UsageDonut({
+export async function UsageDonut({
   used,
   total,
   label,
@@ -83,6 +84,7 @@ export function UsageDonut({
   label: string;
   centerLabel?: string;
 }) {
+  const { t } = await getTranslator();
   const percent = total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0;
   return (
     <div className="flex items-center gap-4">
@@ -94,7 +96,7 @@ export function UsageDonut({
       >
         <div className="absolute inset-[10px] flex flex-col items-center justify-center rounded-full" style={{ background: "var(--bg-elevated)" }}>
           <span className="text-[19px] font-semibold leading-none tabular-nums">{percent}%</span>
-          <span className="mt-1 text-[9px] uppercase tracking-[0.08em] muted">{centerLabel ?? "kullanım"}</span>
+          <span className="mt-1 text-[9px] uppercase tracking-[0.08em] muted">{centerLabel ?? t("x.kullanm")}</span>
         </div>
       </div>
       <div className="min-w-0">

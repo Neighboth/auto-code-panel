@@ -5,9 +5,9 @@ import { ArrowRight, Clock3, Fingerprint, KeyRound, PackageCheck, ShieldCheck, S
 import { db } from "@/db";
 import { entitlements, games } from "@/db/schema";
 import { getStoreState, getStoreBasePath } from "@/lib/tenant";
-import { getTranslator } from "@/lib/i18n/server";
 import { formatMoney } from "@/lib/format";
 import { GameGrid, type StoreGameCard } from "@/components/store/game-grid";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 

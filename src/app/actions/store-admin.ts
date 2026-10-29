@@ -1,5 +1,7 @@
 "use server";
 
+import { getTranslator } from "@/lib/i18n/server";
+
 import { and, eq, inArray, isNotNull, ne, sql } from "drizzle-orm";
 import { promises as dns } from "node:dns";
 import { revalidatePath } from "next/cache";
@@ -71,11 +73,12 @@ export async function steamLookup(
   url: string,
   targetCurrency = "TRY",
 ): Promise<ActionResult<SteamPreview>> {
+  const { t } = await getTranslator();
   const appId = parseSteamAppId(url);
   if (!appId) {
     return {
       ok: false,
-      message: "Steam linkinden appId okunamadı. Örnek: store.steampowered.com/app/1091500",
+      message: t("x.steam-linkinden-appid-okunamad-ornek-store-steampowered"),
     };
   }
   const details = await fetchSteamAppDetails(appId);
@@ -83,7 +86,7 @@ export async function steamLookup(
     return {
       ok: false,
       message:
-        "Steam Store API yanıt vermedi. Başlık, kapak ve fiyatı manuel girebilirsiniz; otomatik senkronizasyon daha sonra tekrar denenecek.",
+        t("x.steam-store-api-yant-vermedi-baslk-kapak-ve-fiyat-manuel"),
     };
   }
   const converted =
@@ -94,7 +97,7 @@ export async function steamLookup(
     ok: true,
     message:
       details.currency.toUpperCase() === targetCurrency.toUpperCase()
-        ? "Steam bilgileri alındı."
+        ? t("x.steam-bilgileri-alnd")
         : `Steam bilgileri alındı · ${details.currency} → ${targetCurrency} dönüştürüldü.`,
     data: {
       appId,
@@ -112,9 +115,10 @@ export async function steamLookup(
 /* ------------------------------- Games ------------------------------- */
 
 export async function saveGame(formData: FormData): Promise<ActionResult<{ id: number }>> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const { store } = guard.state;
 
   const id = intOrNull(str(formData, "id"));
@@ -153,12 +157,12 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
   }
   originalCurrency = currency;
 
-  if (!title) return { ok: false, message: "Ürün başlığı zorunludur (veya Steam linki girin)." };
+  if (!title) return { ok: false, message: t("x.urun-baslg-zorunludur-veya-steam-linki-girin") };
   if (salesUrl && !/^https?:\/\//i.test(salesUrl)) {
-    return { ok: false, message: "Satış ilan linki http(s) ile başlamalıdır." };
+    return { ok: false, message: t("x.sats-ilan-linki-http-s-ile-baslamaldr") };
   }
   if (steamUrl && !/^https?:\/\//i.test(steamUrl)) {
-    return { ok: false, message: "Steam linki http(s) ile başlamalıdır." };
+    return { ok: false, message: t("x.steam-linki-http-s-ile-baslamaldr") };
   }
 
   const payload = {
@@ -182,7 +186,7 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
       .set(payload)
       .where(and(eq(games.id, id), eq(games.storeId, store.id)))
       .returning({ id: games.id });
-    if (updated.length === 0) return { ok: false, message: "Ürün bulunamadı." };
+    if (updated.length === 0) return { ok: false, message: t("x.urun-bulunamad") };
     refreshStore(slug);
     await logAudit({
       action: "store.product.update",
@@ -193,7 +197,7 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
       storeSlug: slug,
       metadata: { title, ourPrice, currency, steamAppId },
     });
-    return { ok: true, message: "Ürün güncellendi.", data: { id } };
+    return { ok: true, message: t("x.urun-guncellendi-2"), data: { id } };
   }
 
   const [created] = await db
@@ -210,15 +214,16 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
     storeSlug: slug,
     metadata: { title, ourPrice, currency, steamAppId, originalPrice },
   });
-  return { ok: true, message: "Ürün eklendi.", data: { id: created.id } };
+  return { ok: true, message: t("x.urun-eklendi-2"), data: { id: created.id } };
 }
 
 export async function deleteGame(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = intOrNull(str(formData, "id"));
-  if (!id) return { ok: false, message: "Ürün bulunamadı." };
+  if (!id) return { ok: false, message: t("x.urun-bulunamad") };
 
   const storeCodes = await db
     .select({ id: codes.id, gameIds: codes.gameIds })
@@ -228,7 +233,7 @@ export async function deleteGame(formData: FormData): Promise<ActionResult> {
   if (codeRows.length > 0) {
     return {
       ok: false,
-      message: "Bu ürüne bağlı kodlar var. Önce ilgili kodları silin veya ürünü pasife alın.",
+      message: t("x.bu-urune-bagl-kodlar-var-once-ilgili-kodlar-silin-veya-u"),
     };
   }
 
@@ -238,18 +243,19 @@ export async function deleteGame(formData: FormData): Promise<ActionResult> {
     action: "store.product.delete",
     entity: "game",
     entityId: id,
-    summary: "Ürün silindi",
+    summary: t("x.urun-silindi"),
     severity: "warn",
     storeId: guard.state.store.id,
     storeSlug: slug,
   });
-  return { ok: true, message: "Ürün silindi." };
+  return { ok: true, message: t("x.urun-silindi-2") };
 }
 
 export async function syncSteamNow(formData: FormData): Promise<ActionResult<{ updated: number }>> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const result = await syncSteamGames(guard.state.store.id);
   refreshStore(slug);
   await logAudit({
@@ -262,11 +268,13 @@ export async function syncSteamNow(formData: FormData): Promise<ActionResult<{ u
     metadata: { checked: result.checked, updated: result.updated, failed: result.failed },
   });
   if (result.checked === 0) {
-    return { ok: false, message: "Senkronizasyon açık ve Steam linki olan ürün bulunamadı." };
+    return { ok: false, message: t("x.senkronizasyon-ack-ve-steam-linki-olan-urun-bulunamad") };
   }
   return {
     ok: true,
-    message: `${result.updated}/${result.checked} ürün güncellendi${result.failed ? `, ${result.failed} hata` : ""}.`,
+    message: result.failed
+        ? t("x.updated-checked-urun-guncellendi-failed-hata", { updated: result.updated, checked: result.checked, failed: result.failed })
+        : t("x.updated-checked-urun-guncellendi", { updated: result.updated, checked: result.checked }),
     data: { updated: result.updated },
   };
 }
@@ -274,19 +282,20 @@ export async function syncSteamNow(formData: FormData): Promise<ActionResult<{ u
 /* ------------------------------ Accounts ----------------------------- */
 
 export async function saveAccount(formData: FormData): Promise<ActionResult<{ id: number }>> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const { store } = guard.state;
 
   const id = intOrNull(str(formData, "id"));
   const platform = str(formData, "platform").toLowerCase() || "steam";
   const preset = PLATFORM_PRESETS.find((item) => item.id === platform);
-  if (!preset) return { ok: false, message: "Geçersiz platform." };
+  if (!preset) return { ok: false, message: t("x.gecersiz-platform") };
 
   const customLabel = str(formData, "platformLabel");
   const platformLabel = platform === "custom" ? customLabel : preset.label;
-  if (!platformLabel) return { ok: false, message: "Özel platform adı zorunludur." };
+  if (!platformLabel) return { ok: false, message: t("x.ozel-platform-ad-zorunludur") };
 
   const username = str(formData, "username");
   const email = str(formData, "email");
@@ -294,7 +303,7 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
   const productLabel = str(formData, "productLabel");
   const guardType = str(formData, "guardType") || "none";
   if (!GUARD_OPTIONS.some((option) => option.id === guardType)) {
-    return { ok: false, message: "Geçersiz koruma türü seçildi." };
+    return { ok: false, message: t("x.gecersiz-koruma-turu-secildi") };
   }
 
   let existingAccount: typeof accounts.$inferSelect | null = null;
@@ -305,7 +314,7 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
       .where(and(eq(accounts.id, id), eq(accounts.storeId, store.id)))
       .limit(1);
     existingAccount = rows[0] ?? null;
-    if (!existingAccount) return { ok: false, message: "Hesap bulunamadı." };
+    if (!existingAccount) return { ok: false, message: t("x.hesap-bulunamad") };
   }
 
   // Blank secret fields on edit keep the previously stored secret intact.
@@ -321,40 +330,40 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
   const notes = str(formData, "notes");
   const linkedGameIdsRaw = parseIdList(str(formData, "linkedGameIds"));
 
-  if (!password) return { ok: false, message: "Şifre zorunludur." };
+  if (!password) return { ok: false, message: t("x.sifre-zorunludur") };
   if (!username && !email) {
-    return { ok: false, message: "Kullanıcı adı veya e-posta adresinden en az biri zorunludur." };
+    return { ok: false, message: t("x.kullanc-ad-veya-e-posta-adresinden-en-az-biri-zorunludur") };
   }
   if (preset.kind === "steam" && !username) {
-    return { ok: false, message: "Steam hesabı için kullanıcı adı zorunludur." };
+    return { ok: false, message: t("x.steam-hesab-icin-kullanc-ad-zorunludur") };
   }
 
   if (guardHasSteam(guardType)) {
-    if (!steamSecret) return { ok: false, message: "Steam Guard seçildiği için shared_secret zorunludur." };
+    if (!steamSecret) return { ok: false, message: t("x.steam-guard-secildigi-icin-shared-secret-zorunludur") };
     if (!isValidSteamSecret(steamSecret)) {
       return {
         ok: false,
         message:
-          "Steam Guard shared_secret geçersiz. Steam Desktop Authenticator'daki base64 shared_secret değerini girin.",
+          t("x.steam-guard-shared-secret-gecersiz-steam-desktop-authent"),
       };
     }
   }
   if (guardHasTotp(guardType)) {
-    if (!totpSecret) return { ok: false, message: "2FA (TOTP) seçildiği için secret key zorunludur." };
+    if (!totpSecret) return { ok: false, message: t("x.2fa-totp-secildigi-icin-secret-key-zorunludur") };
     if (!isValidTotpSecret(totpSecret)) {
-      return { ok: false, message: "2FA secret key geçersiz. Base32 formatında olmalıdır." };
+      return { ok: false, message: t("x.2fa-secret-key-gecersiz-base32-formatnda-olmaldr") };
     }
   }
   if (guardHasEmail(guardType)) {
-    if (!mailEmail) return { ok: false, message: "E-posta doğrulaması için mail adresi zorunludur." };
+    if (!mailEmail) return { ok: false, message: t("x.e-posta-dogrulamas-icin-mail-adresi-zorunludur") };
     if (!mailPassword) {
       return {
         ok: false,
-        message: "E-posta doğrulaması için uygulama şifresi (IMAP) zorunludur.",
+        message: t("x.e-posta-dogrulamas-icin-uygulama-sifresi-imap-zorunludur"),
       };
     }
     if (!MAIL_PRESETS.some((mail) => mail.id === mailProvider)) {
-      return { ok: false, message: "Geçersiz mail sağlayıcısı seçildi." };
+      return { ok: false, message: t("x.gecersiz-mail-saglaycs-secildi") };
     }
   }
 
@@ -393,7 +402,7 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
       .set(payload)
       .where(and(eq(accounts.id, id), eq(accounts.storeId, store.id)))
       .returning({ id: accounts.id });
-    if (updated.length === 0) return { ok: false, message: "Hesap bulunamadı." };
+    if (updated.length === 0) return { ok: false, message: t("x.hesap-bulunamad") };
     refreshStore(slug);
     await logAudit({
       action: "store.account.update",
@@ -405,14 +414,14 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
       // Never log secrets: only which guard types are configured.
       metadata: { platform, guardType, hasMail: Boolean(mailEmail) },
     });
-    return { ok: true, message: "Hesap güncellendi.", data: { id } };
+    return { ok: true, message: t("x.hesap-guncellendi-2"), data: { id } };
   }
 
   const quota = await accountQuota(store);
   if (quota.reached) {
     return {
       ok: false,
-      message: `Hesap limitiniz dolu (${quota.used}/${quota.max}). Bayilik paketinizi yükseltmeden yeni hesap ekleyemezsiniz.`,
+      message: t("x.hesap-limitiniz-dolu-used-max-bayilik-paketinizi-yukselt", { used: quota.used ?? 0, max: quota.max ?? 0 }),
     };
   }
 
@@ -459,11 +468,12 @@ export async function testAccessCode(
     mailSenderFilter?: string;
   },
 ): Promise<ActionResult<{ results: AccessCodeTest[] }>> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const gate = hitRateLimit(`code-test:${guard.state.store.id}`, 20, 60_000);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla test isteği. ${gate.retryInSeconds} saniye bekleyin.` };
+    return { ok: false, message: t("x.cok-fazla-test-istegi-seconds-saniye-bekleyin", { seconds: gate.retryInSeconds }) };
   }
 
   let stored: typeof accounts.$inferSelect | null = null;
@@ -482,7 +492,7 @@ export async function testAccessCode(
   if (guardHasSteam(guardType)) {
     const secret = values.steamSecret || (stored?.steamSecret ? decryptData(stored.steamSecret) : "");
     if (!secret || !isValidSteamSecret(secret)) {
-      return { ok: false, message: "Steam Guard kodu üretilemedi: shared_secret geçersiz veya boş." };
+      return { ok: false, message: t("x.steam-guard-kodu-uretilemedi-shared-secret-gecersiz-veya") };
     }
     results.push({
       label: "Steam Guard",
@@ -495,7 +505,7 @@ export async function testAccessCode(
   if (guardHasTotp(guardType)) {
     const secret = values.totpSecret || (stored?.totpSecret ? decryptData(stored.totpSecret) : "");
     if (!secret || !isValidTotpSecret(secret)) {
-      return { ok: false, message: "TOTP kodu üretilemedi: secret key geçersiz veya boş." };
+      return { ok: false, message: t("x.totp-kodu-uretilemedi-secret-key-gecersiz-veya-bos") };
     }
     results.push({
       label: "Authenticator (TOTP)",
@@ -520,7 +530,7 @@ export async function testAccessCode(
       senderFilter: values.mailSenderFilter || stored?.mailSenderFilter || "steam",
       sinceMinutes: 120,
     });
-    if (!mail.ok) return { ok: false, message: `Mail kodu alınamadı: ${mail.message}` };
+    if (!mail.ok) return { ok: false, message: t("x.mail-kodu-alnamad-detail", { detail: mail.message }) };
     results.push({
       label: `E-posta (${mail.from || email})`,
       code: mail.code,
@@ -530,17 +540,18 @@ export async function testAccessCode(
   }
 
   if (results.length === 0) {
-    return { ok: false, message: "Test edilecek bir koruma yöntemi seçilmedi." };
+    return { ok: false, message: t("x.test-edilecek-bir-koruma-yontemi-secilmedi") };
   }
-  return { ok: true, message: "Kod(lar) başarıyla üretildi.", data: { results } };
+  return { ok: true, message: t("x.kod-lar-basaryla-uretildi"), data: { results } };
 }
 
 export async function deleteAccount(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = intOrNull(str(formData, "id"));
-  if (!id) return { ok: false, message: "Hesap bulunamadı." };
+  if (!id) return { ok: false, message: t("x.hesap-bulunamad") };
 
   const entitlementRows = await db
     .select()
@@ -548,7 +559,7 @@ export async function deleteAccount(formData: FormData): Promise<ActionResult> {
     .where(and(eq(entitlements.storeId, guard.state.store.id), eq(entitlements.accountId, id)));
   const active = entitlementRows.filter((row) => !row.expiresAt || new Date(row.expiresAt).getTime() > Date.now());
   if (active.length > 0) {
-    return { ok: false, message: "Bu hesap aktif bir teslimatta kullanılıyor, silinemez." };
+    return { ok: false, message: t("x.bu-hesap-aktif-bir-teslimatta-kullanlyor-silinemez") };
   }
 
   await db
@@ -568,13 +579,14 @@ export async function deleteAccount(formData: FormData): Promise<ActionResult> {
 }
 
 export async function setAccountStatus(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = intOrNull(str(formData, "id"));
   const status = str(formData, "status");
   if (!id || !["available", "retired"].includes(status)) {
-    return { ok: false, message: "Geçersiz istek." };
+    return { ok: false, message: t("x.gecersiz-istek") };
   }
   await db
     .update(accounts)
@@ -585,12 +597,12 @@ export async function setAccountStatus(formData: FormData): Promise<ActionResult
     action: "store.account.status",
     entity: "account",
     entityId: id,
-    summary: status === "retired" ? "Hesap pasife alındı" : "Hesap aktifleştirildi",
+    summary: status === "retired" ? t("x.hesap-pasife-alnd") : t("x.hesap-aktiflestirildi"),
     storeId: guard.state.store.id,
     storeSlug: slug,
     metadata: { status },
   });
-  return { ok: true, message: status === "retired" ? "Hesap pasife alındı." : "Hesap aktifleştirildi." };
+  return { ok: true, message: status === "retired" ? t("x.hesap-pasife-alnd-2") : t("x.hesap-aktiflestirildi-2") };
 }
 
 /* -------------------------------- Codes ------------------------------ */
@@ -609,12 +621,13 @@ export type CodeWizardPayload = {
 export async function createCodes(
   payload: CodeWizardPayload,
 ): Promise<ActionResult<{ codes: string[] }>> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(payload.slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const { store } = guard.state;
 
   if (!["choice", "single", "bundle"].includes(payload.type)) {
-    return { ok: false, message: "Geçersiz kod türü." };
+    return { ok: false, message: t("x.gecersiz-kod-turu") };
   }
   const count = Math.min(500, Math.max(1, Math.trunc(payload.count || 1)));
   const choiceCount = Math.min(20, Math.max(1, Math.trunc(payload.choiceCount || 1)));
@@ -634,14 +647,14 @@ export async function createCodes(
       .from(games)
       .where(eq(games.storeId, store.id));
     if (Number(gameCount[0]?.value ?? 0) === 0) {
-      return { ok: false, message: "Seçmeli kod için önce mağazaya oyun eklemelisiniz." };
+      return { ok: false, message: t("x.secmeli-kod-icin-once-magazaya-oyun-eklemelisiniz") };
     }
   } else {
     if (gameIds.length + accountIds.length === 0) {
-      return { ok: false, message: "En az bir ürün, oyun veya hesap seçmelisiniz." };
+      return { ok: false, message: t("x.en-az-bir-urun-oyun-veya-hesap-secmelisiniz") };
     }
     if (payload.type === "single" && gameIds.length + accountIds.length !== 1) {
-      return { ok: false, message: "Tekli modda yalnızca 1 hedef seçilebilir." };
+      return { ok: false, message: t("x.tekli-modda-yalnzca-1-hedef-secilebilir") };
     }
     const validGames = await db
       .select({ id: games.id })
@@ -656,7 +669,7 @@ export async function createCodes(
     gameIds = validGames.map((game) => game.id);
     accountIds = validAccounts.map((account) => account.id);
     if (gameIds.length + accountIds.length === 0) {
-      return { ok: false, message: "Seçilen hedefler bu mağazada bulunamadı." };
+      return { ok: false, message: t("x.secilen-hedefler-bu-magazada-bulunamad") };
     }
   }
 
@@ -675,7 +688,7 @@ export async function createCodes(
     }
   }
   if (generated.size === 0) {
-    return { ok: false, message: "Kod üretilemedi, lütfen tekrar deneyin." };
+    return { ok: false, message: t("x.kod-uretilemedi-lutfen-tekrar-deneyin") };
   }
 
   const values = Array.from(generated).map((code) => ({
@@ -708,25 +721,26 @@ export async function createCodes(
   });
   return {
     ok: true,
-    message: `${inserted.length} kod üretildi.`,
+    message: t("x.count-kod-uretildi", { count: inserted.length }),
     data: { codes: inserted.map((row) => row.code) },
   };
 }
 
 export async function deleteCode(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const id = intOrNull(str(formData, "id"));
-  if (!id) return { ok: false, message: "Kod bulunamadı." };
+  if (!id) return { ok: false, message: t("x.kod-bulunamad") };
   const rows = await db
     .select({ redeemedAt: codes.redeemedAt })
     .from(codes)
     .where(and(eq(codes.id, id), eq(codes.storeId, guard.state.store.id)))
     .limit(1);
-  if (rows.length === 0) return { ok: false, message: "Kod bulunamadı." };
+  if (rows.length === 0) return { ok: false, message: t("x.kod-bulunamad") };
   if (rows[0].redeemedAt) {
-    return { ok: false, message: "Kullanılmış kodlar silinemez, arşiv olarak saklanır." };
+    return { ok: false, message: t("x.kullanlms-kodlar-silinemez-arsiv-olarak-saklanr") };
   }
   await db.delete(codes).where(and(eq(codes.id, id), eq(codes.storeId, guard.state.store.id)));
   refreshStore(slug);
@@ -745,21 +759,22 @@ export async function deleteCode(formData: FormData): Promise<ActionResult> {
 /* ------------------------------ Settings ----------------------------- */
 
 export async function saveStoreSettings(formData: FormData): Promise<ActionResult<{ slug: string }>> {
+  const { t } = await getTranslator();
   const currentSlug = str(formData, "slug");
   const guard = await requireStoreAdmin(currentSlug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const { store } = guard.state;
 
   const nextSlug = slugify(str(formData, "newSlug") || currentSlug);
   if (!/^[a-z0-9][a-z0-9-]{2,29}$/.test(nextSlug)) {
-    return { ok: false, message: "Mağaza ID 3-30 karakter olmalıdır." };
+    return { ok: false, message: t("x.magaza-id-3-30-karakter-olmaldr") };
   }
   if (RESERVED_SLUGS.has(nextSlug)) {
-    return { ok: false, message: "Bu mağaza ID ayrılmış durumda." };
+    return { ok: false, message: t("x.bu-magaza-id-ayrlms-durumda") };
   }
   if (nextSlug !== store.slug) {
     const taken = await db.select({ id: stores.id }).from(stores).where(eq(stores.slug, nextSlug)).limit(1);
-    if (taken.length > 0) return { ok: false, message: "Bu mağaza ID zaten kullanılıyor." };
+    if (taken.length > 0) return { ok: false, message: t("x.bu-magaza-id-zaten-kullanlyor") };
   }
 
   const title = str(formData, "title") || store.title;
@@ -773,13 +788,13 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   const fontFamily = str(formData, "fontFamily") || store.fontFamily;
 
   if (logoUrl && !/^https?:\/\//i.test(logoUrl)) {
-    return { ok: false, message: "Logo adresi http(s) ile başlamalıdır." };
+    return { ok: false, message: t("x.logo-adresi-http-s-ile-baslamaldr") };
   }
   if (faviconUrl && !/^https?:\/\//i.test(faviconUrl)) {
-    return { ok: false, message: "Favicon adresi http(s) ile başlamalıdır." };
+    return { ok: false, message: t("x.favicon-adresi-http-s-ile-baslamaldr") };
   }
   if (!FONT_OPTIONS.some((option) => option.family === fontFamily)) {
-    return { ok: false, message: "Desteklenmeyen font seçimi." };
+    return { ok: false, message: t("x.desteklenmeyen-font-secimi") };
   }
 
   let contactLinks: { label: string; url: string }[] = [];
@@ -830,14 +845,14 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
     summary:
       nextSlug !== store.slug
         ? `Mağaza ayarları güncellendi, ID ${store.slug} → ${nextSlug}`
-        : "Mağaza ayarları güncellendi",
+        : t("x.magaza-ayarlar-guncellendi"),
     storeId: store.id,
     storeSlug: nextSlug,
     metadata: { nextSlug, title, fontFamily, contactLinks, logoUrl, primaryColor, accentColor },
   });
   return {
     ok: true,
-    message: nextSlug !== store.slug ? "Ayarlar kaydedildi, mağaza ID güncellendi." : "Ayarlar kaydedildi.",
+    message: nextSlug !== store.slug ? t("x.ayarlar-kaydedildi-magaza-id-guncellendi") : "Ayarlar kaydedildi.",
     data: { slug: nextSlug },
   };
 }
@@ -847,9 +862,10 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
 export async function saveStoreDomain(
   formData: FormData,
 ): Promise<ActionResult<{ domain: string; token: string }>> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const { store } = guard.state;
 
   const raw = str(formData, "domain");
@@ -864,19 +880,19 @@ export async function saveStoreDomain(
       action: "store.domain.remove",
       entity: "store",
       entityId: store.id,
-      summary: `${store.customDomain ?? "Özel alan adı"} kaldırıldı`,
+      summary: `${store.customDomain ?? t("x.ozel-alan-ad")} kaldırıldı`,
       severity: "warn",
       storeId: store.id,
       storeSlug: store.slug,
     });
-    return { ok: true, message: "Özel alan adı kaldırıldı.", data: { domain: "", token: "" } };
+    return { ok: true, message: t("x.ozel-alan-ad-kaldrld-2"), data: { domain: "", token: "" } };
   }
 
   const domain = normalizeDomain(raw);
   if (!isValidDomain(domain)) {
     return {
       ok: false,
-      message: "Geçerli bir alan adı girin. Örnek: magazadi.com (protokol, port ve yol olmadan).",
+      message: t("x.gecerli-bir-alan-ad-girin-ornek-magazadi-com-protokol-po"),
     };
   }
 
@@ -892,7 +908,7 @@ export async function saveStoreDomain(
     )
     .limit(1);
   if (taken.length > 0) {
-    return { ok: false, message: "Bu alan adı başka bir mağaza tarafından doğrulanmış." };
+    return { ok: false, message: t("x.bu-alan-ad-baska-bir-magaza-tarafndan-dogrulanms") };
   }
 
   const unchanged = domain === store.customDomain;
@@ -906,7 +922,7 @@ export async function saveStoreDomain(
       })
       .where(eq(stores.id, store.id));
   } catch {
-    return { ok: false, message: "Bu alan adı başka bir mağazaya bağlı." };
+    return { ok: false, message: t("x.bu-alan-ad-baska-bir-magazaya-bagl") };
   }
 
   revalidatePath(`/${store.slug}`, "layout");
@@ -930,19 +946,20 @@ export async function saveStoreDomain(
 }
 
 export async function verifyStoreDomain(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
 
   const gate = hitRateLimit(`domain-verify:${guard.state.store.id}`, 10, 60_000);
   if (!gate.allowed) {
-    return { ok: false, message: `Çok fazla doğrulama denemesi. ${gate.retryInSeconds} saniye sonra tekrar deneyin.` };
+    return { ok: false, message: t("x.cok-fazla-dogrulama-denemesi-seconds-saniye-sonra-tekrar", { seconds: gate.retryInSeconds }) };
   }
 
   const rows = await db.select().from(stores).where(eq(stores.id, guard.state.store.id)).limit(1);
   const store = rows[0];
   if (!store?.customDomain) {
-    return { ok: false, message: "Önce bir alan adı kaydedin." };
+    return { ok: false, message: t("x.once-bir-alan-ad-kaydedin") };
   }
 
   const domain = store.customDomain;
@@ -963,7 +980,7 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
   if (conflict.length > 0) {
     return {
       ok: false,
-      message: "Bu alan adı başka bir mağaza tarafından doğrulanmış. Lütfen farklı bir alan adı kullanın.",
+      message: t("x.bu-alan-ad-baska-bir-magaza-tarafndan-dogrulanms-lutfen"),
     };
   }
 
@@ -973,7 +990,7 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
       dns.resolveTxt(recordName),
       new Promise<never>((_, reject) =>
         setTimeout(() => {
-          const error = new Error("DNS zaman aşımı");
+          const error = new Error(t("x.dns-zaman-asm"));
           (error as NodeJS.ErrnoException).code = "ETIMEOUT";
           reject(error);
         }, 5000),
@@ -984,12 +1001,12 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
     if (code === "ENOTFOUND" || code === "ENODATA" || code === "ESERVFAIL") {
       return {
         ok: false,
-        message: `${recordName} için TXT kaydı bulunamadı. DNS yayılımı birkaç dakika sürebilir, tekrar deneyin.`,
+        message: t("x.record-icin-txt-kayd-bulunamad-dns-yaylm-birkac-dakika-s", { record: recordName }),
       };
     }
     return {
       ok: false,
-      message: "DNS sorgusu tamamlanamadı. Alan adının yayında olduğundan ve sunucunun dış DNS sorgusu yapabildiğinden emin olun.",
+      message: t("x.dns-sorgusu-tamamlanamad-alan-adnn-yaynda-oldugundan-ve"),
     };
   }
 
@@ -997,7 +1014,7 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
   if (!values.includes(expected)) {
     return {
       ok: false,
-      message: `${recordName} TXT kaydı bulundu ancak değer eşleşmiyor. Beklenen değer: ${expected}`,
+      message: t("x.record-txt-kayd-bulundu-ancak-deger-eslesmiyor-beklenen-", { record: recordName, expected }),
     };
   }
 
@@ -1009,7 +1026,7 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
   } catch {
     return {
       ok: false,
-      message: "Bu alan adı başka bir mağaza tarafından doğrulanmış. Lütfen farklı bir alan adı kullanın.",
+      message: t("x.bu-alan-ad-baska-bir-magaza-tarafndan-dogrulanms-lutfen"),
     };
   }
 
@@ -1026,23 +1043,24 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
   });
   return {
     ok: true,
-    message: `${domain} doğrulandı. Alan adı birkaç saniye içinde mağazanıza yönlenecek.`,
+    message: t("x.domain-dogruland-alan-ad-birkac-saniye-icinde-magazanza-", { domain }),
   };
 }
 
 export async function saveStoreCredentials(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
   const slug = str(formData, "slug");
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const username = str(formData, "username");
   const email = str(formData, "email");
   const currentPassword = str(formData, "currentPassword");
   const newPassword = str(formData, "newPassword");
 
   if (!/^[a-zA-Z0-9._-]{3,32}$/.test(username)) {
-    return { ok: false, message: "Yönetici kullanıcı adı 3-32 karakter olmalıdır." };
+    return { ok: false, message: t("x.yonetici-kullanc-ad-3-32-karakter-olmaldr") };
   }
-  const reserved = managerIdentifierError(username, email);
+  const reserved = await managerIdentifierError(username, email);
   if (reserved) return { ok: false, message: reserved };
   const duplicate = await db
     .select({ id: storeAdmins.id })
@@ -1050,10 +1068,10 @@ export async function saveStoreCredentials(formData: FormData): Promise<ActionRe
     .where(and(sql`lower(${storeAdmins.username}) = ${username.toLowerCase()}`, ne(storeAdmins.id, guard.session.adminId)))
     .limit(1);
   if (duplicate.length > 0) {
-    return { ok: false, message: "Bu yönetici kullanıcı adı platformda zaten kullanılıyor." };
+    return { ok: false, message: t("x.bu-yonetici-kullanc-ad-platformda-zaten-kullanlyor") };
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-    return { ok: false, message: "Geçerli bir e-posta girin." };
+    return { ok: false, message: t("x.gecerli-bir-e-posta-girin") };
   }
   const rows = await db
     .select()
@@ -1061,14 +1079,14 @@ export async function saveStoreCredentials(formData: FormData): Promise<ActionRe
     .where(and(eq(storeAdmins.id, guard.session.adminId), eq(storeAdmins.storeId, guard.state.store.id)))
     .limit(1);
   const admin = rows[0];
-  if (!admin) return { ok: false, message: "Yönetici bulunamadı." };
+  if (!admin) return { ok: false, message: t("x.yonetici-bulunamad") };
 
   let passwordHash = admin.passwordHash;
   if (newPassword) {
     if (!verifyPassword(currentPassword, admin.passwordHash)) {
-      return { ok: false, message: "Mevcut şifre hatalı." };
+      return { ok: false, message: t("x.mevcut-sifre-hatal") };
     }
-    if (newPassword.length < 6) return { ok: false, message: "Yeni şifre en az 6 karakter olmalıdır." };
+    if (newPassword.length < 6) return { ok: false, message: t("x.yeni-sifre-en-az-6-karakter-olmaldr") };
     passwordHash = hashPassword(newPassword);
   }
 
@@ -1083,15 +1101,15 @@ export async function saveStoreCredentials(formData: FormData): Promise<ActionRe
     entityId: admin.id,
     summary:
       newPassword.length > 0
-        ? "Yönetici kullanıcı adı, e-postası ve şifresi güncellendi"
-        : "Yönetici kullanıcı adı ve e-postası güncellendi",
+        ? t("x.yonetici-kullanc-ad-e-postas-ve-sifresi-guncellendi")
+        : t("x.yonetici-kullanc-ad-ve-e-postas-guncellendi"),
     severity: newPassword ? "warn" : "info",
     storeId: guard.state.store.id,
     storeSlug: slug,
     metadata: { username, email, passwordChanged: newPassword.length > 0 },
   });
 
-  return { ok: true, message: "Yönetici bilgileri güncellendi." };
+  return { ok: true, message: t("x.yonetici-bilgileri-guncellendi") };
 }
 
 /**
@@ -1104,11 +1122,12 @@ export async function bulkDeleteCodes(
   slug: string,
   ids: number[],
 ): Promise<ActionResult<{ deleted: number; skipped: number }>> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const store = guard.state.store;
   const unique = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))].slice(0, 500);
-  if (unique.length === 0) return { ok: false, message: "Seçim yapılmadı." };
+  if (unique.length === 0) return { ok: false, message: t("x.secim-yaplmad") };
 
   const rows = await db
     .select({ id: codes.id, code: codes.code, redeemedAt: codes.redeemedAt })
@@ -1140,7 +1159,9 @@ export async function bulkDeleteCodes(
 
   return {
     ok: true,
-    message: `${deletable.length} kod silindi${skipped ? `, ${skipped} kullanılmış kod korundu` : ""}.`,
+    message: skipped
+      ? t("x.count-kod-silindi-kept-kullanlms-kod-korundu", { count: deletable.length, kept: skipped })
+      : t("x.count-kod-silindi", { count: deletable.length }),
     data: { deleted: deletable.length, skipped },
   };
 }
@@ -1152,14 +1173,15 @@ export async function bulkUpdateProductPrices(
   mode: "percent" | "amount",
   value: number,
 ): Promise<ActionResult<{ updated: number }>> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const store = guard.state.store;
   const unique = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))].slice(0, 500);
-  if (unique.length === 0) return { ok: false, message: "Ürün seçilmedi." };
-  if (!Number.isFinite(value) || value === 0) return { ok: false, message: "Geçerli bir değer girin." };
+  if (unique.length === 0) return { ok: false, message: t("x.urun-secilmedi") };
+  if (!Number.isFinite(value) || value === 0) return { ok: false, message: t("x.gecerli-bir-deger-girin") };
   if (mode === "percent" && (value <= -100 || value > 500)) {
-    return { ok: false, message: "Yüzde değeri -99 ile 500 arasında olmalıdır." };
+    return { ok: false, message: t("x.yuzde-degeri-99-ile-500-arasnda-olmaldr") };
   }
 
   const rows = await db
@@ -1190,7 +1212,7 @@ export async function bulkUpdateProductPrices(
     metadata: { mode, value, ids: unique.slice(0, 50), updated },
   });
 
-  return { ok: true, message: `${updated} ürün fiyatı güncellendi.`, data: { updated } };
+  return { ok: true, message: t("x.count-urun-fiyat-guncellendi", { count: updated }), data: { updated } };
 }
 
 /* ----------------------------- CSV import ---------------------------- */
@@ -1252,11 +1274,12 @@ export async function importProductsCsv(
   slug: string,
   csv: string,
 ): Promise<ActionResult<{ created: number; skipped: number; errors: string[] }>> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const store = guard.state.store;
   const records = csvRecords(csv).slice(0, 300);
-  if (records.length === 0) return { ok: false, message: "CSV boş görünüyor." };
+  if (records.length === 0) return { ok: false, message: t("x.csv-bos-gorunuyor") };
 
   const errors: string[] = [];
   let created = 0;
@@ -1266,7 +1289,7 @@ export async function importProductsCsv(
     const title = (record.title ?? "").slice(0, 120).trim();
     if (!title) {
       skipped += 1;
-      errors.push(`Satır ${index + 2}: başlık boş`);
+      errors.push(t("x.satr-row-baslk-bos", { row: index + 2 }));
       continue;
     }
     const currency = (record.currency ?? "TRY").toUpperCase().slice(0, 3) || "TRY";
@@ -1279,7 +1302,7 @@ export async function importProductsCsv(
     const steamUrl = (record.steamurl ?? "").trim();
     if (steamUrl && !/^https?:\/\//i.test(steamUrl)) {
       skipped += 1;
-      errors.push(`Satır ${index + 2}: Steam linki http(s) ile başlamalı`);
+      errors.push(t("x.satr-row-steam-linki-http-s-ile-baslamal", { row: index + 2 }));
       continue;
     }
     await db.insert(games).values({
@@ -1314,7 +1337,7 @@ export async function importProductsCsv(
     message:
       created > 0
         ? `${created} ürün içe aktarıldı${skipped ? `, ${skipped} satır atlandı` : ""}.`
-        : "Hiçbir satır aktarılamadı.",
+        : t("x.hicbir-satr-aktarlamad"),
     data: { created, skipped, errors: errors.slice(0, 20) },
   };
 }
@@ -1324,11 +1347,12 @@ export async function importAccountsCsv(
   slug: string,
   csv: string,
 ): Promise<ActionResult<{ created: number; skipped: number; errors: string[] }>> {
+  const { t } = await getTranslator();
   const guard = await requireStoreAdmin(slug);
-  if (!guard) return { ok: false, message: "Yetkiniz yok." };
+  if (!guard) return { ok: false, message: t("x.yetkiniz-yok") };
   const store = guard.state.store;
   const records = csvRecords(csv).slice(0, 300);
-  if (records.length === 0) return { ok: false, message: "CSV boş görünüyor." };
+  if (records.length === 0) return { ok: false, message: t("x.csv-bos-gorunuyor") };
 
   const quota = await accountQuota(store);
   let remaining = quota.reached ? 0 : quota.max === null ? records.length : quota.max - quota.used;
@@ -1340,14 +1364,14 @@ export async function importAccountsCsv(
   for (const [index, record] of records.entries()) {
     if (remaining <= 0) {
       skipped += 1;
-      errors.push(`Satır ${index + 2}: hesap limiti dolu`);
+      errors.push(t("x.satr-row-hesap-limiti-dolu", { row: index + 2 }));
       continue;
     }
     const productLabel = (record.productlabel ?? record.product ?? "").slice(0, 120).trim();
     const password = record.password ?? "";
     if (!productLabel || !password) {
       skipped += 1;
-      errors.push(`Satır ${index + 2}: ürün adı ve şifre zorunlu`);
+      errors.push(t("x.satr-row-urun-ad-ve-sifre-zorunlu", { row: index + 2 }));
       continue;
     }
     const platform = (record.platform ?? "steam").toLowerCase().slice(0, 30) || "steam";
@@ -1390,7 +1414,7 @@ export async function importAccountsCsv(
     message:
       created > 0
         ? `${created} hesap içe aktarıldı${skipped ? `, ${skipped} satır atlandı` : ""}.`
-        : "Hiçbir satır aktarılamadı.",
+        : t("x.hicbir-satr-aktarlamad"),
     data: { created, skipped, errors: errors.slice(0, 20) },
   };
 }
