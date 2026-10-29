@@ -194,10 +194,32 @@ npm run i18n:coverage          # dil dil kapsam raporu
 npm run i18n:coverage -- --json
 ```
 
-`tr` ve `en` referanstır (tam). 29 dil, mağaza arayüzünün tamamını kapsayan
-"çekirdek paket" ile gelir; kalan diller İngilizceye düşer ve ham anahtar adı asla
-görünmez. Yeni dil eklemek için `src/lib/i18n/core-packs.ts` dosyasına bir nesne
-eklemek yeterlidir. Kapsam ayrıca `/super-admin/ayarlar` sayfasında gösterilir.
+Durum (v1.4.0):
+
+| Katman | Anahtar | Dil |
+| --- | --- | --- |
+| Referans sözlük (`dictionaries.ts`) | 163 | `tr`, `en` (tam) |
+| Çekirdek paket (`core-packs.ts`) | 39 | 80 dilin **tamamı** |
+
+Yani kayıtlı 80 dilin her biri menü, giriş/kayıt, sepet-kod girme, "kalan süre",
+"kopyala", "çıkış" gibi ekranın her yerinde görünen 39 anahtarı **kendi dilinde**
+gösterir; bu anahtarlar için İngilizceye düşme yoktur. Çekirdek pakette olmayan
+uzun kuyruk anahtarlar (panel tabloları, form etiketleri) `tr` ve `en` dışındaki
+dillerde İngilizceye düşer — ham anahtar adı hiçbir koşulda görünmez.
+
+Çeviri eklemek için `src/lib/i18n/core-packs.ts` içindeki ilgili dil nesnesine
+anahtar eklemek yeterlidir (`tr`/`en` dışındaki dillerde eksik anahtar otomatik
+olarak İngilizceye düşer).
+
+```bash
+npm run i18n:hardcoded       # hâlâ JSX içinde sabit yazılmış Türkçe metinler
+npm run i18n:hardcoded -- --json
+```
+
+`i18n:hardcoded` bir denetim aracıdır, derlemeyi düşürmez: hangi dosyada kaç sabit
+metin kaldığını listeler (v1.4.0 itibarıyla 489 metin / 49 dosya, ağırlıklı olarak
+mağaza ve süper yönetici panelleri). Kapsam ayrıca `/super-admin/ayarlar`
+sayfasındaki "Dil kapsamı" kartında canlı olarak gösterilir.
 
 ## Lisans
 

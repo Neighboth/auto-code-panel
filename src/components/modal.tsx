@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { useT } from "@/components/i18n-provider";
 
 /**
  * Dialog primitive.
@@ -31,6 +32,7 @@ export function Modal({
   footer?: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
 }) {
+  const t = useT();
   const widths = useMemo(
     () => ({ sm: "max-w-md", md: "max-w-xl", lg: "max-w-3xl", xl: "max-w-5xl" }),
     [],
@@ -112,7 +114,7 @@ export function Modal({
             type="button"
             onClick={onClose}
             className="rounded-md p-1.5 transition hover:opacity-70"
-            aria-label="Kapat"
+            aria-label={t("common.close")}
           >
             <X size={16} />
           </button>

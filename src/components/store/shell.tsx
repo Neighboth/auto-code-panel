@@ -72,7 +72,7 @@ export function StoreNav({
             <span className="truncate text-[14px] font-semibold tracking-[-0.01em]">{storeName}</span>
           </Link>
 
-          <nav aria-label="Mağaza menüsü" className="hidden items-center gap-5 lg:flex">
+          <nav aria-label={t("ui.storeMenu")} className="hidden items-center gap-5 lg:flex">
             {links.map((link) => {
               const active = pathname === link.href;
               return (
@@ -100,10 +100,10 @@ export function StoreNav({
                 onChange={(event) => setCode(event.target.value)}
                 placeholder={t("store.quickCode")}
                 className="input mono h-9 pl-8 text-[12px] uppercase"
-                aria-label="Hızlı kod gir"
+                aria-label={t("ui.quickCode")}
               />
             </div>
-            <button type="submit" className="btn btn-primary btn-sm h-9 px-2.5" aria-label="Kodu kullan">
+            <button type="submit" className="btn btn-primary btn-sm h-9 px-2.5" aria-label={t("ui.useCode")}>
               <ArrowRight size={13} />
             </button>
           </form>
@@ -192,7 +192,7 @@ export function StoreNav({
               onChange={(event) => setCode(event.target.value)}
               placeholder={t("store.quickCode")}
               className="input mono h-9 pl-8 text-[12px] uppercase"
-              aria-label="Hızlı kod gir"
+              aria-label={t("ui.quickCode")}
             />
           </div>
           <button type="submit" className="btn btn-primary btn-sm h-9 shrink-0 px-3">

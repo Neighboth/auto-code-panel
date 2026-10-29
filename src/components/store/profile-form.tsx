@@ -4,6 +4,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Upload } from "lucide-react";
+import { useT } from "@/components/i18n-provider";
 import { updateCustomerProfile } from "@/app/actions/auth";
 import { Field } from "@/components/ui";
 
@@ -15,6 +16,7 @@ export function ProfileForm({
   customer: { username: string; displayName: string; email: string; avatarUrl: string };
 }) {
   const router = useRouter();
+  const t = useT();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [avatar, setAvatar] = useState(customer.avatarUrl);
@@ -71,7 +73,7 @@ export function ProfileForm({
             Avatar yükle
             <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={onFile} />
           </label>
-          <p className="mt-1.5 text-[10.5px] muted">PNG/JPG, en fazla 160 KB. Hazır avatar URL&apos;si de girebilirsiniz.</p>
+          <p className="mt-1.5 text-[10.5px] muted">{t("profile.avatarHint")}</p>
         </div>
         <button
           type="button"
@@ -104,8 +106,8 @@ export function ProfileForm({
       </div>
 
       <div className="mt-5 border-t pt-4 hairline">
-        <p className="text-[12px] font-semibold">Şifre değiştir</p>
-        <p className="mt-0.5 text-[11px] muted">Şifrenizi değiştirmek istemiyorsanız bu alanları boş bırakın.</p>
+        <p className="text-[12px] font-semibold">{t("profile.changePassword")}</p>
+        <p className="mt-0.5 text-[11px] muted">{t("profile.changePasswordHint")}</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <Field label="Mevcut şifre">
             <input name="currentPassword" type="password" className="input" autoComplete="current-password" />
