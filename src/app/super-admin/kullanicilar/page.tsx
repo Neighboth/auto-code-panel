@@ -7,7 +7,10 @@ import { UserTabs } from "./tabs-client";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "x.kullanclar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.kullanclar") };
+}
 
 export default async function SuperUsersPage({
   searchParams,

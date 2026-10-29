@@ -7,7 +7,10 @@ import { GameGrid, type StoreGameCard } from "@/components/store/game-grid";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Oyunlar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.oyunlar") };
+}
 
 export default async function StoreGamesPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
   const { t } = await getTranslator();

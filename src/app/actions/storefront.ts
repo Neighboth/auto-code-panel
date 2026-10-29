@@ -71,7 +71,7 @@ async function activeStore(slug: string) {
 async function loadCode(storeId: number, rawCode: string) {
   const { t } = await getTranslator();
   const normalized = rawCode.trim().toUpperCase();
-  if (!normalized) return { error: "Kod girin.", code: null };
+  if (!normalized) return { error: t("x.kod-girin"), code: null };
   const rows = await db
     .select()
     .from(codes)
@@ -420,7 +420,8 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
     action: "code.redeem",
     entity: "code",
     entityId: code.id,
-    summary: `${code.code} kodu kullanıldı, ${delivered.length} ürün teslim edildi`,
+    summaryKey: "x.code-kodu-kullanld-count-urun-teslim-edildi",
+    summaryParams: { code: code.code, count: delivered.length },
     storeId: tenantId,
     storeSlug: store.slug,
     actorType: customerId ? "customer" : "system",

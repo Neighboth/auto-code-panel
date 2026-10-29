@@ -96,7 +96,8 @@ export async function createVerification(input: CreateVerificationInput): Promis
     entity: "email_verification",
     entityId: row.id,
     storeId: input.storeId,
-    summary: `${input.purpose} doğrulama kodu ${input.email} adresine gönderildi`,
+    summaryKey: "x.purpose-dogrulama-kodu-email-adresine-gonderildi",
+    summaryParams: { purpose: input.purpose, email: input.email },
     metadata: { purpose: input.purpose, status: result.status, detail: result.detail },
   });
 
@@ -189,7 +190,8 @@ export async function consumeVerification(
       entityId: row.id,
       storeId: row.storeId,
       severity: "warn",
-      summary: `Hatalı doğrulama kodu (${row.attempts + 1}/${MAX_ATTEMPTS})`,
+      summaryKey: "x.hatal-dogrulama-kodu-attempt-max",
+      summaryParams: { attempt: row.attempts + 1, max: MAX_ATTEMPTS },
     });
     return {
       ok: false,
@@ -206,7 +208,8 @@ export async function consumeVerification(
     entity: "email_verification",
     entityId: row.id,
     storeId: row.storeId,
-    summary: `${row.email} doğrulandı (${row.purpose})`,
+    summaryKey: "x.email-dogruland-purpose",
+    summaryParams: { email: row.email, purpose: row.purpose },
   });
   return { ok: true, storeId: row.storeId, customerId: row.customerId, email: row.email, purpose: row.purpose };
 }

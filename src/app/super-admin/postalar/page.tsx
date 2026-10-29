@@ -7,7 +7,10 @@ import { env } from "@/lib/env";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "E-posta Merkezi" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.e-posta-merkezi") };
+}
 
 export default async function SuperAdminMailPage() {
   const { t } = await getTranslator();

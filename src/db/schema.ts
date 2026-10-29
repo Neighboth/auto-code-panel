@@ -302,7 +302,14 @@ export const auditLogs = sqliteTable(
     entity: text("entity").notNull().default(""),
     entityId: text("entity_id").notNull().default(""),
     severity: text("severity").notNull().default("info"),
+    /**
+     * Localised summary. `summaryKey` + `summaryParams` are the source of truth;
+     * `summary` keeps the legacy Turkish rendering so search, export and rows
+     * written before this change keep working.
+     */
     summary: text("summary").notNull().default(""),
+    summaryKey: text("summary_key").notNull().default(""),
+    summaryParams: text("summary_params").notNull().default("{}"),
     metadata: text("metadata").notNull().default("{}"),
     ip: text("ip").notNull().default(""),
     userAgent: text("user_agent").notNull().default(""),

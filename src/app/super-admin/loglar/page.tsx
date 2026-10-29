@@ -5,7 +5,10 @@ import { AuditLogView } from "@/components/super-admin/audit-log";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "x.islem-kaytlar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.islem-kaytlar") };
+}
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 

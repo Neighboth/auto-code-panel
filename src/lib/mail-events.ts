@@ -93,7 +93,8 @@ export async function sendAnnouncementMails(post: PlatformPost): Promise<{ sent:
     action: "mail.announcement.broadcast",
     entity: "platform_post",
     entityId: post.id,
-    summary: `${post.title} duyurusu ${sent} mağazaya gönderildi (${skipped} atlandı)`,
+    summaryKey: "x.title-duyurusu-sent-magazaya-gonderildi-skipped-atland",
+    summaryParams: { title: post.title, sent, skipped },
     metadata: { kind: post.kind, sent, skipped },
   });
   return { sent, skipped };

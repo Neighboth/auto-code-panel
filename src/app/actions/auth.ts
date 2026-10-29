@@ -145,7 +145,8 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
       action: "auth.login",
       entity: "super_admin",
       entityId: 1,
-      summary: `${env.superAdminUsername} süper admin paneline giriş yaptı`,
+      summaryKey: "x.user-super-admin-paneline-giris-yapt",
+      summaryParams: { user: env.superAdminUsername },
       actorType: "super",
       actorId: 1,
       actorName: env.superAdminUsername,
@@ -173,7 +174,8 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
     await logAudit({
       action: "auth.login.failed",
       entity: "store_admin",
-      summary: `Başarısız yönetici girişi: ${identifier.slice(0, 60)}`,
+      summaryKey: "x.basarsz-yonetici-girisi-identifier",
+      summaryParams: { identifier: identifier.slice(0, 60) },
       severity: "warn",
       actorType: "system",
       actorName: identifier.slice(0, 60),
@@ -191,7 +193,8 @@ export async function managerLogin(formData: FormData): Promise<ActionResult> {
     action: "auth.login",
     entity: "store_admin",
     entityId: admin.id,
-    summary: `${admin.username} yönetici paneline giriş yaptı`,
+    summaryKey: "x.user-yonetici-paneline-giris-yapt",
+    summaryParams: { user: admin.username },
     storeId: store.id,
     storeSlug: store.slug,
     actorType: "store",
@@ -379,7 +382,8 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
     await logAudit({
       action: "auth.login.failed",
       entity: "store_admin",
-      summary: `Başarısız mağaza paneli girişi (${store.slug}): ${identifier.slice(0, 60)}`,
+      summaryKey: "x.basarsz-magaza-paneli-girisi-store-identifier",
+      summaryParams: { store: store.slug, identifier: identifier.slice(0, 60) },
       severity: "warn",
       storeId: store.id,
       storeSlug: store.slug,
@@ -394,7 +398,8 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
     action: "auth.login",
     entity: "store_admin",
     entityId: admin.id,
-    summary: `${admin.username} mağaza paneline giriş yaptı`,
+    summaryKey: "x.user-magaza-paneline-giris-yapt",
+    summaryParams: { user: admin.username },
     storeId: store.id,
     storeSlug: store.slug,
     actorType: "store",
@@ -410,14 +415,14 @@ export async function storeAdminLogin(formData: FormData): Promise<ActionResult>
 
 export async function storeAdminLogout(slug: string): Promise<ActionResult> {
   const { t } = await getTranslator();
-  await logAudit({ action: "auth.logout", entity: "store_admin", summary: t("x.magaza-panelinden-cks-yapld"), storeSlug: slug });
+  await logAudit({ action: "auth.logout", entity: "store_admin", summaryKey: "x.magaza-panelinden-cks-yapld", storeSlug: slug });
   await clearSessionCookie(STORE_COOKIE);
   return { ok: true, redirectTo: `/${slug}/admin/giris` };
 }
 
 export async function superAdminLogout(): Promise<ActionResult> {
   const { t } = await getTranslator();
-  await logAudit({ action: "auth.logout", entity: "super_admin", summary: t("x.super-admin-panelinden-cks-yapld"), actorType: "super" });
+  await logAudit({ action: "auth.logout", entity: "super_admin", summaryKey: "x.super-admin-panelinden-cks-yapld", actorType: "super" });
   await clearSessionCookie(SUPER_COOKIE);
   return { ok: true, redirectTo: "/super-admin" };
 }
@@ -496,7 +501,8 @@ export async function customerRegister(
     entityId: customer.id,
     storeId: store.id,
     storeSlug: store.slug,
-    summary: `${customer.username} kayıt oldu`,
+    summaryKey: "x.user-kayt-oldu",
+    summaryParams: { user: customer.username },
     metadata: { email: email || null, verification: verificationOn },
   });
 
@@ -568,7 +574,8 @@ export async function verifyCustomerEmail(
     entityId: customer.id,
     storeId: store.id,
     storeSlug: store.slug,
-    summary: `${customer.username} e-postasını doğruladı`,
+    summaryKey: "x.user-e-postasn-dogrulad",
+    summaryParams: { user: customer.username },
   });
 
   return { ok: true, message: t("x.e-posta-dogruland-giris-yapld"), data: { redirectTo: `/${store.slug}/kutuphane` } };
@@ -644,7 +651,8 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
     await logAudit({
       action: "auth.login.failed",
       entity: "customer",
-      summary: `Başarısız müşteri girişi (${store.slug}): ${username.slice(0, 60)}`,
+      summaryKey: "x.basarsz-musteri-girisi-store-identifier",
+      summaryParams: { store: store.slug, identifier: username.slice(0, 60) },
       severity: "warn",
       storeId: store.id,
       storeSlug: store.slug,
@@ -682,7 +690,8 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
     action: "auth.login",
     entity: "customer",
     entityId: customer.id,
-    summary: `${customer.username} müşteri olarak giriş yaptı`,
+    summaryKey: "x.user-musteri-olarak-giris-yapt",
+    summaryParams: { user: customer.username },
     storeId: store.id,
     storeSlug: store.slug,
     actorType: "customer",
@@ -698,7 +707,7 @@ export async function customerLogin(formData: FormData): Promise<ActionResult> {
 export async function customerLogout(formData: FormData): Promise<ActionResult> {
   const { t } = await getTranslator();
   const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
-  await logAudit({ action: "auth.logout", entity: "customer", summary: t("x.musteri-cks-yapt"), storeSlug: slug });
+  await logAudit({ action: "auth.logout", entity: "customer", summaryKey: "x.musteri-cks-yapt", storeSlug: slug });
   await clearSessionCookie(CUSTOMER_COOKIE);
   if (slug) revalidatePath(`/${slug}`, "layout");
   return { ok: true, redirectTo: `/${slug}` };

@@ -27,7 +27,12 @@ const SKIP_DIRS = new Set(["node_modules", ".next", "i18n"]);
  * decision), not in the interface locale, so they are excluded from the UI
  * audit on purpose.
  */
-const SKIP_FILES = new Set(["src/lib/mailer.ts", "src/lib/mail-templates.ts", "src/lib/mail-events.ts"]);
+const SKIP_FILES = new Set(["src/lib/mailer.ts", "src/lib/mail-templates.ts"]);
+/**
+ * `mail_events`/`mailer` summaries are operational breadcrumbs without an
+ * audience (`announcement → 12`), so they are not part of the readable audit
+ * trail and do not need a dictionary key.
+ */
 const EXT = new Set([".ts", ".tsx"]);
 
 const TURKISH_LETTER = /[çğıöşüÇĞİÖŞÜ]/;
@@ -63,9 +68,20 @@ const UI_PATTERNS = [
   /\?\?\s*"([^"]+)"/g,
 ];
 const SERVER_PATTERNS = [/(?:message|error|summary|title|subtitle|description)\s*:\s*[`"']([^`"']+)[`"']/g];
+/**
+ * A `summaryKey` on the same object literal makes the row localised, so any
+ * `summary` next to it is only a compatibility mirror and is not reported.
+ */
+const SUMMARY_KEY_PATTERN = /summaryKey\s*:/;
 
 /** Keys the code asks for, collected so missing dictionary entries can be reported. */
 const KEY_PATTERN = /\bt\(\s*"([^"]+)"/g;
+/**
+ * Keys held in variables (`const LABELS = { auth: "x.hesap" }`) are not visible
+ * to KEY_PATTERN but break the UI just the same, so every `x.`-prefixed string
+ * literal is treated as a key that must resolve.
+ */
+const KEY_LITERAL_PATTERN = /"((?:x|common|redeem|library)\.[a-z0-9.-]+)"/g;
 
 function* walk(dir) {
   for (const entry of readdirSync(dir)) {
@@ -95,6 +111,7 @@ for (const file of walk(SRC)) {
   }
   const source = readFileSync(file, "utf8");
   for (const match of source.matchAll(KEY_PATTERN)) usedKeys.add(match[1]);
+  for (const match of source.matchAll(KEY_LITERAL_PATTERN)) usedKeys.add(match[1]);
   const hits = [];
   const serverHits = [];
   const lines = source.split("\n");
@@ -111,6 +128,7 @@ for (const file of walk(SRC)) {
         hits.push(text);
       }
     }
+    if (SUMMARY_KEY_PATTERN.test(line)) return;
     for (const pattern of SERVER_PATTERNS) {
       for (const match of line.matchAll(pattern)) {
         const text = (match[1] ?? "").trim();

@@ -7,7 +7,10 @@ import { CodeManager, type AdminCode } from "@/components/admin/codes";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kodlar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.kodlar") };
+}
 
 export default async function AdminCodesPage({ params }: { params: Promise<{ magazaSlug: string }> }) {
   const { t } = await getTranslator();

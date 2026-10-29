@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { getSuperSession } from "@/lib/session";
 import { queryAudit } from "@/lib/audit";
+import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
 /** CSV export of the audit trail (super admin only). */
 export async function GET(request: Request) {
+  const { t } = await getTranslator();
   const session = await getSuperSession();
-  if (!session) return new NextResponse("Yetkisiz", { status: 401 });
+  if (!session) return new NextResponse(t("x.yetkisiz"), { status: 401 });
 
   const url = new URL(request.url);
   const value = (key: string) => (url.searchParams.get(key) ?? "").trim();
@@ -31,20 +33,22 @@ export async function GET(request: Request) {
     page += 1;
   }
 
+  // Column names live in the dictionary, so the CSV matches the interface the
+  // super admin is currently using.
   const header = [
     "id",
-    "zaman",
-    "islem",
-    "yapan",
-    "yapan_tipi",
-    "magaza",
-    "varlik",
-    "varlik_id",
-    "onem",
-    "ozet",
-    "ip",
-    "tarayici",
-    "ek_veri",
+    t("x.audit-kolon-zaman"),
+    t("x.audit-kolon-islem"),
+    t("x.audit-kolon-yapan"),
+    t("x.audit-kolon-yapan-tipi"),
+    t("x.audit-kolon-magaza"),
+    t("x.audit-kolon-varlik"),
+    t("x.audit-kolon-varlik-id"),
+    t("x.audit-kolon-onem"),
+    t("x.audit-kolon-ozet"),
+    t("x.audit-kolon-ip"),
+    t("x.audit-kolon-tarayici"),
+    t("x.audit-kolon-ek-veri"),
   ];
   const escape = (input: string) => `"${String(input).replace(/"/g, '""')}"`;
   const lines = [header.join(",")];
@@ -60,7 +64,7 @@ export async function GET(request: Request) {
         row.entity,
         row.entityId,
         row.severity,
-        row.summary,
+        row.summaryKey ? t(row.summaryKey, row.summaryParams) : row.summary,
         row.ip,
         row.userAgent,
         row.metadata,

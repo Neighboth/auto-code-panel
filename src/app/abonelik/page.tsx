@@ -5,7 +5,10 @@ import { UnsubscribeForm } from "@/components/unsubscribe-form";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "E-posta tercihleri", robots: { index: false, follow: false } };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.e-posta-tercihleri"), robots: { index: false, follow: false } };
+}
 
 export default async function UnsubscribePage({
   searchParams,

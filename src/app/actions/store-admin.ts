@@ -192,7 +192,8 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
       action: "store.product.update",
       entity: "game",
       entityId: id,
-      summary: `${title} ürünü güncellendi`,
+      summaryKey: "x.title-urunu-guncellendi",
+      summaryParams: { title },
       storeId: store.id,
       storeSlug: slug,
       metadata: { title, ourPrice, currency, steamAppId },
@@ -209,7 +210,8 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
     action: "store.product.create",
     entity: "game",
     entityId: created.id,
-    summary: `${title} ürünü eklendi`,
+    summaryKey: "x.title-urunu-eklendi",
+    summaryParams: { title },
     storeId: store.id,
     storeSlug: slug,
     metadata: { title, ourPrice, currency, steamAppId, originalPrice },
@@ -243,7 +245,7 @@ export async function deleteGame(formData: FormData): Promise<ActionResult> {
     action: "store.product.delete",
     entity: "game",
     entityId: id,
-    summary: t("x.urun-silindi"),
+    summaryKey: "x.urun-silindi",
     severity: "warn",
     storeId: guard.state.store.id,
     storeSlug: slug,
@@ -262,7 +264,8 @@ export async function syncSteamNow(formData: FormData): Promise<ActionResult<{ u
     action: "store.product.sync",
     entity: "store",
     entityId: guard.state.store.id,
-    summary: `Steam senkronizasyonu: ${result.updated}/${result.checked} ürün güncellendi`,
+    summaryKey: "x.steam-senkronizasyonu-updated-checked-urun-guncellendi",
+    summaryParams: { updated: result.updated, checked: result.checked },
     storeId: guard.state.store.id,
     storeSlug: slug,
     metadata: { checked: result.checked, updated: result.updated, failed: result.failed },
@@ -408,7 +411,8 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
       action: "store.account.update",
       entity: "account",
       entityId: id,
-      summary: `${productLabel} hesabı güncellendi`,
+      summaryKey: "x.product-hesab-guncellendi",
+      summaryParams: { product: productLabel },
       storeId: store.id,
       storeSlug: slug,
       // Never log secrets: only which guard types are configured.
@@ -434,12 +438,13 @@ export async function saveAccount(formData: FormData): Promise<ActionResult<{ id
     action: "store.account.create",
     entity: "account",
     entityId: created.id,
-    summary: `${productLabel} hesabı envantere eklendi`,
+    summaryKey: "x.product-hesab-envantere-eklendi",
+    summaryParams: { product: productLabel },
     storeId: store.id,
     storeSlug: slug,
     metadata: { platform, guardType, hasMail: Boolean(mailEmail) },
   });
-  return { ok: true, message: "Hesap envantere eklendi.", data: { id: created.id } };
+  return { ok: true, message: t("x.hesap-envantere-eklendi"), data: { id: created.id } };
 }
 
 export type AccessCodeTest = {
@@ -570,12 +575,12 @@ export async function deleteAccount(formData: FormData): Promise<ActionResult> {
     action: "store.account.delete",
     entity: "account",
     entityId: id,
-    summary: "Hesap silindi",
+    summaryKey: "x.hesap-silindi",
     severity: "warn",
     storeId: guard.state.store.id,
     storeSlug: slug,
   });
-  return { ok: true, message: "Hesap silindi." };
+  return { ok: true, message: t("x.hesap-silindi-2") };
 }
 
 export async function setAccountStatus(formData: FormData): Promise<ActionResult> {
@@ -597,7 +602,7 @@ export async function setAccountStatus(formData: FormData): Promise<ActionResult
     action: "store.account.status",
     entity: "account",
     entityId: id,
-    summary: status === "retired" ? t("x.hesap-pasife-alnd") : t("x.hesap-aktiflestirildi"),
+    summaryKey: status === "retired" ? "x.hesap-pasife-alnd" : "x.hesap-aktiflestirildi",
     storeId: guard.state.store.id,
     storeSlug: slug,
     metadata: { status },
@@ -707,7 +712,8 @@ export async function createCodes(
   await logAudit({
     action: "store.code.create",
     entity: "code",
-    summary: `${inserted.length} kod üretildi (${payload.type})`,
+    summaryKey: "x.count-kod-uretildi-type",
+    summaryParams: { count: inserted.length, type: payload.type },
     storeId: store.id,
     storeSlug: payload.slug,
     metadata: {
@@ -748,12 +754,12 @@ export async function deleteCode(formData: FormData): Promise<ActionResult> {
     action: "store.code.delete",
     entity: "code",
     entityId: id,
-    summary: "Kod silindi",
+    summaryKey: "x.kod-silindi",
     severity: "warn",
     storeId: guard.state.store.id,
     storeSlug: slug,
   });
-  return { ok: true, message: "Kod silindi." };
+  return { ok: true, message: t("x.kod-silindi-2") };
 }
 
 /* ------------------------------ Settings ----------------------------- */
@@ -842,10 +848,8 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
     action: "store.settings.update",
     entity: "store",
     entityId: store.id,
-    summary:
-      nextSlug !== store.slug
-        ? `Mağaza ayarları güncellendi, ID ${store.slug} → ${nextSlug}`
-        : t("x.magaza-ayarlar-guncellendi"),
+    summaryKey: nextSlug !== store.slug ? "x.magaza-ayarlar-guncellendi-id-from-to" : "x.magaza-ayarlar-guncellendi",
+    summaryParams: nextSlug !== store.slug ? { from: store.slug, to: nextSlug } : undefined,
     storeId: store.id,
     storeSlug: nextSlug,
     metadata: { nextSlug, title, fontFamily, contactLinks, logoUrl, primaryColor, accentColor },
@@ -880,7 +884,8 @@ export async function saveStoreDomain(
       action: "store.domain.remove",
       entity: "store",
       entityId: store.id,
-      summary: `${store.customDomain ?? t("x.ozel-alan-ad")} kaldırıldı`,
+      summaryKey: "x.domain-kaldrld",
+      summaryParams: { domain: store.customDomain ?? t("x.ozel-alan-ad") },
       severity: "warn",
       storeId: store.id,
       storeSlug: store.slug,
@@ -931,7 +936,8 @@ export async function saveStoreDomain(
     action: "store.domain.add",
     entity: "store",
     entityId: store.id,
-    summary: unchanged ? `${domain} tekrar kaydedildi` : `${domain} özel alan adı olarak kaydedildi`,
+    summaryKey: unchanged ? "x.domain-tekrar-kaydedildi" : "x.domain-ozel-alan-ad-olarak-kaydedildi",
+    summaryParams: { domain },
     storeId: store.id,
     storeSlug: store.slug,
     metadata: { domain, unchanged },
@@ -1036,7 +1042,8 @@ export async function verifyStoreDomain(formData: FormData): Promise<ActionResul
     action: "store.domain.verify",
     entity: "store",
     entityId: store.id,
-    summary: `${domain} alan adı doğrulandı`,
+    summaryKey: "x.domain-alan-ad-dogruland",
+    summaryParams: { domain },
     storeId: store.id,
     storeSlug: store.slug,
     metadata: { domain, recordName },
@@ -1145,7 +1152,8 @@ export async function bulkDeleteCodes(
   await logAudit({
     action: "store.code.bulk_delete",
     entity: "code",
-    summary: `${deletable.length} kod silindi, ${skipped} kullanılmış kod korundu`,
+    summaryKey: "x.count-kod-silindi-kept-kullanlms-kod-korundu-2",
+    summaryParams: { count: deletable.length, kept: skipped },
     severity: "warn",
     storeId: store.id,
     storeSlug: slug,
@@ -1206,7 +1214,8 @@ export async function bulkUpdateProductPrices(
   await logAudit({
     action: "store.product.bulk_price",
     entity: "game",
-    summary: `${updated} ürünün fiyatı toplu güncellendi (${mode === "percent" ? `${value}%` : `${value}`})`,
+    summaryKey: "x.count-urunun-fiyat-toplu-guncellendi-value",
+    summaryParams: { count: updated, value: mode === "percent" ? `${value}%` : value },
     storeId: store.id,
     storeSlug: slug,
     metadata: { mode, value, ids: unique.slice(0, 50), updated },
@@ -1326,7 +1335,8 @@ export async function importProductsCsv(
   await logAudit({
     action: "store.product.import",
     entity: "game",
-    summary: `CSV içe aktarma: ${created} ürün eklendi, ${skipped} satır atlandı`,
+    summaryKey: "x.csv-ice-aktarma-created-urun-eklendi-skipped-satr-atland",
+    summaryParams: { created, skipped },
     storeId: store.id,
     storeSlug: slug,
     metadata: { created, skipped, errors: errors.slice(0, 20) },
@@ -1403,7 +1413,8 @@ export async function importAccountsCsv(
   await logAudit({
     action: "store.account.import",
     entity: "account",
-    summary: `CSV içe aktarma: ${created} hesap eklendi, ${skipped} satır atlandı`,
+    summaryKey: "x.csv-ice-aktarma-created-hesap-eklendi-skipped-satr-atland",
+    summaryParams: { created, skipped },
     storeId: store.id,
     storeSlug: slug,
     metadata: { created, skipped, errors: errors.slice(0, 20) },

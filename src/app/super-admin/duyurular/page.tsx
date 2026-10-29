@@ -7,7 +7,10 @@ import { PostManager, type PostItem } from "@/components/super-admin/posts";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "x.duyurular-guncellemeler" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.duyurular-guncellemeler") };
+}
 
 export default async function SuperAdminPostsPage() {
   const { t } = await getTranslator();

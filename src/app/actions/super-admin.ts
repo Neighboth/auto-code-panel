@@ -42,7 +42,8 @@ export async function viewStoreAccounts(storeId: number): Promise<ActionResult<S
     action: "super.accounts.reveal",
     entity: "store",
     entityId: storeId,
-    summary: `${storeRows[0].name} mağazasının ${rows.length} hesabının şifreleri görüntülendi`,
+    summaryKey: "x.store-magazasnn-count-hesabnn-sifreleri-goruntulendi",
+    summaryParams: { store: storeRows[0].name, count: rows.length },
     severity: "warn",
     storeId,
     storeSlug: storeRows[0].slug,
@@ -108,7 +109,8 @@ export async function createResellerKeys(
   await logAudit({
     action: "super.reseller_keys.create",
     entity: "reseller_key",
-    summary: `${inserted.length} bayilik kodu oluşturuldu`,
+    summaryKey: "x.count-bayilik-kodu-olusturuldu-2",
+    summaryParams: { count: inserted.length },
     metadata: {
       count: inserted.length,
       durationDays,
@@ -141,7 +143,8 @@ export async function revokeResellerKey(formData: FormData): Promise<ActionResul
     action: "super.reseller_keys.revoke",
     entity: "reseller_key",
     entityId: id,
-    summary: `${key.code} bayilik kodu iptal edildi`,
+    summaryKey: "x.code-bayilik-kodu-iptal-edildi",
+    summaryParams: { code: key.code },
     severity: "warn",
     metadata: { code: key.code, note: key.note },
   });
@@ -199,7 +202,12 @@ export async function extendStoreLicense(formData: FormData): Promise<ActionResu
     action: "super.store.extend",
     entity: "store",
     entityId: store.id,
-    summary: `${store.name} lisansı güncellendi (${daysRaw || "0"} gün, limit: ${maxAccountsRaw || "değişmedi"})`,
+    summaryKey: "x.store-lisans-guncellendi-days-gun-limit-limit",
+    summaryParams: {
+      store: store.name,
+      days: daysRaw || "0",
+      limit: maxAccountsRaw || t("x.degismedi"),
+    },
     severity: "info",
     storeId: store.id,
     storeSlug: store.slug,
@@ -248,7 +256,8 @@ export async function setStoreSuspension(formData: FormData): Promise<ActionResu
     action: suspended ? "super.store.suspend" : "super.store.resume",
     entity: "store",
     entityId: store.id,
-    summary: `${store.name} mağazası ${suspended ? "askıya alındı" : "yeniden aktifleştirildi"}`,
+    summaryKey: suspended ? "x.store-magazas-askya-alnd" : "x.store-magazas-yeniden-aktiflestirildi",
+    summaryParams: { store: store.name },
     severity: suspended ? "warn" : "info",
     storeId: store.id,
     storeSlug: store.slug,
@@ -299,7 +308,8 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
       action: "super.post.update",
       entity: "platform_post",
       entityId: id,
-      summary: `${kind === "update" ? "Güncelleme" : "Duyuru"} düzenlendi: ${title}`,
+      summaryKey: kind === "update" ? "x.guncelleme-duzenlendi-title" : "x.duyuru-duzenlendi-title",
+      summaryParams: { title },
       metadata: { kind, version, pinned },
     });
     revalidatePath("/super-admin");
@@ -316,7 +326,8 @@ export async function savePlatformPost(formData: FormData): Promise<ActionResult
     action: "super.post.create",
     entity: "platform_post",
     entityId: created.id,
-    summary: `${kind === "update" ? "Güncelleme" : "Duyuru"} yayınlandı: ${title}`,
+    summaryKey: kind === "update" ? "x.guncelleme-yaynland-title" : "x.duyuru-yaynland-title",
+    summaryParams: { title },
     metadata: { kind, version, pinned, bodyLength: body.length },
   });
 
@@ -346,7 +357,8 @@ export async function deletePlatformPost(formData: FormData): Promise<ActionResu
     action: "super.post.delete",
     entity: "platform_post",
     entityId: id,
-    summary: `Duyuru silindi: ${removed[0]?.title ?? id}`,
+    summaryKey: "x.duyuru-silindi-title",
+    summaryParams: { title: removed[0]?.title ?? id },
     severity: "warn",
     metadata: { kind: removed[0]?.kind ?? null },
   });
@@ -366,7 +378,7 @@ export async function setPlatformPostPinned(formData: FormData): Promise<ActionR
     action: "super.post.pin",
     entity: "platform_post",
     entityId: id,
-    summary: pinned ? "Duyuru sabitlendi" : t("x.sabitleme-kaldrld"),
+    summaryKey: pinned ? "x.duyuru-sabitlendi" : "x.sabitleme-kaldrld",
     metadata: { pinned },
   });
   revalidatePath("/super-admin");
@@ -406,7 +418,7 @@ export async function updatePlatformSettings(formData: FormData): Promise<Action
     action: "super.settings.update",
     entity: "platform_settings",
     entityId: 1,
-    summary: t("x.sistem-ayarlar-guncellendi"),
+    summaryKey: "x.sistem-ayarlar-guncellendi",
     metadata: { defaultPlanNoteLength: defaultPlanNote.length },
   });
   revalidatePath("/super-admin");

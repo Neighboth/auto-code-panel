@@ -11,7 +11,10 @@ import { coverageSummary } from "@/lib/i18n/coverage";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "x.sistem-ayarlar" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("x.sistem-ayarlar") };
+}
 
 export default async function SystemSettingsPage() {
   const { t } = await getTranslator();

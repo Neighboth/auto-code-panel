@@ -175,7 +175,7 @@ export async function enableEmailFactor(
     entity: "security_factor",
     entityId: `${subjectType}:${subject.id}`,
     storeSlug: target.storeSlug || null,
-    summary: t("x.e-posta-ile-2fa-acld"),
+    summaryKey: "x.e-posta-ile-2fa-acld",
     metadata: { email: target.email },
   });
   refresh(slug || undefined);
@@ -324,7 +324,7 @@ export async function savePasskeyRegistration(
     };
     await saveFactor(subjectType, subject.id, "passkey", encryptData(JSON.stringify(stored)));
     refresh(slug || undefined);
-    return { ok: true, message: "Passkey kaydedildi." };
+    return { ok: true, message: t("x.passkey-kaydedildi-2") };
   } catch {
     return { ok: false, message: t("x.passkey-verisi-cozumlenemedi-tekrar-deneyin") };
   }
@@ -377,7 +377,8 @@ export async function removeFactor(slug: string, subjectType: SubjectType, kind:
     action: `security.factor.removed.${kind}`,
     entity: "security_factor",
     entityId: `${subjectType}:${subject.id}`,
-    summary: `${kind} güvenlik yöntemi kaldırıldı`,
+    summaryKey: "x.kind-guvenlik-yontemi-kaldrld",
+    summaryParams: { kind },
   });
   const target = await subjectEmail(subjectType, subject.id);
   if (target) {
