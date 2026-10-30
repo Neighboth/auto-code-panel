@@ -11,6 +11,7 @@ import bgPack from "./bg.json";
 import bsPack from "./bs.json";
 import coveragePack from "./coverage.json";
 import csPack from "./cs.json";
+import daPack from "./da.json";
 import dePack from "./de.json";
 import elPack from "./el.json";
 import esPack from "./es.json";
@@ -41,6 +42,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "bs": bsPack as Dictionary,
   "coverage": coveragePack as Dictionary,
   "cs": csPack as Dictionary,
+  "da": daPack as Dictionary,
   "de": dePack as Dictionary,
   "el": elPack as Dictionary,
   "es": esPack as Dictionary,
