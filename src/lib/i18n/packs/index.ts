@@ -25,6 +25,7 @@ import roPack from "./ro.json";
 import ruPack from "./ru.json";
 import skPack from "./sk.json";
 import slPack from "./sl.json";
+import sqPack from "./sq.json";
 import srPack from "./sr.json";
 import ukPack from "./uk.json";
 
@@ -47,6 +48,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "ru": ruPack as Dictionary,
   "sk": skPack as Dictionary,
   "sl": slPack as Dictionary,
+  "sq": sqPack as Dictionary,
   "sr": srPack as Dictionary,
   "uk": ukPack as Dictionary,
 };
