@@ -67,6 +67,7 @@ import taPack from "./ta.json";
 import tePack from "./te.json";
 import tgPack from "./tg.json";
 import thPack from "./th.json";
+import tkPack from "./tk.json";
 import ukPack from "./uk.json";
 import urPack from "./ur.json";
 import uzPack from "./uz.json";
@@ -134,6 +135,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "te": tePack as Dictionary,
   "tg": tgPack as Dictionary,
   "th": thPack as Dictionary,
+  "tk": tkPack as Dictionary,
   "uk": ukPack as Dictionary,
   "ur": urPack as Dictionary,
   "uz": uzPack as Dictionary,
