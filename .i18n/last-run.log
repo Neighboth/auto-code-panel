@@ -1,1292 +1,668 @@
 Çeviri: 78 dil · referans 1575 anahtar · eşzamanlılık 6
-de: 1536 metin çevrilecek (mevcut 39)
-fr: 1536 metin çevrilecek (mevcut 39)
-es: 1536 metin çevrilecek (mevcut 39)
-it: 1536 metin çevrilecek (mevcut 39)
-  it: 221/1535
-  fr: 221/1535
-  es: 221/1535
-  de: 221/1535
-  it: 409/1535
-  de: 409/1535
-  es: 409/1535
-  fr: 409/1535
-  it: 608/1535
-  es: 608/1535
-  fr: 608/1535
-  de: 608/1535
-  it: 807/1535
-  es: 807/1535
-  de: 807/1535
-  fr: 807/1535
-  it: 1004/1535
-  it: 1221/1535
-  es: 1021/1535
-  de: 1024/1535
-  fr: 1021/1535
-  es: 1221/1535
-  de: 1221/1535
-  it: 1409/1535
-  fr: 1221/1535
-it: 1503/1575 anahtar yazıldı
-packs/index.ts: 1 dil (boş: coverage)
-[arena/f02978eb-auto-code-panel a3fbb83] i18n: it paketi (otomatik)
- 3 files changed, 1511 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/it.json
+de: 72 metin çevrilecek (mevcut 1503)
+fr: 72 metin çevrilecek (mevcut 1503)
+es: 72 metin çevrilecek (mevcut 1503)
+it: 72 metin çevrilecek (mevcut 1503)
+fr: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 405d6a9] i18n: fr paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
 From https://github.com/Neighboth/auto-code-panel
  * [new branch]      main       -> origin/main
 Current branch arena/f02978eb-auto-code-panel is up to date.
 To https://github.com/Neighboth/auto-code-panel
-   ac7fbc3..a3fbb83  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-pt: 1536 metin çevrilecek (mevcut 39)
-  es: 1409/1535
-  de: 1409/1535
-  fr: 1409/1535
-es: 1503/1575 anahtar yazıldı
-packs/index.ts: 3 dil
-[arena/f02978eb-auto-code-panel 8848056] i18n: es paketi (otomatik)
- 3 files changed, 1511 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/es.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a3fbb83..8848056  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-nl: 1536 metin çevrilecek (mevcut 39)
-  pt: 221/1535
-fr: 1503/1575 anahtar yazıldı
-packs/index.ts: 4 dil
-[arena/f02978eb-auto-code-panel 2c506e5] i18n: fr paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/fr.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8848056..2c506e5  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ru: 1536 metin çevrilecek (mevcut 39)
-de: 1503/1575 anahtar yazıldı
-packs/index.ts: 5 dil
-[arena/f02978eb-auto-code-panel 6f5c622] i18n: de paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/de.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2c506e5..6f5c622  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-uk: 1536 metin çevrilecek (mevcut 39)
-  pt: 409/1535
-  nl: 221/1535
-  pt: 609/1535
-  ru: 224/1535
-  uk: 221/1535
-  pt: 807/1535
-  nl: 409/1535
-  pt: 1021/1535
-  ru: 409/1535
-  uk: 409/1535
-  ru: 608/1535
-  pt: 1221/1535
-  nl: 608/1535
-  uk: 609/1535
-  ru: 807/1535
-  nl: 807/1535
-  uk: 807/1535
-  ru: 1021/1535
-  pt: 1409/1535
-  nl: 1021/1535
-  uk: 1021/1535
-  ru: 1219/1535
-  uk: 1219/1535
-  nl: 1221/1535
-pt: 1503/1575 anahtar yazıldı
-packs/index.ts: 6 dil
-[arena/f02978eb-auto-code-panel f930f54] i18n: pt paketi (otomatik)
- 3 files changed, 1510 insertions(+), 2 deletions(-)
- create mode 100644 src/lib/i18n/packs/pt.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   6f5c622..f930f54  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-pl: 1536 metin çevrilecek (mevcut 39)
-  uk: 1409/1535
-  ru: 1409/1535
-  nl: 1409/1535
-uk: 1503/1575 anahtar yazıldı
-packs/index.ts: 7 dil
-[arena/f02978eb-auto-code-panel bf75d75] i18n: uk paketi (otomatik)
- 3 files changed, 1510 insertions(+), 2 deletions(-)
- create mode 100644 src/lib/i18n/packs/uk.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   f930f54..bf75d75  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-cs: 1536 metin çevrilecek (mevcut 39)
-  pl: 221/1535
-ru: 1503/1575 anahtar yazıldı
-packs/index.ts: 8 dil
-[arena/f02978eb-auto-code-panel b070229] i18n: ru paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ru.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   bf75d75..b070229  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sk: 1536 metin çevrilecek (mevcut 39)
-  pl: 415/1535
-nl: 1503/1575 anahtar yazıldı
-packs/index.ts: 9 dil
-[arena/f02978eb-auto-code-panel 71a67ca] i18n: nl paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/nl.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b070229..71a67ca  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hu: 1536 metin çevrilecek (mevcut 39)
-  cs: 224/1535
-  pl: 609/1535
-  pl: 807/1535
-  sk: 221/1535
-  cs: 409/1535
-  cs: 609/1535
-  sk: 409/1535
-  pl: 1021/1535
-  cs: 807/1535
-  sk: 609/1535
-  pl: 1221/1535
-  cs: 1021/1535
-  sk: 807/1535
-  cs: 1221/1535
-  sk: 1021/1535
-  cs: 1409/1535
-  sk: 1221/1535
-  pl: 1409/1535
-cs: 1503/1575 anahtar yazıldı
-packs/index.ts: 10 dil
-[arena/f02978eb-auto-code-panel 5fd4e4b] i18n: cs paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/cs.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   71a67ca..5fd4e4b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ro: 1536 metin çevrilecek (mevcut 39)
-  hu: 222/1535
-pl: 1503/1575 anahtar yazıldı
-packs/index.ts: 11 dil
-[arena/f02978eb-auto-code-panel 11ed55a] i18n: pl paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/pl.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   5fd4e4b..11ed55a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-bg: 1536 metin çevrilecek (mevcut 39)
-  sk: 1409/1535
-  ro: 221/1535
-  hu: 413/1535
-sk: 1503/1575 anahtar yazıldı
-packs/index.ts: 12 dil
-[arena/f02978eb-auto-code-panel 2fa4a18] i18n: sk paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/sk.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   11ed55a..2fa4a18  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-el: 1536 metin çevrilecek (mevcut 39)
-  ro: 413/1535
-  ro: 609/1535
-  hu: 608/1535
-  ro: 807/1535
-  el: 221/1535
-  bg: 221/1535
-  ro: 1021/1535
-  bg: 409/1535
-  el: 413/1535
-  ro: 1221/1535
-  hu: 807/1535
-  bg: 609/1535
-  el: 609/1535
-  ro: 1409/1535
-  hu: 1021/1535
-  bg: 807/1535
-  hu: 1221/1535
-ro: 1503/1575 anahtar yazıldı
-packs/index.ts: 13 dil
-[arena/f02978eb-auto-code-panel 46fd4aa] i18n: ro paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ro.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2fa4a18..46fd4aa  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sr: 1536 metin çevrilecek (mevcut 39)
-  el: 807/1535
-  bg: 1021/1535
-  hu: 1409/1535
-  bg: 1221/1535
-  el: 1021/1535
-  el: 1219/1535
-hu: 1503/1575 anahtar yazıldı
-packs/index.ts: 14 dil
-[arena/f02978eb-auto-code-panel 9f23513] i18n: hu paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/hu.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   46fd4aa..9f23513  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hr: 1536 metin çevrilecek (mevcut 39)
-  bg: 1409/1535
-  sr: 223/1535
-  el: 1409/1535
-  sr: 410/1535
-bg: 1503/1575 anahtar yazıldı
-packs/index.ts: 15 dil
-[arena/f02978eb-auto-code-panel 601a2ba] i18n: bg paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/bg.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   9f23513..601a2ba  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sl: 1536 metin çevrilecek (mevcut 39)
-  hr: 220/1535
-el: 1503/1575 anahtar yazıldı
-packs/index.ts: 16 dil
-[arena/f02978eb-auto-code-panel 3ebdccb] i18n: el paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/el.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   601a2ba..3ebdccb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-bs: 1536 metin çevrilecek (mevcut 39)
-  sr: 609/1535
-  hr: 409/1535
-  sl: 219/1535
-  sr: 807/1535
-  hr: 609/1535
-  sl: 409/1535
-  bs: 221/1535
-  hr: 807/1535
-  sr: 1021/1535
-  bs: 409/1535
-  sl: 609/1535
-  hr: 1021/1535
-  sl: 807/1535
-  bs: 609/1535
-  sr: 1221/1535
-  bs: 807/1535
-  hr: 1219/1535
-  sl: 1021/1535
-  bs: 1021/1535
-  sr: 1409/1535
-  hr: 1409/1535
-  bs: 1221/1535
-  sl: 1219/1535
-sr: 1503/1575 anahtar yazıldı
-packs/index.ts: 17 dil
-[arena/f02978eb-auto-code-panel da05596] i18n: sr paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/sr.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3ebdccb..da05596  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mk: 1536 metin çevrilecek (mevcut 39)
-hr: 1503/1575 anahtar yazıldı
-packs/index.ts: 18 dil
-[arena/f02978eb-auto-code-panel 5442a52] i18n: hr paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/hr.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   da05596..5442a52  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sq: 1536 metin çevrilecek (mevcut 39)
-  sl: 1409/1535
-  mk: 221/1535
-  sq: 221/1535
-  mk: 409/1535
-  sq: 409/1535
-  mk: 608/1535
-  bs: 1409/1535
-  mk: 807/1535
-  sq: 609/1535
-  sq: 807/1535
-  mk: 1021/1535
-  sq: 1021/1535
-  mk: 1221/1535
-sl: 1503/1575 anahtar yazıldı
-packs/index.ts: 19 dil
-[arena/f02978eb-auto-code-panel 99fff8b] i18n: sl paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/sl.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   5442a52..99fff8b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lt: 1536 metin çevrilecek (mevcut 39)
-  sq: 1221/1535
-  mk: 1409/1535
-mk: 1503/1575 anahtar yazıldı
-packs/index.ts: 20 dil
-[arena/f02978eb-auto-code-panel c44e562] i18n: mk paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/mk.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   99fff8b..c44e562  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lv: 1536 metin çevrilecek (mevcut 39)
-  sq: 1409/1535
-  lt: 221/1535
-sq: 1503/1575 anahtar yazıldı
-packs/index.ts: 21 dil
-[arena/f02978eb-auto-code-panel ab61740] i18n: sq paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/sq.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c44e562..ab61740  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-et: 1536 metin çevrilecek (mevcut 39)
-  lv: 221/1535
-  lt: 409/1535
-  lv: 415/1535
-  et: 219/1535
-  lt: 609/1535
-  et: 409/1535
-  lv: 609/1535
-  lt: 807/1535
-  lv: 807/1535
-  et: 608/1535
-  lt: 1021/1535
-  et: 807/1535
-  lv: 1021/1535
-  lt: 1219/1535
-  lv: 1219/1535
-  lt: 1409/1535
-  et: 1004/1535
-lt: 1503/1575 anahtar yazıldı
-packs/index.ts: 22 dil
-[arena/f02978eb-auto-code-panel 754dd51] i18n: lt paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/lt.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   ab61740..754dd51  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-fi: 1536 metin çevrilecek (mevcut 39)
-  lv: 1409/1535
-  et: 1221/1535
-lv: 1503/1575 anahtar yazıldı
-packs/index.ts: 23 dil
-[arena/f02978eb-auto-code-panel 38d0adb] i18n: lv paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/lv.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   754dd51..38d0adb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sv: 1536 metin çevrilecek (mevcut 39)
-  fi: 221/1535
-  et: 1419/1535
-et: 1503/1575 anahtar yazıldı
-packs/index.ts: 24 dil
-[arena/f02978eb-auto-code-panel 9f9859d] i18n: et paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/et.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   38d0adb..9f9859d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-no: 1536 metin çevrilecek (mevcut 39)
-  fi: 413/1535
-bs: 1503/1575 anahtar yazıldı
-packs/index.ts: 25 dil
-[arena/f02978eb-auto-code-panel e3a74c6] i18n: bs paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/bs.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   9f9859d..e3a74c6  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-da: 1536 metin çevrilecek (mevcut 39)
-  sv: 219/1535
-  fi: 608/1535
-  no: 219/1535
-  fi: 807/1535
-  sv: 409/1535
-  fi: 1021/1535
-  da: 221/1535
-  no: 409/1535
-  sv: 608/1535
-  fi: 1221/1535
-  da: 409/1535
-  no: 609/1535
-  sv: 807/1535
-  da: 609/1535
-  no: 807/1535
-  fi: 1409/1535
-  sv: 1021/1535
-  da: 807/1535
-fi: 1503/1575 anahtar yazıldı
-packs/index.ts: 26 dil
-[arena/f02978eb-auto-code-panel 2dc7bdf] i18n: fi paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/fi.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   e3a74c6..2dc7bdf  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-is: 1536 metin çevrilecek (mevcut 39)
-  no: 1004/1535
-  sv: 1221/1535
-  da: 1021/1535
-  no: 1221/1535
-  is: 221/1535
-  sv: 1409/1535
-  da: 1221/1535
-sv: 1503/1575 anahtar yazıldı
-packs/index.ts: 27 dil
-[arena/f02978eb-auto-code-panel 210b641] i18n: sv paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/sv.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2dc7bdf..210b641  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ga: 1536 metin çevrilecek (mevcut 39)
-  no: 1409/1535
-  is: 415/1535
-no: 1503/1575 anahtar yazıldı
-packs/index.ts: 28 dil
-[arena/f02978eb-auto-code-panel 3325ecc] i18n: no paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/no.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   210b641..3325ecc  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mt: 1536 metin çevrilecek (mevcut 39)
-  da: 1409/1535
-  is: 608/1535
-da: 1503/1575 anahtar yazıldı
-packs/index.ts: 29 dil
-[arena/f02978eb-auto-code-panel aec5a48] i18n: da paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/da.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3325ecc..aec5a48  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ca: 1536 metin çevrilecek (mevcut 39)
-  ga: 220/1535
-  is: 807/1535
-  ga: 409/1535
-  is: 1004/1535
-  mt: 221/1535
-  ga: 608/1535
-  ca: 219/1535
-  ga: 807/1535
-  mt: 409/1535
-  is: 1219/1535
-  ca: 413/1535
-  ga: 1021/1535
-  mt: 609/1535
-  ca: 608/1535
-  mt: 807/1535
-  is: 1409/1535
-  ca: 807/1535
-  ga: 1221/1535
-  mt: 1004/1535
-  ca: 1021/1535
-is: 1503/1575 anahtar yazıldı
-packs/index.ts: 30 dil
-[arena/f02978eb-auto-code-panel b8a689b] i18n: is paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/is.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   aec5a48..b8a689b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-eu: 1536 metin çevrilecek (mevcut 39)
-  ca: 1221/1535
-  mt: 1221/1535
-  ga: 1409/1535
-  mt: 1409/1535
-  ca: 1409/1535
-ga: 1503/1575 anahtar yazıldı
-packs/index.ts: 31 dil
-[arena/f02978eb-auto-code-panel a499971] i18n: ga paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ga.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b8a689b..a499971  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-gl: 1536 metin çevrilecek (mevcut 39)
-  eu: 221/1535
-ca: 1503/1575 anahtar yazıldı
-packs/index.ts: 32 dil
-[arena/f02978eb-auto-code-panel ac2e2b6] i18n: ca paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ca.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a499971..ac2e2b6  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lb: 1536 metin çevrilecek (mevcut 39)
-  eu: 415/1535
-mt: 1503/1575 anahtar yazıldı
-packs/index.ts: 33 dil
-[arena/f02978eb-auto-code-panel a378e39] i18n: mt paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/mt.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   ac2e2b6..a378e39  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ar: 1536 metin çevrilecek (mevcut 39)
-  gl: 220/1535
-  eu: 609/1535
-  lb: 221/1535
-  gl: 409/1535
-  eu: 807/1535
-  lb: 409/1535
-  ar: 221/1535
-  gl: 609/1535
-  lb: 609/1535
-  eu: 1021/1535
-  ar: 409/1535
-  lb: 807/1535
-  gl: 807/1535
-  eu: 1221/1535
-  gl: 1021/1535
-  ar: 609/1535
-  eu: 1409/1535
-  lb: 1004/1535
-  gl: 1221/1535
-  ar: 807/1535
-eu: 1503/1575 anahtar yazıldı
-packs/index.ts: 34 dil
-[arena/f02978eb-auto-code-panel 4ba5b12] i18n: eu paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/eu.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a378e39..4ba5b12  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-fa: 1536 metin çevrilecek (mevcut 39)
-  lb: 1221/1535
-  ar: 1004/1535
-  fa: 221/1535
-  gl: 1409/1535
-  ar: 1221/1535
-  fa: 409/1535
-  lb: 1409/1535
-lb: 1503/1575 anahtar yazıldı
-packs/index.ts: 35 dil
-[arena/f02978eb-auto-code-panel 261dc93] i18n: lb paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/lb.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   4ba5b12..261dc93  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-he: 1536 metin çevrilecek (mevcut 39)
-  fa: 609/1535
-gl: 1503/1575 anahtar yazıldı
-packs/index.ts: 36 dil
-[arena/f02978eb-auto-code-panel 86cf7c7] i18n: gl paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/gl.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   261dc93..86cf7c7  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ur: 1536 metin çevrilecek (mevcut 39)
-  ar: 1409/1535
-  fa: 807/1535
-  he: 221/1535
-ar: 1503/1575 anahtar yazıldı
-packs/index.ts: 37 dil
-[arena/f02978eb-auto-code-panel 6201188] i18n: ar paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ar.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   86cf7c7..6201188  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hi: 1536 metin çevrilecek (mevcut 39)
-  ur: 224/1535
-  fa: 1021/1535
-  he: 409/1535
-  ur: 409/1535
-  hi: 219/1535
-  fa: 1221/1535
-  he: 609/1535
-  fa: 1409/1535
-  ur: 609/1535
-  he: 807/1535
-  hi: 409/1535
-  ur: 807/1535
-  he: 1021/1535
-fa: 1503/1575 anahtar yazıldı
-packs/index.ts: 38 dil
-[arena/f02978eb-auto-code-panel d06e631] i18n: fa paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/fa.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   6201188..d06e631  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-bn: 1536 metin çevrilecek (mevcut 39)
-  hi: 608/1535
-  ur: 1021/1535
-  he: 1219/1535
-  hi: 807/1535
-  bn: 200/1535
-  ur: 1221/1535
-  hi: 1021/1535
-  he: 1409/1535
-  bn: 409/1535
-  ur: 1409/1535
-ur: 1503/1575 anahtar yazıldı
-packs/index.ts: 39 dil
-[arena/f02978eb-auto-code-panel fd2b593] i18n: ur paketi (otomatik)
- 3 files changed, 1510 insertions(+), 2 deletions(-)
- create mode 100644 src/lib/i18n/packs/ur.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   d06e631..fd2b593  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ta: 1536 metin çevrilecek (mevcut 39)
-  bn: 609/1535
-he: 1503/1575 anahtar yazıldı
-packs/index.ts: 40 dil
-[arena/f02978eb-auto-code-panel 72c128b] i18n: he paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/he.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   fd2b593..72c128b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-te: 1536 metin çevrilecek (mevcut 39)
-  hi: 1221/1535
-  bn: 807/1535
-  bn: 1021/1535
-  ta: 221/1535
-  te: 219/1535
-  ta: 415/1535
-  te: 413/1535
-  hi: 1409/1535
-  bn: 1221/1535
-  ta: 608/1535
-  te: 609/1535
-  bn: 1409/1535
-  ta: 807/1535
-hi: 1503/1575 anahtar yazıldı
-packs/index.ts: 41 dil
-[arena/f02978eb-auto-code-panel 2c92e69] i18n: hi paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/hi.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   72c128b..2c92e69  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mr: 1536 metin çevrilecek (mevcut 39)
-  te: 807/1535
-bn: 1503/1575 anahtar yazıldı
-packs/index.ts: 42 dil
-[arena/f02978eb-auto-code-panel ed91acd] i18n: bn paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/bn.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2c92e69..ed91acd  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-gu: 1536 metin çevrilecek (mevcut 39)
-  ta: 1021/1535
-  te: 1021/1535
-  ta: 1221/1535
-  mr: 221/1535
-  gu: 221/1535
-  mr: 409/1535
-  te: 1219/1535
-  ta: 1409/1535
-  gu: 409/1535
-  mr: 608/1535
-  te: 1409/1535
-ta: 1503/1575 anahtar yazıldı
-packs/index.ts: 43 dil
-[arena/f02978eb-auto-code-panel 63af711] i18n: ta paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ta.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   ed91acd..63af711  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-pa: 1536 metin çevrilecek (mevcut 39)
-  gu: 609/1535
-te: 1503/1575 anahtar yazıldı
-packs/index.ts: 44 dil
-[arena/f02978eb-auto-code-panel c91eaf0] i18n: te paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/te.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   63af711..c91eaf0  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ne: 1536 metin çevrilecek (mevcut 39)
-  mr: 807/1535
-  gu: 807/1535
-  pa: 221/1535
-  mr: 1021/1535
-  ne: 219/1535
-  gu: 1004/1535
-  pa: 415/1535
-  ne: 413/1535
-  mr: 1219/1535
-  gu: 1219/1535
-  pa: 609/1535
-  ne: 608/1535
-  mr: 1409/1535
-mr: 1503/1575 anahtar yazıldı
-packs/index.ts: 45 dil
-[arena/f02978eb-auto-code-panel f6a170f] i18n: mr paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/mr.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c91eaf0..f6a170f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-si: 1536 metin çevrilecek (mevcut 39)
-  pa: 807/1535
-  ne: 807/1535
-  gu: 1409/1535
-gu: 1503/1575 anahtar yazıldı
-packs/index.ts: 46 dil
-[arena/f02978eb-auto-code-panel 5f74e40] i18n: gu paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/gu.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   f6a170f..5f74e40  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-zh: 1536 metin çevrilecek (mevcut 39)
-  pa: 1024/1535
-  ne: 1021/1535
-  si: 200/1535
-  zh: 221/1535
-  pa: 1221/1535
-  si: 409/1535
-  ne: 1219/1535
-  zh: 413/1535
-  pa: 1409/1535
-  ne: 1409/1535
-pa: 1503/1575 anahtar yazıldı
-packs/index.ts: 47 dil
-[arena/f02978eb-auto-code-panel 05494fb] i18n: pa paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/pa.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   5f74e40..05494fb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ja: 1536 metin çevrilecek (mevcut 39)
-  si: 609/1535
-  zh: 608/1535
-ne: 1503/1575 anahtar yazıldı
-packs/index.ts: 48 dil
-[arena/f02978eb-auto-code-panel b658e7f] i18n: ne paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ne.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   05494fb..b658e7f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ko: 1536 metin çevrilecek (mevcut 39)
-  si: 807/1535
-  ja: 221/1535
-  zh: 807/1535
-  si: 1021/1535
-  ko: 221/1535
-  ja: 413/1535
-  ko: 409/1535
-  si: 1221/1535
-  ja: 609/1535
-  si: 1409/1535
-  ko: 609/1535
-  ja: 807/1535
-si: 1503/1575 anahtar yazıldı
-packs/index.ts: 49 dil
-[arena/f02978eb-auto-code-panel 520300a] i18n: si paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/si.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b658e7f..520300a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-vi: 1536 metin çevrilecek (mevcut 39)
-  ko: 807/1535
-  ja: 1021/1535
-  zh: 1021/1535
-  ja: 1219/1535
-  ko: 1021/1535
-  vi: 221/1535
-  zh: 1219/1535
-  ko: 1219/1535
-  zh: 1409/1535
-  vi: 409/1535
-  ja: 1409/1535
-zh: 1503/1575 anahtar yazıldı
-packs/index.ts: 50 dil
-[arena/f02978eb-auto-code-panel e1c68e9] i18n: zh paketi (otomatik)
- 3 files changed, 1510 insertions(+), 2 deletions(-)
- create mode 100644 src/lib/i18n/packs/zh.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   520300a..e1c68e9  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-th: 1536 metin çevrilecek (mevcut 39)
-ja: 1503/1575 anahtar yazıldı
-packs/index.ts: 51 dil
-[arena/f02978eb-auto-code-panel 33db79d] i18n: ja paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ja.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   e1c68e9..33db79d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-id: 1536 metin çevrilecek (mevcut 39)
-  vi: 607/1535
-  ko: 1409/1535
-  th: 221/1535
-  vi: 807/1535
-  th: 409/1535
-  vi: 1021/1535
-ko: 1503/1575 anahtar yazıldı
-packs/index.ts: 52 dil
-[arena/f02978eb-auto-code-panel 76854e9] i18n: ko paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ko.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   33db79d..76854e9  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ms: 1536 metin çevrilecek (mevcut 39)
-  id: 222/1535
-  vi: 1219/1535
-  th: 608/1535
-  th: 807/1535
-  ms: 221/1535
-  id: 409/1535
-  vi: 1409/1535
-  th: 1021/1535
-  ms: 409/1535
-  id: 608/1535
-  th: 1221/1535
-  ms: 609/1535
-vi: 1503/1575 anahtar yazıldı
-packs/index.ts: 53 dil
-[arena/f02978eb-auto-code-panel 586c167] i18n: vi paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/vi.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   76854e9..586c167  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-fil: 1536 metin çevrilecek (mevcut 39)
-  id: 807/1535
-  th: 1409/1535
-  ms: 807/1535
-th: 1503/1575 anahtar yazıldı
-packs/index.ts: 54 dil
-[arena/f02978eb-auto-code-panel eac731e] i18n: th paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/th.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   586c167..eac731e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-km: 1536 metin çevrilecek (mevcut 39)
-  fil: 219/1535
-  id: 1024/1535
-  ms: 1021/1535
-  fil: 409/1535
-  ms: 1219/1535
-  id: 1219/1535
-  km: 221/1535
-  fil: 609/1535
-  km: 409/1535
-  ms: 1409/1535
-  fil: 807/1535
-ms: 1503/1575 anahtar yazıldı
-packs/index.ts: 55 dil
-[arena/f02978eb-auto-code-panel fce7c84] i18n: ms paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ms.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   eac731e..fce7c84  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lo: 1536 metin çevrilecek (mevcut 39)
-  km: 607/1535
-  fil: 1004/1535
-  id: 1409/1535
-  fil: 1221/1535
-id: 1503/1575 anahtar yazıldı
-packs/index.ts: 56 dil
-[arena/f02978eb-auto-code-panel eef50f1] i18n: id paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/id.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   fce7c84..eef50f1  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-my: 1536 metin çevrilecek (mevcut 39)
-  km: 807/1535
-  lo: 224/1535
-  fil: 1409/1535
-  km: 1007/1535
-fil: 1503/1575 anahtar yazıldı
-packs/index.ts: 57 dil
-[arena/f02978eb-auto-code-panel bc7eea1] i18n: fil paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/fil.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   eef50f1..bc7eea1  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mn: 1536 metin çevrilecek (mevcut 39)
-  lo: 413/1535
-  my: 224/1535
-  km: 1219/1535
-  lo: 608/1535
-  my: 409/1535
-  mn: 221/1535
-  km: 1409/1535
-  lo: 807/1535
-  mn: 409/1535
-  my: 609/1535
-km: 1503/1575 anahtar yazıldı
-packs/index.ts: 58 dil
-[arena/f02978eb-auto-code-panel 74fcd80] i18n: km paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/km.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   bc7eea1..74fcd80  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-kk: 1536 metin çevrilecek (mevcut 39)
-  lo: 1007/1535
-  my: 807/1535
-  mn: 609/1535
-  lo: 1221/1535
-  my: 1021/1535
-  lo: 1409/1535
-  kk: 221/1535
-  mn: 807/1535
-  my: 1219/1535
-lo: 1503/1575 anahtar yazıldı
-packs/index.ts: 59 dil
-[arena/f02978eb-auto-code-panel 1ead57d] i18n: lo paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/lo.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   74fcd80..1ead57d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ky: 1536 metin çevrilecek (mevcut 39)
-  mn: 1021/1535
-  my: 1409/1535
-  kk: 409/1535
-my: 1503/1575 anahtar yazıldı
-packs/index.ts: 60 dil
-[arena/f02978eb-auto-code-panel fb2a391] i18n: my paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/my.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   1ead57d..fb2a391  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-uz: 1536 metin çevrilecek (mevcut 39)
-  kk: 607/1535
-  ky: 221/1535
-  mn: 1219/1535
-  kk: 807/1535
-  uz: 219/1535
-  ky: 409/1535
-  mn: 1409/1535
-  uz: 409/1535
-  kk: 1021/1535
-  ky: 609/1535
-mn: 1503/1575 anahtar yazıldı
-packs/index.ts: 61 dil
-[arena/f02978eb-auto-code-panel 42047d8] i18n: mn paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/mn.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   fb2a391..42047d8  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-tg: 1536 metin çevrilecek (mevcut 39)
-  ky: 807/1535
-  uz: 609/1535
-  kk: 1219/1535
-  tg: 221/1535
-  uz: 807/1535
-  ky: 1021/1535
-  kk: 1409/1535
-  tg: 409/1535
-  uz: 1021/1535
-kk: 1503/1575 anahtar yazıldı
-packs/index.ts: 62 dil
-[arena/f02978eb-auto-code-panel 1ae3471] i18n: kk paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/kk.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   42047d8..1ae3471  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-tk: 1536 metin çevrilecek (mevcut 39)
-  ky: 1221/1535
-  tg: 609/1535
-  uz: 1221/1535
-  ky: 1409/1535
-  tg: 807/1535
-  tk: 221/1535
-  uz: 1409/1535
-ky: 1503/1575 anahtar yazıldı
-packs/index.ts: 63 dil
-[arena/f02978eb-auto-code-panel 5e176ac] i18n: ky paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ky.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   1ae3471..5e176ac  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-az: 1536 metin çevrilecek (mevcut 39)
-uz: 1503/1575 anahtar yazıldı
-packs/index.ts: 64 dil
-[arena/f02978eb-auto-code-panel 93f8694] i18n: uz paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/uz.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   5e176ac..93f8694  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ka: 1536 metin çevrilecek (mevcut 39)
-  tg: 1007/1535
-  tk: 409/1535
-  az: 221/1535
-  ka: 219/1535
-  tk: 608/1535
-  tg: 1219/1535
-  az: 409/1535
-  ka: 409/1535
-  tk: 807/1535
-  tg: 1409/1535
-  az: 608/1535
-  ka: 609/1535
-tg: 1503/1575 anahtar yazıldı
-packs/index.ts: 65 dil
-[arena/f02978eb-auto-code-panel daa6620] i18n: tg paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/tg.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   93f8694..daa6620  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hy: 1536 metin çevrilecek (mevcut 39)
-  tk: 1004/1535
-  az: 807/1535
-  ka: 807/1535
-  tk: 1221/1535
-  hy: 219/1535
-  az: 1021/1535
-  ka: 1021/1535
-  az: 1221/1535
-  hy: 409/1535
-  tk: 1409/1535
-  ka: 1221/1535
-  az: 1409/1535
-  hy: 609/1535
-  ka: 1409/1535
-tk: 1503/1575 anahtar yazıldı
-packs/index.ts: 66 dil
-[arena/f02978eb-auto-code-panel e5f751a] i18n: tk paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/tk.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   daa6620..e5f751a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-be: 1536 metin çevrilecek (mevcut 39)
-  hy: 807/1535
-az: 1503/1575 anahtar yazıldı
-packs/index.ts: 67 dil
-[arena/f02978eb-auto-code-panel 632c7ed] i18n: az paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/az.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   e5f751a..632c7ed  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-af: 1536 metin çevrilecek (mevcut 39)
-ka: 1503/1575 anahtar yazıldı
-packs/index.ts: 68 dil
-[arena/f02978eb-auto-code-panel c75522d] i18n: ka paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ka.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   632c7ed..c75522d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sw: 1536 metin çevrilecek (mevcut 39)
-  hy: 1004/1535
-  af: 221/1535
-  be: 221/1535
-  be: 409/1535
-  af: 409/1535
-  sw: 221/1535
-  hy: 1221/1535
-  be: 608/1535
-  sw: 409/1535
-  hy: 1409/1535
-  af: 609/1535
-  be: 807/1535
-  af: 807/1535
-  sw: 608/1535
-  be: 1004/1535
-hy: 1503/1575 anahtar yazıldı
-packs/index.ts: 69 dil
-[arena/f02978eb-auto-code-panel 00b0a45] i18n: hy paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/hy.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c75522d..00b0a45  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-am: 1536 metin çevrilecek (mevcut 39)
-  af: 1021/1535
-  sw: 807/1535
-  be: 1219/1535
-  af: 1221/1535
-  am: 221/1535
-  sw: 1021/1535
-  be: 1409/1535
-  af: 1409/1535
-  sw: 1221/1535
-  am: 413/1535
-be: 1503/1575 anahtar yazıldı
-packs/index.ts: 70 dil
-[arena/f02978eb-auto-code-panel 7973f63] i18n: be paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/be.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   00b0a45..7973f63  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ha: 1536 metin çevrilecek (mevcut 39)
-af: 1503/1575 anahtar yazıldı
-packs/index.ts: 71 dil
-[arena/f02978eb-auto-code-panel caa0275] i18n: af paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/af.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   7973f63..caa0275  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ig: 1536 metin çevrilecek (mevcut 39)
-  sw: 1409/1535
-  am: 609/1535
-sw: 1503/1575 anahtar yazıldı
-packs/index.ts: 72 dil
-[arena/f02978eb-auto-code-panel cd245cc] i18n: sw paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/sw.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   caa0275..cd245cc  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-yo: 1536 metin çevrilecek (mevcut 39)
-  ha: 219/1535
-  ig: 222/1535
-  am: 807/1535
-  ha: 415/1535
-  ig: 415/1535
-  yo: 219/1535
-  am: 1021/1535
-  ha: 609/1535
-  yo: 413/1535
-  ig: 609/1535
-  am: 1221/1535
-  ha: 807/1535
-  ig: 807/1535
-  yo: 608/1535
-  am: 1409/1535
-  ig: 1021/1535
-  ha: 1021/1535
-  yo: 807/1535
-am: 1503/1575 anahtar yazıldı
-packs/index.ts: 73 dil
-[arena/f02978eb-auto-code-panel 8829696] i18n: am paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/am.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   cd245cc..8829696  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-zu: 1536 metin çevrilecek (mevcut 39)
-  ha: 1221/1535
-  ig: 1221/1535
-  yo: 1021/1535
-  ig: 1409/1535
-  ha: 1409/1535
-  zu: 221/1535
-  yo: 1221/1535
-ig: 1503/1575 anahtar yazıldı
-packs/index.ts: 74 dil
-[arena/f02978eb-auto-code-panel 8ba922f] i18n: ig paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ig.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8829696..8ba922f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-so: 1536 metin çevrilecek (mevcut 39)
-ha: 1503/1575 anahtar yazıldı
-packs/index.ts: 75 dil
-[arena/f02978eb-auto-code-panel d3fb3eb] i18n: ha paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/ha.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8ba922f..d3fb3eb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-eo: 1536 metin çevrilecek (mevcut 39)
-  zu: 409/1535
-  so: 221/1535
-  yo: 1409/1535
-  zu: 608/1535
-  zu: 807/1535
-  so: 409/1535
-  eo: 221/1535
-yo: 1503/1575 anahtar yazıldı
-packs/index.ts: 76 dil
-[arena/f02978eb-auto-code-panel 88cffbf] i18n: yo paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/yo.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   d3fb3eb..88cffbf  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-  so: 609/1535
-  zu: 1021/1535
-  eo: 409/1535
-  so: 807/1535
-  zu: 1219/1535
-  eo: 608/1535
-  eo: 807/1535
-  so: 1021/1535
-  zu: 1409/1535
-  eo: 1021/1535
-  so: 1221/1535
-zu: 1503/1575 anahtar yazıldı
-packs/index.ts: 77 dil
-[arena/f02978eb-auto-code-panel dcfcc43] i18n: zu paketi (otomatik)
- 3 files changed, 1510 insertions(+), 2 deletions(-)
- create mode 100644 src/lib/i18n/packs/zu.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   88cffbf..dcfcc43  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-  eo: 1221/1535
-  so: 1409/1535
-  eo: 1409/1535
-eo: 1503/1575 anahtar yazıldı
-packs/index.ts: 78 dil
-[arena/f02978eb-auto-code-panel 8cd553f] i18n: eo paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/eo.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   dcfcc43..8cd553f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-so: 1503/1575 anahtar yazıldı
+   5cd6e4c..405d6a9  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+pt: 72 metin çevrilecek (mevcut 1503)
+de: 1575/1575 anahtar yazıldı
 packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 13eb045] i18n: so paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/so.json
+[arena/f02978eb-auto-code-panel 4e4da3b] i18n: de paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
 Current branch arena/f02978eb-auto-code-panel is up to date.
 To https://github.com/Neighboth/auto-code-panel
-   8cd553f..13eb045  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-Bitti: 79 paket · 117313 çeviri · 295 sn
-   d3fb3eb..88cffbf  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-  so: 609/1535
-  zu: 1021/1535
-  eo: 409/1535
-  so: 807/1535
-  zu: 1219/1535
-  eo: 608/1535
-  eo: 807/1535
-  so: 1021/1535
-  zu: 1409/1535
-  eo: 1021/1535
-  so: 1221/1535
-zu: 1503/1575 anahtar yazıldı
-packs/index.ts: 77 dil
-[arena/f02978eb-auto-code-panel dcfcc43] i18n: zu paketi (otomatik)
- 3 files changed, 1510 insertions(+), 2 deletions(-)
- create mode 100644 src/lib/i18n/packs/zu.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   88cffbf..dcfcc43  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-  eo: 1221/1535
-  so: 1409/1535
-  eo: 1409/1535
-eo: 1503/1575 anahtar yazıldı
-packs/index.ts: 78 dil
-[arena/f02978eb-auto-code-panel 8cd553f] i18n: eo paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/eo.json
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   dcfcc43..8cd553f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-so: 1503/1575 anahtar yazıldı
+   405d6a9..4e4da3b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+nl: 72 metin çevrilecek (mevcut 1503)
+it: 1575/1575 anahtar yazıldı
 packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 13eb045] i18n: so paketi (otomatik)
- 3 files changed, 1509 insertions(+), 1 deletion(-)
- create mode 100644 src/lib/i18n/packs/so.json
+[arena/f02978eb-auto-code-panel b1881ce] i18n: it paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
 Current branch arena/f02978eb-auto-code-panel is up to date.
 To https://github.com/Neighboth/auto-code-panel
-   8cd553f..13eb045  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-Bitti: 79 paket · 117313 çeviri · 295 sn
+   4e4da3b..b1881ce  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ru: 72 metin çevrilecek (mevcut 1503)
+nl: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d7c1c30] i18n: nl paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b1881ce..d7c1c30  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+uk: 72 metin çevrilecek (mevcut 1503)
+pt: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 7b43659] i18n: pt paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d7c1c30..7b43659  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+pl: 72 metin çevrilecek (mevcut 1503)
+uk: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 5c9afc4] i18n: uk paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   7b43659..5c9afc4  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+cs: 72 metin çevrilecek (mevcut 1503)
+es: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 1fdbe5e] i18n: es paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   5c9afc4..1fdbe5e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+sk: 72 metin çevrilecek (mevcut 1503)
+pl: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 3a86dff] i18n: pl paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   1fdbe5e..3a86dff  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+hu: 72 metin çevrilecek (mevcut 1503)
+ru: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 0a1bf7c] i18n: ru paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   3a86dff..0a1bf7c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ro: 72 metin çevrilecek (mevcut 1503)
+hu: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 47ba77e] i18n: hu paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   0a1bf7c..47ba77e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+bg: 72 metin çevrilecek (mevcut 1503)
+cs: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 7648016] i18n: cs paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   47ba77e..7648016  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+el: 72 metin çevrilecek (mevcut 1503)
+bg: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel aa8aec2] i18n: bg paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   7648016..aa8aec2  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+sr: 72 metin çevrilecek (mevcut 1503)
+sk: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 46c968c] i18n: sk paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   aa8aec2..46c968c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+hr: 72 metin çevrilecek (mevcut 1503)
+ro: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d3e0065] i18n: ro paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   46c968c..d3e0065  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+sl: 72 metin çevrilecek (mevcut 1503)
+hr: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel f0e9070] i18n: hr paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d3e0065..f0e9070  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+bs: 72 metin çevrilecek (mevcut 1503)
+sl: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d9c95f0] i18n: sl paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   f0e9070..d9c95f0  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+mk: 72 metin çevrilecek (mevcut 1503)
+el: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d5b336f] i18n: el paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d9c95f0..d5b336f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+sq: 72 metin çevrilecek (mevcut 1503)
+bs: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 15249ac] i18n: bs paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d5b336f..15249ac  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+lt: 72 metin çevrilecek (mevcut 1503)
+sr: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 951cbe0] i18n: sr paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   15249ac..951cbe0  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+lv: 72 metin çevrilecek (mevcut 1503)
+mk: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 0d2d5df] i18n: mk paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   951cbe0..0d2d5df  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+et: 72 metin çevrilecek (mevcut 1503)
+sq: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel f7e55ec] i18n: sq paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   0d2d5df..f7e55ec  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+fi: 72 metin çevrilecek (mevcut 1503)
+lt: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel e40161f] i18n: lt paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   f7e55ec..e40161f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+sv: 72 metin çevrilecek (mevcut 1503)
+lv: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d23b39d] i18n: lv paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   e40161f..d23b39d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+no: 72 metin çevrilecek (mevcut 1503)
+et: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel a8b2801] i18n: et paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d23b39d..a8b2801  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+da: 72 metin çevrilecek (mevcut 1503)
+no: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 607df81] i18n: no paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   a8b2801..607df81  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+is: 72 metin çevrilecek (mevcut 1503)
+sv: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 8ed36ae] i18n: sv paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   607df81..8ed36ae  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ga: 72 metin çevrilecek (mevcut 1503)
+fi: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 9e3f234] i18n: fi paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   8ed36ae..9e3f234  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+mt: 72 metin çevrilecek (mevcut 1503)
+da: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 157537e] i18n: da paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   9e3f234..157537e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ca: 72 metin çevrilecek (mevcut 1503)
+is: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 4ead309] i18n: is paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   157537e..4ead309  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eu: 72 metin çevrilecek (mevcut 1503)
+ga: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel e5d0199] i18n: ga paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   4ead309..e5d0199  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+gl: 72 metin çevrilecek (mevcut 1503)
+mt: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 46190b3] i18n: mt paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   e5d0199..46190b3  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+lb: 72 metin çevrilecek (mevcut 1503)
+ca: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel e7e9ea8] i18n: ca paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   46190b3..e7e9ea8  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ar: 72 metin çevrilecek (mevcut 1503)
+lb: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel eeeaaaf] i18n: lb paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   e7e9ea8..eeeaaaf  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+fa: 72 metin çevrilecek (mevcut 1503)
+eu: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel dad95ad] i18n: eu paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   eeeaaaf..dad95ad  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+he: 72 metin çevrilecek (mevcut 1503)
+fa: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 806f134] i18n: fa paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   dad95ad..806f134  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ur: 72 metin çevrilecek (mevcut 1503)
+ar: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 0b1e6cd] i18n: ar paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   806f134..0b1e6cd  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+hi: 72 metin çevrilecek (mevcut 1503)
+gl: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 3c98228] i18n: gl paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   0b1e6cd..3c98228  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+bn: 72 metin çevrilecek (mevcut 1503)
+he: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel ddc4351] i18n: he paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   3c98228..ddc4351  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ta: 72 metin çevrilecek (mevcut 1503)
+ur: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel fe93d7a] i18n: ur paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   ddc4351..fe93d7a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+te: 72 metin çevrilecek (mevcut 1503)
+ta: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 375c033] i18n: ta paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   fe93d7a..375c033  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+mr: 72 metin çevrilecek (mevcut 1503)
+te: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 1c7b558] i18n: te paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   375c033..1c7b558  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+gu: 72 metin çevrilecek (mevcut 1503)
+bn: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 7e71b28] i18n: bn paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   1c7b558..7e71b28  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+pa: 72 metin çevrilecek (mevcut 1503)
+mr: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 7817088] i18n: mr paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   7e71b28..7817088  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ne: 72 metin çevrilecek (mevcut 1503)
+gu: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 3d991a6] i18n: gu paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   7817088..3d991a6  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+si: 72 metin çevrilecek (mevcut 1503)
+pa: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 3c92095] i18n: pa paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   3d991a6..3c92095  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+zh: 72 metin çevrilecek (mevcut 1503)
+hi: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d9aee74] i18n: hi paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   3c92095..d9aee74  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ja: 72 metin çevrilecek (mevcut 1503)
+zh: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 4b5c527] i18n: zh paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d9aee74..4b5c527  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ko: 72 metin çevrilecek (mevcut 1503)
+ne: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel b131673] i18n: ne paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   4b5c527..b131673  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+vi: 72 metin çevrilecek (mevcut 1503)
+ko: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 93577c1] i18n: ko paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b131673..93577c1  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+th: 72 metin çevrilecek (mevcut 1503)
+ja: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel fccd177] i18n: ja paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   93577c1..fccd177  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+id: 72 metin çevrilecek (mevcut 1503)
+si: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel df55423] i18n: si paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   fccd177..df55423  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ms: 72 metin çevrilecek (mevcut 1503)
+th: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 464137d] i18n: th paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   df55423..464137d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+fil: 72 metin çevrilecek (mevcut 1503)
+ms: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel b3bd10f] i18n: ms paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   464137d..b3bd10f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+km: 72 metin çevrilecek (mevcut 1503)
+fil: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel a6c6d4c] i18n: fil paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b3bd10f..a6c6d4c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+lo: 72 metin çevrilecek (mevcut 1503)
+vi: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 658e2dc] i18n: vi paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   a6c6d4c..658e2dc  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+my: 72 metin çevrilecek (mevcut 1503)
+id: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel ffd2a13] i18n: id paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   658e2dc..ffd2a13  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+mn: 72 metin çevrilecek (mevcut 1503)
+lo: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 742786f] i18n: lo paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   ffd2a13..742786f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+kk: 72 metin çevrilecek (mevcut 1503)
+km: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 8a85a07] i18n: km paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   742786f..8a85a07  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ky: 72 metin çevrilecek (mevcut 1503)
+mn: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 2b4890d] i18n: mn paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   8a85a07..2b4890d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+uz: 72 metin çevrilecek (mevcut 1503)
+kk: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 2038933] i18n: kk paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   2b4890d..2038933  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+tg: 72 metin çevrilecek (mevcut 1503)
+my: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel bb2b1f8] i18n: my paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   2038933..bb2b1f8  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+tk: 72 metin çevrilecek (mevcut 1503)
+ky: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel b909f0c] i18n: ky paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   bb2b1f8..b909f0c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+az: 72 metin çevrilecek (mevcut 1503)
+uz: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 9c69bef] i18n: uz paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b909f0c..9c69bef  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ka: 72 metin çevrilecek (mevcut 1503)
+tg: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 6dc4935] i18n: tg paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   9c69bef..6dc4935  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+hy: 72 metin çevrilecek (mevcut 1503)
+ka: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 5954ded] i18n: ka paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   6dc4935..5954ded  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+be: 72 metin çevrilecek (mevcut 1503)
+tk: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel a194a90] i18n: tk paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   5954ded..a194a90  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+af: 72 metin çevrilecek (mevcut 1503)
+az: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 1282102] i18n: az paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   a194a90..1282102  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+sw: 72 metin çevrilecek (mevcut 1503)
+af: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel d45c90f] i18n: af paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   1282102..d45c90f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+am: 72 metin çevrilecek (mevcut 1503)
+be: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel b3b5e59] i18n: be paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   d45c90f..b3b5e59  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ha: 72 metin çevrilecek (mevcut 1503)
+hy: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 9596aa9] i18n: hy paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b3b5e59..9596aa9  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ig: 72 metin çevrilecek (mevcut 1503)
+sw: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 7639411] i18n: sw paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   9596aa9..7639411  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+yo: 72 metin çevrilecek (mevcut 1503)
+ha: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 88e453d] i18n: ha paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   7639411..88e453d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+zu: 72 metin çevrilecek (mevcut 1503)
+am: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 5da3a9d] i18n: am paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   88e453d..5da3a9d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+so: 72 metin çevrilecek (mevcut 1503)
+zu: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 0ad5382] i18n: zu paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   5da3a9d..0ad5382  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eo: 72 metin çevrilecek (mevcut 1503)
+yo: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel b2cf9d0] i18n: yo paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   0ad5382..b2cf9d0  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ig: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 9bab6f3] i18n: ig paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b2cf9d0..9bab6f3  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eo: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 1c2e357] i18n: eo paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   9bab6f3..1c2e357  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+so: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel ca91c42] i18n: so paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   1c2e357..ca91c42  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+Bitti: 79 paket · 122929 çeviri · 150 sn
+To https://github.com/Neighboth/auto-code-panel
+   88e453d..5da3a9d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+so: 72 metin çevrilecek (mevcut 1503)
+zu: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 0ad5382] i18n: zu paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   5da3a9d..0ad5382  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eo: 72 metin çevrilecek (mevcut 1503)
+yo: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel b2cf9d0] i18n: yo paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   0ad5382..b2cf9d0  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+ig: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 9bab6f3] i18n: ig paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   b2cf9d0..9bab6f3  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eo: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel 1c2e357] i18n: eo paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   9bab6f3..1c2e357  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+so: 1575/1575 anahtar yazıldı
+packs/index.ts: 79 dil
+[arena/f02978eb-auto-code-panel ca91c42] i18n: so paketi (otomatik)
+ 2 files changed, 73 insertions(+), 1 deletion(-)
+Current branch arena/f02978eb-auto-code-panel is up to date.
+To https://github.com/Neighboth/auto-code-panel
+   1c2e357..ca91c42  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+Bitti: 79 paket · 122929 çeviri · 150 sn
