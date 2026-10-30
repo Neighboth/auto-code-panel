@@ -72,6 +72,9 @@ export function CodeManager({
   const [accountIds, setAccountIds] = useState<number[]>([]);
   const [count, setCount] = useState(1);
   const [generated, setGenerated] = useState<string[]>([]);
+  /** How long the delivery stays in the buyer's library; "unlimited" = forever. */
+  const [durationChoice, setDurationChoice] = useState("unlimited");
+  const [customDays, setCustomDays] = useState(30);
 
   const filtered = useMemo(
     () => (filter === "all" ? codes : codes.filter((code) => code.status === filter)),
@@ -96,15 +99,29 @@ export function CodeManager({
     setAccountIds([]);
     setCount(1);
     setGenerated([]);
+    setDurationChoice("unlimited");
+    setCustomDays(30);
     setError(null);
   }
 
-  /**
-   * The platform delivers shared accounts: access is never time limited.
-   * Codes therefore always carry a null duration (unlimited).
-   */
-  function durationMinutes(): number | null {
-    return null;
+  const DAY = 60 * 24;
+  const durationPresets: { id: string; label: string; minutes: number | null }[] = [
+    { id: "unlimited", label: "x.snrsz", minutes: null },
+    { id: "1d", label: "x.1-gun", minutes: DAY },
+    { id: "3d", label: "x.3-gun", minutes: DAY * 3 },
+    { id: "1w", label: "x.1-hafta", minutes: DAY * 7 },
+    { id: "1m", label: "x.1-ay", minutes: DAY * 30 },
+    { id: "3m", label: "x.3-ay", minutes: DAY * 90 },
+    { id: "6m", label: "x.6-ay", minutes: DAY * 180 },
+    { id: "1y", label: "x.1-yl", minutes: DAY * 365 },
+  ];
+
+  /** Resolves the picker into minutes; `custom` uses the day input. */
+  function resolvedDuration(): number | null {
+    if (durationChoice === "custom") {
+      return Math.max(1, Math.round(customDays)) * DAY;
+    }
+    return durationPresets.find((preset) => preset.id === durationChoice)?.minutes ?? null;
   }
 
   function toggleTarget(kind: "game" | "account", id: number) {
@@ -132,11 +149,13 @@ export function CodeManager({
       slug,
       type,
       choiceCount,
-      durationMinutes: durationMinutes(),
+      durationMinutes: resolvedDuration(),
       gameIds,
       accountIds,
       count,
-      label: `${typeLabel(t, type)}${type === "choice" ? ` (${choiceCount})` : ""} · ${t("x.snrsz")}`,
+      label: `${typeLabel(t, type)}${type === "choice" ? ` (${choiceCount})` : ""} · ${
+        resolvedDuration() === null ? t("x.snrsz") : t("x.count-gun", { count: Math.round(resolvedDuration()! / DAY) })
+      }`,
     });
     setPending(false);
     if (!result.ok) {
@@ -477,7 +496,7 @@ export function CodeManager({
         ) : null}
 
         {step === 1 ? (
-          <div className="space-y-3">
+          <div className="space-y-3" role="radiogroup" aria-label={t("x.kod-turu")}>
             {(
               [
                 { id: "choice", title: t("x.secmeli-kod"), text: t("x.musteri-magazadaki-urunler-arasndan-hakk-kadar-secim-yap") },
@@ -489,6 +508,8 @@ export function CodeManager({
                 key={option.id}
                 type="button"
                 onClick={() => setType(option.id)}
+                role="radio"
+                aria-checked={type === option.id}
                 className="flex w-full items-start gap-3 rounded-xl border p-3 text-left hairline"
                 style={{
                   borderColor: type === option.id ? "var(--store-primary)" : "var(--border)",
@@ -496,10 +517,14 @@ export function CodeManager({
                 }}
               >
                 <span
-                  className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border"
-                  style={{ borderColor: type === option.id ? "var(--store-primary)" : "var(--border-strong)" }}
+                  aria-hidden="true"
+                  className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition"
+                  style={{
+                    borderColor: type === option.id ? "var(--store-primary)" : "var(--border-strong)",
+                    background: type === option.id ? "var(--store-primary)" : "transparent",
+                  }}
                 >
-                  {type === option.id ? <span className="h-2 w-2 rounded-full" style={{ background: "var(--store-primary)" }} /> : null}
+                  {type === option.id ? <Check size={10} strokeWidth={3.5} style={{ color: "#fff" }} /> : null}
                 </span>
                 <span>
                   <span className="block text-[12.5px] font-medium">{t(option.title)}</span>
@@ -562,11 +587,68 @@ export function CodeManager({
 
         {step === 2 ? (
           <div className="space-y-3">
-            <div className="rounded-xl border p-3.5 hairline">
-              <p className="text-[12.5px] font-medium">{" "}{t("x.snrsz-erisim")}</p>
-              <p className="mt-1 text-[11.5px] leading-relaxed muted">{t("x.bu-platform-paylasml-hesap-sats-yapar-kod-kullanldgnda-e")}</p>
+            <div>
+              <p className="text-[12.5px] font-medium">{t("x.kutuphanede-kalma-suresi")}</p>
+              <p className="mt-1 text-[11.5px] leading-relaxed muted">
+                {t("x.teslimat-kac-gun-boyunca-musterinin-kutuphanesinde-kal")}
+              </p>
             </div>
-            <p className="text-[11.5px] leading-relaxed muted">{t("x.secmeli-kodlarda-musteri-koddaki-secim-hakk-kadar-urunu")}</p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="radiogroup" aria-label={t("x.kutuphanede-kalma-suresi")}>
+              {durationPresets.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={durationChoice === preset.id}
+                  onClick={() => setDurationChoice(preset.id)}
+                  className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-[12px] transition hairline"
+                  style={{
+                    borderColor: durationChoice === preset.id ? "var(--store-primary)" : "var(--border)",
+                    background:
+                      durationChoice === preset.id
+                        ? "color-mix(in srgb, var(--store-primary) 6%, transparent)"
+                        : "transparent",
+                  }}
+                >
+                  <span className="font-medium">{t(preset.label)}</span>
+                  {durationChoice === preset.id ? (
+                    <Check size={12} style={{ color: "var(--store-primary)" }} />
+                  ) : null}
+                </button>
+              ))}
+              <button
+                type="button"
+                role="radio"
+                aria-checked={durationChoice === "custom"}
+                onClick={() => setDurationChoice("custom")}
+                className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-[12px] transition hairline"
+                style={{
+                  borderColor: durationChoice === "custom" ? "var(--store-primary)" : "var(--border)",
+                  background:
+                    durationChoice === "custom"
+                      ? "color-mix(in srgb, var(--store-primary) 6%, transparent)"
+                      : "transparent",
+                }}
+              >
+                <span className="font-medium">{t("x.ozel")}</span>
+                {durationChoice === "custom" ? <Check size={12} style={{ color: "var(--store-primary)" }} /> : null}
+              </button>
+            </div>
+            {durationChoice === "custom" ? (
+              <Field label={t("x.gun-cinsinden-sure")}>
+                <input
+                  type="number"
+                  min={1}
+                  max={3650}
+                  value={customDays}
+                  onChange={(event) => setCustomDays(Math.min(3650, Math.max(1, Number(event.target.value) || 1)))}
+                  className="input"
+                />
+              </Field>
+            ) : null}
+            <p className="text-[11.5px] leading-relaxed muted">
+              {t("x.secmeli-kodlarda-musteri-koddaki-secim-hakk-kadar-urunu")}
+            </p>
           </div>
         ) : null}
 
@@ -588,7 +670,14 @@ export function CodeManager({
                 <SummaryRow label={t("x.tur")} value={typeLabel(t, type)} />
                 {type === "choice" ? <SummaryRow label={t("x.secim-hakk-2")} value={t("x.count-urun", { count: choiceCount })} /> : null}
                 {type !== "choice" ? <SummaryRow label={t("x.hedef-says")} value={t("x.count-oge", { count: targetCount })} /> : null}
-                <SummaryRow label={t("x.erisim-suresi")} value={t("x.snrsz")} />
+                <SummaryRow
+                  label={t("x.erisim-suresi")}
+                  value={
+                    resolvedDuration() === null
+                      ? t("x.snrsz")
+                      : t("x.count-gun", { count: Math.round(resolvedDuration()! / DAY) })
+                  }
+                />
                 <SummaryRow label={t("x.adet")} value={`${count} kod`} />
               </div>
             </div>

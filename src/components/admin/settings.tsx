@@ -22,6 +22,8 @@ export type StoreBranding = {
   accentColor: string;
   fontFamily: string;
   contactLinks: { label: string; url: string }[];
+  /** Empty means "inherit the platform/env default". */
+  renewalUrl: string;
 };
 
 export function StoreSettingsForm({ store }: { store: StoreBranding }) {
@@ -37,6 +39,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
   const [fontFamily, setFontFamily] = useState(store.fontFamily);
   const [fontSearch, setFontSearch] = useState("");
   const [fontOpen, setFontOpen] = useState(false);
+  const [renewalUrl, setRenewalUrl] = useState(store.renewalUrl);
   const [contacts, setContacts] = useState(store.contactLinks.length ? store.contactLinks : [{ label: "", url: "" }]);
 
   const filteredFonts = useMemo(() => {
@@ -45,18 +48,28 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     return list.slice(0, 40);
   }, [fontSearch]);
 
+  /*
+   * Every row in the picker is rendered in its own family, so the file for that
+   * family has to be loaded too — otherwise the whole list falls back to the
+   * same system font ("all fonts look identical"). `googleFontHref` accepts at
+   * most 6 families per request, so the list is requested in batches.
+   */
   useEffect(() => {
-    const families = [fontFamily, ...filteredFonts.slice(0, 12).map((font) => font.family)];
-    const href = googleFontHref(families);
-    if (!href) return;
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = href;
-    link.dataset.fontPreview = "true";
-    document.head.appendChild(link);
-    return () => {
-      link.remove();
-    };
+    const families = [fontFamily, ...filteredFonts.map((font) => font.family)];
+    const batches: string[] = [];
+    for (let index = 0; index < families.length; index += 6) {
+      const href = googleFontHref(families.slice(index, index + 6));
+      if (href) batches.push(href);
+    }
+    const links = batches.map((href) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      link.dataset.fontPreview = "true";
+      document.head.appendChild(link);
+      return link;
+    });
+    return () => links.forEach((link) => link.remove());
   }, [fontFamily, filteredFonts]);
 
   function onImage(event: ChangeEvent<HTMLInputElement>, target: "logo" | "favicon") {
@@ -87,6 +100,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     formData.set("primaryColor", primaryColor);
     formData.set("accentColor", accentColor);
     formData.set("fontFamily", fontFamily);
+    formData.set("renewalUrl", renewalUrl);
     formData.set(
       "contactLinks",
       JSON.stringify(contacts.filter((contact) => contact.label.trim() && contact.url.trim())),
@@ -190,7 +204,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
       </section>
 
       <section className="card p-5">
-        <h2 className="text-[14px] font-semibold">Tema ve tipografi</h2>
+        <h2 className="text-[14px] font-semibold">{t("x.tema-ve-tipografi")}</h2>
         <p className="mt-0.5 text-[11.5px] muted">{t("x.renkler-css-degiskenleri-ile-tum-magaza-arayuzune-annda")}</p>
         <div className="mt-4 grid gap-3.5 sm:grid-cols-2">
           <div>
@@ -280,6 +294,22 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
             <p className="mt-1 text-[17px] font-semibold" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>{t("x.dijital-hesap-teslimat")}</p>
             <p className="text-[12px] muted" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>{t("x.steam-guard-kodlar-saniyeler-icinde-yenilenir-0123456789")}</p>
           </div>
+        </div>
+      </section>
+
+      <section className="card p-5">
+        <h2 className="text-[14px] font-semibold">{t("x.sure-uzatma-linki")}</h2>
+        <p className="mt-0.5 text-[11.5px] muted">{t("x.bos-birakirsaniz-platformun-varsayilan-linki-kullanlr")}</p>
+        <div className="mt-3">
+          <Field label={t("x.sure-uzatma-linki")} hint={t("x.desteklenen-bicim-https-ornek-com-yenile")}>
+            <input
+              value={renewalUrl}
+              onChange={(event) => setRenewalUrl(event.target.value)}
+              className="input mono text-[12px]"
+              placeholder="https://..."
+              inputMode="url"
+            />
+          </Field>
         </div>
       </section>
 

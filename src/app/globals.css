@@ -71,11 +71,26 @@
 }
 
 html {
-  overflow-x: hidden;
+  /*
+   * Mobile browsers scroll the *body* even when `html` is clipped, which is why
+   * a single wide table used to let the whole page slide sideways. `clip` is
+   * used instead of `hidden` (hidden still creates a scroll container and, on
+   * iOS, still allows horizontal panning).
+   */
+  overflow-x: clip;
   scroll-behavior: smooth;
+  /* The sticky header would otherwise cover the section a hash points at. */
+  scroll-padding-top: 4.75rem;
+}
+
+/* Section anchors (home page nav links, "back to top" jumps). */
+:where(section, div, h1, h2, h3)[id] {
+  scroll-margin-top: 4.75rem;
 }
 
 body {
+  overflow-x: clip;
+  max-width: 100vw;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--store-font, "Inter"), ui-sans-serif, system-ui, -apple-system,
@@ -523,6 +538,25 @@ video {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Right-hand mobile drawers (store nav + marketing header). */
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes drawer-in {
+    from,
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
 /* Sticky sidebars: the shell keeps the navigation pinned while the content
    column scrolls independently. */
 .app-aside {
@@ -619,6 +653,19 @@ video {
 }
 
 @media (max-width: 640px) {
+  /* Wide tables scroll inside their own card instead of stretching the page. */
+  .table-wrap,
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-main,
+  .app-layout {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .modal-backdrop {
     padding: 0;
     align-items: stretch;

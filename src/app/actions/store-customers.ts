@@ -259,9 +259,14 @@ export async function addCustomerEntitlement(
     .where(and(eq(accounts.storeId, g.storeId), sql`${accounts.status} <> 'retired'`));
   const candidate = candidates.find((account) => (account.linkedGameIds ?? []).includes(gameId));
 
-  // Shared account model: no expiry, the customer keeps access forever.
-  void durationMinutes;
-  const expiresAt: Date | null = null;
+  /*
+   * Honour the duration the admin picked. `null` keeps the legacy "forever"
+   * behaviour, otherwise the entitlement (and its redemption) expire together.
+   */
+  const expiresAt: Date | null =
+    durationMinutes && durationMinutes > 0
+      ? new Date(Date.now() + durationMinutes * 60_000)
+      : null;
 
   await db.transaction(async (tx) => {
     const [redemption] = await tx

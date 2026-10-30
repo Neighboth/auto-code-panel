@@ -47,7 +47,7 @@ export default async function StoreAdminPanelLayout({
       logoUrl={store.logoUrl}
       adminUsername={guard.session.username}
       remaining={remaining}
-      renewalUrl={env.renewalUrl || store.renewalUrl || settings.renewalUrl}
+      renewalUrl={store.renewalUrl || settings.renewalUrl || env.renewalUrl}
       accountUsed={quota.used}
       accountMax={quota.max}
       suspended={suspended}

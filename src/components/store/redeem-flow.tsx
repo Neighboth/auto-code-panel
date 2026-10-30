@@ -10,6 +10,7 @@ import { previewCode, redeemCode } from "@/app/actions/storefront";
 import { CredentialsModal } from "@/components/store/credentials-modal";
 import { Modal } from "@/components/modal";
 import { Field } from "@/components/ui";
+import { formatDuration } from "@/lib/format";
 import type { CodePreview, RedeemResult } from "@/lib/types";
 
 type Step = "entry" | "choices" | "auth" | "confirm" | "result";
@@ -261,77 +262,94 @@ export function RedeemFlow({
       ) : null}
 
       {step === "auth" && preview ? (
-        <div className="card p-6">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl border hairline">
-            <Lock size={16} />
-          </span>
-          <h1 className="mt-4 text-[21px] font-semibold tracking-[-0.02em]">{t("x.teslimat-kaydetmek-icin-hesap-olustur")}</h1>
-          <p className="mt-1.5 text-[12.5px] leading-relaxed muted">{t("x.kutuphanenize-kaydetmek-icin-sadece-kullanc-ad-ve-sifre")}</p>
-
-          <div className="mt-4 flex items-center gap-1 rounded-lg border p-1 hairline">
-            {(["register", "login"] as const).map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                onClick={() => setAuthMode(mode)}
-                className="flex-1 rounded-md px-3 py-1.5 text-[12px] font-medium transition"
-                style={{
-                  background: authMode === mode ? "var(--store-primary)" : "transparent",
-                  color: authMode === mode ? "#fff" : "var(--fg-muted)",
-                }}
-              >
-                {mode === "register" ? t("x.hesap-olustur") : t("x.giris-yap")}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Field label={t("x.kullanc-ad")}>
-              <input
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                className="input"
-                placeholder="oyuncu_adi"
-                autoComplete="username"
-              />
-            </Field>
-            <Field label={t("x.sifre")} hint="En az 6 karakter.">
-              <div className="relative">
-                <input
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  type={showPassword ? "text" : "password"}
-                  className="input pr-14"
-                  autoComplete={authMode === "register" ? "new-password" : "current-password"}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
-                >
-                  {showPassword ? t("x.gizle") : t("x.goster")}
-                </button>
+        <div className="mx-auto w-full max-w-md">
+          <div className="card overflow-hidden">
+            <div className="flex items-start gap-3 border-b px-5 py-4 hairline">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border hairline">
+                <Lock size={15} />
+              </span>
+              <div className="min-w-0">
+                <h1 className="text-[16.5px] font-semibold leading-snug tracking-[-0.02em]">
+                  {t("x.teslimat-kaydetmek-icin-hesap-olustur")}
+                </h1>
+                <p className="mt-1 text-[12px] leading-relaxed muted">
+                  {t("x.kutuphanenize-kaydetmek-icin-sadece-kullanc-ad-ve-sifre")}
+                </p>
               </div>
-            </Field>
-          </div>
+            </div>
 
-          <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-between">
-            <button
-              type="button"
-              onClick={() => setGuestWarning(true)}
-              className="btn btn-outline"
-            >{t("x.uye-olmadan-es-gec")}</button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => commit(true)}
-              disabled={pending || !username.trim() || password.length < 6}
-            >
-              {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-              {authMode === "register" ? t("x.hesap-olustur-ve-kodu-kullan") : t("x.giris-yap-ve-kodu-kullan")}
-            </button>
+            <div className="space-y-4 px-5 py-5">
+              <div role="tablist" className="grid grid-cols-2 gap-1 rounded-lg border p-1 hairline">
+                {(["register", "login"] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    role="tab"
+                    aria-selected={authMode === mode}
+                    onClick={() => setAuthMode(mode)}
+                    className="rounded-md px-3 py-2 text-[12.5px] font-medium transition"
+                    style={{
+                      background: authMode === mode ? "var(--store-primary)" : "transparent",
+                      color: authMode === mode ? "#fff" : "var(--fg-muted)",
+                    }}
+                  >
+                    {mode === "register" ? t("x.hesap-olustur") : t("x.giris-yap")}
+                  </button>
+                ))}
+              </div>
+
+              <Field label={t("x.kullanc-ad")}>
+                <input
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  className="input"
+                  placeholder="oyuncu_adi"
+                  autoComplete="username"
+                />
+              </Field>
+
+              <Field label={t("x.sifre")} hint={t("x.en-az-6-karakter")}>
+                <div className="relative">
+                  <input
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    type={showPassword ? "text" : "password"}
+                    className="input pr-16"
+                    autoComplete={authMode === "register" ? "new-password" : "current-password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((value) => !value)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-medium muted"
+                  >
+                    {showPassword ? t("x.gizle") : t("x.goster")}
+                  </button>
+                </div>
+              </Field>
+
+              <button
+                type="button"
+                className="btn btn-primary w-full justify-center"
+                onClick={() => commit(true)}
+                disabled={pending || !username.trim() || password.length < 6}
+              >
+                {pending ? <Loader2 size={14} className="animate-spin" /> : null}
+                {authMode === "register" ? t("x.hesap-olustur-ve-kodu-kullan") : t("x.giris-yap-ve-kodu-kullan")}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setGuestWarning(true)}
+                className="btn btn-outline w-full justify-center"
+              >
+                {t("x.uye-olmadan-es-gec")}
+              </button>
+
+              <p className="text-center text-[10.5px] leading-relaxed muted">
+                {t("x.hesap-olusturmazsanz-teslimat-tek-seferlik-goruntulenir")}
+              </p>
+            </div>
           </div>
-          <p className="mt-3 text-[10.5px] leading-relaxed muted">{t("x.hesap-olusturmazsanz-teslimat-tek-seferlik-goruntulenir")}</p>
         </div>
       ) : null}
 
@@ -346,17 +364,17 @@ export function RedeemFlow({
                   <p className="text-[12.5px] font-medium">{item.title}</p>
                   <p className="text-[10.5px] muted">{item.subtitle}</p>
                 </div>
-                <span className="badge">{item.kind === "game" ? "Oyun" : "Hesap"}</span>
+                <span className="badge">{item.kind === "game" ? t("x.oyun") : t("x.hesap")}</span>
               </div>
             ))}
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-            <span className="badge badge-blue">{t("library.unlimited")}</span>
+            <span className="badge badge-blue">{formatDuration(preview.durationMinutes, t)}</span>
             <div className="flex items-center gap-2">
               <button type="button" className="btn btn-outline" onClick={() => setStep("entry")}>{t("x.vazgec")}</button>
               <button type="button" className="btn btn-primary" onClick={() => commit(false)} disabled={pending}>
                 {pending ? <Loader2 size={14} className="animate-spin" /> : null}
-                Kodu kullan
+                {t("x.kodu-kullan")}
               </button>
             </div>
           </div>

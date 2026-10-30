@@ -3,7 +3,7 @@ import { useT } from "@/components/i18n-provider";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { ArrowRight, ChevronDown, KeyRound, Menu, Search, ShieldCheck, User, X } from "lucide-react";
 import { LogoutButton } from "@/components/auth-forms";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -37,6 +37,21 @@ export function StoreNav({
     { href: `${basePath}/oyunlar`, label: t("nav.products") },
     { href: `${basePath}/kod-gir`, label: t("nav.redeem") },
   ];
+
+  // Mobile drawer: freeze the page behind it and close on Escape.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setMobileOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [mobileOpen]);
 
   function quickRedeem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -195,14 +210,40 @@ export function StoreNav({
             />
           </div>
           <button type="submit" className="btn btn-primary btn-sm h-9 shrink-0 px-3">
-            Kullan
+            {t("x.kullan")}
           </button>
         </form>
       </div>
 
       {mobileOpen ? (
-        <div className="border-t px-4 pb-4 pt-3 lg:hidden hairline">
-          <nav className="grid gap-0.5">
+        <div className="fixed inset-0 z-[120] lg:hidden">
+          <button
+            type="button"
+            aria-label={t("x.menuyu-kapat")}
+            onClick={() => setMobileOpen(false)}
+            className="absolute inset-0 h-full w-full cursor-default bg-black/45 backdrop-blur-[2px]"
+          />
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("common.menu")}
+            className="absolute inset-y-0 right-0 flex w-[86%] max-w-[340px] flex-col border-l shadow-2xl hairline"
+            style={{ background: "var(--bg-elevated)", animation: "drawer-in 180ms ease-out" }}
+          >
+            <div className="flex h-14 items-center justify-between border-b px-4 hairline">
+              <span className="text-[12px] font-semibold uppercase tracking-[0.1em] muted">
+                {t("common.menu")}
+              </span>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-lg border p-1.5 hairline"
+                aria-label={t("x.menuyu-kapat")}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <nav className="flex-1 overflow-y-auto p-3">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -235,23 +276,24 @@ export function StoreNav({
               <ShieldCheck size={13} />
               {t("store.openAdmin")}
             </Link>
-          </nav>
-          <div className="mt-3 flex items-center gap-2 border-t pt-3 hairline">
-            {customer ? (
-              <>
-                <span className="flex min-w-0 flex-1 items-center gap-1.5 text-[12px] muted">
-                  <User size={13} className="shrink-0" />
-                  <span className="truncate">{customer}</span>
-                </span>
-                <LogoutButton kind="customer" slug={slug} basePath={basePath} className="btn btn-outline btn-sm" />
-              </>
-            ) : (
-              <>
-                <Link href={`${basePath}/giris`} onClick={() => setMobileOpen(false)} className="btn btn-outline btn-sm flex-1">{t("x.giris-yap")}</Link>
-                <Link href={`${basePath}/kayit`} onClick={() => setMobileOpen(false)} className="btn btn-primary btn-sm flex-1">{t("x.kayt-ol")}</Link>
-              </>
-            )}
-          </div>
+            </nav>
+            <div className="flex items-center gap-2 border-t p-3 hairline">
+              {customer ? (
+                <>
+                  <span className="flex min-w-0 flex-1 items-center gap-1.5 text-[12px] muted">
+                    <User size={13} className="shrink-0" />
+                    <span className="truncate">{customer}</span>
+                  </span>
+                  <LogoutButton kind="customer" slug={slug} basePath={basePath} className="btn btn-outline btn-sm" />
+                </>
+              ) : (
+                <>
+                  <Link href={`${basePath}/giris`} onClick={() => setMobileOpen(false)} className="btn btn-outline btn-sm flex-1 justify-center">{t("x.giris-yap")}</Link>
+                  <Link href={`${basePath}/kayit`} onClick={() => setMobileOpen(false)} className="btn btn-primary btn-sm flex-1 justify-center">{t("x.kayt-ol")}</Link>
+                </>
+              )}
+            </div>
+          </aside>
         </div>
       ) : null}
     </header>

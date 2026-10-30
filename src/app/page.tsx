@@ -22,11 +22,13 @@ import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: `${brand.name} — ${brand.tagline}`,
-  description:
-    "x.kendi-magazan-ac-oyun-ve-hesap-envanterini-yonet-kod-sih",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getTranslator();
+  return {
+    title: brand.tagline ? `${brand.name} — ${brand.tagline}` : brand.name,
+    description: t("x.kendi-magazan-ac-oyun-ve-hesap-envanterini-yonet-kod-sih"),
+  };
+}
 
 const features = [
   {
@@ -141,10 +143,10 @@ const faqs = [
 ];
 
 export default async function LandingPage() {
-  const { t } = await getTranslator();
+  const { t, locale } = await getTranslator();
   return (
     <div className="min-h-dvh">
-      <SiteHeader name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} />
+      <SiteHeader name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} locale={locale.code} />
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b hairline">
@@ -176,7 +178,7 @@ export default async function LandingPage() {
               {[
                 { value: "3 mod", label: t("x.kod-sihirbaz") },
                 { value: "30 sn", label: t("x.canl-kod-sayac") },
-                { value: "%100", label: "Tenant izolasyonu" },
+                { value: "%100", label: t("x.tenant-izolasyonu") },
               ].map((stat) => (
                 <div key={stat.label}>
                   <p className="text-[17px] font-semibold tracking-[-0.02em]">{stat.value}</p>
@@ -195,14 +197,14 @@ export default async function LandingPage() {
                   <span className="text-[12px] font-semibold">magaza / kodlar{/* i18n-ignore */}</span>
                 </div>
                 <span className="badge badge-green">
-                  <span className="live-dot" /> aktif
+                  <span className="live-dot" /> {t("x.aktif")}
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-px border-b hairline" style={{ background: "var(--border)" }}>
                 {[
-                  { label: "Aktif kod", value: "148" },
-                  { label: "Teslimat", value: "92" },
-                  { label: "Hesap", value: "37 / 60" },
+                  { label: t("x.aktif-kod"), value: "148" },
+                  { label: t("x.teslimat"), value: "92" },
+                  { label: t("x.hesap"), value: "37 / 60" },
                 ].map((item) => (
                   <div key={item.label} className="px-4 py-3" style={{ background: "var(--bg-elevated)" }}>
                     <p className="text-[10px] uppercase tracking-[0.08em] muted">{item.label}</p>
@@ -228,7 +230,7 @@ export default async function LandingPage() {
               <div className="flex items-center justify-between gap-3 border-t px-4 py-3 hairline">
                 <div className="flex items-center gap-2 text-[11px] muted">
                   <ShieldCheck size={13} />
-                  Steam Guard kodu · 30 sn
+                  {t("x.steam-guard-kodu-30-sn")}
                 </div>
                 <span className="mono rounded-md border px-2 py-1 text-[12px] font-semibold tracking-[0.2em] hairline">
                   K7M2Q
@@ -250,7 +252,7 @@ export default async function LandingPage() {
       <section className="border-b hairline">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] muted">
-            Entegrasyonlar
+            {t("x.entegrasyonlar")}
           </p>
           <div className="flex flex-wrap items-center gap-x-7 gap-y-2 text-[12px] font-medium muted">
             <span>Steam Store API</span>

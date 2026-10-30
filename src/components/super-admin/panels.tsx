@@ -15,13 +15,17 @@ import {
 import { Field } from "@/components/ui";
 import { Modal } from "@/components/modal";
 
-const durationOptions = [
-  { label: "1 Hafta", days: 7 },
-  { label: "1 Ay", days: 30 },
-  { label: "3 Ay", days: 90 },
-  { label: "6 Ay", days: 180 },
+/** Values are dictionary keys; they are translated at render time. */
+const durationOptions: { label: string; days: number | null }[] = [
+  { label: "x.1-hafta", days: 7 },
+  { label: "x.1-ay", days: 30 },
+  { label: "x.3-ay", days: 90 },
+  { label: "x.6-ay", days: 180 },
   { label: "x.1-yl", days: 365 },
+  { label: "x.2-yl", days: 730 },
   { label: "x.snrsz", days: null },
+  /** Sentinel: the real value comes from the "custom days" input. */
+  { label: "x.ozel-gun", days: -1 },
 ];
 
 export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: string }) {
@@ -33,6 +37,9 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
   const [durationIndex, setDurationIndex] = useState("1");
   const [unlimitedAccounts, setUnlimitedAccounts] = useState(false);
   const [count, setCount] = useState(1);
+  /** Empty = inherit the env/platform default; anything else overrides it. */
+  const [renewalUrl, setRenewalUrl] = useState("");
+  const [customDays, setCustomDays] = useState(45);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,11 +47,13 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
     setError(null);
     const formData = new FormData(event.currentTarget);
     const preset = durationOptions[Number(formData.get("duration"))] ?? durationOptions[0];
+    const durationDays = preset.days === -1 ? Math.max(1, Math.trunc(customDays)) : preset.days;
     const maxAccountsRaw = String(formData.get("maxAccounts") ?? "").trim();
     const result = await createResellerKeys({
-      durationDays: preset.days,
+      durationDays,
       maxAccounts: unlimitedAccounts || !maxAccountsRaw ? (unlimitedAccounts ? null : 50) : Number(maxAccountsRaw),
-      renewalUrl: String(formData.get("renewalUrl") ?? globalRenewalUrl),
+      // Empty means "use the platform default"; the server stores null then.
+      renewalUrl: renewalUrl.trim(),
       note: String(formData.get("note") ?? ""),
       count,
     });
@@ -92,12 +101,26 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
             >
               {durationOptions.map((option, index) => (
                 <option key={option.label} value={index}>
-                  {option.label}
+                  {t(option.label)}
                 </option>
               ))}
             </select>
           </Field>
-          <Field label="Maksimum Hesap Limiti">
+          {durationOptions[Number(durationIndex)]?.days === -1 ? (
+            <Field label={t("x.ozel-gun-sayisi")} hint={t("x.1-ile-3650-gun-arasi")}>
+              <input
+                type="number"
+                min={1}
+                max={3650}
+                className="input"
+                value={customDays}
+                onChange={(event) =>
+                  setCustomDays(Math.min(3650, Math.max(1, Number(event.target.value) || 1)))
+                }
+              />
+            </Field>
+          ) : null}
+          <Field label={t("x.maksimum-hesap-limiti")}>
             <div className="flex items-center gap-2">
               <input
                 name="maxAccounts"
@@ -119,17 +142,32 @@ export function ResellerKeyGenerator({ globalRenewalUrl }: { globalRenewalUrl: s
         </div>
         <Field
           label={t("x.sure-uzatma-linki")}
-          hint={t("x.renewal-url-ortam-degiskeninden-gelir-bayilik-koduna-da")}
+          hint={t("x.bos-birakirsaniz-ortam-degiskenindeki-varsayilan-link-ku")}
         >
           <input
             name="renewalUrl"
-            className="input mono text-[12px] opacity-70"
-            value={globalRenewalUrl}
-            readOnly
+            className="input mono text-[12px]"
+            value={renewalUrl}
+            onChange={(event) => setRenewalUrl(event.target.value)}
+            placeholder={globalRenewalUrl}
+            inputMode="url"
           />
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10.5px] muted">
+            <span>{t("x.varsayilan")}:</span>
+            <code className="mono truncate">{globalRenewalUrl}</code>
+            {renewalUrl && renewalUrl !== globalRenewalUrl ? (
+              <button
+                type="button"
+                className="underline underline-offset-2"
+                onClick={() => setRenewalUrl("")}
+              >
+                {t("x.sifirla")}
+              </button>
+            ) : null}
+          </p>
         </Field>
         <div className="grid gap-3 sm:grid-cols-[1fr_110px]">
-          <Field label="Not (opsiyonel)">
+          <Field label={t("x.not-opsiyonel")}>
             <input name="note" className="input" placeholder={t("x.orn-kampanya-bayi-paketi")} />
           </Field>
           <Field label={t("x.adet")}>

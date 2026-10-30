@@ -324,7 +324,7 @@ function AddDeliveryModal({
             <option value="0">{" "}{t("x.suresiz-snrsz")}</option>
             {DURATION_PRESETS.slice(1).map((preset, index) => (
               <option key={preset.label} value={index + 1}>
-                {preset.label}
+                {t(preset.label)}
               </option>
             ))}
           </select>

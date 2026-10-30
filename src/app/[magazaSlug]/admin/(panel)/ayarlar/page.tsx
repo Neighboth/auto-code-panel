@@ -8,6 +8,7 @@ import { domainVerificationToken } from "@/lib/domain";
 import { getStoreBasePath, requireStoreAdmin } from "@/lib/tenant";
 import { getPlatformSettings } from "@/lib/tenant";
 import { brand } from "@/lib/brand";
+import { env } from "@/lib/env";
 import { StoreCredentialsForm, StoreDomainForm, StoreSettingsForm } from "@/components/admin/settings";
 import { FactorSettings } from "@/components/security/factor-settings";
 import { StoreMailPrefsCard } from "@/components/store/mail-prefs-card";
@@ -37,7 +38,7 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
   const settings = await getPlatformSettings();
   const adminSession = await getStoreAdminSession();
   const storeMailPrefs = adminSession ? await getMailPrefs("store_admin", adminSession.adminId) : null;
-  const renewalUrl = store.renewalUrl || settings.renewalUrl;
+  const renewalUrl = store.renewalUrl || settings.renewalUrl || env.renewalUrl;
   const basePath = await getStoreBasePath(store);
   const domainToken = store.customDomain
     ? domainVerificationToken(store.id, store.customDomain)
@@ -93,6 +94,7 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
           accentColor: store.accentColor,
           fontFamily: store.fontFamily,
           contactLinks: store.contactLinks,
+          renewalUrl: store.renewalUrl ?? "",
         }}
       />
 

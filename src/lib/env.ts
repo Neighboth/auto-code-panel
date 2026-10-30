@@ -5,6 +5,16 @@ function read(name: string, fallback = ""): string {
   return value === undefined || value === "" ? fallback : value;
 }
 
+/**
+ * Like `read`, but an explicitly empty value wins over the default.
+ * Used for copy that the operator may want to remove entirely: deleting the
+ * line (`BRAND_TAGLINE=`) must silence the slogan, not resurrect the default.
+ */
+function readOptional(name: string, fallback = ""): string {
+  const value = process.env[name];
+  return value === undefined ? fallback : value;
+}
+
 function sqliteFilePath(): string {
   const raw = read("SQLITE_PATH") || path.join(process.cwd(), "data", "app.db");
   return path.resolve(raw.replace(/^file:/i, ""));
@@ -25,9 +35,9 @@ export const env = {
   superAdminPassword: read("SUPER_ADMIN_PASSWORD"),
   superAdminEmail: read("SUPER_ADMIN_EMAIL"),
   brandName: read("BRAND_NAME", "Platform"),
-  brandTagline: read("BRAND_TAGLINE", "Dijital teslimat altyapısı"),
+  brandTagline: readOptional("BRAND_TAGLINE", "Dijital teslimat altyapısı"),
   brandLogoUrl: read("BRAND_LOGO_URL"),
-  renewalUrl: read("RENEWAL_URL", "https://example.com/renew"),
+  renewalUrl: readOptional("RENEWAL_URL", "https://example.com/renew"),
   supportEmail: read("SUPPORT_EMAIL", "destek@example.com"),
   cronSecret: read("CRON_SECRET"),
   appUrl: read("APP_URL").replace(/\/+$/, ""),

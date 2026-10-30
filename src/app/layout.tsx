@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
 import { Toaster } from "sonner";
 import { brand } from "@/lib/brand";
 import { getLocale } from "@/lib/i18n/server";
@@ -20,15 +21,22 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
+  const cookieTheme = (await cookies()).get("pix-theme")?.value;
+  const theme = cookieTheme === "dark" ? "dark" : "light";
 
   return (
-    <html lang={locale.code} dir={locale.dir} suppressHydrationWarning>
+    <html lang={locale.code} dir={locale.dir} data-theme={theme} suppressHydrationWarning>
       <head>
-        {/* Applies the saved theme before first paint. Light is the default. */}
+        {/*
+          The cookie already produced the right `data-theme` on the server, so this
+          script only repairs the rare case where localStorage and the cookie
+          disagree (user cleared cookies but kept storage). It runs before paint,
+          so there is still no flash.
+        */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var t=localStorage.getItem('pix-theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';}catch(e){document.documentElement.dataset.theme='light';}})();",
+              "(function(){try{var s=localStorage.getItem('pix-theme');if(!s)return;var d=document.documentElement;if(d.dataset.theme!==s){d.dataset.theme=s;document.cookie='pix-theme='+s+'; path=/; max-age=31536000; samesite=lax';}}catch(e){}})();",
           }}
         />
       </head>

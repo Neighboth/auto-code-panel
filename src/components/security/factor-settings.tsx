@@ -288,7 +288,7 @@ export function FactorSettings({
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Mail size={15} />
-              <p className="text-[12.5px] font-medium">E-posta ile 2FA</p>
+              <p className="text-[12.5px] font-medium">{t("x.e-posta-ile-2fa")}</p>
             </div>
             {state.email ? (
               <button type="button" className="btn btn-outline btn-sm" onClick={() => remove("email")} disabled={pending}>{t("x.kaldr")}</button>

@@ -227,7 +227,7 @@ export function AuditLogView({
                 <tr>
                   <th className="px-4 py-2.5 font-semibold">{t("x.zaman")}</th>
                   <th className="px-4 py-2.5 font-semibold">{t("x.islem")}</th>
-                  <th className="px-4 py-2.5 font-semibold">Yapan</th>
+                  <th className="px-4 py-2.5 font-semibold">{t("x.yapan")}</th>
                   <th className="px-4 py-2.5 font-semibold">{t("x.magaza")}</th>
                   <th className="px-4 py-2.5 font-semibold">{t("x.ozet")}</th>
                   <th className="px-4 py-2.5 font-semibold">IP</th>

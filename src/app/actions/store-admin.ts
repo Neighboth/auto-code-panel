@@ -764,6 +764,18 @@ export async function deleteCode(formData: FormData): Promise<ActionResult> {
 
 /* ------------------------------ Settings ----------------------------- */
 
+/**
+ * A logo may be a remote URL **or** an inline upload. The settings screen reads
+ * picked files with FileReader and stores a `data:image/...;base64,…` string, so
+ * rejecting everything without `http` made every upload fail. Size is capped so
+ * the row stays reasonable (same limit as the browser-side check).
+ */
+function isLogoSrc(value: string): boolean {
+  if (/^https?:\/\//i.test(value)) return true;
+  return /^data:image\/(png|jpeg|jpg|webp|svg\+xml|x-icon|vnd\.microsoft\.icon);base64,[a-z0-9+/=]+$/i.test(value)
+    && value.length <= 400_000;
+}
+
 export async function saveStoreSettings(formData: FormData): Promise<ActionResult<{ slug: string }>> {
   const { t } = await getTranslator();
   const currentSlug = str(formData, "slug");
@@ -792,15 +804,19 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   const primaryColor = str(formData, "primaryColor") || store.primaryColor;
   const accentColor = str(formData, "accentColor") || store.accentColor;
   const fontFamily = str(formData, "fontFamily") || store.fontFamily;
+  const renewalUrl = str(formData, "renewalUrl");
 
-  if (logoUrl && !/^https?:\/\//i.test(logoUrl)) {
+  if (logoUrl && !isLogoSrc(logoUrl)) {
     return { ok: false, message: t("x.logo-adresi-http-s-ile-baslamaldr") };
   }
-  if (faviconUrl && !/^https?:\/\//i.test(faviconUrl)) {
+  if (faviconUrl && !isLogoSrc(faviconUrl)) {
     return { ok: false, message: t("x.favicon-adresi-http-s-ile-baslamaldr") };
   }
   if (!FONT_OPTIONS.some((option) => option.family === fontFamily)) {
     return { ok: false, message: t("x.desteklenmeyen-font-secimi") };
+  }
+  if (renewalUrl && !/^https?:\/\//i.test(renewalUrl)) {
+    return { ok: false, message: t("x.sure-uzatma-linki-http-s-ile-baslamaldr") };
   }
 
   let contactLinks: { label: string; url: string }[] = [];
@@ -837,6 +853,7 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
       accentColor,
       fontFamily,
       contactLinks,
+      renewalUrl: renewalUrl || null,
       updatedAt: new Date(),
     })
     .where(eq(stores.id, store.id));

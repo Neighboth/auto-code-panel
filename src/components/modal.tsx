@@ -39,6 +39,15 @@ export function Modal({
   );
 
   const panelRef = useRef<HTMLDivElement | null>(null);
+  /*
+   * `onClose` is almost always an inline arrow, so its identity changes on every
+   * parent render — e.g. on every keystroke. The focus trap effect must therefore
+   * not depend on it; it reads the latest callback through a ref instead.
+   */
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
 
@@ -59,7 +68,7 @@ export function Modal({
 
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== "Tab") return;
@@ -84,7 +93,7 @@ export function Modal({
       document.body.style.overflow = previous;
       restoreFocusRef.current?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open || typeof document === "undefined") return null;
 

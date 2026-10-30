@@ -6,6 +6,50 @@
 
 ---
 
+## 0.0 Bu tur: SS'li 20+ maddelik hata listesi (PR #10)
+
+> Talep: ekran görüntüleriyle gelen listenin **tamamı** düzeltilecek, kısmi teslim yok.
+
+| # | Bildirim | Yapılan | Kanıt |
+| --- | --- | --- | --- |
+| 1 | Kod oluşturma sihirbazında süre seçici ham anahtar gösteriyor (`x.1-yl`) | `panels.tsx` süre listesi sözlük anahtarına çevrildi, `t()` ile basılıyor; 2 Yıl ve "Özel (gün)" eklendi | `/super-admin` SSR'da `Özel (gün)`, `2 Yıl` |
+| 2 | Hesap ekleme popup'ında ham kategori etiketleri (`x.egitim`) | `fonts.ts` grupları `x.grup-*` anahtarı; `catalog.tsx` `<optgroup label={t(group)}>` | `i18n:check` 0 |
+| 3 | Ana sayfada dil/tema seçici yok | `site-header.tsx` yeniden yazıldı: `LanguageSwitcher` + `ThemeToggle` + mobil drawer | `/` SSR çıktısı |
+| 4 | Yatay kaydırma / taşan düzen | `html,body{overflow-x:clip}`, `body{max-width:100vw}`, `≤640px` tablo sarmalayıcıları, `min-width:0` | `globals.css` |
+| 5 | Hamburger üstten açılıyor, sol taraf kararmıyor | Site + mağaza + admin + süper admin: **sağdan drawer**, yarı saydam backdrop, Escape, gövde kaydırma kilidi | 4 shell dosyası |
+| 6 | Logoya basınca ana sayfaya dönmüyor | `SiteHeader` → `/`, mağaza shell → mağaza kökü, admin/süper admin → panel kökü | grep + SSR |
+| 7 | Üst bar linkleriyle gidip yenileyince sayfa ortada açılıyor | `scroll-padding-top`/`scroll-margin-top` + `usePathname` etkisinde açık scroll (hash varsa hedefe, yoksa en üste) | `site-header.tsx`, `globals.css` |
+| 8 | Dil kutusu sol kenara giriyor | `language-switcher.tsx` `position:fixed` + viewport clamp + resize/scroll takibi | `language-switcher.tsx` |
+| 9 | Yalnız TR/EN çalışıyor | 80 dil canlı tarandı: her dilde `raw key` = 0, HTTP hatası = 0 (aşağıya bakın) | canlı SSR taraması |
+| 10 | Mağaza kodu üretiminde süre uzatma linki değiştirilemiyor | Süper admin sihirbazında düzenlenebilir alan (boş = ENV varsayılanı), bayilik koduna yazılıyor; mağaza **Ayarlar**'a da alan eklendi → `stores.renewal_url` | `/super-admin`, `/demo/admin/ayarlar` SSR |
+| 11 | Öncelik sırası hatası | `store.renewalUrl → platform settings → env` (önce env kazanıyordu) | `(panel)/layout.tsx` |
+| 12 | Mağaza sayfalarında tema flash / kalıcı değil | `pix-theme` çerezi + `cookies()` ile SSR `data-theme`; inline script yalnız uyuşmazlığı onarıyor | `curl -b pix-theme=dark` → `data-theme="dark"` |
+| 13 | Font seçicide her seçenek kendi fontuyla görünmüyor | Önizleme listesi 6'şar Google Fonts isteğine bölünerek yükleniyor | `admin/settings.tsx` |
+| 14 | Steam import'ta açıklama güncellenmiyor | `lastImport` ref'i: elle yazılmadıysa yeni açıklama eskisini değiştirir | `catalog.tsx` |
+| 15 | Admin oturumu varken "Kayıt ol" açılıyor | `giris`/`kayit` sayfalarında çift guard (müşteri → kütüphane, yönetici → panel) | `307 → /demo/admin` |
+| 16 | Input yazarken butonlara focus sıçrıyor | `modal.tsx` focus effect `[open]` + `onCloseRef` | `modal.tsx` |
+| 17 | Kod türü seçiminde tik yok | Dolu daire + beyaz tik, `role=radio`/`aria-checked` | `codes.tsx` |
+| 18 | Kod oluşturma 2. adımda süre seçilemiyor | Sınırsız/1-3 gün/1 hafta/1 ay/3 ay/6 ay/1 yıl/**özel gün**; süre koda yazılıyor ve teslimatta gerçekten uygulanıyor | `codes.tsx`, `storefront.ts` |
+| 19 | Kayıt/giriş ekranı tasarımı | Kart tasarımı, sekme, şifre göster/gizle, misafir uyarısı | `/demo/giris`, `/demo/kayit` SSR |
+| 20 | "Bu hesap paylaşımlıdır…" uyarısı | Metin silindi | `credentials-modal.tsx` |
+| 21 | Logo yüklemede "https ile başlamalıdır" hatası | `isLogoSrc()`: `http(s)://` veya `data:image/*;base64` (≤400k) | `store-admin.ts` |
+| 22 | ENV'de silinen slogan geri geliyor | `readOptional()` — boş değer varsayılanı ezmez | `env.ts` |
+
+**Ek olarak bulunan ve düzeltilenler:** kod süresi teslimatta hiç uygulanmıyordu (her zaman `null`) → artık `codes.durationMinutes` hem `entitlements.expiresAt` hem `redemptions.accessExpiresAt` olarak yazılıyor; müşteri kütüphanesinde "Sınırsız erişim" yerine kalan süre gösteriliyor; yönetici "kütüphaneye teslimat ekle" akışında süre seçimi yok sayılıyordu (`void durationMinutes`) → artık uygulanıyor; müşteri detayındaki süre select'i ham anahtar basıyordu; süper admin denetim kaydında `<th>Yapan</th>` ham Türkçeydi.
+
+**Doğrulama (bu turda çalıştırıldı):**
+- `npm run build` ✅ · `npm run typecheck` ✅ · `npm run lint` ✅ · `npm run i18n:check` → `0 / 0 / 0 / 0` ✅
+- Sözlük: **1611 anahtar** (tr/en tam), 80 dil × çekirdek paket 39 anahtar + İngilizce yedek.
+- Canlı SSR taraması (`node server.js` + curl): **80 dil × 6 herkese açık sayfa** (`/`, `/bayi`, `/demo`, `/demo/giris`, `/demo/kayit`, `/demo/kod-gir`) = 480 istek → hepsi 200, ham anahtar 0.
+- Oturumlu tarama: mağaza admini 7 sayfa × 7 dil, süper admin 5 sayfa → 200, ham anahtar 0.
+- Tema: `pix-theme=dark|light` çerezi SSR'da `data-theme` olarak doğrulandı. Yönlendirme: admin oturumu varken `/demo/kayit` ve `/demo/giris` → `307 /demo/admin`.
+
+**Dürüstçe kalanlar:**
+- Tarayıcı (Playwright/Chrome) bu ortamda yok; drawer animasyonu, focus sıçraması ve süre sihirbazının 2. adımı **tıklanarak** değil, kod + SSR çıktısı + tip/lint kapılarıyla doğrulandı. Etkileşimli son kontrol kullanıcı tarafında yapılmalı.
+- 78 dilde çekirdek UI (menü, sepet/hesap fiilleri, giriş-kayıt, ürün ızgarası) yerel; uzun kuyruk metinler İngilizceye düşüyor (ham anahtar değil). 1611 anahtarın 78 dile elle çevrilmesi bu turun kapsamı dışında.
+
+---
+
 ## 0. Durum özeti
 
 | Başlık | Durum | Kanıt |
