@@ -35,6 +35,7 @@ import idPack from "./id.json";
 import isPack from "./is.json";
 import itPack from "./it.json";
 import jaPack from "./ja.json";
+import kkPack from "./kk.json";
 import kmPack from "./km.json";
 import koPack from "./ko.json";
 import lbPack from "./lb.json";
@@ -98,6 +99,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "is": isPack as Dictionary,
   "it": itPack as Dictionary,
   "ja": jaPack as Dictionary,
+  "kk": kkPack as Dictionary,
   "km": kmPack as Dictionary,
   "ko": koPack as Dictionary,
   "lb": lbPack as Dictionary,
