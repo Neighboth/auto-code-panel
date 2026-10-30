@@ -24,6 +24,7 @@ import fiPack from "./fi.json";
 import frPack from "./fr.json";
 import gaPack from "./ga.json";
 import glPack from "./gl.json";
+import hePack from "./he.json";
 import hrPack from "./hr.json";
 import huPack from "./hu.json";
 import isPack from "./is.json";
@@ -65,6 +66,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "fr": frPack as Dictionary,
   "ga": gaPack as Dictionary,
   "gl": glPack as Dictionary,
+  "he": hePack as Dictionary,
   "hr": hrPack as Dictionary,
   "hu": huPack as Dictionary,
   "is": isPack as Dictionary,
