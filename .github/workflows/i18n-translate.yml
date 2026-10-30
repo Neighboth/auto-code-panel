@@ -1,0 +1,68 @@
+name: i18n translate
+
+# Machine-translates the UI dictionary into every supported locale.
+#
+# The sandbox that edits this repo cannot reach translation.googleapis.com, but
+# a GitHub runner can, so the job runs here and commits the finished packs back
+# onto the branch it was dispatched from (one commit per locale, so a timeout
+# never loses work).
+on:
+  workflow_dispatch:
+    inputs:
+      locales:
+        description: "Comma separated locale codes, or `all`"
+        required: false
+        default: all
+      concurrency:
+        description: "Parallel requests per locale"
+        required: false
+        default: "6"
+      locales_parallel:
+        description: "How many locales to translate at once"
+        required: false
+        default: "4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: i18n-translate-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Translate
+        env:
+          GITHUB_ACTIONS: "true"
+        run: |
+          git config user.name "i18n-bot"
+          git config user.email "i18n@users.noreply.github.com"
+          node scripts/i18n-translate.mjs \
+            --locales="${{ inputs.locales }}" \
+            --concurrency="${{ inputs.concurrency }}" \
+            --locales_parallel="${{ inputs.locales_parallel }}"
+
+      - name: Rebuild pack index
+        run: node scripts/i18n-pack-index.mjs
+
+      - name: Commit leftovers
+        run: |
+          git add src/lib/i18n/packs
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "i18n: çeviri paketleri (otomatik)" --no-verify
+            git push
+          fi
+
+      - name: Coverage report
+        run: node scripts/i18n-coverage.mjs | head -12
