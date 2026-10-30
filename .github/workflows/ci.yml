@@ -1,0 +1,46 @@
+name: CI
+
+# Quality gate for every push to main and every pull request.
+#
+# The dictionary now ships 1575 keys in 80 languages; `i18n:verify` is what keeps
+# a half-translated pack (a failed machine-translation run) from reaching main.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      AUTH_SECRET: ci-only-secret-0123456789abcdef
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: i18n gate (hardcoded text)
+        run: npm run i18n:check
+
+      - name: i18n gate (translation packs)
+        run: npm run i18n:verify
+
+      - name: Build
+        run: npm run build
