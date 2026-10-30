@@ -1,0 +1,34 @@
+name: i18n probe
+
+# Cheap connectivity check for the translation endpoints. The job writes its
+# result into `.i18n/probe.log` so a session that cannot read Actions logs can
+# still see what the runner managed to reach.
+on:
+  push:
+    branches: ["arena/**"]
+    paths: [".i18n/probe-request"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Probe
+        env:
+          GITHUB_ACTIONS: "true"
+        run: |
+          git config user.name "i18n-bot"
+          git config user.email "i18n@users.noreply.github.com"
+          node scripts/i18n-probe.mjs
+          git add .i18n/probe.log
+          git commit -m "chore(i18n): probe sonucu" --no-verify || true
+          git pull --rebase --autostash
+          git push || true

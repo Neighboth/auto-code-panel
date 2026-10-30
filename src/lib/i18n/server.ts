@@ -6,7 +6,8 @@ import {
   negotiateLocale,
   type Locale,
 } from "@/lib/i18n/config";
-import { createTranslator, type Translator } from "@/lib/i18n/translate";
+import { createServerTranslator } from "@/lib/i18n/packs/server";
+import type { Translator } from "@/lib/i18n/translate";
 
 /**
  * Server-side locale resolution:
@@ -30,7 +31,7 @@ export async function getLocale(): Promise<Locale> {
 
 export async function getTranslator(): Promise<{ locale: Locale; t: Translator }> {
   const locale = await getLocale();
-  return { locale, t: createTranslator(locale.code) };
+  return { locale, t: createServerTranslator(locale.code) };
 }
 
 /** Locale code only — for templates and server actions that just need a tag. */

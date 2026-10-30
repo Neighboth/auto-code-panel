@@ -5,7 +5,6 @@ import { remainingLabel } from "@/lib/format";
 import { useMemo, useState } from "react";
 import { KeyRound, ShieldCheck } from "lucide-react";
 import { CredentialsModal } from "@/components/store/credentials-modal";
-import { createTranslator } from "@/lib/i18n/translate";
 
 export type LibraryItem = {
   entitlementId: number;
@@ -34,7 +33,7 @@ export function LibraryView({
   items: LibraryItem[];
   locale?: string;
 }) {
-  const t = createTranslator(locale);
+  const t = useT();
   const [active, setActive] = useState<LibraryItem | null>(null);
   const [open, setOpen] = useState(false);
 

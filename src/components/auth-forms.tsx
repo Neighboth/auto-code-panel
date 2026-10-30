@@ -19,7 +19,6 @@ import { slugify } from "@/lib/format";
 import { Field } from "@/components/ui";
 import { TwoFactorPrompt } from "@/components/security/two-factor-prompt";
 import { EmailVerifyCard } from "@/components/store/email-verify";
-import { createTranslator } from "@/lib/i18n/translate";
 
 function ErrorBox({ message }: { message: string | null }) {
   if (!message) return null;
@@ -264,7 +263,7 @@ export function StoreAdminLoginForm({
   locale?: string;
 }) {
   const router = useRouter();
-  const t = createTranslator(locale);
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
@@ -341,7 +340,7 @@ export function CustomerAuthForm({
   locale?: string;
 }) {
   const router = useRouter();
-  const t = createTranslator(locale);
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [twoFa, setTwoFa] = useTwoFaState();
@@ -485,7 +484,7 @@ export function StoreLoginTabs({
   locale?: string;
 }) {
   const [tab, setTab] = useState<"customer" | "manager">(initialTab);
-  const t = createTranslator(locale);
+  const t = useT();
 
   return (
     <div>

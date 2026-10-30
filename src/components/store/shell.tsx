@@ -8,7 +8,6 @@ import { ArrowRight, ChevronDown, KeyRound, Menu, Search, ShieldCheck, User, X }
 import { LogoutButton } from "@/components/auth-forms";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-provider";
-import { createTranslator } from "@/lib/i18n/translate";
 
 export function StoreNav({
   slug,
@@ -25,7 +24,7 @@ export function StoreNav({
   customer: string | null;
   locale?: string;
 }) {
-  const t = createTranslator(locale);
+  const t = useT();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);

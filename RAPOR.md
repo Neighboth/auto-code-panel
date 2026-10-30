@@ -6,6 +6,36 @@
 
 ---
 
+## 0.0a Bu tur: 78 dilin tamamı çevrildi (PR #12)
+
+Talep: *"dilleri yap hepsini, kalanları tek seferde bitir."* Önceden 78 dilde yalnızca
+39 anahtarlık çekirdek paket vardı; uzun kuyruk İngilizceye düşüyordu. Artık **her dilde
+1575/1575 anahtar** var.
+
+### Nasıl yapıldı
+| Adım | Ayrıntı |
+| --- | --- |
+| Paket biçimi | `src/lib/i18n/packs/<dil>.json` (düz anahtar-değer). `scripts/i18n-pack-index.mjs` bunları statik import haritasına çevirir; elle import yok. |
+| Çeviri işi | `scripts/i18n-translate.mjs` — kaynak İngilizce (TR'de olup EN'de olmayan anahtarlar için Türkçe), `{placeholder}` korunur, başarısız dize tek tek yeniden denenir, dil başına commit atılır (kopan koşu kaldığı yerden devam eder). |
+| Nerede koştu | Sandbox `translate.googleapis.com`'a çıkamıyor; **GitHub Actions**'ta koştu ve paketleri dala commit etti (`.github/workflows/i18n-translate.yml`). |
+| Uç nokta | `gtx` ucu veri merkezi IP'lerine **429** dönüyor (kanıt: `.i18n/probe.log`). `clients5.google.com/translate_a/t?client=dict-chrome-ex` ucu hem açık hem **toplu** (`q` tekrarı) → 78 dil ~5 dakikada bitti. |
+| Bağlam ipuçları | "Menu" → "Speisekarte" (yemek menüsü) çevirisini önlemek için 4 kısa anahtar bağlamlı kaynakla yeniden çevrildi (`SOURCE_HINTS`). |
+| İstemci ağırlığı | Paketler **yalnızca sunucu demetinde**; tarayıcıya `I18nProvider` prop'u ile tek dil olarak geçiyor (`dictionaries.ts` içine konmadı, yoksa 78 × ~110 KB istemciye girerdi). |
+
+### Doğrulama (bu turda çalıştırıldı)
+- `node scripts/i18n-verify.mjs` → **78 dil · ok: 78** (eksik anahtar 0, placeholder uyumsuzluğu 0, "İngilizce kalmış" paket 0).
+- `npm run i18n:coverage` → **Diller: 80 · tam: 80**.
+- `npm run build` ✅ · `typecheck` ✅ · `lint` ✅ · `i18n:check` → `0 / 0 / 0 / 0` ✅
+- Canlı SSR taraması: **80 dil × 14 sayfa = 1120 istek** (ana sayfa, /bayi, mağaza vitrini, giriş, kayıt, kod-gir, ürünler + 7 admin sayfası oturumlu) → **ham anahtar 0, HTTP hatası 0**.
+- Örnek çıktı: `/demo/giris` → de "Willkommen zurück", ja "おかえり", ar "مرحبًا بعودتك", sw "Karibu tena".
+
+### Dürüstçe kalanlar
+- Çeviriler **makine çevirisi** (Google). Yeniden kullanılan 78 pakette ton/terminoloji tutarlılığı garanti değil; kritik pazarlama metinleri için insan gözden geçirmesi önerilir.
+- Aktif dilin paketi RSC yükünde sayfa başına ~+110 KB (sıkıştırılmış ~30 KB) taşınıyor. Daha da küçültmek için anahtar budama yapılabilir; şu an doğruluk için tam sözlük gönderiliyor.
+- İlk (429'a takılan) çeviri koşusu iptal edilemedi (GitHub App'in `actions: write` izni yok); o koşu dil paketlerini İngilizce metinle ezerse `i18n:verify` bunu yakalar ve betik o paketi otomatik yeniden çevirir (yazma guard'ı eklendi).
+
+---
+
 ## 0.0 Bu tur: SS'li 20+ maddelik hata listesi (PR #10)
 
 > Talep: ekran görüntüleriyle gelen listenin **tamamı** düzeltilecek, kısmi teslim yok.

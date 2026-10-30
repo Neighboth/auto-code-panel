@@ -7,6 +7,162 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
  * directory, so adding a language pack never needs a hand-written import.
  * Precedence in `dictionaries.ts`: tr/en → full pack → core pack → English.
  */
+import afPack from "./af.json";
+import amPack from "./am.json";
+import arPack from "./ar.json";
+import azPack from "./az.json";
+import bePack from "./be.json";
+import bgPack from "./bg.json";
+import bnPack from "./bn.json";
+import bsPack from "./bs.json";
+import caPack from "./ca.json";
+import csPack from "./cs.json";
+import daPack from "./da.json";
+import dePack from "./de.json";
+import elPack from "./el.json";
+import eoPack from "./eo.json";
+import esPack from "./es.json";
+import etPack from "./et.json";
+import euPack from "./eu.json";
+import faPack from "./fa.json";
+import fiPack from "./fi.json";
+import filPack from "./fil.json";
+import frPack from "./fr.json";
+import gaPack from "./ga.json";
+import glPack from "./gl.json";
+import guPack from "./gu.json";
+import haPack from "./ha.json";
+import hePack from "./he.json";
+import hiPack from "./hi.json";
+import hrPack from "./hr.json";
+import huPack from "./hu.json";
+import hyPack from "./hy.json";
+import idPack from "./id.json";
+import igPack from "./ig.json";
+import isPack from "./is.json";
+import itPack from "./it.json";
+import jaPack from "./ja.json";
+import kaPack from "./ka.json";
+import kkPack from "./kk.json";
+import kmPack from "./km.json";
+import koPack from "./ko.json";
+import kyPack from "./ky.json";
+import lbPack from "./lb.json";
+import loPack from "./lo.json";
+import ltPack from "./lt.json";
+import lvPack from "./lv.json";
+import mkPack from "./mk.json";
+import mnPack from "./mn.json";
+import mrPack from "./mr.json";
+import msPack from "./ms.json";
+import mtPack from "./mt.json";
+import myPack from "./my.json";
+import nePack from "./ne.json";
+import nlPack from "./nl.json";
+import noPack from "./no.json";
+import paPack from "./pa.json";
+import plPack from "./pl.json";
+import ptPack from "./pt.json";
+import roPack from "./ro.json";
+import ruPack from "./ru.json";
+import siPack from "./si.json";
+import skPack from "./sk.json";
+import slPack from "./sl.json";
+import soPack from "./so.json";
+import sqPack from "./sq.json";
+import srPack from "./sr.json";
+import svPack from "./sv.json";
+import swPack from "./sw.json";
+import taPack from "./ta.json";
+import tePack from "./te.json";
+import tgPack from "./tg.json";
+import thPack from "./th.json";
+import tkPack from "./tk.json";
+import ukPack from "./uk.json";
+import urPack from "./ur.json";
+import uzPack from "./uz.json";
+import viPack from "./vi.json";
+import yoPack from "./yo.json";
+import zhPack from "./zh.json";
+import zuPack from "./zu.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
+  "af": afPack as Dictionary,
+  "am": amPack as Dictionary,
+  "ar": arPack as Dictionary,
+  "az": azPack as Dictionary,
+  "be": bePack as Dictionary,
+  "bg": bgPack as Dictionary,
+  "bn": bnPack as Dictionary,
+  "bs": bsPack as Dictionary,
+  "ca": caPack as Dictionary,
+  "cs": csPack as Dictionary,
+  "da": daPack as Dictionary,
+  "de": dePack as Dictionary,
+  "el": elPack as Dictionary,
+  "eo": eoPack as Dictionary,
+  "es": esPack as Dictionary,
+  "et": etPack as Dictionary,
+  "eu": euPack as Dictionary,
+  "fa": faPack as Dictionary,
+  "fi": fiPack as Dictionary,
+  "fil": filPack as Dictionary,
+  "fr": frPack as Dictionary,
+  "ga": gaPack as Dictionary,
+  "gl": glPack as Dictionary,
+  "gu": guPack as Dictionary,
+  "ha": haPack as Dictionary,
+  "he": hePack as Dictionary,
+  "hi": hiPack as Dictionary,
+  "hr": hrPack as Dictionary,
+  "hu": huPack as Dictionary,
+  "hy": hyPack as Dictionary,
+  "id": idPack as Dictionary,
+  "ig": igPack as Dictionary,
+  "is": isPack as Dictionary,
+  "it": itPack as Dictionary,
+  "ja": jaPack as Dictionary,
+  "ka": kaPack as Dictionary,
+  "kk": kkPack as Dictionary,
+  "km": kmPack as Dictionary,
+  "ko": koPack as Dictionary,
+  "ky": kyPack as Dictionary,
+  "lb": lbPack as Dictionary,
+  "lo": loPack as Dictionary,
+  "lt": ltPack as Dictionary,
+  "lv": lvPack as Dictionary,
+  "mk": mkPack as Dictionary,
+  "mn": mnPack as Dictionary,
+  "mr": mrPack as Dictionary,
+  "ms": msPack as Dictionary,
+  "mt": mtPack as Dictionary,
+  "my": myPack as Dictionary,
+  "ne": nePack as Dictionary,
+  "nl": nlPack as Dictionary,
+  "no": noPack as Dictionary,
+  "pa": paPack as Dictionary,
+  "pl": plPack as Dictionary,
+  "pt": ptPack as Dictionary,
+  "ro": roPack as Dictionary,
+  "ru": ruPack as Dictionary,
+  "si": siPack as Dictionary,
+  "sk": skPack as Dictionary,
+  "sl": slPack as Dictionary,
+  "so": soPack as Dictionary,
+  "sq": sqPack as Dictionary,
+  "sr": srPack as Dictionary,
+  "sv": svPack as Dictionary,
+  "sw": swPack as Dictionary,
+  "ta": taPack as Dictionary,
+  "te": tePack as Dictionary,
+  "tg": tgPack as Dictionary,
+  "th": thPack as Dictionary,
+  "tk": tkPack as Dictionary,
+  "uk": ukPack as Dictionary,
+  "ur": urPack as Dictionary,
+  "uz": uzPack as Dictionary,
+  "vi": viPack as Dictionary,
+  "yo": yoPack as Dictionary,
+  "zh": zhPack as Dictionary,
+  "zu": zuPack as Dictionary,
 };

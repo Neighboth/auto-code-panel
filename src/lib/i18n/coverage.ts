@@ -1,6 +1,7 @@
 import { DICTIONARIES, REFERENCE_KEY_COUNT } from "@/lib/i18n/dictionaries";
 import { CORE_KEYS } from "@/lib/i18n/core-packs";
 import { LOCALES } from "@/lib/i18n/config";
+import packCounts from "@/lib/i18n/packs/coverage.json";
 
 export type CoverageStatus = "full" | "core" | "english";
 
@@ -23,7 +24,10 @@ export type LocaleCoverage = {
 export function localeCoverage(): LocaleCoverage[] {
   return LOCALES.map((locale) => {
     const dictionary = DICTIONARIES[locale.code] ?? {};
-    const translated = Object.keys(dictionary).length;
+    // Machine-translated packs live outside the client dictionary on purpose;
+    // `coverage.json` carries only their key counts.
+    const packCount = (packCounts as Record<string, number>)[locale.code] ?? 0;
+    const translated = Math.max(Object.keys(dictionary).length, packCount);
     const coreTranslated = CORE_KEYS.filter((key) => Boolean(dictionary[key])).length;
     const status: CoverageStatus =
       translated >= REFERENCE_KEY_COUNT ? "full" : coreTranslated >= CORE_KEYS.length ? "core" : "english";

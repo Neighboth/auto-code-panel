@@ -11,7 +11,7 @@ import { join } from "node:path";
 
 const dir = join(process.cwd(), "src", "lib", "i18n", "packs");
 const files = readdirSync(dir)
-  .filter((file) => file.endsWith(".json"))
+  .filter((file) => file.endsWith(".json") && file !== "coverage.json")
   .sort();
 
 const lines = [
@@ -27,10 +27,12 @@ const lines = [
 ];
 
 const skipped = [];
+const counts = {};
 for (const file of files) {
   const code = file.replace(/\.json$/, "");
   const dictionary = JSON.parse(readFileSync(join(dir, file), "utf8"));
   const count = Object.keys(dictionary).length;
+  counts[code] = count;
   if (count === 0) {
     skipped.push(code);
     continue;
@@ -50,4 +52,7 @@ lines.push("};");
 lines.push("");
 
 writeFileSync(join(dir, "index.ts"), lines.join("\n"));
+// Key counts only: the language switcher shows coverage badges and must not
+// import the packs themselves into the browser bundle.
+writeFileSync(join(dir, "coverage.json"), JSON.stringify(counts, null, 2) + "\n");
 console.log(`packs/index.ts: ${files.length - skipped.length} dil` + (skipped.length ? ` (boş: ${skipped.join(", ")})` : ""));
