@@ -37,6 +37,7 @@ import hrPack from "./hr.json";
 import huPack from "./hu.json";
 import hyPack from "./hy.json";
 import idPack from "./id.json";
+import igPack from "./ig.json";
 import isPack from "./is.json";
 import itPack from "./it.json";
 import jaPack from "./ja.json";
@@ -112,6 +113,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "hu": huPack as Dictionary,
   "hy": hyPack as Dictionary,
   "id": idPack as Dictionary,
+  "ig": igPack as Dictionary,
   "is": isPack as Dictionary,
   "it": itPack as Dictionary,
   "ja": jaPack as Dictionary,
