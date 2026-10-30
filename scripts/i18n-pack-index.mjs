@@ -11,7 +11,7 @@ import { join } from "node:path";
 
 const dir = join(process.cwd(), "src", "lib", "i18n", "packs");
 const files = readdirSync(dir)
-  .filter((file) => file.endsWith(".json"))
+  .filter((file) => file.endsWith(".json") && file !== "coverage.json")
   .sort();
 
 const lines = [
