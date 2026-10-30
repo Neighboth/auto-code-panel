@@ -7,6 +7,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
  * directory, so adding a language pack never needs a hand-written import.
  * Precedence in `dictionaries.ts`: tr/en → full pack → core pack → English.
  */
+import afPack from "./af.json";
 import arPack from "./ar.json";
 import azPack from "./az.json";
 import bePack from "./be.json";
@@ -79,6 +80,7 @@ import viPack from "./vi.json";
 import zhPack from "./zh.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
+  "af": afPack as Dictionary,
   "ar": arPack as Dictionary,
   "az": azPack as Dictionary,
   "be": bePack as Dictionary,
