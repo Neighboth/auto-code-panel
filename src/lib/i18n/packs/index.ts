@@ -46,6 +46,7 @@ import plPack from "./pl.json";
 import ptPack from "./pt.json";
 import roPack from "./ro.json";
 import ruPack from "./ru.json";
+import siPack from "./si.json";
 import skPack from "./sk.json";
 import slPack from "./sl.json";
 import sqPack from "./sq.json";
@@ -96,6 +97,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "pt": ptPack as Dictionary,
   "ro": roPack as Dictionary,
   "ru": ruPack as Dictionary,
+  "si": siPack as Dictionary,
   "sk": skPack as Dictionary,
   "sl": slPack as Dictionary,
   "sq": sqPack as Dictionary,
