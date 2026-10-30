@@ -12,6 +12,7 @@ import dePack from "./de.json";
 import esPack from "./es.json";
 import frPack from "./fr.json";
 import itPack from "./it.json";
+import nlPack from "./nl.json";
 import ptPack from "./pt.json";
 import ruPack from "./ru.json";
 import ukPack from "./uk.json";
@@ -22,6 +23,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "es": esPack as Dictionary,
   "fr": frPack as Dictionary,
   "it": itPack as Dictionary,
+  "nl": nlPack as Dictionary,
   "pt": ptPack as Dictionary,
   "ru": ruPack as Dictionary,
   "uk": ukPack as Dictionary,
