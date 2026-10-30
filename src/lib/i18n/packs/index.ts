@@ -48,6 +48,7 @@ import sqPack from "./sq.json";
 import srPack from "./sr.json";
 import svPack from "./sv.json";
 import taPack from "./ta.json";
+import tePack from "./te.json";
 import ukPack from "./uk.json";
 import urPack from "./ur.json";
 
@@ -93,6 +94,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "sr": srPack as Dictionary,
   "sv": svPack as Dictionary,
   "ta": taPack as Dictionary,
+  "te": tePack as Dictionary,
   "uk": ukPack as Dictionary,
   "ur": urPack as Dictionary,
 };
