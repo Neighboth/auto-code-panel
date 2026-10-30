@@ -94,6 +94,23 @@ function resolveText(value, dict, other) {
   return value;
 }
 
+/**
+ * A few English words are ambiguous out of context ("Menu" became "Speisekarte",
+ * a restaurant menu). These sources are only used to *ask* for the translation.
+ */
+const SOURCE_HINTS = {
+  "common.menu": "Navigation menu",
+  "common.back": "Back to previous page",
+  "common.code": "Access code",
+  "common.remaining": "Time remaining",
+};
+
+const textFor = (key, lang) => {
+  const source = sourceOf.get(key);
+  const hinted = lang === "en" ? SOURCE_HINTS[key] : undefined;
+  return hinted ?? source?.text ?? "";
+};
+
 const referenceKeys = Object.keys(tr);
 const sourceOf = new Map(); // key -> { text, lang }
 for (const key of referenceKeys) {
@@ -233,19 +250,26 @@ async function translateBatch(texts, from, to) {
   return results;
 }
 
-/** Chunks strings so each request stays under the URL budget. */
-function chunk(texts, budget = 1200) {
+/**
+ * Groups keys so each request stays under the URL budget.
+ *
+ * Keys are chunked — never their text — because two keys can share the same
+ * English string ("Save" appears in a dozen places), and matching the response
+ * back by text silently dropped those keys.
+ */
+function chunkKeys(keys, textOf, budget = 1200, maxItems = 25) {
   const chunks = [];
   let current = [];
   let size = 0;
-  for (const text of texts) {
-    if (current.length > 0 && (size + text.length > budget || current.length >= 25)) {
+  for (const key of keys) {
+    const length = (textOf(key) ?? "").length;
+    if (current.length > 0 && (size + length > budget || current.length >= maxItems)) {
       chunks.push(current);
       current = [];
       size = 0;
     }
-    current.push(text);
-    size += text.length + 6;
+    current.push(key);
+    size += length + 6;
   }
   if (current.length) chunks.push(current);
   return chunks;
@@ -329,15 +353,12 @@ async function translateLocale(code) {
   for (const lang of ["en", "tr"]) {
     const keys = byLang[lang];
     if (!keys.length) continue;
-    const jobs = chunk(keys.map((key) => sourceOf.get(key).text)).map((texts) => {
-      const set = new Set(texts);
-      return keys.filter((key) => set.has(sourceOf.get(key).text)).slice(0, texts.length);
-    });
+    const jobs = chunkKeys(keys, (key) => sourceOf.get(key).text);
     let done = 0;
     await withPool(
       jobs,
       async (jobKeys) => {
-        const texts = jobKeys.map((key) => sourceOf.get(key).text);
+        const texts = jobKeys.map((key) => textFor(key, lang));
         const results = await translateBatch(texts, lang, code);
         for (let index = 0; index < texts.length; index += 1) {
           pack[jobKeys[index]] = results[index] ?? texts[index];
