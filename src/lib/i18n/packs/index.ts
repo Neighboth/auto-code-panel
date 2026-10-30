@@ -45,6 +45,7 @@ import mkPack from "./mk.json";
 import mrPack from "./mr.json";
 import msPack from "./ms.json";
 import mtPack from "./mt.json";
+import myPack from "./my.json";
 import nePack from "./ne.json";
 import nlPack from "./nl.json";
 import noPack from "./no.json";
@@ -106,6 +107,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "mr": mrPack as Dictionary,
   "ms": msPack as Dictionary,
   "mt": mtPack as Dictionary,
+  "my": myPack as Dictionary,
   "ne": nePack as Dictionary,
   "nl": nlPack as Dictionary,
   "no": noPack as Dictionary,
