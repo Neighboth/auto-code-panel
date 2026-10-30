@@ -48,24 +48,33 @@ jobs:
       - name: Translate
         env:
           GITHUB_ACTIONS: "true"
+          INPUT_LOCALES: ${{ inputs.locales }}
+          INPUT_CONCURRENCY: ${{ inputs.concurrency }}
+          INPUT_PARALLEL: ${{ inputs.locales_parallel }}
         run: |
           git config user.name "i18n-bot"
           git config user.email "i18n@users.noreply.github.com"
+          set -o pipefail
           node scripts/i18n-translate.mjs \
-            --locales="${{ inputs.locales }}" \
-            --concurrency="${{ inputs.concurrency }}" \
-            --locales_parallel="${{ inputs.locales_parallel }}"
+            --locales="${INPUT_LOCALES:-all}" \
+            --concurrency="${INPUT_CONCURRENCY:-6}" \
+            --locales_parallel="${INPUT_PARALLEL:-4}" 2>&1 | tee /tmp/translate.log
 
       - name: Rebuild pack index
         run: node scripts/i18n-pack-index.mjs
 
       - name: Commit leftovers
+        if: always()
         run: |
-          git add src/lib/i18n/packs
+          mkdir -p .i18n
+          cp /tmp/translate.log .i18n/last-run.log 2>/dev/null || echo "log yok" > .i18n/last-run.log
+          tail -40 /tmp/translate.log >> .i18n/last-run.log 2>/dev/null || true
+          git add -A src/lib/i18n/packs .i18n/last-run.log
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
             git commit -m "i18n: çeviri paketleri (otomatik)" --no-verify
+            git pull --rebase --autostash
             git push
           fi
 

@@ -1,4 +1,4 @@
-import { dictionaryFor } from "@/lib/i18n/dictionaries";
+import { dictionaryFor, type Dictionary } from "@/lib/i18n/dictionaries";
 import { TEXT_EN } from "@/lib/i18n/ui-extra";
 import { DEFAULT_LOCALE, findLocale } from "@/lib/i18n/config";
 import { normalizeTag } from "@/lib/i18n/helpers";
@@ -14,9 +14,14 @@ export type Translator = (key: string, paramsOrFallback?: TranslateParams | stri
 /**
  * Builds a synchronous translator for the given locale. Missing keys fall back
  * to English and finally to the key itself (or the provided fallback text).
+ *
+ * `overrides` carries the complete machine-translated pack on the server (and
+ * the same object is handed to the client through `I18nProvider`), which keeps
+ * the multi-megabyte packs out of the client bundle.
  */
-export function createTranslator(locale: string): Translator {
-  const primary = dictionaryFor(locale);
+export function createTranslator(locale: string, overrides?: Dictionary): Translator {
+  const baseDictionary = dictionaryFor(locale);
+  const primary = overrides && Object.keys(overrides).length > 0 ? { ...baseDictionary, ...overrides } : baseDictionary;
   const base = dictionaryFor("en");
   const defaultDict = dictionaryFor(DEFAULT_LOCALE);
   // Last chance fallback: some data structures (feature lists, duration presets)

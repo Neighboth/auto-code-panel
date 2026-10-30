@@ -39,8 +39,12 @@ const args = Object.fromEntries(
   }),
 );
 
-const CONCURRENCY = Math.max(1, Math.min(16, Number(args.concurrency ?? 6)));
-const LIMIT = args.limit ? Number(args.limit) : 0;
+const positive = (value, fallback) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+const CONCURRENCY = Math.min(16, positive(args.concurrency, 6));
+const LIMIT = positive(args.limit, 0);
 const FORCE = args.force === "true";
 const ENDPOINT = "https://translate.googleapis.com/translate_a/single";
 
@@ -293,7 +297,9 @@ async function translateLocale(code) {
 
 /* -------------------------------------------------------------------- main */
 
-const requested = args.locales && args.locales !== "all" ? args.locales.split(",").map((c) => c.trim()) : locales;
+// An empty dispatch input arrives as "true" (the parser's flag value) — treat it as "all".
+const wanted = args.locales && !["all", "true", ""].includes(args.locales) ? args.locales : null;
+const requested = wanted ? wanted.split(",").map((code) => code.trim()) : locales;
 const targets = locales.filter((code) => requested.includes(code));
 console.log(
   `Çeviri: ${targets.length} dil · referans ${referenceKeys.length} anahtar · eşzamanlılık ${CONCURRENCY}` +
@@ -329,7 +335,7 @@ await withPool(
       console.error(`${code}: BAŞARISIZ — ${error?.message ?? error}`);
     }
   },
-  Math.max(1, Math.min(4, Number(args.locales_parallel ?? 4))),
+  Math.max(1, Math.min(6, positive(args.locales_parallel, 4))),
 );
 
 const packs = readdirSync(PACK_DIR).filter((file) => file.endsWith(".json"));

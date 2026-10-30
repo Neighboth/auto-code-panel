@@ -8,7 +8,7 @@ import { StoreNav } from "@/components/store/shell";
 import { BrandMark } from "@/components/brand";
 import { brand } from "@/lib/brand";
 import { getLocale } from "@/lib/i18n/server";
-import { createTranslator } from "@/lib/i18n/translate";
+import { createServerTranslator } from "@/lib/i18n/packs/server";
 import { getTranslator } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +30,7 @@ export default async function StorefrontLayout({
     customerSession && customerSession.storeId === store.id ? customerSession.username : null;
   const basePath = await getStoreBasePath(store);
   const locale = await getLocale();
-  const t = createTranslator(locale.code);
+  const t = createServerTranslator(locale.code);
 
   if (!active) {
     const renewalUrl = store.renewalUrl || settings.renewalUrl;

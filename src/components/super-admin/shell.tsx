@@ -9,7 +9,6 @@ import { LogoutButton } from "@/components/auth-forms";
 import { BrandLogo } from "@/components/brand";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-provider";
-import { createTranslator } from "@/lib/i18n/translate";
 
 export function SuperAdminShell({
   username,
@@ -25,7 +24,7 @@ export function SuperAdminShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const t = createTranslator(locale);
+  const t = useT();
   /** Mobile navigation opens from the right instead of scrolling sideways. */
   const [drawerOpen, setDrawerOpen] = useState(false);
 

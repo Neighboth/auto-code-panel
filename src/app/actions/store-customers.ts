@@ -2,7 +2,7 @@
 
 import { currentLocaleCode } from "@/lib/i18n/server";
 import { getTranslator } from "@/lib/i18n/server";
-import { createTranslator } from "@/lib/i18n/translate";
+import { createServerTranslator } from "@/lib/i18n/packs/server";
 
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -392,7 +392,7 @@ export async function customerLibraryPayload(
     }[]
   >
 > {
-  const t = createTranslator(await currentLocaleCode());
+  const t = createServerTranslator(await currentLocaleCode());
   const g = await guard(slug);
   if (!g) return { ok: false, message: t("x.yetkiniz-yok") };
   const customer = await loadCustomer(g.storeId, customerId);
