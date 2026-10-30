@@ -17,6 +17,7 @@ import frPack from "./fr.json";
 import hrPack from "./hr.json";
 import huPack from "./hu.json";
 import itPack from "./it.json";
+import ltPack from "./lt.json";
 import mkPack from "./mk.json";
 import nlPack from "./nl.json";
 import plPack from "./pl.json";
@@ -40,6 +41,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "hr": hrPack as Dictionary,
   "hu": huPack as Dictionary,
   "it": itPack as Dictionary,
+  "lt": ltPack as Dictionary,
   "mk": mkPack as Dictionary,
   "nl": nlPack as Dictionary,
   "pl": plPack as Dictionary,
