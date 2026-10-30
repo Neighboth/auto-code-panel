@@ -16,6 +16,7 @@ import path from "node:path";
 const dictFile = path.join("src", "lib", "i18n", "dictionaries.ts");
 const packFile = path.join("src", "lib", "i18n", "core-packs.ts");
 const extraFile = path.join("src", "lib", "i18n", "ui-extra.ts");
+const packDir = path.join("src", "lib", "i18n", "packs");
 const configFile = path.join("src", "lib", "i18n", "config.ts");
 
 const dict = fs.readFileSync(dictFile, "utf8");
@@ -42,11 +43,25 @@ for (const match of packsSection.matchAll(/^ {2}([a-z]{2,3}):\s*\{([\s\S]*?)^ {2
   packBlocks.set(match[1], keysIn(match[2]));
 }
 
+// Machine-translated packs (written by scripts/i18n-translate.mjs) count fully.
+const fullPacks = new Map();
+if (fs.existsSync(packDir)) {
+  for (const file of fs.readdirSync(packDir).filter((name) => name.endsWith(".json") && name !== "coverage.json")) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(path.join(packDir, file), "utf8"));
+      fullPacks.set(file.replace(/\.json$/, ""), new Set(Object.keys(parsed)));
+    } catch {
+      /* a half-written pack is simply ignored */
+    }
+  }
+}
+
 const shortLangs = new Set([...shortBlock.matchAll(/^ {2}([a-z]{2,3}):\s*\{/gm)].map((m) => m[1]));
 const locales = [...new Set([...config.matchAll(/code:\s*"([a-z]{2,3})"/g)].map((m) => m[1]))];
 
 const rows = locales.map((code) => {
-  const pack = packBlocks.get(code) ?? new Set();
+  const full = fullPacks.get(code);
+  const pack = new Set([...(packBlocks.get(code) ?? []), ...(full ?? [])]);
   const seeded = shortLangs.has(code) ? 13 : 0;
   const own = code === "tr" ? trKeys.size : code === "en" ? enKeys.size : Math.max(pack.size, seeded);
   const core = code === "tr" || code === "en" ? coreKeys.size : [...coreKeys].filter((key) => pack.has(key)).length;
