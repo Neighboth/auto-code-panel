@@ -12,6 +12,7 @@ import dePack from "./de.json";
 import esPack from "./es.json";
 import frPack from "./fr.json";
 import itPack from "./it.json";
+import ptPack from "./pt.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
   "coverage": coveragePack as Dictionary,
@@ -19,4 +20,5 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "es": esPack as Dictionary,
   "fr": frPack as Dictionary,
   "it": itPack as Dictionary,
+  "pt": ptPack as Dictionary,
 };
