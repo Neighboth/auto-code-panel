@@ -16,6 +16,7 @@ import itPack from "./it.json";
 import nlPack from "./nl.json";
 import plPack from "./pl.json";
 import ptPack from "./pt.json";
+import roPack from "./ro.json";
 import ruPack from "./ru.json";
 import skPack from "./sk.json";
 import ukPack from "./uk.json";
@@ -30,6 +31,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "nl": nlPack as Dictionary,
   "pl": plPack as Dictionary,
   "pt": ptPack as Dictionary,
+  "ro": roPack as Dictionary,
   "ru": ruPack as Dictionary,
   "sk": skPack as Dictionary,
   "uk": ukPack as Dictionary,
