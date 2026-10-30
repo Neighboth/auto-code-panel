@@ -9,10 +9,12 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
  */
 import coveragePack from "./coverage.json";
 import esPack from "./es.json";
+import frPack from "./fr.json";
 import itPack from "./it.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
   "coverage": coveragePack as Dictionary,
   "es": esPack as Dictionary,
+  "fr": frPack as Dictionary,
   "it": itPack as Dictionary,
 };
