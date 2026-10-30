@@ -83,6 +83,7 @@ import uzPack from "./uz.json";
 import viPack from "./vi.json";
 import yoPack from "./yo.json";
 import zhPack from "./zh.json";
+import zuPack from "./zu.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
   "af": afPack as Dictionary,
@@ -161,4 +162,5 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "vi": viPack as Dictionary,
   "yo": yoPack as Dictionary,
   "zh": zhPack as Dictionary,
+  "zu": zuPack as Dictionary,
 };
