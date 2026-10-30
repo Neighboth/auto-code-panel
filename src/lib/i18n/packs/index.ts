@@ -69,6 +69,7 @@ import ruPack from "./ru.json";
 import siPack from "./si.json";
 import skPack from "./sk.json";
 import slPack from "./sl.json";
+import soPack from "./so.json";
 import sqPack from "./sq.json";
 import srPack from "./sr.json";
 import svPack from "./sv.json";
@@ -149,6 +150,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "si": siPack as Dictionary,
   "sk": skPack as Dictionary,
   "sl": slPack as Dictionary,
+  "so": soPack as Dictionary,
   "sq": sqPack as Dictionary,
   "sr": srPack as Dictionary,
   "sv": svPack as Dictionary,
