@@ -9,6 +9,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
  */
 import arPack from "./ar.json";
 import bgPack from "./bg.json";
+import bnPack from "./bn.json";
 import bsPack from "./bs.json";
 import caPack from "./ca.json";
 import coveragePack from "./coverage.json";
@@ -52,6 +53,7 @@ import urPack from "./ur.json";
 export const FULL_PACKS: Record<string, Dictionary> = {
   "ar": arPack as Dictionary,
   "bg": bgPack as Dictionary,
+  "bn": bnPack as Dictionary,
   "bs": bsPack as Dictionary,
   "ca": caPack as Dictionary,
   "coverage": coveragePack as Dictionary,
