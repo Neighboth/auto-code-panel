@@ -30,8 +30,10 @@ on:
 permissions:
   contents: write
 
+# `-v2`: a previous run that got stuck on the 429'd endpoint cannot be cancelled
+# from this session, so the new run uses its own group and starts immediately.
 concurrency:
-  group: i18n-translate-${{ github.ref_name }}
+  group: i18n-translate-${{ github.ref_name }}-v2
   cancel-in-progress: false
 
 jobs:

@@ -123,39 +123,76 @@ const locales = [...new Set([...configSource.matchAll(/code:\s*"([a-z]{2,3})"/g)
 
 /* --------------------------------------------------------------- transport */
 
+/**
+ * `translate.googleapis.com` answers 429 to datacenter IPs (verified with
+ * `scripts/i18n-probe.mjs`), while `clients5.google.com/translate_a/t` with the
+ * `dict-chrome-ex` client stays available *and* accepts many `q` parameters in
+ * one request — which is both faster and far gentler on the rate limit.
+ */
+const BATCH_ENDPOINT = "https://clients5.google.com/translate_a/t";
+const SINGLE_ENDPOINT = "https://clients5.google.com/translate_a/single";
+const MAX_URL = 7000;
+
 /** Google speaks a few language codes differently from ISO-639-1. */
 const GOOGLE_CODE = { zh: "zh-CN", fil: "tl", no: "nb", he: "iw", jv: "jw" };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function request(text, from, to, attempt = 0) {
-  const url =
-    `${ENDPOINT}?client=gtx&sl=${GOOGLE_CODE[from] ?? from}&tl=${GOOGLE_CODE[to] ?? to}` +
-    `&dt=t&q=${encodeURIComponent(text)}`;
+let throttles = 0;
+
+async function post(url, attempt = 0) {
   try {
     const response = await fetch(url, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+        Accept: "*/*",
       },
       signal: AbortSignal.timeout(30_000),
     });
-    if (response.status === 429 || response.status >= 500) throw new Error(`HTTP ${response.status}`);
+    if (response.status === 429 || response.status === 503) {
+      throttles += 1;
+      throw new Error(`HTTP ${response.status}`);
+    }
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
-    const segments = Array.isArray(payload?.[0]) ? payload[0] : [];
-    const joined = segments.map((segment) => (Array.isArray(segment) ? segment[0] ?? "" : "")).join("");
-    if (!joined.trim()) throw new Error("empty translation");
-    return joined;
+    const text = await response.text();
+    if (text.trim().startsWith("<")) throw new Error("HTML challenge");
+    return JSON.parse(text);
   } catch (error) {
-    if (attempt >= 5) throw error;
-    // 429s mean the runner is being throttled: back off harder than a normal error.
-    const base = String(error?.message ?? "").includes("429") ? 4000 : 800;
-    await sleep(base * 2 ** attempt + Math.random() * 400);
-    return request(text, from, to, attempt + 1);
+    if (attempt >= 6) throw error;
+    const throttled = String(error?.message ?? "").includes("429") || String(error?.message ?? "").includes("503");
+    const base = throttled ? Math.min(30_000, 1500 * 2 ** attempt) : 500;
+    await sleep(base + Math.random() * 500);
+    return post(url, attempt + 1);
   }
 }
 
+/** Normalises `["a","b"]` / `[["a"],["b"]]` / `{"sentences":…}` into strings. */
+function flatten(payload) {
+  if (typeof payload === "string") return [payload];
+  if (Array.isArray(payload)) return payload.map((item) => (Array.isArray(item) ? item[0] ?? "" : String(item ?? "")));
+  if (payload && Array.isArray(payload.sentences)) return [payload.sentences.map((s) => s.trans ?? "").join("")];
+  return [String(payload ?? "")];
+}
+
+async function translateMany(texts, from, to) {
+  const query = texts.map((text) => `&q=${encodeURIComponent(text)}`).join("");
+  const url = `${BATCH_ENDPOINT}?client=dict-chrome-ex&sl=${GOOGLE_CODE[from] ?? from}&tl=${GOOGLE_CODE[to] ?? to}${query}`;
+  if (url.length > MAX_URL) throw new Error("batch too large");
+  const payload = await post(url);
+  const lines = flatten(payload).map((line) => String(line).trim());
+  if (lines.length === texts.length) return lines;
+  // Older response shape nests one array per input string.
+  if (Array.isArray(payload) && payload.length === texts.length) {
+    return payload.map((item) => flatten(item)[0]?.trim() ?? "");
+  }
+  return null;
+}
+
+/*
+  Batch endpoint `q` limit: keep each URL comfortably below the gateway limit.
+  `chunk()` budgets characters *and* item count.
+*/
 const PLACEHOLDER = /\{[a-zA-Z0-9_]+\}/g;
 const placeholders = (text) => (text.match(PLACEHOLDER) ?? []).sort();
 
@@ -166,36 +203,49 @@ function keepPlaceholders(source, translated) {
   return expected.every((token, index) => token === actual[index]);
 }
 
-/** Strings that are only brands, codes or symbols are copied verbatim. */
-const needsTranslation = (text) => /[A-Za-zÀ-ÿ\u00c0-\u024f\u0400-\u04ff\u0600-\u06ff\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(text) && text.length > 1;
+/** Strings that carry no letters (codes, prices, symbols) are copied verbatim. */
+const needsTranslation = (text) => /[A-Za-z\u00c0-\u024f\u0370-\u03ff\u0400-\u04ff\u0530-\u058f\u0590-\u06ff\u0900-\u0dff\u0e00-\u0eff\u10a0-\u10ff\u1e00-\u1eff\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/.test(text) && text.length > 1;
 
-/**
- * Translates a batch of strings by joining them with newlines. Returns one
- * translation per input; `null` marks the ones that need an individual retry.
- */
+/** Translates one batch; per-item failures are retried individually. */
 async function translateBatch(texts, from, to) {
-  const joined = texts.join("\n");
-  const translated = await request(joined, from, to);
-  const lines = translated.split("\n");
-  // Trailing newline handling: Google keeps the count when every line ends with one.
-  while (lines.length > texts.length && lines[lines.length - 1].trim() === "") lines.pop();
-  if (lines.length !== texts.length) return texts.map(() => null);
-  return lines.map((line, index) => (keepPlaceholders(texts[index], line.trim()) ? line.trim() : null));
+  let lines = null;
+  try {
+    lines = await translateMany(texts, from, to);
+  } catch {
+    lines = null;
+  }
+  const results = new Array(texts.length).fill(null);
+  if (lines) {
+    lines.forEach((line, index) => {
+      if (line && keepPlaceholders(texts[index], line)) results[index] = line;
+    });
+  }
+  for (let index = 0; index < texts.length; index += 1) {
+    if (results[index] !== null) continue;
+    try {
+      const single = await translateMany([texts[index]], from, to);
+      const value = single?.[0]?.trim();
+      results[index] = value && keepPlaceholders(texts[index], value) ? value : null;
+    } catch {
+      results[index] = null;
+    }
+  }
+  return results;
 }
 
-/** Chunks strings so each request stays well under the URL limit. */
+/** Chunks strings so each request stays under the URL budget. */
 function chunk(texts, budget = 1200) {
   const chunks = [];
   let current = [];
   let size = 0;
   for (const text of texts) {
-    if (current.length > 0 && (size + text.length > budget || current.length >= 40)) {
+    if (current.length > 0 && (size + text.length > budget || current.length >= 25)) {
       chunks.push(current);
       current = [];
       size = 0;
     }
     current.push(text);
-    size += text.length + 1;
+    size += text.length + 6;
   }
   if (current.length) chunks.push(current);
   return chunks;
@@ -218,11 +268,35 @@ async function withPool(items, worker, concurrency) {
 
 /* -------------------------------------------------------------- per locale */
 
+/**
+ * A pack that is mostly the English source text is not a translation (it is what
+ * an earlier run wrote when every request failed). Such packs are ignored so the
+ * locale is translated again.
+ */
+function isUntranslated(pack) {
+  const keys = Object.keys(pack);
+  if (keys.length === 0) return true;
+  let identical = 0;
+  let compared = 0;
+  for (const key of keys) {
+    const source = sourceOf.get(key);
+    if (!source) continue;
+    compared += 1;
+    if (pack[key] === source.text) identical += 1;
+  }
+  return compared > 20 && identical / compared > 0.6;
+}
+
 function existingPack(code) {
   const file = join(PACK_DIR, `${code}.json`);
   if (!existsSync(file)) return {};
   try {
-    return JSON.parse(readFileSync(file, "utf8"));
+    const pack = JSON.parse(readFileSync(file, "utf8"));
+    if (!FORCE && isUntranslated(pack)) {
+      console.log(`${code}: mevcut paket çevrilmemiş görünüyor, yeniden çevrilecek`);
+      return {};
+    }
+    return pack;
   } catch {
     return {};
   }
@@ -264,18 +338,9 @@ async function translateLocale(code) {
       jobs,
       async (jobKeys) => {
         const texts = jobKeys.map((key) => sourceOf.get(key).text);
-        let results = await translateBatch(texts, lang, code);
-        // Mixed success: retry the failures one by one.
+        const results = await translateBatch(texts, lang, code);
         for (let index = 0; index < texts.length; index += 1) {
-          if (results[index] === null) {
-            try {
-              const single = (await request(texts[index], lang, code)).trim();
-              results[index] = keepPlaceholders(texts[index], single) ? single : texts[index];
-            } catch {
-              results[index] = texts[index];
-            }
-          }
-          pack[jobKeys[index]] = results[index];
+          pack[jobKeys[index]] = results[index] ?? texts[index];
         }
         done += jobKeys.length;
         if (done % 200 < jobKeys.length) console.log(`  ${code}: ${done}/${keys.length}`);
