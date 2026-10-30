@@ -38,6 +38,7 @@ import jaPack from "./ja.json";
 import kkPack from "./kk.json";
 import kmPack from "./km.json";
 import koPack from "./ko.json";
+import kyPack from "./ky.json";
 import lbPack from "./lb.json";
 import loPack from "./lo.json";
 import ltPack from "./lt.json";
@@ -102,6 +103,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "kk": kkPack as Dictionary,
   "km": kmPack as Dictionary,
   "ko": koPack as Dictionary,
+  "ky": kyPack as Dictionary,
   "lb": lbPack as Dictionary,
   "lo": loPack as Dictionary,
   "lt": ltPack as Dictionary,
