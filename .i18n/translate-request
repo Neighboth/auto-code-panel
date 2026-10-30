@@ -1,0 +1,3 @@
+locales=all
+concurrency=6
+locales_parallel=4

@@ -7,6 +7,11 @@ name: i18n translate
 # onto the branch it was dispatched from (one commit per locale, so a timeout
 # never loses work).
 on:
+  # The GitHub App that runs this session may not dispatch workflows (403), so a
+  # push that touches this marker file is the way to start a job.
+  push:
+    branches: ["arena/**", "main"]
+    paths: [".i18n/translate-request"]
   workflow_dispatch:
     inputs:
       locales:
