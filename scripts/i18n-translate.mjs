@@ -370,6 +370,16 @@ async function translateLocale(code) {
     );
   }
 
+  /*
+   * Never commit a pack that is just the English source text. That is what a run
+   * produces when every request fails (429), and it would make a locale look
+   * translated while showing English.
+   */
+  if (isUntranslated(pack)) {
+    console.error(`${code}: çeviri başarısız görünüyor (İngilizce metin oranı yüksek) — yazılmadı`);
+    throw new Error("untranslated output");
+  }
+
   // Deterministic key order keeps the diff readable across reruns.
   const ordered = {};
   for (const key of referenceKeys) {
