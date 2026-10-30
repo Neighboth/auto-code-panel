@@ -13,6 +13,7 @@ import esPack from "./es.json";
 import frPack from "./fr.json";
 import itPack from "./it.json";
 import ptPack from "./pt.json";
+import ruPack from "./ru.json";
 import ukPack from "./uk.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
@@ -22,5 +23,6 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "fr": frPack as Dictionary,
   "it": itPack as Dictionary,
   "pt": ptPack as Dictionary,
+  "ru": ruPack as Dictionary,
   "uk": ukPack as Dictionary,
 };
