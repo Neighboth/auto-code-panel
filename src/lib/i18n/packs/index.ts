@@ -25,6 +25,7 @@ import hrPack from "./hr.json";
 import huPack from "./hu.json";
 import isPack from "./is.json";
 import itPack from "./it.json";
+import lbPack from "./lb.json";
 import ltPack from "./lt.json";
 import lvPack from "./lv.json";
 import mkPack from "./mk.json";
@@ -61,6 +62,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "hu": huPack as Dictionary,
   "is": isPack as Dictionary,
   "it": itPack as Dictionary,
+  "lb": lbPack as Dictionary,
   "lt": ltPack as Dictionary,
   "lv": lvPack as Dictionary,
   "mk": mkPack as Dictionary,
