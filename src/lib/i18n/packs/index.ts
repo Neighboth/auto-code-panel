@@ -22,6 +22,7 @@ import etPack from "./et.json";
 import euPack from "./eu.json";
 import faPack from "./fa.json";
 import fiPack from "./fi.json";
+import filPack from "./fil.json";
 import frPack from "./fr.json";
 import gaPack from "./ga.json";
 import glPack from "./gl.json";
@@ -80,6 +81,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "eu": euPack as Dictionary,
   "fa": faPack as Dictionary,
   "fi": fiPack as Dictionary,
+  "fil": filPack as Dictionary,
   "fr": frPack as Dictionary,
   "ga": gaPack as Dictionary,
   "gl": glPack as Dictionary,
