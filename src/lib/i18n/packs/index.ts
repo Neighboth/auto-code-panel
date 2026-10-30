@@ -21,6 +21,7 @@ import csPack from "./cs.json";
 import daPack from "./da.json";
 import dePack from "./de.json";
 import elPack from "./el.json";
+import eoPack from "./eo.json";
 import esPack from "./es.json";
 import etPack from "./et.json";
 import euPack from "./eu.json";
@@ -100,6 +101,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "da": daPack as Dictionary,
   "de": dePack as Dictionary,
   "el": elPack as Dictionary,
+  "eo": eoPack as Dictionary,
   "es": esPack as Dictionary,
   "et": etPack as Dictionary,
   "eu": euPack as Dictionary,
