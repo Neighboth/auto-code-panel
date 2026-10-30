@@ -141,8 +141,7 @@ export async function previewCode(slug: string, rawCode: string): Promise<Action
       type: code.type as CodePreview["type"],
       choiceCount: code.choiceCount,
       durationMinutes: code.durationMinutes,
-      // Shared accounts are never time-limited: the customer keeps unlimited access.
-      durationLabel: t("x.snrsz-erisim"),
+      durationLabel: formatDuration(code.durationMinutes, t),
       items,
       selectableGames: storeGames.map((game) => ({
         id: game.id,
@@ -264,9 +263,15 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
     };
   }
 
-  // The platform delivers shared accounts, so access never expires: a code is a
-  // permanent, unlimited assignment even if the code form offered a duration.
-  const accessExpiresAt: Date | null = null;
+  /*
+   * The code decides how long the delivery stays in the buyer's library. Admins
+   * pick "unlimited" by default, but 1 day … 1 year (and a custom day count) are
+   * possible; `durationMinutes === null` keeps the old permanent behaviour.
+   */
+  const accessExpiresAt: Date | null =
+    code.durationMinutes && code.durationMinutes > 0
+      ? new Date(Date.now() + code.durationMinutes * 60_000)
+      : null;
   const guestToken = randomToken(18);
 
   let delivered: DeliveredItem[] = [];

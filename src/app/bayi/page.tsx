@@ -20,16 +20,16 @@ const bullets = [
 ];
 
 export default async function ResellerActivationPage() {
-  const { t } = await getTranslator();
+  const { t, locale } = await getTranslator();
   return (
     <div className="min-h-dvh">
-      <SiteHeader name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} />
+      <SiteHeader name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} locale={locale.code} />
       <main className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-10 lg:grid-cols-[1fr_480px] lg:py-16">
         <div>
           <Link href="/" className="inline-flex items-center gap-1.5 text-[12px] muted hover:opacity-70">
             <ArrowLeft size={13} />{t("x.ana-sayfaya-don")}</Link>
           <h1 className="mt-6 text-[32px] font-semibold leading-tight tracking-[-0.03em] sm:text-[40px]">
-            Bayilik kodunu aktive et,
+            {t("x.bayilik-kodunu-aktiflestir")},
             <br />
             <span className="muted">{" "}{t("x.magazan-hemen-ac")}</span>
           </h1>

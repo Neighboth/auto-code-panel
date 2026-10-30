@@ -51,7 +51,32 @@ export function LanguageSwitcher({
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  /*
+   * The list is anchored to the *viewport*, not to the button: inside the admin
+   * shell and the store nav the trigger sits near an edge, and an absolutely
+   * positioned 248px panel used to slide off-screen (the left half was cut).
+   */
+  const [anchor, setAnchor] = useState<{ top: number; left: number; width: number } | null>(null);
   const active = findLocale(locale) ?? LOCALES[0];
+
+  useEffect(() => {
+    if (!open) return;
+    function place() {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const width = Math.min(248, window.innerWidth - 16);
+      const left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8));
+      setAnchor({ top: rect.bottom + 8, left, width });
+    }
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -88,6 +113,7 @@ export function LanguageSwitcher({
   return (
     <div ref={containerRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((value) => !value)}
         className="flex h-8 items-center gap-1.5 rounded-lg border px-2 text-[12px] font-medium hairline"
@@ -102,11 +128,16 @@ export function LanguageSwitcher({
 
       {open ? (
         <div
-          className={`absolute z-[70] mt-2 w-[248px] overflow-hidden rounded-xl border shadow-lg hairline ${
-            align === "right" ? "right-0" : "left-0"
-          }`}
-          style={{ background: "var(--bg-elevated)" }}
+          className="fixed z-[200] overflow-hidden rounded-xl border shadow-lg hairline"
+          style={{
+            background: "var(--bg-elevated)",
+            top: anchor?.top ?? 0,
+            left: anchor?.left ?? 0,
+            width: anchor?.width ?? 248,
+            visibility: anchor ? "visible" : "hidden",
+          }}
           role="listbox"
+          data-align={align}
         >
           <div className="relative border-b px-2 py-2 hairline">
             <Search size={12} className="absolute left-4 top-1/2 -translate-y-1/2 muted" />

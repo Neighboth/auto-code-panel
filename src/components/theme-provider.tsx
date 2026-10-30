@@ -6,6 +6,12 @@ import { useT } from "@/components/i18n-provider";
 
 export type Theme = "light" | "dark";
 const STORAGE_KEY = "pix-theme";
+/**
+ * The theme is mirrored into a cookie so the *server* can render
+ * `<html data-theme="dark">` on the first byte. localStorage alone is only
+ * readable after hydration, which produced a white flash on every reload.
+ */
+export const THEME_COOKIE = "pix-theme";
 
 type ThemeContextValue = {
   theme: Theme;
@@ -50,6 +56,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Private browsing: the theme still applies for this session.
     }
+    // 1 year, same-site; the server reads this on the next request.
+    document.cookie = `${THEME_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
     window.dispatchEvent(new Event(THEME_EVENT));
   }, []);
 

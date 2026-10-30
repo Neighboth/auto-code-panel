@@ -155,7 +155,6 @@ function CredentialsWizard({ open, onClose, slug, item }: CredentialsModalProps)
               {item.email ? <Credential label="E-posta" value={item.email} /> : null}
               {item.password ? <Credential label={t("x.sifre")} value={item.password} mono /> : null}
             </div>
-            <p className="note note-warn">{t("x.bu-hesap-paylasmldr-baska-kullanclar-da-ayn-hesab-kullan")}</p>
             <p className="text-[11px] muted">{t("x.devam-ettiginizde-hesap-bilgileri-ekrandan-kalkar-yerine")}</p>
           </>
         ) : null}

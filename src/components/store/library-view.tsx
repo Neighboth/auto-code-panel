@@ -1,5 +1,6 @@
 "use client";
 import { useT } from "@/components/i18n-provider";
+import { remainingLabel } from "@/lib/format";
 
 import { useMemo, useState } from "react";
 import { KeyRound, ShieldCheck } from "lucide-react";
@@ -111,7 +112,9 @@ export function LibraryView({
                 <p className="truncate text-[13.5px] font-semibold">{entry.title}</p>
                 <p className="mt-0.5 text-[10.5px] muted">{entry.subtitle}</p>
                 <div className="mt-2.5 flex items-center justify-between gap-2">
-                  <span className="text-[11px] muted">{t("library.unlimited")}</span>
+                  <span className="text-[11px] muted">
+                    {entry.expiresAt ? remainingLabel(entry.expiresAt, t) : t("library.unlimited")}
+                  </span>
                   <span className="btn btn-outline btn-sm">{t("library.details")}</span>
                 </div>
               </div>

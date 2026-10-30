@@ -1,7 +1,7 @@
 "use client";
 import { useT } from "@/components/i18n-provider";
 
-import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -123,6 +123,8 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkMode, setBulkMode] = useState<"percent" | "amount">("percent");
   const [bulkValue, setBulkValue] = useState("10");
+  /** Text produced by the last Steam lookup, so a re-import can replace it. */
+  const lastImport = useRef("");
 
   const emptyForm = useMemo(
     () => ({
@@ -144,12 +146,14 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
   function openCreate() {
     setEditing(null);
     setForm(emptyForm);
+    lastImport.current = "";
     setError(null);
     setOpen(true);
   }
 
   function openEdit(game: AdminGame) {
     setEditing(game);
+    lastImport.current = game.description;
     setForm({
       title: game.title,
       description: game.description,
@@ -196,16 +200,28 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
       return;
     }
     const data = result.data;
+    const previous = lastImport.current;
     setForm((current) => ({
       ...current,
       title: data.title || current.title,
-      description: current.description || data.shortDescription,
+      /*
+       * A second import (after changing the link) used to keep the *first*
+       * description because of `current.description || …`. Only keep the field
+       * when the operator typed it themselves; an auto-filled text from the
+       * previous lookup is replaced.
+       */
+      description:
+        current.description && current.description !== previous
+          ? current.description
+          : data.shortDescription || "",
+      
       coverImage: data.headerImage || current.coverImage,
       originalPrice:
         data.originalPrice !== null ? String(data.originalPrice) : current.originalPrice,
       originalCurrency: current.currency,
     }));
-    toast.success(result.message ?? "Steam bilgileri dolduruldu");
+    lastImport.current = data.shortDescription || "";
+    toast.success(result.message ?? t("x.steam-bilgileri-dolduruldu"));
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -271,7 +287,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
       toast.error(result.message ?? t("x.senkronizasyon-basarsz"));
       return;
     }
-    toast.success(result.message ?? "Senkronize edildi");
+    toast.success(result.message ?? t("x.senkronize-edildi"));
     router.refresh();
   }
 
@@ -490,7 +506,7 @@ export function GameManager({ slug, games }: { slug: string; games: AdminGame[] 
                 inputMode="decimal"
               />
             </Field>
-            <Field label="Para birimi">
+            <Field label={t("x.para-birimi")}>
               <select name="currency" value={form.currency} onChange={onCurrencyChange} className="select">
                 {CURRENCY_OPTIONS.map((option) => (
                   <option key={option.code} value={option.code}>
@@ -900,7 +916,7 @@ export function AccountManager({
                         <button type="button" className="btn btn-ghost btn-sm" onClick={() => openEdit(account)}>
                           <Pencil size={12} />{t("x.duzenle")}</button>
                         <button type="button" className="btn btn-ghost btn-sm" onClick={() => onToggle(account)}>
-                          {account.status === "retired" ? t("x.aktiflestir") : "Pasife al"}
+                          {account.status === "retired" ? t("x.aktiflestir") : t("x.pasife-al")}
                         </button>
                         <button
                           type="button"
@@ -923,7 +939,7 @@ export function AccountManager({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title={editing ? t("x.hesab-duzenle") : "Yeni hesap ekle"}
+        title={editing ? t("x.hesab-duzenle") : t("x.yeni-hesap-ekle")}
         description={t("x.platform-koruma-yontemi-ve-varsa-mail-kutusunu-secin-kay")}
         size="lg"
       >
@@ -936,7 +952,7 @@ export function AccountManager({
                 className="select"
               >
                 {PLATFORM_GROUPS.map((group) => (
-                  <optgroup key={group} label={group}>
+                  <optgroup key={group} label={t(group)}>
                     {PLATFORM_PRESETS.filter((item) => item.group === group).map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.label}

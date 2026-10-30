@@ -3,7 +3,7 @@ import { useT } from "@/components/i18n-provider";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   ArrowUpRight,
   BarChart3,
@@ -14,10 +14,12 @@ import {
   LayoutDashboard,
   Lock,
   Mail,
+  Menu,
   Palette,
   Timer,
   TriangleAlert,
   Users,
+  X,
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth-forms";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -59,6 +61,22 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const t = createTranslator(locale);
+  /** Mobile navigation lives in a right-side drawer instead of a scroller. */
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDrawerOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previous;
+    };
+  }, [drawerOpen]);
   const blocked = suspended || expired;
   const usagePercent = accountMax ? Math.min(100, Math.round((accountUsed / accountMax) * 100)) : 6;
 
@@ -100,6 +118,16 @@ export function AdminShell({
           <div className="flex shrink-0 items-center gap-1">
             <LanguageSwitcher locale={locale} compact />
             <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              aria-label={t("x.menuyu-ac")}
+              aria-expanded={drawerOpen}
+              aria-controls="admin-drawer"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border hairline lg:hidden"
+            >
+              <Menu size={15} />
+            </button>
           </div>
         </div>
 
@@ -146,7 +174,11 @@ export function AdminShell({
           </div>
         </div>
 
-        <nav aria-label={t("x.magaza-yonetimi")} className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible">
+        <nav
+          id="admin-nav-desktop"
+          aria-label={t("x.magaza-yonetimi")}
+          className="hidden gap-1 px-3 pb-3 lg:flex lg:flex-col"
+        >
           {nav.map((item) => {
             const href = item.href ? `${basePath}/admin/${item.href}` : `${basePath}/admin`;
             const active = pathname === href;
@@ -215,6 +247,93 @@ export function AdminShell({
           </div>
         </div>
       </aside>
+
+      {drawerOpen ? (
+        <div className="fixed inset-0 z-[150] lg:hidden">
+          <div
+            className="absolute inset-0 bg-black/45"
+            onClick={() => setDrawerOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            id="admin-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("x.magaza-yonetimi")}
+            className="absolute inset-y-0 right-0 flex w-[min(84vw,320px)] flex-col border-l hairline"
+            style={{ background: "var(--bg-elevated)", animation: "drawer-in 180ms ease-out" }}
+          >
+            <div className="flex h-16 items-center justify-between border-b px-4 hairline">
+              <span className="text-[13px] font-semibold">{t("common.menu")}</span>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                aria-label={t("x.menuyu-kapat")}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border hairline"
+              >
+                <X size={15} />
+              </button>
+            </div>
+            <nav aria-label={t("x.magaza-yonetimi")} className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
+              {nav.map((item) => {
+                const href = item.href ? `${basePath}/admin/${item.href}` : `${basePath}/admin`;
+                const active = pathname === href;
+                if (blocked) {
+                  return (
+                    <span
+                      key={`drawer-${item.href || "dashboard"}`}
+                      aria-disabled="true"
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] font-medium opacity-50"
+                    >
+                      <item.icon size={15} strokeWidth={1.8} />
+                      {item.label}
+                    </span>
+                  );
+                }
+                return (
+                  <Link
+                    key={`drawer-${item.href || "dashboard"}`}
+                    href={href}
+                    onClick={() => setDrawerOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] font-medium transition"
+                    style={{
+                      background: active ? "color-mix(in srgb, var(--fg) 7%, transparent)" : "transparent",
+                      color: active ? "var(--fg)" : "var(--fg-muted)",
+                    }}
+                  >
+                    <item.icon size={15} strokeWidth={1.8} />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="border-t px-3 py-3 hairline">
+              <Link
+                href={basePath || "/"}
+                target="_blank"
+                className="mb-1 flex items-center gap-2.5 rounded-lg px-3 py-2 text-[12px] muted"
+              >
+                <ExternalLink size={13} />
+                {t("admin.viewStore")}
+              </Link>
+              <div className="flex items-center justify-between rounded-lg px-3 py-2">
+                <div>
+                  <p className="text-[12px] font-medium">{adminUsername}</p>
+                  <p className="text-[10px] muted">{t("admin.manager")}</p>
+                </div>
+                <LogoutButton
+                  kind="store"
+                  slug={slug}
+                  basePath={basePath}
+                  className="text-[11px] font-medium muted hover:opacity-70"
+                  label={t("common.logout")}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <a href="#main" className="skip-link">{t("x.icerige-gec")}</a>
       <main id="main" tabIndex={-1} className="app-main min-w-0 px-4 py-6 sm:px-7 lg:py-7">
