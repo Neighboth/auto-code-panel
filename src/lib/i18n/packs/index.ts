@@ -8,6 +8,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
  * Precedence in `dictionaries.ts`: tr/en → full pack → core pack → English.
  */
 import coveragePack from "./coverage.json";
+import csPack from "./cs.json";
 import dePack from "./de.json";
 import esPack from "./es.json";
 import frPack from "./fr.json";
@@ -19,6 +20,7 @@ import ukPack from "./uk.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
   "coverage": coveragePack as Dictionary,
+  "cs": csPack as Dictionary,
   "de": dePack as Dictionary,
   "es": esPack as Dictionary,
   "fr": frPack as Dictionary,
