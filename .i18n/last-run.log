@@ -1,668 +1,666 @@
 Çeviri: 78 dil · referans 1575 anahtar · eşzamanlılık 6
-de: 1 metin çevrilecek (mevcut 1574)
-fr: 1 metin çevrilecek (mevcut 1574)
-es: 1 metin çevrilecek (mevcut 1574)
-it: 1 metin çevrilecek (mevcut 1574)
+de: 0 metin çevrilecek (mevcut 1575)
 de: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 000eee5] i18n: de paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-From https://github.com/Neighboth/auto-code-panel
- * [new branch]      main       -> origin/main
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   4b56704..000eee5  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-pt: 1 metin çevrilecek (mevcut 1574)
-it: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel f5ff969] i18n: it paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   000eee5..f5ff969  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-nl: 1 metin çevrilecek (mevcut 1574)
-es: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 09fbeaf] i18n: es paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   f5ff969..09fbeaf  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ru: 1 metin çevrilecek (mevcut 1574)
+fr: 0 metin çevrilecek (mevcut 1575)
 fr: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel cb3d01a] i18n: fr paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   09fbeaf..cb3d01a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-uk: 1 metin çevrilecek (mevcut 1574)
-nl: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel c3b91ed] i18n: nl paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   cb3d01a..c3b91ed  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-pl: 1 metin çevrilecek (mevcut 1574)
+es: 0 metin çevrilecek (mevcut 1575)
+es: 1575/1575 anahtar yazıldı
+it: 0 metin çevrilecek (mevcut 1575)
+it: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (de): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: de paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (fr): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: fr paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (es): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: es paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (it): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: it paketi (otomatik)" --no-verify
+pt: 0 metin çevrilecek (mevcut 1575)
 pt: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 33b77fc] i18n: pt paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c3b91ed..33b77fc  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-cs: 1 metin çevrilecek (mevcut 1574)
-pl: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel e85c4f5] i18n: pl paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   33b77fc..e85c4f5  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sk: 1 metin çevrilecek (mevcut 1574)
-uk: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 3daf215] i18n: uk paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   e85c4f5..3daf215  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hu: 1 metin çevrilecek (mevcut 1574)
+nl: 0 metin çevrilecek (mevcut 1575)
+nl: 1575/1575 anahtar yazıldı
+ru: 0 metin çevrilecek (mevcut 1575)
 ru: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel b4ffa1a] i18n: ru paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3daf215..b4ffa1a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ro: 1 metin çevrilecek (mevcut 1574)
-sk: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel c3fb09b] i18n: sk paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b4ffa1a..c3fb09b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-bg: 1 metin çevrilecek (mevcut 1574)
-hu: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 3a6e9ed] i18n: hu paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c3fb09b..3a6e9ed  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-el: 1 metin çevrilecek (mevcut 1574)
-bg: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 15994b3] i18n: bg paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3a6e9ed..15994b3  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sr: 1 metin çevrilecek (mevcut 1574)
-el: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel c4afcf3] i18n: el paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   15994b3..c4afcf3  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hr: 1 metin çevrilecek (mevcut 1574)
-sr: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 4697c36] i18n: sr paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c4afcf3..4697c36  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sl: 1 metin çevrilecek (mevcut 1574)
-hr: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 23dc6eb] i18n: hr paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   4697c36..23dc6eb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-bs: 1 metin çevrilecek (mevcut 1574)
+uk: 0 metin çevrilecek (mevcut 1575)
+uk: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (pt): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: pt paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (nl): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: nl paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ru): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ru paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (uk): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: uk paketi (otomatik)" --no-verify
+pl: 0 metin çevrilecek (mevcut 1575)
+pl: 1575/1575 anahtar yazıldı
+cs: 0 metin çevrilecek (mevcut 1575)
 cs: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 273f8e6] i18n: cs paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   23dc6eb..273f8e6  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mk: 1 metin çevrilecek (mevcut 1574)
-sl: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 1401676] i18n: sl paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   273f8e6..1401676  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sq: 1 metin çevrilecek (mevcut 1574)
-bs: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel c47078f] i18n: bs paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   1401676..c47078f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lt: 1 metin çevrilecek (mevcut 1574)
+sk: 0 metin çevrilecek (mevcut 1575)
+sk: 1575/1575 anahtar yazıldı
+hu: 0 metin çevrilecek (mevcut 1575)
+hu: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (pl): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: pl paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (cs): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: cs paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (sk): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: sk paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (hu): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: hu paketi (otomatik)" --no-verify
+ro: 0 metin çevrilecek (mevcut 1575)
 ro: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 75f0b69] i18n: ro paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c47078f..75f0b69  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lv: 1 metin çevrilecek (mevcut 1574)
+bg: 0 metin çevrilecek (mevcut 1575)
+bg: 1575/1575 anahtar yazıldı
+el: 0 metin çevrilecek (mevcut 1575)
+el: 1575/1575 anahtar yazıldı
+sr: 0 metin çevrilecek (mevcut 1575)
+sr: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ro): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ro paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (bg): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: bg paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (el): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: el paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (sr): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: sr paketi (otomatik)" --no-verify
+hr: 0 metin çevrilecek (mevcut 1575)
+hr: 1575/1575 anahtar yazıldı
+sl: 0 metin çevrilecek (mevcut 1575)
+sl: 1575/1575 anahtar yazıldı
+bs: 0 metin çevrilecek (mevcut 1575)
+bs: 1575/1575 anahtar yazıldı
+mk: 0 metin çevrilecek (mevcut 1575)
 mk: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 86e2a02] i18n: mk paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   75f0b69..86e2a02  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-et: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (hr): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: hr paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (sl): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: sl paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (bs): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: bs paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (mk): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: mk paketi (otomatik)" --no-verify
+sq: 0 metin çevrilecek (mevcut 1575)
 sq: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel d665e2d] i18n: sq paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   86e2a02..d665e2d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-fi: 1 metin çevrilecek (mevcut 1574)
-lv: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 31a581d] i18n: lv paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   d665e2d..31a581d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sv: 1 metin çevrilecek (mevcut 1574)
+lt: 0 metin çevrilecek (mevcut 1575)
 lt: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 8593a85] i18n: lt paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   31a581d..8593a85  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-no: 1 metin çevrilecek (mevcut 1574)
+lv: 0 metin çevrilecek (mevcut 1575)
+lv: 1575/1575 anahtar yazıldı
+et: 0 metin çevrilecek (mevcut 1575)
 et: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel b5e620c] i18n: et paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8593a85..b5e620c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-da: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (sq): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: sq paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (lt): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: lt paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (lv): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: lv paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (et): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: et paketi (otomatik)" --no-verify
+fi: 0 metin çevrilecek (mevcut 1575)
 fi: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel facef8e] i18n: fi paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b5e620c..facef8e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-is: 1 metin çevrilecek (mevcut 1574)
+sv: 0 metin çevrilecek (mevcut 1575)
 sv: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 3a534f1] i18n: sv paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   facef8e..3a534f1  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ga: 1 metin çevrilecek (mevcut 1574)
+no: 0 metin çevrilecek (mevcut 1575)
 no: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 2e3037b] i18n: no paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3a534f1..2e3037b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mt: 1 metin çevrilecek (mevcut 1574)
+da: 0 metin çevrilecek (mevcut 1575)
 da: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel edaf95c] i18n: da paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2e3037b..edaf95c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ca: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (fi): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: fi paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (sv): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: sv paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (no): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: no paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (da): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: da paketi (otomatik)" --no-verify
+is: 0 metin çevrilecek (mevcut 1575)
 is: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel f3efc78] i18n: is paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   edaf95c..f3efc78  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-eu: 1 metin çevrilecek (mevcut 1574)
+ga: 0 metin çevrilecek (mevcut 1575)
 ga: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 8a6dcbe] i18n: ga paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   f3efc78..8a6dcbe  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-gl: 1 metin çevrilecek (mevcut 1574)
+mt: 0 metin çevrilecek (mevcut 1575)
 mt: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 3196e1e] i18n: mt paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8a6dcbe..3196e1e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lb: 1 metin çevrilecek (mevcut 1574)
-eu: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel bc06d6b] i18n: eu paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3196e1e..bc06d6b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ar: 1 metin çevrilecek (mevcut 1574)
+ca: 0 metin çevrilecek (mevcut 1575)
 ca: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 38a5275] i18n: ca paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   bc06d6b..38a5275  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-fa: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (is): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: is paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ga): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ga paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (mt): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: mt paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ca): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ca paketi (otomatik)" --no-verify
+eu: 0 metin çevrilecek (mevcut 1575)
+eu: 1575/1575 anahtar yazıldı
+gl: 0 metin çevrilecek (mevcut 1575)
 gl: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 33da81e] i18n: gl paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   38a5275..33da81e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-he: 1 metin çevrilecek (mevcut 1574)
+lb: 0 metin çevrilecek (mevcut 1575)
 lb: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel b91cf25] i18n: lb paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   33da81e..b91cf25  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ur: 1 metin çevrilecek (mevcut 1574)
-he: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel fe6a3ff] i18n: he paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b91cf25..fe6a3ff  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hi: 1 metin çevrilecek (mevcut 1574)
+ar: 0 metin çevrilecek (mevcut 1575)
 ar: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 27f79bb] i18n: ar paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   fe6a3ff..27f79bb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-bn: 1 metin çevrilecek (mevcut 1574)
-hi: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 961f948] i18n: hi paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   27f79bb..961f948  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ta: 1 metin çevrilecek (mevcut 1574)
-ur: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 136cf25] i18n: ur paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   961f948..136cf25  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-te: 1 metin çevrilecek (mevcut 1574)
-ta: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel c05082b] i18n: ta paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   136cf25..c05082b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mr: 1 metin çevrilecek (mevcut 1574)
-bn: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 2c1b187] i18n: bn paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c05082b..2c1b187  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-gu: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (eu): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: eu paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (gl): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: gl paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (lb): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: lb paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ar): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ar paketi (otomatik)" --no-verify
+fa: 0 metin çevrilecek (mevcut 1575)
 fa: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel f96d961] i18n: fa paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2c1b187..f96d961  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-pa: 1 metin çevrilecek (mevcut 1574)
-mr: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 6fac561] i18n: mr paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   f96d961..6fac561  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ne: 1 metin çevrilecek (mevcut 1574)
-gu: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 3b4dff9] i18n: gu paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   6fac561..3b4dff9  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-si: 1 metin çevrilecek (mevcut 1574)
-pa: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel a6c4ffb] i18n: pa paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3b4dff9..a6c4ffb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-zh: 1 metin çevrilecek (mevcut 1574)
-ne: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 9cfcaea] i18n: ne paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a6c4ffb..9cfcaea  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ja: 1 metin çevrilecek (mevcut 1574)
-zh: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel a5bfe45] i18n: zh paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   9cfcaea..a5bfe45  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ko: 1 metin çevrilecek (mevcut 1574)
-si: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 02d12fd] i18n: si paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a5bfe45..02d12fd  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-vi: 1 metin çevrilecek (mevcut 1574)
-ja: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 098ff27] i18n: ja paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   02d12fd..098ff27  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-th: 1 metin çevrilecek (mevcut 1574)
-ko: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 667a40a] i18n: ko paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   098ff27..667a40a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-id: 1 metin çevrilecek (mevcut 1574)
-vi: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 7337374] i18n: vi paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   667a40a..7337374  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ms: 1 metin çevrilecek (mevcut 1574)
-th: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 66f271c] i18n: th paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   7337374..66f271c  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-fil: 1 metin çevrilecek (mevcut 1574)
-id: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel b7ada46] i18n: id paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   66f271c..b7ada46  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-km: 1 metin çevrilecek (mevcut 1574)
-fil: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 6d37e6d] i18n: fil paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b7ada46..6d37e6d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-lo: 1 metin çevrilecek (mevcut 1574)
-ms: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 43b2c29] i18n: ms paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   6d37e6d..43b2c29  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-my: 1 metin çevrilecek (mevcut 1574)
-km: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel fd0e689] i18n: km paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   43b2c29..fd0e689  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-mn: 1 metin çevrilecek (mevcut 1574)
-lo: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 20d25f7] i18n: lo paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   fd0e689..20d25f7  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-kk: 1 metin çevrilecek (mevcut 1574)
-my: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 4461365] i18n: my paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   20d25f7..4461365  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ky: 1 metin çevrilecek (mevcut 1574)
-mn: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel b3d5cf0] i18n: mn paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   4461365..b3d5cf0  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-uz: 1 metin çevrilecek (mevcut 1574)
-ky: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel ee8c849] i18n: ky paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   b3d5cf0..ee8c849  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-tg: 1 metin çevrilecek (mevcut 1574)
-kk: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 4ab3f9a] i18n: kk paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   ee8c849..4ab3f9a  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-tk: 1 metin çevrilecek (mevcut 1574)
-tg: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 011ca31] i18n: tg paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   4ab3f9a..011ca31  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-az: 1 metin çevrilecek (mevcut 1574)
-tk: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 64b45f3] i18n: tk paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   011ca31..64b45f3  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ka: 1 metin çevrilecek (mevcut 1574)
-az: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 585af93] i18n: az paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   64b45f3..585af93  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-hy: 1 metin çevrilecek (mevcut 1574)
-ka: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 3759392] i18n: ka paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   585af93..3759392  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-be: 1 metin çevrilecek (mevcut 1574)
-hy: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 54010b7] i18n: hy paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   3759392..54010b7  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-af: 1 metin çevrilecek (mevcut 1574)
+he: 0 metin çevrilecek (mevcut 1575)
+he: 1575/1575 anahtar yazıldı
+ur: 0 metin çevrilecek (mevcut 1575)
+ur: 1575/1575 anahtar yazıldı
+hi: 0 metin çevrilecek (mevcut 1575)
+hi: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (fa): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: fa paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (he): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: he paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ur): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ur paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (hi): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: hi paketi (otomatik)" --no-verify
+bn: 0 metin çevrilecek (mevcut 1575)
+bn: 1575/1575 anahtar yazıldı
+ta: 0 metin çevrilecek (mevcut 1575)
+ta: 1575/1575 anahtar yazıldı
+te: 0 metin çevrilecek (mevcut 1575)
 te: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 1b4429e] i18n: te paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   54010b7..1b4429e  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sw: 1 metin çevrilecek (mevcut 1574)
-af: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 2d59651] i18n: af paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   1b4429e..2d59651  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-am: 1 metin çevrilecek (mevcut 1574)
-be: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel e16c304] i18n: be paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   2d59651..e16c304  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ha: 1 metin çevrilecek (mevcut 1574)
+mr: 0 metin çevrilecek (mevcut 1575)
+mr: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (bn): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: bn paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ta): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ta paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (te): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: te paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (mr): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: mr paketi (otomatik)" --no-verify
+gu: 0 metin çevrilecek (mevcut 1575)
+gu: 1575/1575 anahtar yazıldı
+pa: 0 metin çevrilecek (mevcut 1575)
+pa: 1575/1575 anahtar yazıldı
+ne: 0 metin çevrilecek (mevcut 1575)
+ne: 1575/1575 anahtar yazıldı
+si: 0 metin çevrilecek (mevcut 1575)
+si: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (gu): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: gu paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (pa): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: pa paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ne): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ne paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (si): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: si paketi (otomatik)" --no-verify
+zh: 0 metin çevrilecek (mevcut 1575)
+zh: 1575/1575 anahtar yazıldı
+ja: 0 metin çevrilecek (mevcut 1575)
+ja: 1575/1575 anahtar yazıldı
+ko: 0 metin çevrilecek (mevcut 1575)
+ko: 1575/1575 anahtar yazıldı
+vi: 0 metin çevrilecek (mevcut 1575)
+vi: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (zh): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: zh paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ja): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ja paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ko): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ko paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (vi): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: vi paketi (otomatik)" --no-verify
+th: 0 metin çevrilecek (mevcut 1575)
+th: 1575/1575 anahtar yazıldı
+id: 0 metin çevrilecek (mevcut 1575)
+id: 1575/1575 anahtar yazıldı
+ms: 0 metin çevrilecek (mevcut 1575)
+ms: 1575/1575 anahtar yazıldı
+fil: 0 metin çevrilecek (mevcut 1575)
+fil: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (th): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: th paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (id): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: id paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ms): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ms paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (fil): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: fil paketi (otomatik)" --no-verify
+km: 0 metin çevrilecek (mevcut 1575)
+km: 1575/1575 anahtar yazıldı
+lo: 0 metin çevrilecek (mevcut 1575)
+lo: 1575/1575 anahtar yazıldı
+my: 0 metin çevrilecek (mevcut 1575)
+my: 1575/1575 anahtar yazıldı
+mn: 0 metin çevrilecek (mevcut 1575)
+mn: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (km): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: km paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (lo): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: lo paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (my): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: my paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (mn): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: mn paketi (otomatik)" --no-verify
+kk: 0 metin çevrilecek (mevcut 1575)
+kk: 1575/1575 anahtar yazıldı
+ky: 0 metin çevrilecek (mevcut 1575)
+ky: 1575/1575 anahtar yazıldı
+uz: 0 metin çevrilecek (mevcut 1575)
 uz: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 977dc9d] i18n: uz paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   e16c304..977dc9d  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ig: 1 metin çevrilecek (mevcut 1574)
+tg: 0 metin çevrilecek (mevcut 1575)
+tg: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (kk): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: kk paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ky): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ky paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (uz): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: uz paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (tg): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: tg paketi (otomatik)" --no-verify
+tk: 0 metin çevrilecek (mevcut 1575)
+tk: 1575/1575 anahtar yazıldı
+az: 0 metin çevrilecek (mevcut 1575)
+az: 1575/1575 anahtar yazıldı
+ka: 0 metin çevrilecek (mevcut 1575)
+ka: 1575/1575 anahtar yazıldı
+hy: 0 metin çevrilecek (mevcut 1575)
+hy: 1575/1575 anahtar yazıldı
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (tk): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: tk paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (az): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: az paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ka): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ka paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (hy): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: hy paketi (otomatik)" --no-verify
+be: 0 metin çevrilecek (mevcut 1575)
+be: 1575/1575 anahtar yazıldı
+af: 0 metin çevrilecek (mevcut 1575)
+af: 1575/1575 anahtar yazıldı
+sw: 0 metin çevrilecek (mevcut 1575)
+sw: 1575/1575 anahtar yazıldı
+am: 0 metin çevrilecek (mevcut 1575)
 am: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 6a05087] i18n: am paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   977dc9d..6a05087  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-yo: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (be): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: be paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (af): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: af paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (sw): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: sw paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (am): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: am paketi (otomatik)" --no-verify
+ha: 0 metin çevrilecek (mevcut 1575)
+ha: 1575/1575 anahtar yazıldı
+ig: 0 metin çevrilecek (mevcut 1575)
 ig: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 73bf96f] i18n: ig paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   6a05087..73bf96f  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-zu: 1 metin çevrilecek (mevcut 1574)
+yo: 0 metin çevrilecek (mevcut 1575)
 yo: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel c3a17bb] i18n: yo paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   73bf96f..c3a17bb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-so: 1 metin çevrilecek (mevcut 1574)
+zu: 0 metin çevrilecek (mevcut 1575)
 zu: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 60c80d4] i18n: zu paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c3a17bb..60c80d4  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-eo: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ha): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ha paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ig): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ig paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (yo): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: yo paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (zu): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: zu paketi (otomatik)" --no-verify
+so: 0 metin çevrilecek (mevcut 1575)
 so: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel a303127] i18n: so paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   60c80d4..a303127  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eo: 0 metin çevrilecek (mevcut 1575)
 eo: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 0639105] i18n: eo paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a303127..0639105  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sw: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 8454679] i18n: sw paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   0639105..8454679  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ha: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel e79737b] i18n: ha paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8454679..e79737b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-Bitti: 79 paket · 122929 çeviri · 120 sn
-To https://github.com/Neighboth/auto-code-panel
-   73bf96f..c3a17bb  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-so: 1 metin çevrilecek (mevcut 1574)
-zu: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 60c80d4] i18n: zu paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   c3a17bb..60c80d4  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-eo: 1 metin çevrilecek (mevcut 1574)
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (so): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: so paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (eo): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: eo paketi (otomatik)" --no-verify
+Bitti: 79 paket · 122928 çeviri · 10 sn
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ha): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ha paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (ig): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: ig paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (yo): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: yo paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (zu): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: zu paketi (otomatik)" --no-verify
+so: 0 metin çevrilecek (mevcut 1575)
 so: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel a303127] i18n: so paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   60c80d4..a303127  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
+eo: 0 metin çevrilecek (mevcut 1575)
 eo: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 0639105] i18n: eo paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   a303127..0639105  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-sw: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel 8454679] i18n: sw paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   0639105..8454679  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-ha: 1575/1575 anahtar yazıldı
-packs/index.ts: 79 dil
-[arena/f02978eb-auto-code-panel e79737b] i18n: ha paketi (otomatik)
- 2 files changed, 5 insertions(+), 1 deletion(-)
-Current branch arena/f02978eb-auto-code-panel is up to date.
-To https://github.com/Neighboth/auto-code-panel
-   8454679..e79737b  arena/f02978eb-auto-code-panel -> arena/f02978eb-auto-code-panel
-Bitti: 79 paket · 122929 çeviri · 120 sn
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (so): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: so paketi (otomatik)" --no-verify
+packs/index.ts: 78 dil
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+  ! commit (eo): Command failed: git -c user.name="i18n-bot" -c user.email="i18n@users.noreply.github.com" commit -m "i18n: eo paketi (otomatik)" --no-verify
+Bitti: 79 paket · 122928 çeviri · 10 sn
