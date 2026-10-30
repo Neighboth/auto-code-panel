@@ -8,6 +8,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
  * Precedence in `dictionaries.ts`: tr/en → full pack → core pack → English.
  */
 import arPack from "./ar.json";
+import azPack from "./az.json";
 import bgPack from "./bg.json";
 import bnPack from "./bn.json";
 import bsPack from "./bs.json";
@@ -76,6 +77,7 @@ import zhPack from "./zh.json";
 
 export const FULL_PACKS: Record<string, Dictionary> = {
   "ar": arPack as Dictionary,
+  "az": azPack as Dictionary,
   "bg": bgPack as Dictionary,
   "bn": bnPack as Dictionary,
   "bs": bsPack as Dictionary,
