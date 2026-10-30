@@ -24,6 +24,7 @@ import ltPack from "./lt.json";
 import lvPack from "./lv.json";
 import mkPack from "./mk.json";
 import nlPack from "./nl.json";
+import noPack from "./no.json";
 import plPack from "./pl.json";
 import ptPack from "./pt.json";
 import roPack from "./ro.json";
@@ -53,6 +54,7 @@ export const FULL_PACKS: Record<string, Dictionary> = {
   "lv": lvPack as Dictionary,
   "mk": mkPack as Dictionary,
   "nl": nlPack as Dictionary,
+  "no": noPack as Dictionary,
   "pl": plPack as Dictionary,
   "pt": ptPack as Dictionary,
   "ro": roPack as Dictionary,
