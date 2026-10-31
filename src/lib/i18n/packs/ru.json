@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Управляющие аккаунты",
   "x.yonetici-sifresi-guncellendi-user": "Пароль менеджера {user} обновлен.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Пароли менеджера и клиента видны только владельцу платформы.",
-  "x.yuklenemedi": "Загрузка не удалась"
+  "x.yuklenemedi": "Загрузка не удалась",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браузер заблокировал файл cookie сеанса. Откройте приложение в новой вкладке или разрешите использование файлов cookie для этого сайта."
 }
