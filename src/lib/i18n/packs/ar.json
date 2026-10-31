@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "حسابات المدير",
   "x.yonetici-sifresi-guncellendi-user": "تم تحديث كلمة مرور المدير {user}.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "تكون كلمات مرور المدير والعملاء مرئية لمالك النظام الأساسي فقط",
-  "x.yuklenemedi": "فشل التحميل"
+  "x.yuklenemedi": "فشل التحميل",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "قام متصفحك بحظر ملف تعريف ارتباط الجلسة. افتح التطبيق في علامة تبويب جديدة أو اسمح بملفات تعريف الارتباط لهذا الموقع."
 }
