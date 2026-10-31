@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "प्रबन्धक खाताहरू",
   "x.yonetici-sifresi-guncellendi-user": "व्यवस्थापक {user} को पासवर्ड अपडेट गरियो",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "प्रबन्धक र ग्राहक पासवर्डहरू प्लेटफर्म मालिकले मात्र देख्न सक्छन्",
-  "x.yuklenemedi": "अपलोड असफल भयो"
+  "x.yuklenemedi": "अपलोड असफल भयो",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "तपाईंको ब्राउजरले सत्र कुकीलाई अवरुद्ध गर्यो। नयाँ ट्याबमा एप खोल्नुहोस् वा यो साइटका लागि कुकीहरूलाई अनुमति दिनुहोस्।"
 }
