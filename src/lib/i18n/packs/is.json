@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Stjórnendareikningar",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Lykilorð stjórnenda og viðskiptavina eru aðeins sýnileg vettvangseiganda",
-  "x.yuklenemedi": "Upphleðsla mistókst"
+  "x.yuklenemedi": "Upphleðsla mistókst",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vafrinn þinn lokaði á sessionsfótsporið. Opnaðu forritið í nýjum flipa eða leyfðu vafrakökur fyrir þessa síðu."
 }
