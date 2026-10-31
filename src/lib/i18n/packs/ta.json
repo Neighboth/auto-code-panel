@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "நிர்வாகி {user} இன் கடவுச்சொல் புதுப்பிக்கப்பட்டது",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "மேலாளர் மற்றும் வாடிக்கையாளர் கடவுச்சொற்கள் இயங்குதள உரிமையாளருக்கு மட்டுமே தெரியும்",
   "x.yuklenemedi": "பதிவேற்றம் தோல்வியடைந்தது",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "உங்கள் உலாவி அமர்வு குக்கீயைத் தடுத்துள்ளது. புதிய தாவலில் பயன்பாட்டைத் திறக்கவும் அல்லது இந்தத் தளத்திற்கான குக்கீகளை அனுமதிக்கவும்."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "உங்கள் உலாவி அமர்வு குக்கீயைத் தடுத்துள்ளது. புதிய தாவலில் பயன்பாட்டைத் திறக்கவும் அல்லது இந்தத் தளத்திற்கான குக்கீகளை அனுமதிக்கவும்.",
+  "x.font-sayisi": "{count} எழுத்துருக்கள்",
+  "x.daha-fazla-goster": "மேலும் {count} காட்டு",
+  "x.yaz-tipi": "எழுத்துரு",
+  "x.yukleniyor-yuzde": "பதிவேற்றுகிறது %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "பதிவேற்றம் முடியும் வரை சேமிக்க முடியாது",
+  "x.gorsel-optimize-edildi": "படம் உகந்ததாக்கப்பட்டது: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "புதுப்பித்தல் இணைப்பை தளம் நிர்வகிக்கிறது.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "மாற்ற தள ஆதரவைத் தொடர்பு கொள்ளவும்"
 }

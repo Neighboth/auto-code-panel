@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Lösenordet för chefen {user} har uppdaterats",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- och kundlösenord är endast synliga för plattformsägaren",
   "x.yuklenemedi": "Uppladdningen misslyckades",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Din webbläsare blockerade sessionscookien. Öppna appen på en ny flik eller tillåt cookies för den här webbplatsen."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Din webbläsare blockerade sessionscookien. Öppna appen på en ny flik eller tillåt cookies för den här webbplatsen.",
+  "x.font-sayisi": "{count} teckensnitt",
+  "x.daha-fazla-goster": "Visa {count} till",
+  "x.yaz-tipi": "Teckensnitt",
+  "x.yukleniyor-yuzde": "Laddar upp %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Kan inte spara förrän uppladdningen är klar",
+  "x.gorsel-optimize-edildi": "Bild optimerad: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Förnyelselänken hanteras av plattformen.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Kontakta plattformens support för att ändra den"
 }

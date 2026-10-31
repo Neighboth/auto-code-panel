@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Ylläpitäjän {user} salasana päivitetty",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Esimiehen ja asiakkaan salasanat näkyvät vain alustan omistajalle",
   "x.yuklenemedi": "Lataus epäonnistui",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Selaimesi esti istuntoevästeen. Avaa sovellus uudella välilehdellä tai salli evästeet tälle sivustolle."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Selaimesi esti istuntoevästeen. Avaa sovellus uudella välilehdellä tai salli evästeet tälle sivustolle.",
+  "x.font-sayisi": "{count} fonttia",
+  "x.daha-fazla-goster": "Näytä {count} lisää",
+  "x.yaz-tipi": "Kirjasin",
+  "x.yukleniyor-yuzde": "Ladataan %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Tallennus ei onnistu ennen latauksen valmistumista",
+  "x.gorsel-optimize-edildi": "Kuva optimoitu: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Uusintalinkkiä hallinnoi alusta.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Ota yhteyttä alustan tukeen sen muuttamiseksi"
 }

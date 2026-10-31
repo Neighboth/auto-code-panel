@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Паролата на мениджъра {user} е актуализирана",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролите на мениджър и клиент се виждат само от собственика на платформата",
   "x.yuklenemedi": "Качването не бе успешно",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Вашият браузър блокира сесийната бисквитка. Отворете приложението в нов раздел или разрешете бисквитки за този сайт."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Вашият браузър блокира сесийната бисквитка. Отворете приложението в нов раздел или разрешете бисквитки за този сайт.",
+  "x.font-sayisi": "{count} шрифта",
+  "x.daha-fazla-goster": "Покажи още {count}",
+  "x.yaz-tipi": "Шрифт",
+  "x.yukleniyor-yuzde": "Качване %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Не може да се запази, докато качването не приключи",
+  "x.gorsel-optimize-edildi": "Изображението е оптимизирано: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Връзката за удължаване се управлява от платформата.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Свържете се с поддръжката на платформата, за да я промените"
 }

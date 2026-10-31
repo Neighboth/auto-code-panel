@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { googleFontHref } from "@/lib/fonts";
+import { familyStylesheet, fontProvider } from "@/lib/fonts";
 import { getStoreState } from "@/lib/tenant";
 import { normalizeDomain, normalizeHost } from "@/lib/domain";
 import { getTranslator } from "@/lib/i18n/server";
@@ -58,7 +58,8 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
    */
   const uploaded = store.fontUrl?.trim() ?? "";
   const familyName = uploaded ? store.fontLabel || "StoreFont" : store.fontFamily;
-  const fontHref = uploaded ? "" : googleFontHref([store.fontFamily]);
+  const fontHref = uploaded ? "" : familyStylesheet(store.fontFamily);
+  const fontHost = uploaded || fontProvider(store.fontFamily) === "fontshare" ? "https://api.fontshare.com" : "https://fonts.gstatic.com";
   const fontFace = uploaded
     ? `@font-face{font-family:"${familyName.replace(/"/g, "")}";src:url("${uploaded}");font-display:swap;font-weight:100 900;}`
     : "";
@@ -70,10 +71,39 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     fontFamily: `"${familyName}", ui-sans-serif, system-ui, -apple-system, sans-serif`,
   } as CSSProperties;
 
+  /*
+   * Font loading is deliberately *non-blocking*.
+   *
+   * A plain `<link rel="stylesheet">` to fonts.googleapis.com is render-blocking:
+   * wherever that host is slow or filtered, the whole storefront sat blank for
+   * 15+ seconds before the first paint. Loading it with `media="print"` and
+   * flipping the media on load gives the browser the font without ever holding
+   * the page hostage; `<noscript>` keeps the old behaviour for JS-less clients.
+   */
   return (
     <div className="min-h-dvh" style={style}>
       {fontFace ? <style dangerouslySetInnerHTML={{ __html: fontFace }} /> : null}
-      {fontHref ? <link rel="stylesheet" href={fontHref} /> : null}
+      {/* Only this store's own font origin is preconnected — never a whole catalogue. */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href={fontHost} crossOrigin="anonymous" />
+      {fontHref ? (
+        <>
+          {/*
+            `media="print"` + inline `onload` is the classic async-CSS pattern:
+            the request never blocks the first paint, and the sheet is applied as
+            soon as it arrives. Server components cannot attach `onLoad`, so the
+            tag is emitted as HTML (the href is escaped).
+          */}
+          <div
+            dangerouslySetInnerHTML={{
+              __html: `<link id="store-font-css" rel="stylesheet" href="${fontHref.replace(/"/g, "&quot;")}" media="print" onload="this.media='all'">`,
+            }}
+          />
+          <noscript>
+            <link rel="stylesheet" href={fontHref} />
+          </noscript>
+        </>
+      ) : null}
       {children}
     </div>
   );

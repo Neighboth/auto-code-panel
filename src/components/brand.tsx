@@ -17,21 +17,30 @@ export function BrandLogo({
   logoUrl,
   size = 28,
   className,
+  priority = true,
 }: {
   logoUrl?: string;
   size?: number;
   className?: string;
+  /**
+   * Header logos are above the fold: `loading="lazy"` there made the store logo
+   * pop in a second after the rest of the bar (the browser only started the
+   * request once layout settled). Eager + explicit dimensions paints with the
+   * rest of the header and reserves the box, so nothing shifts.
+   */
+  priority?: boolean;
 }) {
   if (logoUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-                    loading="lazy"
-                    decoding="async"
         src={logoUrl}
         alt=""
         width={size}
         height={size}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
         className={`shrink-0 rounded-md object-cover ${className ?? ""}`}
         style={{ width: size, height: size }}
       />

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password tal-maniġer {user} aġġornata",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Il-passwords tal-maniġer u tal-klijenti huma viżibbli għal sid il-pjattaforma biss",
   "x.yuklenemedi": "It-tlugħ fallut",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Il-browser tiegħek imblokka l-cookie tas-sessjoni. Iftaħ l-app f'tab ġdida jew tħalli cookies għal dan is-sit."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Il-browser tiegħek imblokka l-cookie tas-sessjoni. Iftaħ l-app f'tab ġdida jew tħalli cookies għal dan is-sit.",
+  "x.font-sayisi": "{count} tipi ta' ittri",
+  "x.daha-fazla-goster": "Uri {count} oħra",
+  "x.yaz-tipi": "Tipa ta' ittri",
+  "x.yukleniyor-yuzde": "Qed jitla' %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ma tistax issalva qabel ma jitlesta t-tlugħ",
+  "x.gorsel-optimize-edildi": "L-immaġni ġiet ottimizzata: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Il-link tat-tiġdid huwa mmaniġġjat mill-pjattaforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Ikkuntattja l-appoġġ tal-pjattaforma biex tibdlu"
 }

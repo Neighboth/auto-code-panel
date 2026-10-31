@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Passwort des Managers {user} aktualisiert",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- und Kundenpasswörter sind nur für den Plattformbesitzer sichtbar",
   "x.yuklenemedi": "Der Upload ist fehlgeschlagen",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ihr Browser hat das Sitzungscookie blockiert. Öffnen Sie die App in einem neuen Tab oder erlauben Sie Cookies für diese Website."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ihr Browser hat das Sitzungscookie blockiert. Öffnen Sie die App in einem neuen Tab oder erlauben Sie Cookies für diese Website.",
+  "x.font-sayisi": "{count} Schriftarten",
+  "x.daha-fazla-goster": "{count} weitere anzeigen",
+  "x.yaz-tipi": "Schriftart",
+  "x.yukleniyor-yuzde": "Wird hochgeladen %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Speichern erst nach Abschluss des Uploads möglich",
+  "x.gorsel-optimize-edildi": "Bild optimiert: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Der Verlängerungslink wird von der Plattform verwaltet.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Wenden Sie sich an den Plattform-Support, um ihn zu ändern"
 }

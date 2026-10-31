@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Na-update ang password ng manager {user}.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Ang mga password ng manager at customer ay makikita lamang ng may-ari ng platform",
   "x.yuklenemedi": "Nabigo ang pag-upload",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Na-block ng iyong browser ang cookie ng session. Buksan ang app sa isang bagong tab o payagan ang cookies para sa site na ito."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Na-block ng iyong browser ang cookie ng session. Buksan ang app sa isang bagong tab o payagan ang cookies para sa site na ito.",
+  "x.font-sayisi": "{count} na font",
+  "x.daha-fazla-goster": "Magpakita ng {count} pa",
+  "x.yaz-tipi": "Uri ng font",
+  "x.yukleniyor-yuzde": "Nag-a-upload %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Hindi makakapag-save hanggang matapos ang upload",
+  "x.gorsel-optimize-edildi": "Na-optimize ang larawan: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Ang renewal link ay pinamamahalaan ng platform.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Makipag-ugnayan sa platform support para baguhin ito"
 }

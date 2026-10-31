@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "סיסמאות מנהל ולקוחות גלויות לבעל הפלטפורמה בלבד",
   "x.yuklenemedi": "ההעלאה נכשלה",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "הדפדפן שלך חסם את קובץ ה-cookie של ההפעלה. פתח את האפליקציה בכרטיסייה חדשה או אפשר קובצי Cookie עבור אתר זה."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "הדפדפן שלך חסם את קובץ ה-cookie של ההפעלה. פתח את האפליקציה בכרטיסייה חדשה או אפשר קובצי Cookie עבור אתר זה.",
+  "x.font-sayisi": "{count} גופנים",
+  "x.daha-fazla-goster": "הצג עוד {count}",
+  "x.yaz-tipi": "גופן",
+  "x.yukleniyor-yuzde": "מעלה %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "לא ניתן לשמור עד שההעלאה תסתיים",
+  "x.gorsel-optimize-edildi": "התמונה עברה אופטימיזציה: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "קישור החידוש מנוהל על ידי הפלטפורמה.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "פנה לתמיכת הפלטפורמה כדי לשנות אותו"
 }

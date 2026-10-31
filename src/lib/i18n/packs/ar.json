@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "تم تحديث كلمة مرور المدير {user}.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "تكون كلمات مرور المدير والعملاء مرئية لمالك النظام الأساسي فقط",
   "x.yuklenemedi": "فشل التحميل",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "قام متصفحك بحظر ملف تعريف ارتباط الجلسة. افتح التطبيق في علامة تبويب جديدة أو اسمح بملفات تعريف الارتباط لهذا الموقع."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "قام متصفحك بحظر ملف تعريف ارتباط الجلسة. افتح التطبيق في علامة تبويب جديدة أو اسمح بملفات تعريف الارتباط لهذا الموقع.",
+  "x.font-sayisi": "{count} خط",
+  "x.daha-fazla-goster": "إظهار {count} إضافي",
+  "x.yaz-tipi": "نوع الخط",
+  "x.yukleniyor-yuzde": "جارٍ الرفع %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "لا يمكن الحفظ قبل انتهاء الرفع",
+  "x.gorsel-optimize-edildi": "تم تحسين الصورة: {from} ← {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "يُدار رابط التمديد من قبل المنصة.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "تواصل مع دعم المنصة لتغييره"
 }

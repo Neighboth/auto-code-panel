@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Heslo manažéra {user} bolo aktualizované",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manažérske a zákaznícke heslá sú viditeľné iba pre vlastníka platformy",
   "x.yuklenemedi": "Nahrávanie zlyhalo",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Váš prehliadač zablokoval súbor cookie relácie. Otvorte aplikáciu na novej karte alebo povoľte súbory cookie pre túto stránku."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Váš prehliadač zablokoval súbor cookie relácie. Otvorte aplikáciu na novej karte alebo povoľte súbory cookie pre túto stránku.",
+  "x.font-sayisi": "{count} písiem",
+  "x.daha-fazla-goster": "Zobraziť ďalších {count}",
+  "x.yaz-tipi": "Písmo",
+  "x.yukleniyor-yuzde": "Nahrávanie %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Nedá sa uložiť, kým sa nahrávanie neskončí",
+  "x.gorsel-optimize-edildi": "Obrázok optimalizovaný: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Odkaz na predĺženie spravuje platforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Ak ho chcete zmeniť, kontaktujte podporu platformy"
 }

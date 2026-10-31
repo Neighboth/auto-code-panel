@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Le password del gestore e del cliente sono visibili solo al proprietario della piattaforma",
   "x.yuklenemedi": "Caricamento non riuscito",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Il tuo browser ha bloccato il cookie di sessione. Apri l'app in una nuova scheda o consenti i cookie per questo sito."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Il tuo browser ha bloccato il cookie di sessione. Apri l'app in una nuova scheda o consenti i cookie per questo sito.",
+  "x.font-sayisi": "{count} caratteri",
+  "x.daha-fazla-goster": "Mostra altri {count}",
+  "x.yaz-tipi": "Carattere",
+  "x.yukleniyor-yuzde": "Caricamento %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Impossibile salvare prima del termine del caricamento",
+  "x.gorsel-optimize-edildi": "Immagine ottimizzata: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Il link di rinnovo è gestito dalla piattaforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Contatta il supporto della piattaforma per modificarlo"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "የአስተዳዳሪ እና የደንበኛ የይለፍ ቃሎች የሚታዩት ለመድረክ ባለቤት ብቻ ነው።",
   "x.yuklenemedi": "መጫን አልተሳካም።",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "አሳሽህ የክፍለ ጊዜውን ኩኪ አግዶታል። መተግበሪያውን በአዲስ ትር ውስጥ ይክፈቱ ወይም ለዚህ ጣቢያ ኩኪዎችን ይፍቀዱ።"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "አሳሽህ የክፍለ ጊዜውን ኩኪ አግዶታል። መተግበሪያውን በአዲስ ትር ውስጥ ይክፈቱ ወይም ለዚህ ጣቢያ ኩኪዎችን ይፍቀዱ።",
+  "x.font-sayisi": "{count} ፊደል ቅርጾች",
+  "x.daha-fazla-goster": "ተጨማሪ {count} አሳይ",
+  "x.yaz-tipi": "የፊደል ቅርጽ",
+  "x.yukleniyor-yuzde": "በመጫን ላይ %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "ስቀራሩ እስኪጠናቀቅ ማስቀመጥ አይቻልም",
+  "x.gorsel-optimize-edildi": "ምስሉ ተመቻችቷል፡ {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "የእድሳት አገናኙ በመድረኩ ይተዳደራል።",
+  "x.degistirmek-icin-platform-destegine-basvurun": "ለመለወጥ የመድረክ ድጋፍን ያግኙ"
 }

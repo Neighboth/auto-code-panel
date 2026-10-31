@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "マネージャー {user} のパスワードが更新されました",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "マネージャーと顧客のパスワードはプラットフォーム所有者のみに表示されます",
   "x.yuklenemedi": "アップロードに失敗しました",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ブラウザがセッション Cookie をブロックしました。新しいタブでアプリを開くか、このサイトの Cookie を許可してください。"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ブラウザがセッション Cookie をブロックしました。新しいタブでアプリを開くか、このサイトの Cookie を許可してください。",
+  "x.font-sayisi": "{count} 種類のフォント",
+  "x.daha-fazla-goster": "さらに {count} 件表示",
+  "x.yaz-tipi": "書体",
+  "x.yukleniyor-yuzde": "アップロード中 %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "アップロードが完了するまで保存できません",
+  "x.gorsel-optimize-edildi": "画像を最適化しました: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "更新リンクはプラットフォームが管理しています。",
+  "x.degistirmek-icin-platform-destegine-basvurun": "変更するにはプラットフォームのサポートにお問い合わせください"
 }

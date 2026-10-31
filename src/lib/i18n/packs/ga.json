@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Tá pasfhocail bhainisteora agus chustaiméara le feiceáil ag úinéir an ardáin amháin",
   "x.yuklenemedi": "Theip ar an uaslódáil",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Chuir do bhrabhsálaí bac ar fhianán an tseisiúin. Oscail an aip i gcluaisín nua nó ceadaigh fianáin don suíomh seo."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Chuir do bhrabhsálaí bac ar fhianán an tseisiúin. Oscail an aip i gcluaisín nua nó ceadaigh fianáin don suíomh seo.",
+  "x.font-sayisi": "{count} clófhoireann",
+  "x.daha-fazla-goster": "Taispeáin {count} eile",
+  "x.yaz-tipi": "Cló",
+  "x.yukleniyor-yuzde": "Á uaslódáil %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ní féidir sábháil go dtí go gcríochnóidh an uaslódáil",
+  "x.gorsel-optimize-edildi": "Optamaithe an íomhá: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Is í an ardán a bhainistíonn an nasc athnuachana.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Déan teagmháil le tacaíocht an ardáin chun é a athrú"
 }

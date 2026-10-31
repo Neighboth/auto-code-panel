@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Lykilorð stjórnenda og viðskiptavina eru aðeins sýnileg vettvangseiganda",
   "x.yuklenemedi": "Upphleðsla mistókst",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vafrinn þinn lokaði á sessionsfótsporið. Opnaðu forritið í nýjum flipa eða leyfðu vafrakökur fyrir þessa síðu."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vafrinn þinn lokaði á sessionsfótsporið. Opnaðu forritið í nýjum flipa eða leyfðu vafrakökur fyrir þessa síðu.",
+  "x.font-sayisi": "{count} leturgerðir",
+  "x.daha-fazla-goster": "Sýna {count} í viðbót",
+  "x.yaz-tipi": "Leturgerð",
+  "x.yukleniyor-yuzde": "Hleð upp %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ekki er hægt að vista fyrr en upphleðslu lýkur",
+  "x.gorsel-optimize-edildi": "Mynd fínstillt: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Endurnýjunarhlekkurinn er stýrður af pallinum.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Hafðu samband við stuðning pallsins til að breyta honum"
 }

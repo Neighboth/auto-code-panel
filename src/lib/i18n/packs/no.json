@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Passordet til administratoren {user} er oppdatert",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- og kundepassord er kun synlige for plattformeieren",
   "x.yuklenemedi": "Opplasting mislyktes",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Nettleseren din blokkerte øktinformasjonskapselen. Åpne appen i en ny fane eller tillat informasjonskapsler for dette nettstedet."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Nettleseren din blokkerte øktinformasjonskapselen. Åpne appen i en ny fane eller tillat informasjonskapsler for dette nettstedet.",
+  "x.font-sayisi": "{count} skrifttyper",
+  "x.daha-fazla-goster": "Vis {count} til",
+  "x.yaz-tipi": "Skrifttype",
+  "x.yukleniyor-yuzde": "Laster opp %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Kan ikke lagre før opplastingen er ferdig",
+  "x.gorsel-optimize-edildi": "Bilde optimalisert: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Fornyelseslenken administreres av plattformen.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Kontakt plattformens støtte for å endre den"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Geslo upravitelja {user} je posodobljeno",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Gesla upravitelja in strank so vidna samo lastniku platforme",
   "x.yuklenemedi": "Nalaganje ni uspelo",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš brskalnik je blokiral sejni piškotek. Odprite aplikacijo v novem zavihku ali dovolite piškotke za to spletno mesto."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš brskalnik je blokiral sejni piškotek. Odprite aplikacijo v novem zavihku ali dovolite piškotke za to spletno mesto.",
+  "x.font-sayisi": "{count} pisav",
+  "x.daha-fazla-goster": "Prikaži še {count}",
+  "x.yaz-tipi": "Pisava",
+  "x.yukleniyor-yuzde": "Nalaganje %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ni mogoče shraniti, dokler nalaganje ni končano",
+  "x.gorsel-optimize-edildi": "Slika optimizirana: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Povezavo za podaljšanje upravlja platforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Za spremembo se obrnite na podporo platforme"
 }

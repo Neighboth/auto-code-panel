@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Las contraseñas de administrador y cliente solo son visibles para el propietario de la plataforma",
   "x.yuklenemedi": "Error al subir",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Su navegador bloqueó la cookie de sesión. Abra la aplicación en una nueva pestaña o permita las cookies para este sitio."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Su navegador bloqueó la cookie de sesión. Abra la aplicación en una nueva pestaña o permita las cookies para este sitio.",
+  "x.font-sayisi": "{count} fuentes",
+  "x.daha-fazla-goster": "Mostrar {count} más",
+  "x.yaz-tipi": "Tipografía",
+  "x.yukleniyor-yuzde": "Subiendo %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "No se puede guardar hasta que termine la subida",
+  "x.gorsel-optimize-edildi": "Imagen optimizada: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "El enlace de renovación lo gestiona la plataforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Contacta con el soporte de la plataforma para cambiarlo"
 }

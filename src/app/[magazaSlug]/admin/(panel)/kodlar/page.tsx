@@ -52,7 +52,13 @@ export default async function AdminCodesPage({ params }: { params: Promise<{ mag
     .orderBy(games.title);
 
   const accountRows = await db
-    .select({ id: accounts.id, username: accounts.username, email: accounts.email, platformLabel: accounts.platformLabel })
+    .select({
+      id: accounts.id,
+      username: accounts.username,
+      email: accounts.email,
+      platformLabel: accounts.platformLabel,
+      productLabel: accounts.productLabel,
+    })
     .from(accounts)
     .where(eq(accounts.storeId, store.id))
     .orderBy(desc(accounts.createdAt));
@@ -114,10 +120,17 @@ export default async function AdminCodesPage({ params }: { params: Promise<{ mag
       slug={store.slug}
       codes={list}
       games={gameRows}
-      accounts={accountRows.map((account) => ({
-        id: account.id,
-        label: `${account.username ?? account.email ?? `Hesap #${account.id}`} · ${account.platformLabel}`,
-      }))}
+      accounts={accountRows.map((account) => {
+        const name = account.username?.trim() || account.email?.trim() || `Hesap #${account.id}`;
+        return {
+          id: account.id,
+          label: `${name} · ${account.platformLabel}`,
+          name,
+          email: account.email ?? "",
+          platformLabel: account.platformLabel,
+          productLabel: account.productLabel,
+        };
+      })}
     />
   );
 }

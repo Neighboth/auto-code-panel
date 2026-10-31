@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Пароль менеджера {user} обновлен.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Пароли менеджера и клиента видны только владельцу платформы.",
   "x.yuklenemedi": "Загрузка не удалась",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браузер заблокировал файл cookie сеанса. Откройте приложение в новой вкладке или разрешите использование файлов cookie для этого сайта."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браузер заблокировал файл cookie сеанса. Откройте приложение в новой вкладке или разрешите использование файлов cookie для этого сайта.",
+  "x.font-sayisi": "{count} шрифтов",
+  "x.daha-fazla-goster": "Показать ещё {count}",
+  "x.yaz-tipi": "Шрифт",
+  "x.yukleniyor-yuzde": "Загрузка %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Нельзя сохранить, пока загрузка не завершится",
+  "x.gorsel-optimize-edildi": "Изображение оптимизировано: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Ссылкой на продление управляет платформа.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Чтобы изменить её, обратитесь в поддержку платформы"
 }

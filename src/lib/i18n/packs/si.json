@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "කළමනාකරු සහ පාරිභෝගික මුරපද දෘශ්‍යමාන වන්නේ වේදිකා හිමිකරුට පමණි",
   "x.yuklenemedi": "උඩුගත කිරීම අසාර්ථක විය",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ඔබගේ බ්‍රවුසරය සැසි කුකී අවහිර කර ඇත. යෙදුම නව ටැබයක විවෘත කරන්න හෝ මෙම වෙබ් අඩවිය සඳහා කුකීස් ඉඩ දෙන්න."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ඔබගේ බ්‍රවුසරය සැසි කුකී අවහිර කර ඇත. යෙදුම නව ටැබයක විවෘත කරන්න හෝ මෙම වෙබ් අඩවිය සඳහා කුකීස් ඉඩ දෙන්න.",
+  "x.font-sayisi": "ෆොන්ට් {count}",
+  "x.daha-fazla-goster": "තවත් {count} ක් පෙන්වන්න",
+  "x.yaz-tipi": "ෆොන්ට්",
+  "x.yukleniyor-yuzde": "උඩුගත වෙමින් %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "උඩුගත කිරීම අවසන් වන තුරු සුරැකිය නොහැක",
+  "x.gorsel-optimize-edildi": "පින්තූරය ප්‍රශස්ත කරන ලදි: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "අලුත් කිරීමේ සබැඳිය වේදිකාව විසින් කළමනාකරණය කරයි.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "එය වෙනස් කිරීමට වේදිකා සහාය අමතන්න"
 }

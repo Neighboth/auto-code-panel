@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "ਪ੍ਰਬੰਧਕ {user} ਦਾ ਪਾਸਵਰਡ ਅੱਪਡੇਟ ਕੀਤਾ ਗਿਆ",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "ਮੈਨੇਜਰ ਅਤੇ ਗਾਹਕ ਪਾਸਵਰਡ ਸਿਰਫ਼ ਪਲੇਟਫਾਰਮ ਮਾਲਕ ਨੂੰ ਦਿਖਾਈ ਦਿੰਦੇ ਹਨ",
   "x.yuklenemedi": "ਅੱਪਲੋਡ ਅਸਫਲ ਰਿਹਾ",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ਤੁਹਾਡੇ ਬ੍ਰਾਊਜ਼ਰ ਨੇ ਸੈਸ਼ਨ ਕੂਕੀ ਨੂੰ ਬਲੌਕ ਕੀਤਾ ਹੈ। ਐਪ ਨੂੰ ਇੱਕ ਨਵੀਂ ਟੈਬ ਵਿੱਚ ਖੋਲ੍ਹੋ ਜਾਂ ਇਸ ਸਾਈਟ ਲਈ ਕੂਕੀਜ਼ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ਤੁਹਾਡੇ ਬ੍ਰਾਊਜ਼ਰ ਨੇ ਸੈਸ਼ਨ ਕੂਕੀ ਨੂੰ ਬਲੌਕ ਕੀਤਾ ਹੈ। ਐਪ ਨੂੰ ਇੱਕ ਨਵੀਂ ਟੈਬ ਵਿੱਚ ਖੋਲ੍ਹੋ ਜਾਂ ਇਸ ਸਾਈਟ ਲਈ ਕੂਕੀਜ਼ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।",
+  "x.font-sayisi": "{count} ਫ਼ੌਂਟ",
+  "x.daha-fazla-goster": "{count} ਹੋਰ ਦਿਖਾਓ",
+  "x.yaz-tipi": "ਫ਼ੌਂਟ",
+  "x.yukleniyor-yuzde": "ਅੱਪਲੋਡ ਹੋ ਰਿਹਾ ਹੈ %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "ਅੱਪਲੋਡ ਪੂਰਾ ਹੋਣ ਤੱਕ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ",
+  "x.gorsel-optimize-edildi": "ਤਸਵੀਰ ਅਨੁਕੂਲਿਤ ਕੀਤੀ ਗਈ: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "ਰੀਨਿਊਅਲ ਲਿੰਕ ਪਲੇਟਫ਼ਾਰਮ ਦੁਆਰਾ ਪ੍ਰਬੰਧਿਤ ਹੁੰਦਾ ਹੈ।",
+  "x.degistirmek-icin-platform-destegine-basvurun": "ਇਸਨੂੰ ਬਦਲਣ ਲਈ ਪਲੇਟਫ਼ਾਰਮ ਸਹਾਇਤਾ ਨਾਲ ਸੰਪਰਕ ਕਰੋ"
 }

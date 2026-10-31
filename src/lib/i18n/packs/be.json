@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Пароль кіраўніка {user} абноўлены",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролі кіраўніка і кліента бачныя толькі ўладальніку платформы",
   "x.yuklenemedi": "Памылка загрузкі",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браўзер заблакаваў файл cookie сесіі. Адкрыйце праграму ў новай укладцы або дазвольце файлы cookie для гэтага сайта."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браўзер заблакаваў файл cookie сесіі. Адкрыйце праграму ў новай укладцы або дазвольце файлы cookie для гэтага сайта.",
+  "x.font-sayisi": "{count} шрыфтоў",
+  "x.daha-fazla-goster": "Паказаць яшчэ {count}",
+  "x.yaz-tipi": "Шрыфт",
+  "x.yukleniyor-yuzde": "Загрузка %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Нельга захаваць, пакуль загрузка не скончыцца",
+  "x.gorsel-optimize-edildi": "Выява аптымізавана: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Спасылкай на падаўжэнне кіруе платформа.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Каб змяніць, звярніцеся ў падтрымку платформы"
 }

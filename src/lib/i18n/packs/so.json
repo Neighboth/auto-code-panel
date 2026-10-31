@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Furaha maamulaha {user} waa la cusboonaysiiyay",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Maamulaha iyo furaha sirta ah ee macaamiisha ayaa u muuqda mulkiilaha madal kaliya",
   "x.yuklenemedi": "Soo dejintu waa fashilantay",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Barowsarkaaga ayaa xannibay buskudka fadhiga Ku fur abka tab cusub ama u oggolow cookies-ka boggan."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Barowsarkaaga ayaa xannibay buskudka fadhiga Ku fur abka tab cusub ama u oggolow cookies-ka boggan.",
+  "x.font-sayisi": "{count} font",
+  "x.daha-fazla-goster": "Muuji {count} dheeraad ah",
+  "x.yaz-tipi": "Nooca farriimaha",
+  "x.yukleniyor-yuzde": "Waa la soo gelinayaa %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Lama kaydin karo ilaa soo gelinta dhammaato",
+  "x.gorsel-optimize-edildi": "Sawirka waa la hagaajiyay: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Xiriirka kordhinta waxaa maamula madal.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "La xiriir taageerada madasha si aad u beddesho"
 }

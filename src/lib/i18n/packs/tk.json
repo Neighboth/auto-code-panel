@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Dolandyryjy we müşderi parollary diňe platformanyň eýesine görünýär",
   "x.yuklenemedi": "Uploadüklemek şowsuz",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeriňiz sessiýa gutapjygyny bloklady. Programmany täze goýmada açyň ýa-da bu sahypa üçin gutapjyklara rugsat beriň."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeriňiz sessiýa gutapjygyny bloklady. Programmany täze goýmada açyň ýa-da bu sahypa üçin gutapjyklara rugsat beriň.",
+  "x.font-sayisi": "{count} şrift",
+  "x.daha-fazla-goster": "Ýene {count} görkez",
+  "x.yaz-tipi": "Şrift",
+  "x.yukleniyor-yuzde": "Ýüklenýär %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ýükleme gutarmanka ýazyp bolmaýar",
+  "x.gorsel-optimize-edildi": "Surat optimizirlendi: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Möhleti uzaltmak baglanyşygy platforma tarapyndan dolandyrylýar.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Üýtgetmek üçin platformanyň goldawyna ýüz tutuň"
 }

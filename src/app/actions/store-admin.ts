@@ -24,14 +24,13 @@ import {
   isValidDomain,
   normalizeDomain,
 } from "@/lib/domain";
-import {
-  FONT_OPTIONS,
-  PLATFORM_PRESETS,
+import { PLATFORM_PRESETS,
   guardHasEmail,
   guardHasSteam,
   guardHasTotp,
   GUARD_OPTIONS,
 } from "@/lib/fonts";
+import { isSupportedFont } from "@/lib/font-providers";
 import { parsePrice, RESERVED_SLUGS, slugify } from "@/lib/format";
 import { convertAmount, convertWithRates, getUsdRates } from "@/lib/currency";
 import { MAIL_PRESETS, resolveMailPreset } from "@/lib/imap";
@@ -837,7 +836,15 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   const fontFamily = str(formData, "fontFamily") || store.fontFamily;
   const fontUrl = str(formData, "fontUrl") ?? "";
   const fontLabel = str(formData, "fontLabel").slice(0, 60);
-  const renewalUrl = str(formData, "renewalUrl");
+  /*
+   * `renewalUrl` is intentionally NOT read from the form.
+   *
+   * It used to be writable here, which let any store owner repoint the renewal
+   * button of their own checkout (and of the reminder e-mails) to an arbitrary
+   * host — a one-field phishing redirect. The link is a platform/reseller
+   * decision now: only `saveStoreForPlatform` and the global settings action in
+   * `super-admin.ts` write the column.
+   */
 
   if (logoUrl && !isLogoSrc(logoUrl)) {
     return { ok: false, message: t("x.logo-adresi-http-s-ile-baslamaldr") };
@@ -845,7 +852,7 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   if (faviconUrl && !isLogoSrc(faviconUrl)) {
     return { ok: false, message: t("x.favicon-adresi-http-s-ile-baslamaldr") };
   }
-  if (!FONT_OPTIONS.some((option) => option.family === fontFamily)) {
+  if (!isSupportedFont(fontFamily)) {
     return { ok: false, message: t("x.desteklenmeyen-font-secimi") };
   }
   if (fontUrl && !isLocalMedia(fontUrl) && !/^https?:\/\//i.test(fontUrl)) {
@@ -855,10 +862,6 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
     // The previous typeface is only deleted when no store still points at it.
     await releaseMedia(store.fontUrl);
   }
-  if (renewalUrl && !/^https?:\/\//i.test(renewalUrl)) {
-    return { ok: false, message: t("x.sure-uzatma-linki-http-s-ile-baslamaldr") };
-  }
-
   let contactLinks: { label: string; url: string }[] = [];
   try {
     const parsed = JSON.parse(str(formData, "contactLinks") || "[]") as unknown;
@@ -898,7 +901,6 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
       fontUrl,
       fontLabel,
       contactLinks,
-      renewalUrl: renewalUrl || null,
       updatedAt: new Date(),
     })
     .where(eq(stores.id, store.id));

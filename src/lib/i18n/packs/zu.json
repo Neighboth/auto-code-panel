@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Iphasiwedi yesiphathi {user} ibuyekeziwe",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Amaphasiwedi omphathi nawekhasimende abonakala kumnikazi wenkundla kuphela",
   "x.yuklenemedi": "Ukulayisha kuhlulekile",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Isiphequluli sakho sivimbe ikhukhi yeseshini. Vula uhlelo lokusebenza kuthebhu entsha noma vumela amakhukhi ale sayithi."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Isiphequluli sakho sivimbe ikhukhi yeseshini. Vula uhlelo lokusebenza kuthebhu entsha noma vumela amakhukhi ale sayithi.",
+  "x.font-sayisi": "Amafonti angu-{count}",
+  "x.daha-fazla-goster": "Bonisa okunye okungu-{count}",
+  "x.yaz-tipi": "Uhlobo lwefonti",
+  "x.yukleniyor-yuzde": "Iyalayisha %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Awukwazi ukugcina kuze kuqede ukulayisha",
+  "x.gorsel-optimize-edildi": "Isithombe sithuthukisiwe: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Isixhumanisi sokuvuselela silawulwa yiplatformu.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Xhumana nosekelo lweplatformu ukuze usishintshe"
 }

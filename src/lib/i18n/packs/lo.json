@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "ອັບເດດລະຫັດຜ່ານຂອງຜູ້ຈັດການ {user} ແລ້ວ",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "ຜູ້ຈັດການ ແລະລະຫັດຜ່ານຂອງລູກຄ້າແມ່ນເຫັນໄດ້ໂດຍເຈົ້າຂອງເວທີເທົ່ານັ້ນ",
   "x.yuklenemedi": "ອັບໂຫຼດບໍ່ສຳເລັດ",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ບຼາວເຊີຂອງທ່ານໄດ້ບລັອກຄຸກກີເຊດຊັນ. ເປີດແອັບໃນແຖບໃໝ່ ຫຼືອະນຸຍາດຄຸກກີ້ສຳລັບເວັບໄຊນີ້."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ບຼາວເຊີຂອງທ່ານໄດ້ບລັອກຄຸກກີເຊດຊັນ. ເປີດແອັບໃນແຖບໃໝ່ ຫຼືອະນຸຍາດຄຸກກີ້ສຳລັບເວັບໄຊນີ້.",
+  "x.font-sayisi": "{count} ຟອນ",
+  "x.daha-fazla-goster": "ສະແດງເພີ່ມອີກ {count}",
+  "x.yaz-tipi": "ຟອນ",
+  "x.yukleniyor-yuzde": "ກຳລັງອັບໂຫລດ %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "ບໍ່ສາມາດບັນທຶກໄດ້ຈົນກວ່າການອັບໂຫລດຈະສຳເລັດ",
+  "x.gorsel-optimize-edildi": "ປັບປຸງຮູບພາບແລ້ວ: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "ລິ້ງຕໍ່ອາຍຸຖືກຈັດການໂດຍແພລດຟອມ.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "ຕິດຕໍ່ຝ່າຍສະໜັບສະໜູນແພລດຟອມເພື່ອປ່ຽນ"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Mot de passe du gestionnaire {user} mis à jour",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Les mots de passe du gestionnaire et du client sont visibles uniquement par le propriétaire de la plateforme.",
   "x.yuklenemedi": "Échec du téléchargement",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Votre navigateur a bloqué le cookie de session. Ouvrez l'application dans un nouvel onglet ou autorisez les cookies pour ce site."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Votre navigateur a bloqué le cookie de session. Ouvrez l'application dans un nouvel onglet ou autorisez les cookies pour ce site.",
+  "x.font-sayisi": "{count} polices",
+  "x.daha-fazla-goster": "Afficher {count} de plus",
+  "x.yaz-tipi": "Police",
+  "x.yukleniyor-yuzde": "Téléversement %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Impossible d'enregistrer avant la fin du téléversement",
+  "x.gorsel-optimize-edildi": "Image optimisée : {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Le lien de renouvellement est géré par la plateforme.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Contactez le support de la plateforme pour le modifier"
 }

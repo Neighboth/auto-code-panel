@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Nenosiri la msimamizi {user} limesasishwa",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manenosiri ya kidhibiti na mteja yanaonekana kwa mmiliki wa jukwaa pekee",
   "x.yuklenemedi": "Imeshindwa kupakia",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Kivinjari chako kimezuia kidakuzi cha kipindi. Fungua programu katika kichupo kipya au ruhusu vidakuzi vya tovuti hii."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Kivinjari chako kimezuia kidakuzi cha kipindi. Fungua programu katika kichupo kipya au ruhusu vidakuzi vya tovuti hii.",
+  "x.font-sayisi": "Fonti {count}",
+  "x.daha-fazla-goster": "Onyesha {count} zaidi",
+  "x.yaz-tipi": "Aina ya herufi",
+  "x.yukleniyor-yuzde": "Inapakia %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Haiwezi kuhifadhiwa hadi upakiaji ukamilike",
+  "x.gorsel-optimize-edildi": "Picha imeboreshwa: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Kiungo cha kuhuisha kinasimamiwa na jukwaa.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Wasiliana na usaidizi wa jukwaa ili kukibadilisha"
 }

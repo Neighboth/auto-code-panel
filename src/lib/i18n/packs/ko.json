@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "관리자 {user}의 비밀번호가 업데이트되었습니다.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "관리자 및 고객 비밀번호는 플랫폼 소유자에게만 표시됩니다.",
   "x.yuklenemedi": "업로드 실패",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Your browser blocked the session cookie. Open the app in a new tab or allow cookies for this site."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Your browser blocked the session cookie. Open the app in a new tab or allow cookies for this site.",
+  "x.font-sayisi": "글꼴 {count}개",
+  "x.daha-fazla-goster": "{count}개 더 보기",
+  "x.yaz-tipi": "글꼴",
+  "x.yukleniyor-yuzde": "업로드 중 %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "업로드가 끝나기 전에는 저장할 수 없습니다",
+  "x.gorsel-optimize-edildi": "이미지 최적화됨: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "갱신 링크는 플랫폼에서 관리합니다.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "변경하려면 플랫폼 지원팀에 문의하세요"
 }

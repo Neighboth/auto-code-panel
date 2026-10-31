@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Рамзи мудири {user} нав карда шуд",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролҳои менеҷер ва муштарӣ танҳо ба соҳиби платформа намоёнанд",
   "x.yuklenemedi": "Боргузорӣ натавонист",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузери шумо кукиҳои сессияро маҳкам кард. Барномаро дар ҷадвали нав кушоед ё кукиҳоро барои ин сайт иҷозат диҳед."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузери шумо кукиҳои сессияро маҳкам кард. Барномаро дар ҷадвали нав кушоед ё кукиҳоро барои ин сайт иҷозат диҳед.",
+  "x.font-sayisi": "{count} шрифт",
+  "x.daha-fazla-goster": "Боз {count} нишон диҳед",
+  "x.yaz-tipi": "Шрифт",
+  "x.yukleniyor-yuzde": "Боргирӣ %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "То анҷоми боргирӣ нигоҳ доштан мумкин нест",
+  "x.gorsel-optimize-edildi": "Тасвир оптимизатсия шуд: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Пайванди тамдидро платформа идора мекунад.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Барои иваз кардан ба дастгирии платформа муроҷиат кунед"
 }

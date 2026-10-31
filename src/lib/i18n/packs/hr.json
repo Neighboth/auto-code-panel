@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Lozinka upravitelja {user} ažurirana",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Zaporke upravitelja i korisnika vidljive su samo vlasniku platforme",
   "x.yuklenemedi": "Prijenos nije uspio",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš preglednik blokirao je kolačić sesije. Otvorite aplikaciju u novoj kartici ili dopustite kolačiće za ovu stranicu."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš preglednik blokirao je kolačić sesije. Otvorite aplikaciju u novoj kartici ili dopustite kolačiće za ovu stranicu.",
+  "x.font-sayisi": "{count} fontova",
+  "x.daha-fazla-goster": "Prikaži još {count}",
+  "x.yaz-tipi": "Font",
+  "x.yukleniyor-yuzde": "Prijenos %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Nije moguće spremiti prije završetka prijenosa",
+  "x.gorsel-optimize-edildi": "Slika optimizirana: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Poveznicom za produljenje upravlja platforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Obratite se podršci platforme za promjenu"
 }

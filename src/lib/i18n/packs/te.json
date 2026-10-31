@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "మేనేజర్ {user} పాస్‌వర్డ్ అప్‌డేట్ చేయబడింది",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "మేనేజర్ మరియు కస్టమర్ పాస్‌వర్డ్‌లు ప్లాట్‌ఫారమ్ యజమానికి మాత్రమే కనిపిస్తాయి",
   "x.yuklenemedi": "అప్‌లోడ్ విఫలమైంది",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "మీ బ్రౌజర్ సెషన్ కుక్కీని బ్లాక్ చేసింది. యాప్‌ను కొత్త ట్యాబ్‌లో తెరవండి లేదా ఈ సైట్ కోసం కుక్కీలను అనుమతించండి."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "మీ బ్రౌజర్ సెషన్ కుక్కీని బ్లాక్ చేసింది. యాప్‌ను కొత్త ట్యాబ్‌లో తెరవండి లేదా ఈ సైట్ కోసం కుక్కీలను అనుమతించండి.",
+  "x.font-sayisi": "{count} ఫాంట్లు",
+  "x.daha-fazla-goster": "మరో {count} చూపించు",
+  "x.yaz-tipi": "ఫాంట్",
+  "x.yukleniyor-yuzde": "అప్‌లోడ్ అవుతోంది %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "అప్‌లోడ్ పూర్తయ్యే వరకు సేవ్ చేయలేరు",
+  "x.gorsel-optimize-edildi": "చిత్రం ఆప్టిమైజ్ చేయబడింది: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "పునరుద్ధరణ లింక్‌ను ప్లాట్‌ఫారమ్ నిర్వహిస్తుంది.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "మార్చడానికి ప్లాట్‌ఫారమ్ మద్దతును సంప్రదించండి"
 }

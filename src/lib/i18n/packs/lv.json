@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Pārziņa {user} parole ir atjaunināta",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Pārziņa un klientu paroles ir redzamas tikai platformas īpašniekam",
   "x.yuklenemedi": "Augšupielāde neizdevās",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jūsu pārlūkprogramma bloķēja sesijas sīkfailu. Atveriet lietotni jaunā cilnē vai atļaujiet sīkfailus šai vietnei."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jūsu pārlūkprogramma bloķēja sesijas sīkfailu. Atveriet lietotni jaunā cilnē vai atļaujiet sīkfailus šai vietnei.",
+  "x.font-sayisi": "{count} fonti",
+  "x.daha-fazla-goster": "Rādīt vēl {count}",
+  "x.yaz-tipi": "Fonts",
+  "x.yukleniyor-yuzde": "Augšupielāde %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Nevar saglabāt, pirms augšupielāde nav pabeigta",
+  "x.gorsel-optimize-edildi": "Attēls optimizēts: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Pagarinājuma saiti pārvalda platforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Lai to mainītu, sazinieties ar platformas atbalstu"
 }

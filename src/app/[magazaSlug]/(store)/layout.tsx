@@ -92,8 +92,13 @@ export default async function StorefrontLayout({
               {store.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                    loading="lazy"
-                    decoding="async" src={store.logoUrl} alt={store.name} className="h-7 w-7 rounded-md object-cover" />
+                  src={store.logoUrl}
+                  alt={store.name}
+                  width={28}
+                  height={28}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-7 w-7 rounded-md object-cover" />
               ) : (
                 <span
                   className="flex h-7 w-7 items-center justify-center rounded-md text-[13px] font-bold text-white"

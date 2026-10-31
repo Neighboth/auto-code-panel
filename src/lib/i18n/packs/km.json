@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "បានធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់របស់អ្នកគ្រប់គ្រង {user}",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "អ្នកគ្រប់គ្រង និងពាក្យសម្ងាត់របស់អតិថិជនអាចមើលឃើញដោយម្ចាស់វេទិកាតែប៉ុណ្ណោះ",
   "x.yuklenemedi": "ការបង្ហោះបានបរាជ័យ",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "កម្មវិធីរុករកតាមអ៊ីនធឺណិតរបស់អ្នកបានរារាំងខូគីសម័យ។ បើកកម្មវិធីនៅក្នុងផ្ទាំងថ្មី ឬអនុញ្ញាតខូគីសម្រាប់គេហទំព័រនេះ។"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "កម្មវិធីរុករកតាមអ៊ីនធឺណិតរបស់អ្នកបានរារាំងខូគីសម័យ។ បើកកម្មវិធីនៅក្នុងផ្ទាំងថ្មី ឬអនុញ្ញាតខូគីសម្រាប់គេហទំព័រនេះ។",
+  "x.font-sayisi": "ពុម្ពអក្សរ {count}",
+  "x.daha-fazla-goster": "បង្ហាញ {count} ទៀត",
+  "x.yaz-tipi": "ពុម្ពអក្សរ",
+  "x.yukleniyor-yuzde": "កំពុងផ្ទុកឡើង %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "មិនអាចរក្សាទុកបានទេរហូតដល់ការផ្ទុកឡើងបញ្ចប់",
+  "x.gorsel-optimize-edildi": "រូបភាពត្រូវបានបង្កើនប្រសិទ្ធភាព៖ {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "តំណបន្តត្រូវបានគ្រប់គ្រងដោយវេទិកា។",
+  "x.degistirmek-icin-platform-destegine-basvurun": "សូមទាក់ទងផ្នែកគាំទ្រវេទិកាដើម្បីផ្លាស់ប្តូរ"
 }

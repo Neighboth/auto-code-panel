@@ -6,6 +6,33 @@
 
 ---
 
+## 0.0y Bu tur: süre uzatma kilidi, hız, yükleme yüzdesi, sihirbaz alanları (PR #17)
+
+> Tarih: 2026-10-31 · Branch: `arena/4ae7c765-auto-code-panel` → `main`
+
+### Yapılanlar
+| # | Konu | Ayrıntı |
+| --- | --- | --- |
+| 1 | Süre uzatma linki artık mağazaya kapalı | `saveStoreSettings` formdan `renewalUrl` **okumuyor** ve kolonu yazmıyor; ayarlar ekranındaki alan `readOnly/disabled` + kilit rozeti ve "platform tarafından yönetilir" açıklaması. Süre uzatma linkini yalnız `super-admin.ts` (bayi/global ayarlar) yazabiliyor. Doğrulama: form `renewalUrl=https://evil.example.com/renew` gönderdi, DB'de `renewal_url` **NULL** kaldı. |
+| 2 | Vitrin 15–20 sn bekletmiyor | `[magazaSlug]/layout.tsx` font `<link>`'i artık **render-blocking değil**: `media="print"` + `onload` ile async, `<noscript>` yedeği var, yalnız kullanılan aile istenir, `preconnect` Google **veya** Fontshare'e göre seçilir. Logo/kapak görselleri yüklemede `sharp` ile WebP'ye indiriliyor (2600×2600 PNG → 1.9 KB) ve başlık logoları `loading="lazy"`'den `eager` + `fetchPriority="high"`'a alındı (logo artık sonradan "patlamıyor"). |
+| 3 | Yükleme yüzdesi + kilit + yarım dosya temizliği | `lib/upload-client.ts`: `XMLHttpRequest.upload.onprogress` ile gerçek yüzde, `AbortController` ile iptal, sekmeyi kapatınca `keepalive` DELETE. Yükleme sürerken **kaydet düğmesi kilitli** ("Yükleme bitmeden kaydedilemez"). Sunucu önce `data/media/.tmp` dizinine yazıp başarıda `rename` ediyor; kopan istek `request.signal.aborted` ile 499 dönüyor ve 10 dakikadan eski artıklar her yüklemede `pruneTempUploads()` ile siliniyor. |
+| 4 | Kod sihirbazında hesap adı/e-posta | Hesap seçim satırı artık görünen ad + e-posta + platform + ürün etiketi gösteriyor (`AccountOption` alanları ayrıştırıldı); boş e-postada "E-posta yok" yazar. |
+| 5 | Girişte 2FA | Akış zaten bağlıydı (bayi/mağaza/müşteri + süper yönetici); bu turda **uçtan uca doğrulandı**: seed'lenmiş güvenlik sorusu faktörüyle `storeAdminLogin → needs2fa:true, methods.question:true` → `verifyTwoFactorLogin("question")` → `ok:true`, `kr_store` çerezi, `/demo/admin` yönlendirmesi. |
+| 6 | Görünüm + daha çok font | Font seçici baştan yazıldı (`font-picker.tsx`): Google (**1.575**) + Fontshare (**33**) = **1.608 aile**, sağlayıcı sekmeleri ("Tümü / Google Fonts / Fontshare"), kategori çipleri, arama, IntersectionObserver ile yalnız görünen satırın önizlemesi (en fazla 6 aile/istek, eşzamanlı 2 istek, oturumda bir kez). Eski sürüm her tuş vuruşunda 10'a kadar blocking CSS isteği atıyordu. Ayarlar formuna yapışkan kaydet çubuğu eklendi. |
+
+### Doğrulama (bu turda çalıştırıldı)
+- `npx tsc --noEmit` ✅ · `npm run lint` ✅ (0 uyarı) · `npm run build` ✅
+- `npm run i18n:check` → `OK (0 / 0 / 0 / 0)` · `i18n:verify` → `78 dil · referans 1635 anahtar · ok: 78` · `i18n:coverage` → tüm diller `full`
+- Canlı: `/` 47 ms, `/demo` 58 ms, `/demo/admin/ayarlar` 60 ms (yerel). Vitrin HTML'inde font `<link media="print">` var, blocking stylesheet yok.
+- Yükleme API'si: 2600×2600 PNG → `{"ok":true,"bytes":1952,"originalBytes":98696}` (`/media/<sha1>.webp`), `DELETE ?path=` dosyayı siliyor, `../` içeren yol reddediliyor (`removed:false`), 30 dakikalık `.tmp` artığı bir sonraki yüklemede temizlendi.
+- Fontshare: `fontFamily=Clash Display` kaydedildi, vitrin `api.fontshare.com/v2/css?f[]=clash-display&display=swap` + preconnect üretti.
+
+### Bilinen sınırlar
+- 8 yeni anahtar 78 pakete elle çevrildi (makine çevirisi işi bu turda ağ erişimi olmadığı için çalıştırılmadı); `i18n:verify` hepsini geçti.
+- Fontshare slug'ları katalogdan; yanlış bir slug yalnız o satırın önizlemesini bozar (CSS 400 → sistem fontu), kaydı engellemez.
+
+---
+
 ## 0.0z Bu tur: fiyat planları, şifre kasası, gerçek görsel/font yükleme (PR #14)
 
 > Tarih: 2026-10-31 · Branch: `arena/cabc42da-auto-code-panel` → `main` (merge `acee239`)

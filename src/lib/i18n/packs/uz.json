@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "{user} menejerining paroli yangilandi",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Menejer va mijoz parollari faqat platforma egasiga koʻrinadi",
   "x.yuklenemedi": "Yuklab bo‘lmadi",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeringiz seans cookie faylini blokladi. Ilovani yangi tabda oching yoki ushbu sayt uchun cookie-fayllarga ruxsat bering."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeringiz seans cookie faylini blokladi. Ilovani yangi tabda oching yoki ushbu sayt uchun cookie-fayllarga ruxsat bering.",
+  "x.font-sayisi": "{count} shrift",
+  "x.daha-fazla-goster": "Yana {count} tasini koʻrsatish",
+  "x.yaz-tipi": "Shrift",
+  "x.yukleniyor-yuzde": "Yuklanmoqda %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Yuklash tugamaguncha saqlab boʻlmaydi",
+  "x.gorsel-optimize-edildi": "Rasm optimallashtirildi: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Muddatni uzaytirish havolasi platforma tomonidan boshqariladi.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Oʻzgartirish uchun platforma yordamiga murojaat qiling"
 }

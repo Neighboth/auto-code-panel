@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Đã cập nhật mật khẩu của người quản lý {user}",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Mật khẩu của người quản lý và khách hàng chỉ hiển thị với chủ sở hữu nền tảng",
   "x.yuklenemedi": "Tải lên không thành công",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Trình duyệt của bạn đã chặn cookie phiên. Mở ứng dụng trong tab mới hoặc cho phép cookie cho trang web này."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Trình duyệt của bạn đã chặn cookie phiên. Mở ứng dụng trong tab mới hoặc cho phép cookie cho trang web này.",
+  "x.font-sayisi": "{count} phông chữ",
+  "x.daha-fazla-goster": "Hiển thị thêm {count}",
+  "x.yaz-tipi": "Phông chữ",
+  "x.yukleniyor-yuzde": "Đang tải lên %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Không thể lưu cho đến khi tải lên hoàn tất",
+  "x.gorsel-optimize-edildi": "Ảnh đã được tối ưu: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Liên kết gia hạn do nền tảng quản lý.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Liên hệ bộ phận hỗ trợ nền tảng để thay đổi"
 }

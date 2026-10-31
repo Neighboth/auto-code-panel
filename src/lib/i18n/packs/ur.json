@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "مینیجر {user} کا پاس ورڈ اپ ڈیٹ ہو گیا۔",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "مینیجر اور کسٹمر کے پاس ورڈ صرف پلیٹ فارم کے مالک کو نظر آتے ہیں۔",
   "x.yuklenemedi": "اپ لوڈ ناکام ہو گیا۔",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "آپ کے براؤزر نے سیشن کوکی کو بلاک کر دیا ہے۔ ایپ کو ایک نئے ٹیب میں کھولیں یا اس سائٹ کے لیے کوکیز کی اجازت دیں۔"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "آپ کے براؤزر نے سیشن کوکی کو بلاک کر دیا ہے۔ ایپ کو ایک نئے ٹیب میں کھولیں یا اس سائٹ کے لیے کوکیز کی اجازت دیں۔",
+  "x.font-sayisi": "{count} فونٹس",
+  "x.daha-fazla-goster": "مزید {count} دکھائیں",
+  "x.yaz-tipi": "فونٹ",
+  "x.yukleniyor-yuzde": "اپ لوڈ ہو رہا ہے %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "اپ لوڈ مکمل ہونے تک محفوظ نہیں کیا جا سکتا",
+  "x.gorsel-optimize-edildi": "تصویر کو بہتر بنایا گیا: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "تجدید لنک پلیٹ فارم کے زیر انتظام ہے۔",
+  "x.degistirmek-icin-platform-destegine-basvurun": "اسے تبدیل کرنے کے لیے پلیٹ فارم سپورٹ سے رابطہ کریں"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "{user} menecerinin parolu yeniləndi",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Menecer və müştəri parollarını yalnız platforma sahibi görə bilər",
   "x.yuklenemedi": "Yükləmə uğursuz oldu",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeriniz sessiya kukisini blokladı. Proqramı yeni tabda açın və ya bu sayt üçün kukilərə icazə verin."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeriniz sessiya kukisini blokladı. Proqramı yeni tabda açın və ya bu sayt üçün kukilərə icazə verin.",
+  "x.font-sayisi": "{count} şrift",
+  "x.daha-fazla-goster": "{count} daha göstər",
+  "x.yaz-tipi": "Şrift",
+  "x.yukleniyor-yuzde": "Yüklənir %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Yükləmə bitməmiş yadda saxlamaq olmaz",
+  "x.gorsel-optimize-edildi": "Şəkil optimallaşdırıldı: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Müddət uzatma linki platforma tərəfindən idarə olunur.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Dəyişdirmək üçün platformanın dəstəyinə müraciət edin"
 }

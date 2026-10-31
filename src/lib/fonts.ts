@@ -87,21 +87,22 @@ export function guardHasEmail(guard: string): boolean {
 }
 
 export type { FontOption } from "@/lib/font-catalog";
-export { FONT_CATALOG, FONT_CATEGORIES, FONT_COUNT, FONT_OPTIONS } from "@/lib/font-catalog";
-
-/**
- * CSS2 URL for up to 6 families.
- *
- * The weight axis is intentionally omitted: the catalogue contains single-weight
- * display faces (Bebas Neue, Anton…) for which `:wght@400;500;600;700` answers
- * 400 and the whole stylesheet fails. Asking for the family alone returns
- * whatever weights it actually ships.
- */
-export function googleFontHref(families: string[]): string {
-  const unique = Array.from(new Set(families.filter(Boolean))).slice(0, 6);
-  if (unique.length === 0) return "";
-  const params = unique
-    .map((family) => `family=${encodeURIComponent(family).replace(/%20/g, "+")}`)
-    .join("&");
-  return `https://fonts.googleapis.com/css2?${params}&display=swap`;
-}
+export {
+  FONT_CATALOG,
+  FONT_CATEGORIES,
+  FONT_COUNT,
+  FONT_OPTIONS,
+} from "@/lib/font-catalog";
+export {
+  FONT_LIBRARY,
+  FONT_LIBRARY_COUNT,
+  FONTSHARE_FONTS,
+  familyStylesheet,
+  fontProvider,
+  googleFontHref,
+  isSupportedFont,
+  previewStylesheets,
+  providerLabel,
+  type CatalogFont,
+  type FontProvider,
+} from "@/lib/font-providers";

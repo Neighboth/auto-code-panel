@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "မန်နေဂျာ {user} ၏ စကားဝှက်ကို အပ်ဒိတ်လုပ်ထားသည်။",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "မန်နေဂျာနှင့် သုံးစွဲသူ စကားဝှက်များကို ပလပ်ဖောင်းပိုင်ရှင်ကသာ မြင်နိုင်သည်။",
   "x.yuklenemedi": "အပ်လုဒ် မအောင်မြင်ပါ။",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "သင့်ဘရောင်ဇာသည် စက်ရှင်ကွတ်ကီးကို ပိတ်ဆို့ထားသည်။ တဘ်အသစ်တွင် အက်ပ်ကိုဖွင့်ပါ သို့မဟုတ် ဤဆိုက်အတွက် ကွက်ကီးများကို ခွင့်ပြုပါ။"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "သင့်ဘရောင်ဇာသည် စက်ရှင်ကွတ်ကီးကို ပိတ်ဆို့ထားသည်။ တဘ်အသစ်တွင် အက်ပ်ကိုဖွင့်ပါ သို့မဟုတ် ဤဆိုက်အတွက် ကွက်ကီးများကို ခွင့်ပြုပါ။",
+  "x.font-sayisi": "ဖောင့် {count} ခု",
+  "x.daha-fazla-goster": "နောက်ထပ် {count} ခု ပြရန်",
+  "x.yaz-tipi": "ဖောင့်",
+  "x.yukleniyor-yuzde": "တင်နေသည် %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "တင်ခြင်း မပြီးမချင်း သိမ်း၍ မရပါ",
+  "x.gorsel-optimize-edildi": "ပုံကို အကောင်းဆုံးဖြစ်အောင် ပြုလုပ်ပြီး: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "သက်တမ်းတိုးလင့်ခ်ကို ပလက်ဖောင်းက စီမံသည်။",
+  "x.degistirmek-icin-platform-destegine-basvurun": "ပြောင်းလဲရန် ပလက်ဖောင်း ပံ့ပိုးမှုကို ဆက်သွယ်ပါ"
 }

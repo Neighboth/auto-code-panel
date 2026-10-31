@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Adgangskode for administrator {user} opdateret",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- og kundeadgangskoder er kun synlige for platformsejeren",
   "x.yuklenemedi": "Upload mislykkedes",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Din browser blokerede sessionscookien. Åbn appen på en ny fane, eller tillad cookies for dette websted."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Din browser blokerede sessionscookien. Åbn appen på en ny fane, eller tillad cookies for dette websted.",
+  "x.font-sayisi": "{count} skrifttyper",
+  "x.daha-fazla-goster": "Vis {count} mere",
+  "x.yaz-tipi": "Skrifttype",
+  "x.yukleniyor-yuzde": "Uploader %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Kan ikke gemme, før uploadet er færdigt",
+  "x.gorsel-optimize-edildi": "Billede optimeret: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Fornyelseslinket administreres af platformen.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Kontakt platformsupport for at ændre det"
 }

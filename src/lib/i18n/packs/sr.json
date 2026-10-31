@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Лозинке менаџера и клијента су видљиве само власнику платформе",
   "x.yuklenemedi": "Отпремање није успело",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш претраживач је блокирао колачић сесије. Отворите апликацију на новој картици или дозволите колачиће за ову веб локацију."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш претраживач је блокирао колачић сесије. Отворите апликацију на новој картици или дозволите колачиће за ову веб локацију.",
+  "x.font-sayisi": "{count} фонтова",
+  "x.daha-fazla-goster": "Прикажи још {count}",
+  "x.yaz-tipi": "Фонт",
+  "x.yukleniyor-yuzde": "Пренос %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Није могуће сачувати пре завршетка преноса",
+  "x.gorsel-optimize-edildi": "Слика је оптимизована: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Линком за продужење управља платформа.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Обратите се подршци платформе да је промените"
 }
