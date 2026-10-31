@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Bestuurder rekeninge",
   "x.yonetici-sifresi-guncellendi-user": "Wagwoord van bestuurder {user} is opgedateer",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Bestuurder- en kliëntwagwoorde is slegs vir die platformeienaar sigbaar",
-  "x.yuklenemedi": "Oplaai het misluk"
+  "x.yuklenemedi": "Oplaai het misluk",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jou blaaier het die sessiekoekie geblokkeer. Maak die toepassing in 'n nuwe oortjie oop of laat webkoekies vir hierdie werf toe."
 }
