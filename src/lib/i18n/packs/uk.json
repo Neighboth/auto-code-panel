@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Керуючі облікові записи",
   "x.yonetici-sifresi-guncellendi-user": "Пароль менеджера {user} оновлено",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролі менеджера та клієнта бачать лише власники платформи",
-  "x.yuklenemedi": "Помилка завантаження"
+  "x.yuklenemedi": "Помилка завантаження",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браузер заблокував файл cookie сесії. Відкрийте програму в новій вкладці або дозвольте файли cookie для цього сайту."
 }
