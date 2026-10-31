@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "منیجر اکاؤنٹس",
   "x.yonetici-sifresi-guncellendi-user": "مینیجر {user} کا پاس ورڈ اپ ڈیٹ ہو گیا۔",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "مینیجر اور کسٹمر کے پاس ورڈ صرف پلیٹ فارم کے مالک کو نظر آتے ہیں۔",
-  "x.yuklenemedi": "اپ لوڈ ناکام ہو گیا۔"
+  "x.yuklenemedi": "اپ لوڈ ناکام ہو گیا۔",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "آپ کے براؤزر نے سیشن کوکی کو بلاک کر دیا ہے۔ ایپ کو ایک نئے ٹیب میں کھولیں یا اس سائٹ کے لیے کوکیز کی اجازت دیں۔"
 }
