@@ -20,11 +20,14 @@ export function RedeemFlow({
   basePath,
   initialCode,
   customerName,
+  storeName,
 }: {
   slug: string;
   basePath: string;
   initialCode: string;
   customerName: string | null;
+  /** Only used for the branded header, matching the sign-in / sign-up cards. */
+  storeName: string;
 }) {
   const router = useRouter();
   const t = useT();
@@ -175,28 +178,72 @@ export function RedeemFlow({
       ) : null}
 
       {step === "entry" ? (
-        <div className="card p-6">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl border hairline">
-            <KeyRound size={17} />
-          </span>
-          <h1 className="mt-4 text-[22px] font-semibold tracking-[-0.02em]">Redeem kodunu kullan</h1>
-          <p className="mt-1.5 text-[13px] leading-relaxed muted">{t("x.satn-aldgnz-kodu-girin-secmeli-kodlarda-oyunlarnz-kendin")}</p>
-          <form onSubmit={onSubmitCode} className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <input
-              value={codeInput}
-              onChange={(event) => setCodeInput(event.target.value)}
-              placeholder="KEYR-XXXXX-XXXXX"
-              className="input mono flex-1 uppercase tracking-wide"
-              aria-label={t("redeem.title")}
-              required
-            />
-            <button type="submit" className="btn btn-primary btn-lg" disabled={pending}>
-              {pending ? <Loader2 size={15} className="animate-spin" /> : <ArrowRight size={15} />}
-              {t("x.kodu-dogrula")}
-            </button>
-          </form>
-          <div className="mt-5 rounded-lg border px-3.5 py-3 hairline">
-            <p className="text-[11.5px] leading-relaxed muted">{t("x.kodunuz-magaza-sahibinden-aldgnz-keyr-xxxxx-xxxxx-format")}</p>
+        <div className="card overflow-hidden">
+          {/* Same header pattern as /giris and /kayit: store badge, name, step label. */}
+          <div className="border-b px-5 py-5 hairline sm:px-6">
+            <div className="flex items-center gap-2.5">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[13px] font-bold text-white"
+                style={{ background: "var(--store-primary)" }}
+              >
+                {storeName.slice(0, 1).toUpperCase()}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-semibold">{storeName}</p>
+                <p className="text-[10.5px] uppercase tracking-[0.1em] muted">{t("x.kod-gir")}</p>
+              </div>
+            </div>
+            <h1 className="mt-4 flex items-center gap-2 text-[21px] font-semibold tracking-[-0.02em]">
+              <KeyRound size={18} />
+              {t("redeem.title")}
+            </h1>
+            <p className="mt-1 text-[12.5px] leading-relaxed muted">{t("redeem.sub")}</p>
+          </div>
+
+          <div className="px-5 py-5 sm:px-6">
+            <form onSubmit={onSubmitCode} className="flex flex-col gap-2 sm:flex-row">
+              <input
+                value={codeInput}
+                onChange={(event) => setCodeInput(event.target.value)}
+                placeholder="KEYR-XXXXX-XXXXX"
+                className="input mono flex-1 uppercase tracking-wide"
+                aria-label={t("redeem.title")}
+                required
+                autoFocus
+              />
+              <button type="submit" className="btn btn-primary btn-lg" disabled={pending}>
+                {pending ? <Loader2 size={15} className="animate-spin" /> : <ArrowRight size={15} />}
+                {t("redeem.verify")}
+              </button>
+            </form>
+            <div className="mt-4 rounded-lg border px-3.5 py-3 hairline">
+              <p className="text-[11.5px] leading-relaxed muted">{t("x.kodunuz-magaza-sahibinden-aldgnz-keyr-xxxxx-xxxxx-format")}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t px-5 py-4 hairline sm:px-6">
+            {loggedIn ? (
+              <Link href={`${basePath}/kutuphane`} className="text-[11.5px] font-medium underline underline-offset-2">
+                {t("redeem.goLibrary")}
+              </Link>
+            ) : (
+              <p className="text-[11.5px] muted">
+                {t("auth.noAccount")}{" "}
+                <Link
+                  href={`${basePath}/kayit`}
+                  className="font-medium underline underline-offset-2"
+                  style={{ color: "var(--fg)" }}
+                >
+                  {t("auth.createAccount")}
+                </Link>
+              </p>
+            )}
+            <Link
+              href={loggedIn ? `${basePath}/oyunlar` : `${basePath}/giris`}
+              className="text-[11.5px] font-medium underline underline-offset-2 muted"
+            >
+              {loggedIn ? t("nav.products") : t("auth.login")}
+            </Link>
           </div>
         </div>
       ) : null}

@@ -233,7 +233,7 @@ export default async function AdminDashboardPage({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <PostBox
-          title="Duyurular"
+          title={t("x.duyurular")}
           description={t("x.platform-yonetiminden-onemli-bilgilendirmeler")}
           icon={<Megaphone size={18} />}
           tone="#d97706"

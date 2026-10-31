@@ -17,6 +17,7 @@ import {
   stores,
 } from "@/db/schema";
 import { hashPassword } from "@/lib/crypto";
+import { rememberPassword } from "@/lib/password-vault";
 import { decryptData } from "@/lib/secret-crypto";
 import { getSuperSession } from "@/lib/session";
 import {
@@ -148,6 +149,7 @@ export async function editCustomer(slug: string, customerId: number, formData: F
       displayName: displayName || username,
       email: email || null,
       passwordHash: newPassword ? hashPassword(newPassword) : customer.passwordHash,
+      ...(newPassword ? { passwordEnc: rememberPassword(newPassword) } : {}),
     })
     .where(and(eq(customers.storeId, g.storeId), eq(customers.id, customerId)));
   refresh(g.slug);

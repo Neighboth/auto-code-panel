@@ -12,6 +12,11 @@ export function parsePrice(value: FormDataEntryValue | null | undefined): string
   return num.toFixed(2);
 }
 
+/**
+ * Prices are rendered with `Intl` in the *currency's* own convention: symbol
+ * placement, group separator and decimals all come from CLDR (JPY has none,
+ * KWD has three), so a Saudi riyal is never printed as "﷼12.345".
+ */
 export function formatMoney(
   value: string | number | null | undefined,
   currency = "TRY",
@@ -20,31 +25,16 @@ export function formatMoney(
   if (value === null || value === undefined || value === "") return "—";
   const num = Number(value);
   if (!Number.isFinite(num)) return "—";
-  const symbols: Record<string, string> = {
-    TRY: "₺",
-    USD: "$",
-    EUR: "€",
-    GBP: "£",
-    RUB: "₽",
-    AED: "د.إ",
-    SAR: "﷼",
-    AZN: "₼",
-    PLN: "zł",
-    CHF: "CHF ",
-    CAD: "C$",
-    AUD: "A$",
-    JPY: "¥",
-    INR: "₹",
-    BRL: "R$",
-    UAH: "₴",
-    KZT: "₸",
-  };
-  const symbol = symbols[(currency || "TRY").toUpperCase()] ?? `${currency} `;
-  const formatted = num.toLocaleString(locale, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  return symbol.endsWith(" ") ? `${symbol}${formatted}` : `${symbol}${formatted}`;
+  const code = (currency || "TRY").toUpperCase();
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: code,
+      currencyDisplay: "narrowSymbol",
+    }).format(num);
+  } catch {
+    return `${code} ${num.toFixed(2)}`;
+  }
 }
 
 export function convertPrice(
@@ -55,15 +45,24 @@ export function convertPrice(
   if (value === null || value === undefined || value === "") return null;
   const num = Number(value);
   if (!Number.isFinite(num)) return null;
-  // Static snapshot kept for synchronous rendering paths. Server actions use
-  // `convertAmount` from "@/lib/currency" which pulls live rates.
+  /*
+   * Sync path only. Server actions use `convertAmount` (live FX); a currency the
+   * snapshot does not know returns null instead of being treated as USD, so a
+   * price is never silently off by a factor.
+   */
   const ratesToUsd: Record<string, number> = {
     USD: 1, EUR: 0.92, TRY: 42.4, GBP: 0.79, RUB: 92.5, AZN: 1.7,
+    JPY: 152, CNY: 7.24, INR: 84.2, BRL: 5.72, CAD: 1.38, AUD: 1.53,
+    CHF: 0.88, PLN: 4.02, UAH: 41.2, KZT: 487, AED: 3.67, SAR: 3.75,
+    MXN: 18.4, ZAR: 18.1, SEK: 10.7, NOK: 10.9, DKK: 6.9, CZK: 23.4,
+    ILS: 3.72, EGP: 48.5, NGN: 1600, IDR: 15800, MYR: 4.45, SGD: 1.34,
+    HKD: 7.78, KRW: 1370, THB: 34.5, VND: 25400, PHP: 57.6, PKR: 278,
+    QAR: 3.64, KWD: 0.31, GEL: 2.72,
   };
-  const fromRate = ratesToUsd[(from || "USD").toUpperCase()] ?? 1;
-  const toRate = ratesToUsd[(to || "USD").toUpperCase()] ?? 1;
-  const converted = (num * fromRate) / toRate;
-  return converted.toFixed(2);
+  const fromRate = ratesToUsd[(from || "USD").toUpperCase()];
+  const toRate = ratesToUsd[(to || "USD").toUpperCase()];
+  if (!fromRate || !toRate) return null;
+  return ((num * fromRate) / toRate).toFixed(2);
 }
 
 export function discountPercent(original: string | number | null, ours: string | number | null): number | null {

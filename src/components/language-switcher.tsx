@@ -23,15 +23,20 @@ export function Flag({ flag, size = 20 }: { flag: string; size?: number }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={flagUrl(flag, size > 24 ? "w40" : "w20")}
+      src={flagUrl(flag)}
       decoding="async"
       alt=""
       width={Math.round(size * 1.4)}
       height={size}
-      loading="lazy"
+      loading="eager"
       onError={() => setFailed(true)}
-      className="inline-block shrink-0 rounded-[3px] object-cover"
-      style={{ height: size, width: size * 1.4 }}
+      /* `object-cover` on an SVG rasterises it; the flag keeps its 3:2 ratio. */
+      className="inline-block shrink-0 rounded-[3px]"
+      style={{
+        height: size,
+        width: Math.round(size * 1.4),
+        boxShadow: "0 0 0 1px color-mix(in srgb, var(--fg) 14%, transparent)",
+      }}
     />
   );
 }

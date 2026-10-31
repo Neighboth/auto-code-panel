@@ -5,10 +5,15 @@ import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Check, Globe2, Loader2, Plus, Search, ShieldCheck, Trash2, Upload } from "lucide-react";
-import { saveStoreCredentials, saveStoreDomain, saveStoreSettings, verifyStoreDomain } from "@/app/actions/store-admin";
+import {
+  saveStoreCredentials,
+  saveStoreDomain,
+  saveStoreSettings,
+  verifyStoreDomain,
+} from "@/app/actions/store-admin";
 import { CopyButton } from "@/components/copy-button";
 import { Field } from "@/components/ui";
-import { FONT_OPTIONS, googleFontHref } from "@/lib/fonts";
+import { FONT_CATEGORIES, FONT_OPTIONS, googleFontHref } from "@/lib/fonts";
 
 export type StoreBranding = {
   slug: string;
@@ -21,6 +26,9 @@ export type StoreBranding = {
   primaryColor: string;
   accentColor: string;
   fontFamily: string;
+  /** Self-hosted typeface uploaded by the owner (empty = use the Google family). */
+  fontUrl: string;
+  fontLabel: string;
   contactLinks: { label: string; url: string }[];
   /** Empty means "inherit the platform/env default". */
   renewalUrl: string;
@@ -37,6 +45,10 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
   const [primaryColor, setPrimaryColor] = useState(store.primaryColor);
   const [accentColor, setAccentColor] = useState(store.accentColor);
   const [fontFamily, setFontFamily] = useState(store.fontFamily);
+  const [fontUrl, setFontUrl] = useState(store.fontUrl);
+  const [fontLabel, setFontLabel] = useState(store.fontLabel);
+  const [fontCategory, setFontCategory] = useState<string>("all");
+  const [uploading, setUploading] = useState<"logo" | "favicon" | "font" | null>(null);
   const [fontSearch, setFontSearch] = useState("");
   const [fontOpen, setFontOpen] = useState(false);
   const [renewalUrl, setRenewalUrl] = useState(store.renewalUrl);
@@ -44,9 +56,12 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
 
   const filteredFonts = useMemo(() => {
     const term = fontSearch.trim().toLowerCase();
-    const list = term ? FONT_OPTIONS.filter((font) => font.family.toLowerCase().includes(term)) : FONT_OPTIONS;
-    return list.slice(0, 40);
-  }, [fontSearch]);
+    const list = FONT_OPTIONS.filter((font) => {
+      if (fontCategory !== "all" && font.category !== fontCategory) return false;
+      return term ? font.family.toLowerCase().includes(term) : true;
+    });
+    return list.slice(0, 60);
+  }, [fontSearch, fontCategory]);
 
   /*
    * Every row in the picker is rendered in its own family, so the file for that
@@ -72,20 +87,77 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     return () => links.forEach((link) => link.remove());
   }, [fontFamily, filteredFonts]);
 
-  function onImage(event: ChangeEvent<HTMLInputElement>, target: "logo" | "favicon") {
+  /**
+   * Uploads a picked file to the media library and keeps the returned
+   * `/media/<sha1>.<ext>` path in the form.
+   *
+   * The old flow inlined images as base64 and had to cap them at 180 KB. The
+   * server now stores the bytes on disk (5 MB images, 50 MB fonts), so the form
+   * payload stays small and a 4K logo or a full font family works.
+   */
+  async function uploadFile(file: File, kind: "image" | "font") {
+    const limit = kind === "font" ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > limit) {
+      toast.error(kind === "font" ? t("x.font-en-fazla-50-mb-olabilir") : t("x.gorsel-en-fazla-5-mb-olabilir"));
+      return null;
+    }
+    const formData = new FormData();
+    formData.set("kind", kind);
+    formData.set("file", file);
+    try {
+      // Route handler, not a server action: action bodies are capped at 1 MB.
+      const response = await fetch("/api/store/upload", { method: "POST", body: formData });
+      const payload = (await response.json()) as { ok?: boolean; path?: string; reason?: string };
+      if (!response.ok || !payload.ok || !payload.path) {
+        const reason = payload.reason;
+        if (reason === "size") {
+          toast.error(kind === "font" ? t("x.font-en-fazla-50-mb-olabilir") : t("x.gorsel-en-fazla-5-mb-olabilir"));
+        } else if (reason === "type") {
+          toast.error(
+            kind === "font"
+              ? t("x.desteklenmeyen-font-dosyas-ttf-otf-woff-woff2")
+              : t("x.desteklenmeyen-gorsel-format"),
+          );
+        } else {
+          toast.error(t("x.yuklenemedi"));
+        }
+        return null;
+      }
+      return payload.path;
+    } catch {
+      toast.error(t("x.yuklenemedi"));
+      return null;
+    }
+  }
+
+  async function onImage(event: ChangeEvent<HTMLInputElement>, target: "logo" | "favicon") {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (file.size > 180_000) {
-      toast.error(t("x.gorsel-en-fazla-180-kb-olabilir"));
+    setUploading(target);
+    const path = await uploadFile(file, "image");
+    setUploading(null);
+    event.target.value = "";
+    if (!path) return;
+    if (target === "logo") setLogoUrl(path);
+    else setFaviconUrl(path);
+    toast.success(t("x.dosya-yuklendi"));
+  }
+
+  async function onFontFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!/\.(ttf|otf|woff2?|TTF|OTF|WOFF2?)$/.test(file.name)) {
+      toast.error(t("x.desteklenmeyen-font-dosyas-ttf-otf-woff-woff2"));
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const value = String(reader.result ?? "");
-      if (target === "logo") setLogoUrl(value);
-      else setFaviconUrl(value);
-    };
-    reader.readAsDataURL(file);
+    setUploading("font");
+    const path = await uploadFile(file, "font");
+    setUploading(null);
+    event.target.value = "";
+    if (!path) return;
+    setFontUrl(path);
+    setFontLabel(file.name.replace(/\.[^.]+$/, "").slice(0, 60));
+    toast.success(t("x.dosya-yuklendi"));
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -100,6 +172,8 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     formData.set("primaryColor", primaryColor);
     formData.set("accentColor", accentColor);
     formData.set("fontFamily", fontFamily);
+    formData.set("fontUrl", fontUrl);
+    formData.set("fontLabel", fontLabel);
     formData.set("renewalUrl", renewalUrl);
     formData.set(
       "contactLinks",
@@ -249,7 +323,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
             className="flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-left hairline"
           >
             <span className="text-[13px]" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>
-              {fontFamily}
+              {fontUrl ? `${fontLabel || "Custom"} · ${fontFamily}` : fontFamily}
             </span>
             <span className="text-[11px] muted">{FONT_OPTIONS.length} font</span>
           </button>
@@ -264,6 +338,22 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                   className="input h-9 pl-8 text-[12px]"
                   autoFocus
                 />
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {["all", ...FONT_CATEGORIES].map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setFontCategory(category)}
+                    className="rounded-full border px-2.5 py-1 text-[10.5px] hairline"
+                    style={{
+                      background: fontCategory === category ? "var(--fg)" : "transparent",
+                      color: fontCategory === category ? "var(--bg)" : "inherit",
+                    }}
+                  >
+                    {category === "all" ? t("x.tumu") : category}
+                  </button>
+                ))}
               </div>
               <div className="mt-2 max-h-64 overflow-y-auto rounded-lg scroll-thin">
                 {filteredFonts.map((font) => (
@@ -289,10 +379,70 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
               </div>
             </div>
           ) : null}
+
+          {/* Self-hosted typeface: takes precedence over the Google family. */}
+          <div className="mt-2 rounded-lg border px-3 py-2.5 hairline">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[11.5px] font-medium">{t("x.ozel-font-dosyas")}</p>
+                <p className="mt-0.5 text-[10.5px] muted">
+                  {fontUrl ? (
+                    <span className="mono">{fontLabel || fontUrl}</span>
+                  ) : (
+                    t("x.ttf-otf-woff-ve-woff2-en-fazla-50-mb")
+                  )}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="btn btn-outline btn-sm cursor-pointer">
+                  {uploading === "font" ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                  {t("x.font-yukle")}
+                  <input
+                    type="file"
+                    accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
+                    className="hidden"
+                    onChange={onFontFile}
+                  />
+                </label>
+                {fontUrl ? (
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    aria-label={t("common.delete")}
+                    onClick={() => {
+                      setFontUrl("");
+                      setFontLabel("");
+                    }}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          {fontUrl ? (
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `@font-face{font-family:"StoreCustomFont";src:url("${fontUrl}");font-display:swap;}`,
+              }}
+            />
+          ) : null}
+
           <div className="mt-2 rounded-lg border px-3 py-2.5 hairline">
             <p className="text-[10px] font-semibold uppercase tracking-[0.08em] muted">{" "}{t("x.canl-onizleme")}</p>
-            <p className="mt-1 text-[17px] font-semibold" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>{t("x.dijital-hesap-teslimat")}</p>
-            <p className="text-[12px] muted" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>{t("x.steam-guard-kodlar-saniyeler-icinde-yenilenir-0123456789")}</p>
+            <p
+              className="mt-1 text-[17px] font-semibold"
+              style={{ fontFamily: fontUrl ? `"StoreCustomFont", sans-serif` : `"${fontFamily}", sans-serif` }}
+            >
+              {t("x.dijital-hesap-teslimat")}
+            </p>
+            <p
+              className="text-[12px] muted"
+              style={{ fontFamily: fontUrl ? `"StoreCustomFont", sans-serif` : `"${fontFamily}", sans-serif` }}
+            >
+              {t("x.steam-guard-kodlar-saniyeler-icinde-yenilenir-0123456789")}
+            </p>
           </div>
         </div>
       </section>
