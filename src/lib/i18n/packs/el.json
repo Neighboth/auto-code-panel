@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Λογαριασμοί διαχειριστή",
   "x.yonetici-sifresi-guncellendi-user": "Ο κωδικός πρόσβασης του διαχειριστή {user} ενημερώθηκε",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Οι κωδικοί πρόσβασης διαχειριστή και πελάτη είναι ορατοί μόνο στον κάτοχο της πλατφόρμας",
-  "x.yuklenemedi": "Η μεταφόρτωση απέτυχε"
+  "x.yuklenemedi": "Η μεταφόρτωση απέτυχε",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Το πρόγραμμα περιήγησής σας απέκλεισε το cookie περιόδου λειτουργίας. Ανοίξτε την εφαρμογή σε μια νέα καρτέλα ή επιτρέψτε τα cookie για αυτόν τον ιστότοπο."
 }
