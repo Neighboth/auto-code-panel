@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Förvaltarkonton",
   "x.yonetici-sifresi-guncellendi-user": "Lösenordet för chefen {user} har uppdaterats",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- och kundlösenord är endast synliga för plattformsägaren",
-  "x.yuklenemedi": "Uppladdningen misslyckades"
+  "x.yuklenemedi": "Uppladdningen misslyckades",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Din webbläsare blockerade sessionscookien. Öppna appen på en ny flik eller tillåt cookies för den här webbplatsen."
 }
