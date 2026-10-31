@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Басқару тіркелгілері",
   "x.yonetici-sifresi-guncellendi-user": "{user} менеджерінің құпия сөзі жаңартылды",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Менеджер мен тұтынушы құпия сөздері платформа иесіне ғана көрінеді",
-  "x.yuklenemedi": "Жүктеп салу сәтсіз аяқталды"
+  "x.yuklenemedi": "Жүктеп салу сәтсіз аяқталды",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузеріңіз сеанс cookie файлын блоктады. Қолданбаны жаңа қойындыда ашыңыз немесе осы сайт үшін cookie файлдарына рұқсат беріңіз."
 }
