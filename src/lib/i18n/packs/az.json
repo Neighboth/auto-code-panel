@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Menecer hesabları",
   "x.yonetici-sifresi-guncellendi-user": "{user} menecerinin parolu yeniləndi",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Menecer və müştəri parollarını yalnız platforma sahibi görə bilər",
-  "x.yuklenemedi": "Yükləmə uğursuz oldu"
+  "x.yuklenemedi": "Yükləmə uğursuz oldu",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeriniz sessiya kukisini blokladı. Proqramı yeni tabda açın və ya bu sayt üçün kukilərə icazə verin."
 }
