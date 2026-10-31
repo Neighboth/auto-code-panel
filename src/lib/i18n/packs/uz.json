@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Menejer hisoblari",
   "x.yonetici-sifresi-guncellendi-user": "{user} menejerining paroli yangilandi",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Menejer va mijoz parollari faqat platforma egasiga koʻrinadi",
-  "x.yuklenemedi": "Yuklab bo‘lmadi"
+  "x.yuklenemedi": "Yuklab bo‘lmadi",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeringiz seans cookie faylini blokladi. Ilovani yangi tabda oching yoki ushbu sayt uchun cookie-fayllarga ruxsat bering."
 }
