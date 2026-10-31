@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Башкаруучу эсептер",
   "x.yonetici-sifresi-guncellendi-user": "{user} башкаруучунун сырсөзү жаңырды",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Башкаруучу жана кардар сырсөздөрү платформанын ээсине гана көрүнөт",
-  "x.yuklenemedi": "Жүктөп берүү ишке ашкан жок"
+  "x.yuklenemedi": "Жүктөп берүү ишке ашкан жок",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузериңиз сеанс кукисин бөгөттөп койду. Колдонмону жаңы өтмөктө ачыңыз же бул сайт үчүн кукилерге уруксат бериңиз."
 }
