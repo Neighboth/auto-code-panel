@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Računi upravitelja",
   "x.yonetici-sifresi-guncellendi-user": "Lozinka upravitelja {user} ažurirana",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Zaporke upravitelja i korisnika vidljive su samo vlasniku platforme",
-  "x.yuklenemedi": "Prijenos nije uspio"
+  "x.yuklenemedi": "Prijenos nije uspio",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš preglednik blokirao je kolačić sesije. Otvorite aplikaciju u novoj kartici ili dopustite kolačiće za ovu stranicu."
 }
