@@ -6,6 +6,40 @@
 
 ---
 
+## 0.0z Bu tur: fiyat planları, şifre kasası, gerçek görsel/font yükleme (PR #14)
+
+> Tarih: 2026-10-31 · Branch: `arena/cabc42da-auto-code-panel` → `main` (merge `acee239`)
+
+### Yapılanlar
+| # | Konu | Ayrıntı |
+| --- | --- | --- |
+| 1 | Bayrak bulanıklığı | Bayraklar artık `country-flag-icons` SVG'lerinden `public/flags/<cc>.svg` olarak üretiliyor (`scripts/flags.mjs`, 69 dosya / 280 KB); `flagcdn` PNG + `object-cover` kaldırıldı. |
+| 2 | Görseller sunucuda | `src/lib/media.ts` içerik adresli medya kütüphanesi (`data/media/<sha1>.<ext>`) + `/media/[file]` route'u (`immutable` cache). Steam kapakları, CSV içe aktarma ve logo yüklemeleri buraya iniyor; referans kalmayınca dosya siliniyor. |
+| 3 | Para birimleri | `src/lib/currency.ts` ISO-4217 tam listesi (~160 kod), `Intl.DisplayNames`/`narrowSymbol` ile türetim, `SYMBOL_OVERRIDES` (KWD/SAR/IRR). Bilinmeyen kur artık **null** döner (eski `?? 1` 60 USD'yi 60 TRY yapıyordu). |
+| 4 | Eksik çeviri artıkları | `x.ozel-platform`, "Duyurular" gibi sabit metinler sözlüğe taşındı (`i18n gate: 0/0/0/0`). |
+| 5 | Fiyat planları DB'de | `plans` tablosu + `/super-admin/fiyatlar` editörü (fiyat, para birimi, süre, hesap limiti, özellikler, satın alma linki, sıralama, öne çıkan/yayında, dil bazlı çeviri). Ana sayfa kartları `listPlans()` ile geliyor, buton `purchaseUrl`'e gidiyor, taze kurulumda üç varsayılan plan seed ediliyor. |
+| 6 | Şifre kasası | `store_admins.password_enc` / `customers.password_enc` (AES-256-GCM). Giriş hâlâ hash ile doğrulanıyor; kasa yalnızca platform sahibinin destek amaçlı görebilmesi için. `/super-admin` → "Giriş bilgileri": göster/gizle, kopyala, yeni şifre belirle; her erişim audit'te. |
+| 7 | 5 MB logo, 50 MB font | `POST /api/store/upload` route handler (server action gövde limiti 1 MB olduğu için). Logo/favicon 5 MB, TTF/OTF/WOFF/WOFF2 50 MB; `/media` doğru MIME döndürüyor, eski dosya referans kalmayınca siliniyor. |
+| 8 | Font kataloğu | `scripts/fonts.mjs` → `src/lib/font-catalog.ts`: **1.581 Google Fonts ailesi** (kategori + latin-ext bilgisi), seçicide arama/kategori filtresi/canlı önizleme. Yüklenen font Google ailesine göre öncelikli ve vitrinde `@font-face` ile kullanılıyor. |
+| 9 | Kod giriş ekranı | `/{magaza}/kod-gir` giriş/kayıt kartıyla aynı tasarım: mağaza rozeti, başlık/açıklama, gövde, alt bağlantı satırı ("hesabınız yok mu? / giriş yap / kütüphanem"). |
+| 10 | 78 dil tam çeviri | Yeni 51 anahtar GitHub Actions `i18n translate` işiyle 78 dile çevrildi: **her paket 1626/1626 anahtar**, `coverage: 80 dil · tam 80 · kısmi 0`. Yer tutucular (`{count}`, `{store}`, `{user}`) korunuyor. |
+
+### Doğrulama (bu turda çalıştırıldı)
+- `npm run typecheck` ✅ · `npm run lint` ✅ · `npm run build` ✅
+- `npm run i18n:check` → `OK (0 / 0 / 0 / 0)` · `i18n:verify` → `78 dil · ok: 78` · `i18n:coverage` → `80 · tam 80`
+- Canlı test: `/`, `/demo`, `/demo/kod-gir`, `/super-admin/fiyatlar`, `/demo/admin/ayarlar` → 200.
+- Upload testi: 3,4 MB PNG → `200` + `/media/<sha1>.png` (image/png); 100 KB TTF → `200` (font/ttf); 5 MB üstü → `413`, yanlış tür → `400`, oturumsuz → `401`.
+- Plan editörü/DB: `plans` üç satır seed edildi; `resolvePlan(plan, "en")` → "Starter" (dil bazlı override), bilinmeyen dilde taban metne düşüyor.
+- `formatMoney` örnekleri: `₺1.234,50`, `¥1.235`, `د.ك 1.234,500`, `﷼ 1.234,50`.
+
+### Dürüstçe kalanlar
+- **"~10 bin font"**: Google Fonts kataloğunun tamamı 1.581 aile; 10.000 aile Google'da yok. İstenen çeşitlilik için yükleme yolu (TTF/OTF/WOFF, 50 MB) açık — katalog dışı fontlar bu yolla eklenebilir.
+- Şifre kasası **yalnızca bu turdan sonra** oluşturulan/değiştirilen şifreleri gösterir; eski kayıtların hash'i geri çevrilemez, panel bu hesaplar için "şifre belirle" akışını sunar.
+- Çeviriler makine çevirisi; kritik pazarlama metinleri için insan gözden geçirmesi önerilir.
+- Yüklenen 50 MB font dosyaları diskte tutulur; depolama kotası/otomatik temizlik (prune) yalnızca referanssız medya için var.
+
+---
+
 ## 0.0a Bu tur: 78 dilin tamamı çevrildi (PR #12)
 
 Talep: *"dilleri yap hepsini, kalanları tek seferde bitir."* Önceden 78 dilde yalnızca
