@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Cuntas bainisteoir",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Tá pasfhocail bhainisteora agus chustaiméara le feiceáil ag úinéir an ardáin amháin",
-  "x.yuklenemedi": "Theip ar an uaslódáil"
+  "x.yuklenemedi": "Theip ar an uaslódáil",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Chuir do bhrabhsálaí bac ar fhianán an tseisiúin. Oscail an aip i gcluaisín nua nó ceadaigh fianáin don suíomh seo."
 }
