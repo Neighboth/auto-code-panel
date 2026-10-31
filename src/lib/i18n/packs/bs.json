@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Nalozi menadžera",
   "x.yonetici-sifresi-guncellendi-user": "Lozinka upravitelja {user} je ažurirana",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Lozinke menadžera i korisnika vidljive su samo vlasniku platforme",
-  "x.yuklenemedi": "Otpremanje nije uspjelo"
+  "x.yuklenemedi": "Otpremanje nije uspjelo",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš pretraživač je blokirao kolačić sesije. Otvorite aplikaciju na novoj kartici ili dozvolite kolačiće za ovu stranicu."
 }
