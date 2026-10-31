@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "మేనేజర్ ఖాతాలు",
   "x.yonetici-sifresi-guncellendi-user": "మేనేజర్ {user} పాస్‌వర్డ్ అప్‌డేట్ చేయబడింది",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "మేనేజర్ మరియు కస్టమర్ పాస్‌వర్డ్‌లు ప్లాట్‌ఫారమ్ యజమానికి మాత్రమే కనిపిస్తాయి",
-  "x.yuklenemedi": "అప్‌లోడ్ విఫలమైంది"
+  "x.yuklenemedi": "అప్‌లోడ్ విఫలమైంది",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "మీ బ్రౌజర్ సెషన్ కుక్కీని బ్లాక్ చేసింది. యాప్‌ను కొత్త ట్యాబ్‌లో తెరవండి లేదా ఈ సైట్ కోసం కుక్కీలను అనుమతించండి."
 }
