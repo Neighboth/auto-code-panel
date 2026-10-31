@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Менаџерски сметки",
   "x.yonetici-sifresi-guncellendi-user": "Лозинката на менаџерот {user} е ажурирана",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Лозинките на менаџерот и клиентите се видливи само за сопственикот на платформата",
-  "x.yuklenemedi": "Поставувањето не успеа"
+  "x.yuklenemedi": "Поставувањето не успеа",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Вашиот прелистувач го блокираше колачето за сесија. Отворете ја апликацијата во нова картичка или дозволете колачиња за оваа страница."
 }
