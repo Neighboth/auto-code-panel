@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Уліковыя запісы кіраўніка",
   "x.yonetici-sifresi-guncellendi-user": "Пароль кіраўніка {user} абноўлены",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролі кіраўніка і кліента бачныя толькі ўладальніку платформы",
-  "x.yuklenemedi": "Памылка загрузкі"
+  "x.yuklenemedi": "Памылка загрузкі",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браўзер заблакаваў файл cookie сесіі. Адкрыйце праграму ў новай укладцы або дазвольце файлы cookie для гэтага сайта."
 }

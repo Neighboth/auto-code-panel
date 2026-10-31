@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Conturi de manager",
   "x.yonetici-sifresi-guncellendi-user": "Parola managerului {user} a fost actualizată",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Parolele managerului și ale clienților sunt vizibile numai pentru proprietarul platformei",
-  "x.yuklenemedi": "Încărcarea nu a reușit"
+  "x.yuklenemedi": "Încărcarea nu a reușit",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Browserul dvs. a blocat cookie-ul de sesiune. Deschideți aplicația într-o filă nouă sau permiteți cookie-uri pentru acest site."
 }

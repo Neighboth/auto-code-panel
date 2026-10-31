@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Pārziņa konti",
   "x.yonetici-sifresi-guncellendi-user": "Pārziņa {user} parole ir atjaunināta",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Pārziņa un klientu paroles ir redzamas tikai platformas īpašniekam",
-  "x.yuklenemedi": "Augšupielāde neizdevās"
+  "x.yuklenemedi": "Augšupielāde neizdevās",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jūsu pārlūkprogramma bloķēja sesijas sīkfailu. Atveriet lietotni jaunā cilnē vai atļaujiet sīkfailus šai vietnei."
 }

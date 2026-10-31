@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Manager Konten",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager a Client Passwierder sinn nëmme fir de Plattformbesëtzer siichtbar",
-  "x.yuklenemedi": "Eroplueden gescheitert"
+  "x.yuklenemedi": "Eroplueden gescheitert",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Äre Browser huet de Sessiouns-Cookie blockéiert. Öffnen d'App an engem neien Tab oder erlaabt Cookien fir dëse Site."
 }

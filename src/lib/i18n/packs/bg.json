@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Мениджърски сметки",
   "x.yonetici-sifresi-guncellendi-user": "Паролата на мениджъра {user} е актуализирана",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролите на мениджър и клиент се виждат само от собственика на платформата",
-  "x.yuklenemedi": "Качването не бе успешно"
+  "x.yuklenemedi": "Качването не бе успешно",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Вашият браузър блокира сесийната бисквитка. Отворете приложението в нов раздел или разрешете бисквитки за този сайт."
 }

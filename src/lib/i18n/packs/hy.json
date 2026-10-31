@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Կառավարչի հաշիվներ",
   "x.yonetici-sifresi-guncellendi-user": "Կառավարչի {user} գաղտնաբառը թարմացվել է",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Կառավարչի և հաճախորդի գաղտնաբառերը տեսանելի են միայն հարթակի սեփականատիրոջը",
-  "x.yuklenemedi": "Չհաջողվեց վերբեռնել"
+  "x.yuklenemedi": "Չհաջողվեց վերբեռնել",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ձեր զննարկիչը արգելափակել է նիստի քուքի ֆայլը: Բացեք հավելվածը նոր ներդիրում կամ թույլատրեք քուքիները այս կայքի համար:"
 }

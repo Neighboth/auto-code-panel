@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Konta menedżerów",
   "x.yonetici-sifresi-guncellendi-user": "Hasło menedżera {user} zostało zaktualizowane",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Hasła menedżera i klienta są widoczne tylko dla właściciela platformy",
-  "x.yuklenemedi": "Przesyłanie nie powiodło się"
+  "x.yuklenemedi": "Przesyłanie nie powiodło się",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Twoja przeglądarka zablokowała plik cookie sesji. Otwórz aplikację w nowej karcie lub zezwól na pliki cookie dla tej witryny."
 }

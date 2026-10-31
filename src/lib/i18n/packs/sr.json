@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Налози менаџера",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Лозинке менаџера и клијента су видљиве само власнику платформе",
-  "x.yuklenemedi": "Отпремање није успело"
+  "x.yuklenemedi": "Отпремање није успело",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш претраживач је блокирао колачић сесије. Отворите апликацију на новој картици или дозволите колачиће за ову веб локацију."
 }

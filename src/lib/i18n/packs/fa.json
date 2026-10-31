@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "حساب های مدیر",
   "x.yonetici-sifresi-guncellendi-user": "رمز عبور مدیر {user} به روز شد",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "رمز عبور مدیر و مشتری فقط برای مالک پلتفرم قابل مشاهده است",
-  "x.yuklenemedi": "آپلود انجام نشد"
+  "x.yuklenemedi": "آپلود انجام نشد",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "مرورگر شما کوکی جلسه را مسدود کرده است. برنامه را در یک برگه جدید باز کنید یا کوکی ها را برای این سایت مجاز کنید."
 }

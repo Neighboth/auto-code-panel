@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "관리자 계정",
   "x.yonetici-sifresi-guncellendi-user": "관리자 {user}의 비밀번호가 업데이트되었습니다.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "관리자 및 고객 비밀번호는 플랫폼 소유자에게만 표시됩니다.",
-  "x.yuklenemedi": "업로드 실패"
+  "x.yuklenemedi": "업로드 실패",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Your browser blocked the session cookie. Open the app in a new tab or allow cookies for this site."
 }

@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Managerkonti",
   "x.yonetici-sifresi-guncellendi-user": "Adgangskode for administrator {user} opdateret",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- og kundeadgangskoder er kun synlige for platformsejeren",
-  "x.yuklenemedi": "Upload mislykkedes"
+  "x.yuklenemedi": "Upload mislykkedes",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Din browser blokerede sessionscookien. Åbn appen på en ny fane, eller tillad cookies for dette websted."
 }

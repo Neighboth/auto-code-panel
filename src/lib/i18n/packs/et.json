@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Haldurikontod",
   "x.yonetici-sifresi-guncellendi-user": "Halduri {user} parool on värskendatud",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Halduri ja kliendi paroolid on nähtavad ainult platvormi omanikule",
-  "x.yuklenemedi": "Üleslaadimine ebaõnnestus"
+  "x.yuklenemedi": "Üleslaadimine ebaõnnestus",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Teie brauser blokeeris seansiküpsise. Avage rakendus uuel vahelehel või lubage sellel saidil küpsised."
 }

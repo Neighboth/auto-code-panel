@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "ບັນຊີຜູ້ຈັດການ",
   "x.yonetici-sifresi-guncellendi-user": "ອັບເດດລະຫັດຜ່ານຂອງຜູ້ຈັດການ {user} ແລ້ວ",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "ຜູ້ຈັດການ ແລະລະຫັດຜ່ານຂອງລູກຄ້າແມ່ນເຫັນໄດ້ໂດຍເຈົ້າຂອງເວທີເທົ່ານັ້ນ",
-  "x.yuklenemedi": "ອັບໂຫຼດບໍ່ສຳເລັດ"
+  "x.yuklenemedi": "ອັບໂຫຼດບໍ່ສຳເລັດ",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ບຼາວເຊີຂອງທ່ານໄດ້ບລັອກຄຸກກີເຊດຊັນ. ເປີດແອັບໃນແຖບໃໝ່ ຫຼືອະນຸຍາດຄຸກກີ້ສຳລັບເວັບໄຊນີ້."
 }

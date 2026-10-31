@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Contas de administrador",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "As senhas do gerente e do cliente são visíveis apenas para o proprietário da plataforma",
-  "x.yuklenemedi": "Falha no upload"
+  "x.yuklenemedi": "Falha no upload",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Seu navegador bloqueou o cookie de sessão. Abra o aplicativo em uma nova aba ou permita cookies para este site."
 }

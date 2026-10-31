@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Kezelői fiókok",
   "x.yonetici-sifresi-guncellendi-user": "A(z) {user} kezelő jelszava frissítve",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "A menedzser és az ügyfél jelszavait csak a platform tulajdonosa láthatja",
-  "x.yuklenemedi": "A feltöltés sikertelen"
+  "x.yuklenemedi": "A feltöltés sikertelen",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Az Ön böngészője blokkolta a munkamenet cookie-ját. Nyissa meg az alkalmazást egy új lapon, vagy engedélyezze a cookie-kat ezen a webhelyen."
 }

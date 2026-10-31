@@ -1471,6 +1471,7 @@ export const EXTRA_TR: Record<string, string> = {
   "x.yonetici-sifresi-guncellendi-user": "{user} yöneticisinin şifresi güncellendi",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Yönetici ve müşteri şifreleri yalnızca platform sahibine açıktır",
   "x.yuklenemedi": "Yüklenemedi",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Tarayıcı oturum çerezini engelledi. Uygulamayı yeni bir sekmede açın veya bu site için çerezlere izin verin.",
 };
 
 export const EXTRA_EN: Record<string, string> = {
@@ -2935,6 +2936,7 @@ export const EXTRA_EN: Record<string, string> = {
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager and customer passwords are visible to the platform owner only",
   "x.yuklenemedi": "Upload failed",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Your browser blocked the session cookie. Open the app in a new tab or allow cookies for this site.",
 };
 
 /** Turkish source text → English, used by `t()` as a last-chance fallback. */

@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Administraj kontoj",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Administranto kaj kliento pasvortoj estas videblaj nur por la platformo posedanto",
-  "x.yuklenemedi": "Alŝuto malsukcesis"
+  "x.yuklenemedi": "Alŝuto malsukcesis",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Via retumilo blokis la sean kuketon. Malfermu la apon en nova langeto aŭ permesu kuketojn por ĉi tiu retejo."
 }

@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Kontijiet tal-maniġer",
   "x.yonetici-sifresi-guncellendi-user": "Password tal-maniġer {user} aġġornata",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Il-passwords tal-maniġer u tal-klijenti huma viżibbli għal sid il-pjattaforma biss",
-  "x.yuklenemedi": "It-tlugħ fallut"
+  "x.yuklenemedi": "It-tlugħ fallut",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Il-browser tiegħek imblokka l-cookie tas-sessjoni. Iftaħ l-app f'tab ġdida jew tħalli cookies għal dan is-sit."
 }

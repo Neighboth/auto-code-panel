@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Contas de xestor",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Os contrasinais do xestor e dos clientes só son visibles para o propietario da plataforma",
-  "x.yuklenemedi": "Produciuse un erro na carga"
+  "x.yuklenemedi": "Produciuse un erro na carga",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "O teu navegador bloqueou a cookie de sesión. Abre a aplicación nunha nova pestana ou permite cookies para este sitio."
 }

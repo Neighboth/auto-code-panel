@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Dolandyryjy hasaplary",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Dolandyryjy we müşderi parollary diňe platformanyň eýesine görünýär",
-  "x.yuklenemedi": "Uploadüklemek şowsuz"
+  "x.yuklenemedi": "Uploadüklemek şowsuz",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Brauzeriňiz sessiýa gutapjygyny bloklady. Programmany täze goýmada açyň ýa-da bu sahypa üçin gutapjyklara rugsat beriň."
 }

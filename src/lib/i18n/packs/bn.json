@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "ম্যানেজার অ্যাকাউন্ট",
   "x.yonetici-sifresi-guncellendi-user": "ম্যানেজার {user}-এর পাসওয়ার্ড আপডেট করা হয়েছে",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "ম্যানেজার এবং গ্রাহকের পাসওয়ার্ড শুধুমাত্র প্ল্যাটফর্মের মালিকের কাছে দৃশ্যমান",
-  "x.yuklenemedi": "আপলোড ব্যর্থ হয়েছে"
+  "x.yuklenemedi": "আপলোড ব্যর্থ হয়েছে",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "আপনার ব্রাউজার সেশন কুকি ব্লক করেছে. একটি নতুন ট্যাবে অ্যাপটি খুলুন বা এই সাইটের জন্য কুকির অনুমতি দিন।"
 }

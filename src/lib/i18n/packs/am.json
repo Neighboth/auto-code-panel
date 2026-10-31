@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "አስተዳዳሪ መለያዎች",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "የአስተዳዳሪ እና የደንበኛ የይለፍ ቃሎች የሚታዩት ለመድረክ ባለቤት ብቻ ነው።",
-  "x.yuklenemedi": "መጫን አልተሳካም።"
+  "x.yuklenemedi": "መጫን አልተሳካም።",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "አሳሽህ የክፍለ ጊዜውን ኩኪ አግዶታል። መተግበሪያውን በአዲስ ትር ውስጥ ይክፈቱ ወይም ለዚህ ጣቢያ ኩኪዎችን ይፍቀዱ።"
 }

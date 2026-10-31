@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Računi upraviteljev",
   "x.yonetici-sifresi-guncellendi-user": "Geslo upravitelja {user} je posodobljeno",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Gesla upravitelja in strank so vidna samo lastniku platforme",
-  "x.yuklenemedi": "Nalaganje ni uspelo"
+  "x.yuklenemedi": "Nalaganje ni uspelo",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Vaš brskalnik je blokiral sejni piškotek. Odprite aplikacijo v novem zavihku ali dovolite piškotke za to spletno mesto."
 }

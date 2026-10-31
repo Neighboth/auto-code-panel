@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Mga manager account",
   "x.yonetici-sifresi-guncellendi-user": "Na-update ang password ng manager {user}.",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Ang mga password ng manager at customer ay makikita lamang ng may-ari ng platform",
-  "x.yuklenemedi": "Nabigo ang pag-upload"
+  "x.yuklenemedi": "Nabigo ang pag-upload",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Na-block ng iyong browser ang cookie ng session. Buksan ang app sa isang bagong tab o payagan ang cookies para sa site na ito."
 }

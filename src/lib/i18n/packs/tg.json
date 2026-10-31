@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Ҳисобҳои менеҷер",
   "x.yonetici-sifresi-guncellendi-user": "Рамзи мудири {user} нав карда шуд",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролҳои менеҷер ва муштарӣ танҳо ба соҳиби платформа намоёнанд",
-  "x.yuklenemedi": "Боргузорӣ натавонист"
+  "x.yuklenemedi": "Боргузорӣ натавонист",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузери шумо кукиҳои сессияро маҳкам кард. Барномаро дар ҷадвали нав кушоед ё кукиҳоро барои ин сайт иҷозат диҳед."
 }

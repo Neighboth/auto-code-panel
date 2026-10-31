@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Comptes de gestor",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Les contrasenyes del gestor i del client només són visibles per al propietari de la plataforma",
-  "x.yuklenemedi": "La càrrega ha fallat"
+  "x.yuklenemedi": "La càrrega ha fallat",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "El vostre navegador ha bloquejat la galeta de sessió. Obriu l'aplicació en una pestanya nova o permeteu galetes per a aquest lloc."
 }

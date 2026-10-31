@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Conti amministratore",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Le password del gestore e del cliente sono visibili solo al proprietario della piattaforma",
-  "x.yuklenemedi": "Caricamento non riuscito"
+  "x.yuklenemedi": "Caricamento non riuscito",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Il tuo browser ha bloccato il cookie di sessione. Apri l'app in una nuova scheda o consenti i cookie per questo sito."
 }

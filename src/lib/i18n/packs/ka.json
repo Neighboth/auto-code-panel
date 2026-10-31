@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "მენეჯერის ანგარიშები",
   "x.yonetici-sifresi-guncellendi-user": "მენეჯერის {user} პაროლი განახლდა",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "მენეჯერისა და მომხმარებლის პაროლები ხილულია მხოლოდ პლატფორმის მფლობელისთვის",
-  "x.yuklenemedi": "ატვირთვა ვერ მოხერხდა"
+  "x.yuklenemedi": "ატვირთვა ვერ მოხერხდა",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "თქვენმა ბრაუზერმა დაბლოკა სესიის ქუქი. გახსენით აპი ახალ ჩანართში ან დაუშვით ქუქიები ამ საიტისთვის."
 }

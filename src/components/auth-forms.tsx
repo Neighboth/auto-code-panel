@@ -11,6 +11,7 @@ import {
   customerLogout,
   customerRegister,
   managerLogin,
+  sessionReady,
   storeAdminLogin,
   storeAdminLogout,
   superAdminLogout,
@@ -37,6 +38,19 @@ function useTwoFaState(): [
 ] {
   const [state, setState] = useState<TwoFaState | null>(null);
   return [state, setState, () => setState(null)];
+}
+
+/**
+ * Verifies server-side that the session cookie survived, and returns an error
+ * text when the browser dropped it.
+ *
+ * Without this check a blocked cookie looks like a successful login followed by
+ * a mysterious bounce back to the form ("panel opens for a second and closes").
+ */
+async function cookieBlockedMessage(kind: "super" | "store" | "customer"): Promise<string | null> {
+  const result = await sessionReady(kind);
+  if (result.data?.kept) return null;
+  return result.message || "cookie";
 }
 
 /** Keeps redirects inside the store's current URL style (with or without the /slug prefix). */
@@ -205,7 +219,15 @@ export function ManagerLoginForm() {
         });
         return;
       }
+      const blocked = await cookieBlockedMessage("super");
+      if (blocked) {
+        setError(blocked);
+        return;
+      }
       toast.success(t("x.giris-basarl-paneliniz-aclyor"));
+      // Hard navigation: the panel must be rendered by the server with the new
+      // cookie, never from the client router cache (that cache is what showed the
+      // panel for a second before sending the user back to the form).
       window.location.assign(result.redirectTo ?? "/super-admin");
     } finally {
       setPending(false);
@@ -262,7 +284,6 @@ export function StoreAdminLoginForm({
   basePath: string;
   locale?: string;
 }) {
-  const router = useRouter();
   const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -288,9 +309,13 @@ export function StoreAdminLoginForm({
       });
       return;
     }
+    const blocked = await cookieBlockedMessage("store");
+    if (blocked) {
+      setError(blocked);
+      return;
+    }
     toast.success(`${storeName} ${t("auth.storeLoginSuccess")}`);
-    router.push(localizeStorePath(result.redirectTo, slug, basePath, fallback));
-    router.refresh();
+    window.location.assign(localizeStorePath(result.redirectTo, slug, basePath, fallback));
   }
 
   return (
@@ -379,9 +404,13 @@ export function CustomerAuthForm({
       });
       return;
     }
+    const blocked = await cookieBlockedMessage("customer");
+    if (blocked) {
+      setError(blocked);
+      return;
+    }
     toast.success(result.message ?? t("x.giris-basarl"));
-    router.push(fallback);
-    router.refresh();
+    window.location.assign(fallback);
   }
 
   if (verification) {
@@ -546,21 +575,22 @@ export function LogoutButton({
 
   async function onClick() {
     setPending(true);
+    let target = "/";
     if (kind === "super") {
       const result = await superAdminLogout();
-      router.push(result.redirectTo ?? "/super-admin");
+      target = result.redirectTo ?? "/super-admin";
     } else if (kind === "store" && slug) {
       await storeAdminLogout(slug);
-      const base = basePath ?? `/${slug}`;
-      router.push(`${base}/admin/giris`);
+      target = `${basePath ?? `/${slug}`}/admin/giris`;
     } else if (slug) {
       const formData = new FormData();
       formData.set("slug", slug);
       await customerLogout(formData);
-      router.push(basePath === undefined ? `/${slug}` : basePath || "/");
+      target = basePath === undefined ? `/${slug}` : basePath || "/";
     }
-    router.refresh();
     setPending(false);
+    // Full reload so no cached panel markup survives the logout.
+    window.location.assign(target);
   }
 
   return (

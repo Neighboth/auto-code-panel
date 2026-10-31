@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Llogaritë e menaxherit",
   "x.yonetici-sifresi-guncellendi-user": "Fjalëkalimi i menaxherit {user} u përditësua",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Fjalëkalimet e menaxherit dhe klientit janë të dukshme vetëm për pronarin e platformës",
-  "x.yuklenemedi": "Ngarkimi dështoi"
+  "x.yuklenemedi": "Ngarkimi dështoi",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Shfletuesi juaj bllokoi skedarin e sesionit. Hap aplikacionin në një skedë të re ose lejo skedarët e skedarëve për këtë sajt."
 }

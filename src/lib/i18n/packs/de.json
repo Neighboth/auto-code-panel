@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Managerkonten",
   "x.yonetici-sifresi-guncellendi-user": "Passwort des Managers {user} aktualisiert",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- und Kundenpasswörter sind nur für den Plattformbesitzer sichtbar",
-  "x.yuklenemedi": "Der Upload ist fehlgeschlagen"
+  "x.yuklenemedi": "Der Upload ist fehlgeschlagen",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ihr Browser hat das Sitzungscookie blockiert. Öffnen Sie die App in einem neuen Tab oder erlauben Sie Cookies für diese Website."
 }
