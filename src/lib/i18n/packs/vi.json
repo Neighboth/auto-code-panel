@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Tài khoản người quản lý",
   "x.yonetici-sifresi-guncellendi-user": "Đã cập nhật mật khẩu của người quản lý {user}",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Mật khẩu của người quản lý và khách hàng chỉ hiển thị với chủ sở hữu nền tảng",
-  "x.yuklenemedi": "Tải lên không thành công"
+  "x.yuklenemedi": "Tải lên không thành công",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Trình duyệt của bạn đã chặn cookie phiên. Mở ứng dụng trong tab mới hoặc cho phép cookie cho trang web này."
 }
