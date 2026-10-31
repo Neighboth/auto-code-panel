@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "บัญชีผู้จัดการ",
   "x.yonetici-sifresi-guncellendi-user": "อัปเดตรหัสผ่านของผู้จัดการ {user} แล้ว",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "รหัสผ่านผู้จัดการและลูกค้าจะปรากฏแก่เจ้าของแพลตฟอร์มเท่านั้น",
-  "x.yuklenemedi": "การอัปโหลดล้มเหลว"
+  "x.yuklenemedi": "การอัปโหลดล้มเหลว",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "เบราว์เซอร์ของคุณบล็อกคุกกี้เซสชัน เปิดแอปในแท็บใหม่หรืออนุญาตคุกกี้สำหรับไซต์นี้"
 }
