@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "व्यवस्थापक खाती",
   "x.yonetici-sifresi-guncellendi-user": "व्यवस्थापक {user} चा पासवर्ड अपडेट केला",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "व्यवस्थापक आणि ग्राहक संकेतशब्द फक्त प्लॅटफॉर्म मालकास दृश्यमान आहेत",
-  "x.yuklenemedi": "अपलोड अयशस्वी"
+  "x.yuklenemedi": "अपलोड अयशस्वी",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "तुमच्या ब्राउझरने सेशन कुकी ब्लॉक केली आहे. नवीन टॅबमध्ये ॲप उघडा किंवा या साइटसाठी कुकीजला अनुमती द्या."
 }
