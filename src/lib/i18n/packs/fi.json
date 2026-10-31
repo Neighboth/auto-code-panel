@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Hallinnoijan tilit",
   "x.yonetici-sifresi-guncellendi-user": "Ylläpitäjän {user} salasana päivitetty",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Esimiehen ja asiakkaan salasanat näkyvät vain alustan omistajalle",
-  "x.yuklenemedi": "Lataus epäonnistui"
+  "x.yuklenemedi": "Lataus epäonnistui",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Selaimesi esti istuntoevästeen. Avaa sovellus uudella välilehdellä tai salli evästeet tälle sivustolle."
 }
