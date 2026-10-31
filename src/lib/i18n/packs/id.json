@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Akun manajer",
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Kata sandi pengelola dan pelanggan hanya dapat dilihat oleh pemilik platform",
-  "x.yuklenemedi": "Gagal mengunggah"
+  "x.yuklenemedi": "Gagal mengunggah",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Browser Anda memblokir cookie sesi. Buka aplikasi di tab baru atau izinkan cookie untuk situs ini."
 }
