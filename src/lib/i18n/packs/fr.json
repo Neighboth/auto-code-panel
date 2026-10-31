@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Comptes gestionnaires",
   "x.yonetici-sifresi-guncellendi-user": "Mot de passe du gestionnaire {user} mis à jour",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Les mots de passe du gestionnaire et du client sont visibles uniquement par le propriétaire de la plateforme.",
-  "x.yuklenemedi": "Échec du téléchargement"
+  "x.yuklenemedi": "Échec du téléchargement",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Votre navigateur a bloqué le cookie de session. Ouvrez l'application dans un nouvel onglet ou autorisez les cookies pour ce site."
 }
