@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "رمز عبور مدیر {user} به روز شد",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "رمز عبور مدیر و مشتری فقط برای مالک پلتفرم قابل مشاهده است",
   "x.yuklenemedi": "آپلود انجام نشد",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "مرورگر شما کوکی جلسه را مسدود کرده است. برنامه را در یک برگه جدید باز کنید یا کوکی ها را برای این سایت مجاز کنید."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "مرورگر شما کوکی جلسه را مسدود کرده است. برنامه را در یک برگه جدید باز کنید یا کوکی ها را برای این سایت مجاز کنید.",
+  "x.font-sayisi": "{count} قلم",
+  "x.daha-fazla-goster": "نمایش {count} مورد بیشتر",
+  "x.yaz-tipi": "قلم",
+  "x.yukleniyor-yuzde": "در حال بارگذاری %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "تا پایان بارگذاری نمی‌توان ذخیره کرد",
+  "x.gorsel-optimize-edildi": "تصویر بهینه شد: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "پیوند تمدید توسط پلتفرم مدیریت می‌شود.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "برای تغییر آن با پشتیبانی پلتفرم تماس بگیرید"
 }

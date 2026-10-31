@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Administranto kaj kliento pasvortoj estas videblaj nur por la platformo posedanto",
   "x.yuklenemedi": "Alŝuto malsukcesis",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Via retumilo blokis la sean kuketon. Malfermu la apon en nova langeto aŭ permesu kuketojn por ĉi tiu retejo."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Via retumilo blokis la sean kuketon. Malfermu la apon en nova langeto aŭ permesu kuketojn por ĉi tiu retejo.",
+  "x.font-sayisi": "{count} tiparoj",
+  "x.daha-fazla-goster": "Montri {count} pli",
+  "x.yaz-tipi": "Tiparo",
+  "x.yukleniyor-yuzde": "Alŝutado %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ne eblas konservi antaŭ ol la alŝuto finiĝos",
+  "x.gorsel-optimize-edildi": "Bildo optimumigita: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "La renoviga ligilo estas administrata de la platformo.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Kontaktu la subtenon de la platformo por ŝanĝi ĝin"
 }

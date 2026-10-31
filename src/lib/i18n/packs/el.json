@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Ο κωδικός πρόσβασης του διαχειριστή {user} ενημερώθηκε",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Οι κωδικοί πρόσβασης διαχειριστή και πελάτη είναι ορατοί μόνο στον κάτοχο της πλατφόρμας",
   "x.yuklenemedi": "Η μεταφόρτωση απέτυχε",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Το πρόγραμμα περιήγησής σας απέκλεισε το cookie περιόδου λειτουργίας. Ανοίξτε την εφαρμογή σε μια νέα καρτέλα ή επιτρέψτε τα cookie για αυτόν τον ιστότοπο."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Το πρόγραμμα περιήγησής σας απέκλεισε το cookie περιόδου λειτουργίας. Ανοίξτε την εφαρμογή σε μια νέα καρτέλα ή επιτρέψτε τα cookie για αυτόν τον ιστότοπο.",
+  "x.font-sayisi": "{count} γραμματοσειρές",
+  "x.daha-fazla-goster": "Εμφάνιση {count} ακόμη",
+  "x.yaz-tipi": "Γραμματοσειρά",
+  "x.yukleniyor-yuzde": "Μεταφόρτωση %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Δεν είναι δυνατή η αποθήκευση πριν ολοκληρωθεί η μεταφόρτωση",
+  "x.gorsel-optimize-edildi": "Η εικόνα βελτιστοποιήθηκε: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Ο σύνδεσμος ανανέωσης διαχειρίζεται από την πλατφόρμα.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Επικοινωνήστε με την υποστήριξη της πλατφόρμας για αλλαγή"
 }

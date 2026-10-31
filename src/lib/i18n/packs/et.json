@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Halduri {user} parool on värskendatud",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Halduri ja kliendi paroolid on nähtavad ainult platvormi omanikule",
   "x.yuklenemedi": "Üleslaadimine ebaõnnestus",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Teie brauser blokeeris seansiküpsise. Avage rakendus uuel vahelehel või lubage sellel saidil küpsised."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Teie brauser blokeeris seansiküpsise. Avage rakendus uuel vahelehel või lubage sellel saidil küpsised.",
+  "x.font-sayisi": "{count} fonti",
+  "x.daha-fazla-goster": "Näita veel {count}",
+  "x.yaz-tipi": "Font",
+  "x.yukleniyor-yuzde": "Üleslaadimine %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ei saa salvestada enne üleslaadimise lõppu",
+  "x.gorsel-optimize-edildi": "Pilt optimeeritud: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Uuenduslinki haldab platvorm.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Muutmiseks võtke ühendust platvormi toega"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Wachtwoord van manager {user} bijgewerkt",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager- en klantwachtwoorden zijn alleen zichtbaar voor de platformeigenaar",
   "x.yuklenemedi": "Uploaden mislukt",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Uw browser heeft de sessiecookie geblokkeerd. Open de app in een nieuw tabblad of sta cookies toe voor deze site."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Uw browser heeft de sessiecookie geblokkeerd. Open de app in een nieuw tabblad of sta cookies toe voor deze site.",
+  "x.font-sayisi": "{count} lettertypen",
+  "x.daha-fazla-goster": "Nog {count} tonen",
+  "x.yaz-tipi": "Lettertype",
+  "x.yukleniyor-yuzde": "Uploaden %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Kan niet opslaan voordat de upload klaar is",
+  "x.gorsel-optimize-edildi": "Afbeelding geoptimaliseerd: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "De verlengingslink wordt door het platform beheerd.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Neem contact op met platformondersteuning om dit te wijzigen"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "प्रबंधक और ग्राहक पासवर्ड केवल प्लेटफ़ॉर्म स्वामी को दिखाई देते हैं",
   "x.yuklenemedi": "अपलोड विफल रहा",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "आपके ब्राउज़र ने सत्र कुकी को अवरोधित कर दिया है. ऐप को एक नए टैब में खोलें या इस साइट के लिए कुकीज़ की अनुमति दें।"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "आपके ब्राउज़र ने सत्र कुकी को अवरोधित कर दिया है. ऐप को एक नए टैब में खोलें या इस साइट के लिए कुकीज़ की अनुमति दें।",
+  "x.font-sayisi": "{count} फ़ॉन्ट",
+  "x.daha-fazla-goster": "{count} और दिखाएँ",
+  "x.yaz-tipi": "फ़ॉन्ट",
+  "x.yukleniyor-yuzde": "अपलोड हो रहा है %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "अपलोड पूरा होने तक सहेजा नहीं जा सकता",
+  "x.gorsel-optimize-edildi": "छवि अनुकूलित की गई: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "नवीनीकरण लिंक प्लेटफ़ॉर्म द्वारा प्रबंधित होता है।",
+  "x.degistirmek-icin-platform-destegine-basvurun": "इसे बदलने के लिए प्लेटफ़ॉर्म सहायता से संपर्क करें"
 }

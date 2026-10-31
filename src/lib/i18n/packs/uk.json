@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Пароль менеджера {user} оновлено",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Паролі менеджера та клієнта бачать лише власники платформи",
   "x.yuklenemedi": "Помилка завантаження",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браузер заблокував файл cookie сесії. Відкрийте програму в новій вкладці або дозвольте файли cookie для цього сайту."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ваш браузер заблокував файл cookie сесії. Відкрийте програму в новій вкладці або дозвольте файли cookie для цього сайту.",
+  "x.font-sayisi": "{count} шрифтів",
+  "x.daha-fazla-goster": "Показати ще {count}",
+  "x.yaz-tipi": "Шрифт",
+  "x.yukleniyor-yuzde": "Завантаження %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Не можна зберегти, доки завантаження не завершиться",
+  "x.gorsel-optimize-edildi": "Зображення оптимізовано: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Посиланням на продовження керує платформа.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Щоб змінити його, зверніться до підтримки платформи"
 }

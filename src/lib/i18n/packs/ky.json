@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "{user} башкаруучунун сырсөзү жаңырды",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Башкаруучу жана кардар сырсөздөрү платформанын ээсине гана көрүнөт",
   "x.yuklenemedi": "Жүктөп берүү ишке ашкан жок",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузериңиз сеанс кукисин бөгөттөп койду. Колдонмону жаңы өтмөктө ачыңыз же бул сайт үчүн кукилерге уруксат бериңиз."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузериңиз сеанс кукисин бөгөттөп койду. Колдонмону жаңы өтмөктө ачыңыз же бул сайт үчүн кукилерге уруксат бериңиз.",
+  "x.font-sayisi": "{count} арип",
+  "x.daha-fazla-goster": "Дагы {count} көрсөтүү",
+  "x.yaz-tipi": "Арип",
+  "x.yukleniyor-yuzde": "Жүктөлүүдө %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Жүктөө бүтмөйүнчө сактоо мүмкүн эмес",
+  "x.gorsel-optimize-edildi": "Сүрөт оптималдаштырылды: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Узартуу шилтемесин платформа башкарат.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Өзгөртүү үчүн платформанын колдоо кызматына кайрылыңыз"
 }

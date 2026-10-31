@@ -30,7 +30,23 @@ export type AdminCode = {
 };
 
 type GameOption = { id: number; title: string };
-type AccountOption = { id: number; label: string };
+/**
+ * Catalogue row for the wizard.
+ *
+ * The picker used to print a single concatenated `label`, so an account whose
+ * username was empty showed up as "Hesap #12 · Steam" with no way to tell which
+ * login the buyer would receive. Name, e-mail and platform are now separate
+ * fields and rendered on their own lines.
+ */
+type AccountOption = {
+  id: number;
+  label: string;
+  /** Display name = platform username, e-mail or the generated fallback. */
+  name: string;
+  email: string;
+  platformLabel: string;
+  productLabel: string;
+};
 
 const typeLabels: Record<AdminCode["type"], string> = {
   choice: "x.secmeli-musteri-secer",
@@ -569,13 +585,24 @@ export function CodeManager({
                     <p className="px-1 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.06em] muted">{t("x.hesap-gruplar")}</p>
                     {accounts.length === 0 ? <p className="px-1 py-1 text-[11px] muted">{t("x.hesap-yok")}</p> : null}
                     {accounts.map((account) => (
-                      <label key={account.id} className="flex items-center gap-2 rounded-md px-1 py-1 text-[11.5px]">
+                      <label
+                        key={account.id}
+                        className="flex cursor-pointer items-start gap-2 rounded-md px-1 py-1.5 text-[11.5px] transition hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                      >
                         <input
                           type={type === "single" ? "radio" : "checkbox"}
+                          className="mt-0.5"
                           checked={accountIds.includes(account.id)}
                           onChange={() => toggleTarget("account", account.id)}
                         />
-                        {account.label}
+                        <span className="min-w-0">
+                          {/* Display name first: it is what the buyer recognises. */}
+                          <span className="block truncate font-medium">{account.name}</span>
+                          <span className="block truncate text-[10.5px] muted">
+                            {account.email || t("x.e-posta-yok")} · {account.platformLabel}
+                            {account.productLabel ? ` · ${account.productLabel}` : ""}
+                          </span>
+                        </span>
                       </label>
                     ))}
                   </div>

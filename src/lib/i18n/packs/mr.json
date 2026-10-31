@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "व्यवस्थापक {user} चा पासवर्ड अपडेट केला",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "व्यवस्थापक आणि ग्राहक संकेतशब्द फक्त प्लॅटफॉर्म मालकास दृश्यमान आहेत",
   "x.yuklenemedi": "अपलोड अयशस्वी",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "तुमच्या ब्राउझरने सेशन कुकी ब्लॉक केली आहे. नवीन टॅबमध्ये ॲप उघडा किंवा या साइटसाठी कुकीजला अनुमती द्या."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "तुमच्या ब्राउझरने सेशन कुकी ब्लॉक केली आहे. नवीन टॅबमध्ये ॲप उघडा किंवा या साइटसाठी कुकीजला अनुमती द्या.",
+  "x.font-sayisi": "{count} फॉन्ट",
+  "x.daha-fazla-goster": "आणखी {count} दाखवा",
+  "x.yaz-tipi": "फॉन्ट",
+  "x.yukleniyor-yuzde": "अपलोड होत आहे %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "अपलोड पूर्ण होईपर्यंत जतन करता येत नाही",
+  "x.gorsel-optimize-edildi": "प्रतिमा ऑप्टिमाइझ झाली: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "नूतनीकरण लिंक प्लॅटफॉर्मद्वारे व्यवस्थापित केली जाते.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "ती बदलण्यासाठी प्लॅटफॉर्म सपोर्टशी संपर्क करा"
 }

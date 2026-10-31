@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "A(z) {user} kezelő jelszava frissítve",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "A menedzser és az ügyfél jelszavait csak a platform tulajdonosa láthatja",
   "x.yuklenemedi": "A feltöltés sikertelen",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Az Ön böngészője blokkolta a munkamenet cookie-ját. Nyissa meg az alkalmazást egy új lapon, vagy engedélyezze a cookie-kat ezen a webhelyen."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Az Ön böngészője blokkolta a munkamenet cookie-ját. Nyissa meg az alkalmazást egy új lapon, vagy engedélyezze a cookie-kat ezen a webhelyen.",
+  "x.font-sayisi": "{count} betűtípus",
+  "x.daha-fazla-goster": "További {count} megjelenítése",
+  "x.yaz-tipi": "Betűtípus",
+  "x.yukleniyor-yuzde": "Feltöltés %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Nem menthető a feltöltés befejezéséig",
+  "x.gorsel-optimize-edildi": "Kép optimalizálva: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "A hosszabbítási linket a platform kezeli.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Módosításhoz forduljon a platform ügyfélszolgálatához"
 }

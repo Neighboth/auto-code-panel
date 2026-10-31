@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Atnaujintas valdytojo {user} slaptažodis",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Valdytojo ir klientų slaptažodžius mato tik platformos savininkas",
   "x.yuklenemedi": "Įkelti nepavyko",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jūsų naršyklė užblokavo seanso slapuką. Atidarykite programą naujame skirtuke arba leiskite šios svetainės slapukus."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jūsų naršyklė užblokavo seanso slapuką. Atidarykite programą naujame skirtuke arba leiskite šios svetainės slapukus.",
+  "x.font-sayisi": "{count} šriftai",
+  "x.daha-fazla-goster": "Rodyti dar {count}",
+  "x.yaz-tipi": "Šriftas",
+  "x.yukleniyor-yuzde": "Įkeliama %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Negalima išsaugoti, kol įkėlimas nebaigtas",
+  "x.gorsel-optimize-edildi": "Vaizdas optimizuotas: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Pratęsimo nuorodą valdo platforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Norėdami pakeisti, susisiekite su platformos pagalba"
 }

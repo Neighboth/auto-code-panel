@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Les contrasenyes del gestor i del client només són visibles per al propietari de la plataforma",
   "x.yuklenemedi": "La càrrega ha fallat",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "El vostre navegador ha bloquejat la galeta de sessió. Obriu l'aplicació en una pestanya nova o permeteu galetes per a aquest lloc."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "El vostre navegador ha bloquejat la galeta de sessió. Obriu l'aplicació en una pestanya nova o permeteu galetes per a aquest lloc.",
+  "x.font-sayisi": "{count} tipus de lletra",
+  "x.daha-fazla-goster": "Mostra'n {count} més",
+  "x.yaz-tipi": "Tipus de lletra",
+  "x.yukleniyor-yuzde": "S'està carregant %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "No es pot desar fins que acabi la càrrega",
+  "x.gorsel-optimize-edildi": "Imatge optimitzada: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "L'enllaç de renovació el gestiona la plataforma.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Contacta amb el suport de la plataforma per canviar-lo"
 }

@@ -97,8 +97,12 @@ export function AdminShell({
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                    loading="lazy"
-                    decoding="async" src={logoUrl} alt={storeName} className="h-7 w-7 shrink-0 rounded-md object-cover" />
+                    src={logoUrl}
+                    alt={storeName}
+                    width={28}
+                    height={28}
+                    decoding="async"
+                    className="h-7 w-7 shrink-0 rounded-md object-cover" />
             ) : (
               <span
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[12px] font-bold text-white"

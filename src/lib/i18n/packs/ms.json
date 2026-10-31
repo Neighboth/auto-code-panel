@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Kata laluan pengurus {user} dikemas kini",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Kata laluan pengurus dan pelanggan kelihatan kepada pemilik platform sahaja",
   "x.yuklenemedi": "Muat naik gagal",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Penyemak imbas anda menyekat kuki sesi. Buka apl dalam tab baharu atau benarkan kuki untuk tapak ini."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Penyemak imbas anda menyekat kuki sesi. Buka apl dalam tab baharu atau benarkan kuki untuk tapak ini.",
+  "x.font-sayisi": "{count} fon",
+  "x.daha-fazla-goster": "Tunjuk {count} lagi",
+  "x.yaz-tipi": "Jenis huruf",
+  "x.yukleniyor-yuzde": "Memuat naik %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Tidak boleh simpan sehingga muat naik selesai",
+  "x.gorsel-optimize-edildi": "Imej dioptimumkan: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Pautan pembaharuan diurus oleh platform.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Hubungi sokongan platform untuk menukarnya"
 }

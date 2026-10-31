@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Менежер болон хэрэглэгчийн нууц үг нь зөвхөн платформ эзэмшигчид харагдана",
   "x.yuklenemedi": "Байршуулж чадсангүй",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Таны хөтөч сесс күүкийг блоклосон. Аппликешныг шинэ таб дээр нээх эсвэл энэ сайтад күүкиг зөвшөөрөх."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Таны хөтөч сесс күүкийг блоклосон. Аппликешныг шинэ таб дээр нээх эсвэл энэ сайтад күүкиг зөвшөөрөх.",
+  "x.font-sayisi": "{count} фонт",
+  "x.daha-fazla-goster": "Дахин {count} харуулах",
+  "x.yaz-tipi": "Фонт",
+  "x.yukleniyor-yuzde": "Байршуулж байна %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Байршуулалт дуусах хүртэл хадгалах боломжгүй",
+  "x.gorsel-optimize-edildi": "Зураг оновчлогдлоо: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Сунгах холбоосыг платформ удирддаг.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Өөрчлөхийн тулд платформын дэмжлэгтэй холбогдоно уу"
 }

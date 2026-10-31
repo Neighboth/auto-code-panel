@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "{user} менеджерінің құпия сөзі жаңартылды",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Менеджер мен тұтынушы құпия сөздері платформа иесіне ғана көрінеді",
   "x.yuklenemedi": "Жүктеп салу сәтсіз аяқталды",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузеріңіз сеанс cookie файлын блоктады. Қолданбаны жаңа қойындыда ашыңыз немесе осы сайт үшін cookie файлдарына рұқсат беріңіз."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Браузеріңіз сеанс cookie файлын блоктады. Қолданбаны жаңа қойындыда ашыңыз немесе осы сайт үшін cookie файлдарына рұқсат беріңіз.",
+  "x.font-sayisi": "{count} қаріп",
+  "x.daha-fazla-goster": "Тағы {count} көрсету",
+  "x.yaz-tipi": "Қаріп",
+  "x.yukleniyor-yuzde": "Жүктелуде %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Жүктеу аяқталмайынша сақтау мүмкін емес",
+  "x.gorsel-optimize-edildi": "Сурет оңтайландырылды: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Ұзарту сілтемесін платформа басқарады.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Өзгерту үшін платформа қолдауына хабарласыңыз"
 }

@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "管理员{user}的密码已更新",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "经理和客户密码仅对平台所有者可见",
   "x.yuklenemedi": "上传失败",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "您的浏览器阻止了会话 cookie。在新选项卡中打开应用程序或允许该网站使用 cookie。"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "您的浏览器阻止了会话 cookie。在新选项卡中打开应用程序或允许该网站使用 cookie。",
+  "x.font-sayisi": "{count} 种字体",
+  "x.daha-fazla-goster": "再显示 {count} 个",
+  "x.yaz-tipi": "字体",
+  "x.yukleniyor-yuzde": "正在上传 %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "上传完成前无法保存",
+  "x.gorsel-optimize-edildi": "图片已优化：{from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "续期链接由平台管理。",
+  "x.degistirmek-icin-platform-destegine-basvurun": "如需更改，请联系平台支持"
 }

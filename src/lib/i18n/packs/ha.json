@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "An sabunta kalmar wucewa ta manajan {user}",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manajan da kalmomin shiga na abokin ciniki suna bayyane ga mai dandalin kawai",
   "x.yuklenemedi": "An kasa uploading",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Mai binciken ku ya toshe kuki ɗin zaman. Bude ƙa'idar a cikin sabon shafin ko ba da izinin kukis don wannan rukunin yanar gizon."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Mai binciken ku ya toshe kuki ɗin zaman. Bude ƙa'idar a cikin sabon shafin ko ba da izinin kukis don wannan rukunin yanar gizon.",
+  "x.font-sayisi": "Font {count}",
+  "x.daha-fazla-goster": "Nuna ƙari {count}",
+  "x.yaz-tipi": "Nau'in rubutu",
+  "x.yukleniyor-yuzde": "Ana lodawa %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Ba za a iya ajiyewa ba har sai an gama lodawa",
+  "x.gorsel-optimize-edildi": "An inganta hoton: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Dandalin ne ke kula da hanyar sabuntawa.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Tuntuɓi tallafin dandali don canza shi"
 }

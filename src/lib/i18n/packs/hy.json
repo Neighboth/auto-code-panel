@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Կառավարչի {user} գաղտնաբառը թարմացվել է",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Կառավարչի և հաճախորդի գաղտնաբառերը տեսանելի են միայն հարթակի սեփականատիրոջը",
   "x.yuklenemedi": "Չհաջողվեց վերբեռնել",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ձեր զննարկիչը արգելափակել է նիստի քուքի ֆայլը: Բացեք հավելվածը նոր ներդիրում կամ թույլատրեք քուքիները այս կայքի համար:"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Ձեր զննարկիչը արգելափակել է նիստի քուքի ֆայլը: Բացեք հավելվածը նոր ներդիրում կամ թույլատրեք քուքիները այս կայքի համար:",
+  "x.font-sayisi": "{count} տառատեսակ",
+  "x.daha-fazla-goster": "Ցուցադրել ևս {count}",
+  "x.yaz-tipi": "Տառատեսակ",
+  "x.yukleniyor-yuzde": "Վերբեռնում %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Հնարավոր չէ պահել մինչև վերբեռնման ավարտը",
+  "x.gorsel-optimize-edildi": "Պատկերը օպտիմիզացված է՝ {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Երկարաձգման հղումը կառավարվում է հարթակի կողմից։",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Փոփոխելու համար դիմեք հարթակի աջակցությանը"
 }

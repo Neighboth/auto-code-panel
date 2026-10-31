@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Kata sandi pengelola dan pelanggan hanya dapat dilihat oleh pemilik platform",
   "x.yuklenemedi": "Gagal mengunggah",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Browser Anda memblokir cookie sesi. Buka aplikasi di tab baru atau izinkan cookie untuk situs ini."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Browser Anda memblokir cookie sesi. Buka aplikasi di tab baru atau izinkan cookie untuk situs ini.",
+  "x.font-sayisi": "{count} font",
+  "x.daha-fazla-goster": "Tampilkan {count} lagi",
+  "x.yaz-tipi": "Jenis huruf",
+  "x.yukleniyor-yuzde": "Mengunggah %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Tidak dapat menyimpan sebelum unggahan selesai",
+  "x.gorsel-optimize-edildi": "Gambar dioptimalkan: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Tautan perpanjangan dikelola oleh platform.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Hubungi dukungan platform untuk mengubahnya"
 }

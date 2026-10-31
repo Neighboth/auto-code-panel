@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Oluṣakoso ati awọn ọrọ igbaniwọle alabara han si oniwun Syeed nikan",
   "x.yuklenemedi": "Ìrùsókè kùnà",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Aṣàwákiri rẹ ti dina kuki igba. Ṣii app ni taabu tuntun tabi gba awọn kuki laaye fun aaye yii."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Aṣàwákiri rẹ ti dina kuki igba. Ṣii app ni taabu tuntun tabi gba awọn kuki laaye fun aaye yii.",
+  "x.font-sayisi": "Fonti {count}",
+  "x.daha-fazla-goster": "Fi {count} sí",
+  "x.yaz-tipi": "Irú lẹ́tà",
+  "x.yukleniyor-yuzde": "Ń gbéwọlé %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Kò ṣeé ṣe láti fipamọ́ títí ìgbéwọlé yóò fi parí",
+  "x.gorsel-optimize-edildi": "A ti mú àwòrán dára: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Ìjápọ̀ ìmúdọ̀tun jẹ́ ìṣàkóso pẹpẹ.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Kàn sí àtìlẹ́yìn pẹpẹ láti yí i padà"
 }

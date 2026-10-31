@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "Password of manager {user} updated",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manager a Client Passwierder sinn nëmme fir de Plattformbesëtzer siichtbar",
   "x.yuklenemedi": "Eroplueden gescheitert",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Äre Browser huet de Sessiouns-Cookie blockéiert. Öffnen d'App an engem neien Tab oder erlaabt Cookien fir dëse Site."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Äre Browser huet de Sessiouns-Cookie blockéiert. Öffnen d'App an engem neien Tab oder erlaabt Cookien fir dëse Site.",
+  "x.font-sayisi": "{count} Schrëften",
+  "x.daha-fazla-goster": "{count} méi weisen",
+  "x.yaz-tipi": "Schrëft",
+  "x.yukleniyor-yuzde": "Gëtt eropgelueden %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Kann net gespäichert ginn, éier den Upload fäerdeg ass",
+  "x.gorsel-optimize-edildi": "Bild optimiséiert: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "De Verlängerungslink gëtt vun der Plattform geréiert.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Kontaktéiert de Plattform-Support fir et ze änneren"
 }

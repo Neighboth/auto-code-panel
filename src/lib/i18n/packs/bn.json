@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "ম্যানেজার {user}-এর পাসওয়ার্ড আপডেট করা হয়েছে",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "ম্যানেজার এবং গ্রাহকের পাসওয়ার্ড শুধুমাত্র প্ল্যাটফর্মের মালিকের কাছে দৃশ্যমান",
   "x.yuklenemedi": "আপলোড ব্যর্থ হয়েছে",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "আপনার ব্রাউজার সেশন কুকি ব্লক করেছে. একটি নতুন ট্যাবে অ্যাপটি খুলুন বা এই সাইটের জন্য কুকির অনুমতি দিন।"
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "আপনার ব্রাউজার সেশন কুকি ব্লক করেছে. একটি নতুন ট্যাবে অ্যাপটি খুলুন বা এই সাইটের জন্য কুকির অনুমতি দিন।",
+  "x.font-sayisi": "{count} ফন্ট",
+  "x.daha-fazla-goster": "আরও {count} দেখান",
+  "x.yaz-tipi": "ফন্ট",
+  "x.yukleniyor-yuzde": "আপলোড হচ্ছে %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "আপলোড শেষ না হলে সংরক্ষণ করা যাবে না",
+  "x.gorsel-optimize-edildi": "ছবি অপ্টিমাইজ করা হয়েছে: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "নবায়ন লিংক প্ল্যাটফর্ম দ্বারা পরিচালিত হয়।",
+  "x.degistirmek-icin-platform-destegine-basvurun": "পরিবর্তন করতে প্ল্যাটফর্ম সাপোর্টে যোগাযোগ করুন"
 }

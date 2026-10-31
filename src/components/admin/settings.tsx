@@ -1,10 +1,10 @@
 "use client";
 import { useT } from "@/components/i18n-provider";
 
-import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Globe2, Loader2, Plus, Search, ShieldCheck, Trash2, Upload } from "lucide-react";
+import { Globe2, ImagePlus, Loader2, Lock, Plus, ShieldCheck, Trash2, Type, Upload, X } from "lucide-react";
 import {
   saveStoreCredentials,
   saveStoreDomain,
@@ -13,7 +13,8 @@ import {
 } from "@/app/actions/store-admin";
 import { CopyButton } from "@/components/copy-button";
 import { Field } from "@/components/ui";
-import { FONT_CATEGORIES, FONT_OPTIONS, googleFontHref } from "@/lib/fonts";
+import { FontPicker } from "@/components/admin/font-picker";
+import { discardUpload, sizeLabel, uploadWithProgress, type UploadProgress } from "@/lib/upload-client";
 
 export type StoreBranding = {
   slug: string;
@@ -47,123 +48,153 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
   const [fontFamily, setFontFamily] = useState(store.fontFamily);
   const [fontUrl, setFontUrl] = useState(store.fontUrl);
   const [fontLabel, setFontLabel] = useState(store.fontLabel);
-  const [fontCategory, setFontCategory] = useState<string>("all");
-  const [uploading, setUploading] = useState<"logo" | "favicon" | "font" | null>(null);
-  const [fontSearch, setFontSearch] = useState("");
-  const [fontOpen, setFontOpen] = useState(false);
-  const [renewalUrl, setRenewalUrl] = useState(store.renewalUrl);
+  /*
+   * Upload state is one object: which slot is busy, how far the bytes got, and
+   * the request that can cancel it. Saving is blocked while it is set — a form
+   * submitted mid-upload used to store the *previous* path and silently lose the
+   * image.
+   */
+  const [upload, setUpload] = useState<{
+    slot: "logo" | "favicon" | "font";
+    percent: number;
+    name: string;
+  } | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  /** Files uploaded during this visit that a save has not committed yet. */
+  const unsaved = useRef<Set<string>>(new Set());
+  const [renewalUrl] = useState(store.renewalUrl);
   const [contacts, setContacts] = useState(store.contactLinks.length ? store.contactLinks : [{ label: "", url: "" }]);
 
-  const filteredFonts = useMemo(() => {
-    const term = fontSearch.trim().toLowerCase();
-    const list = FONT_OPTIONS.filter((font) => {
-      if (fontCategory !== "all" && font.category !== fontCategory) return false;
-      return term ? font.family.toLowerCase().includes(term) : true;
-    });
-    return list.slice(0, 60);
-  }, [fontSearch, fontCategory]);
-
   /*
-   * Every row in the picker is rendered in its own family, so the file for that
-   * family has to be loaded too — otherwise the whole list falls back to the
-   * same system font ("all fonts look identical"). `googleFontHref` accepts at
-   * most 6 families per request, so the list is requested in batches.
+   * Abandoned uploads are cleaned up when the owner leaves without saving.
+   *
+   * `keepalive` makes the DELETE survive the navigation, and the server only
+   * removes files nothing references, so a logo that *was* saved is safe.
    */
   useEffect(() => {
-    const families = [fontFamily, ...filteredFonts.map((font) => font.family)];
-    const batches: string[] = [];
-    for (let index = 0; index < families.length; index += 6) {
-      const href = googleFontHref(families.slice(index, index + 6));
-      if (href) batches.push(href);
-    }
-    const links = batches.map((href) => {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      link.dataset.fontPreview = "true";
-      document.head.appendChild(link);
-      return link;
-    });
-    return () => links.forEach((link) => link.remove());
-  }, [fontFamily, filteredFonts]);
+    const pending = unsaved.current;
+    return () => {
+      for (const path of pending) discardUpload(path);
+      pending.clear();
+    };
+  }, []);
 
   /**
-   * Uploads a picked file to the media library and keeps the returned
-   * `/media/<sha1>.<ext>` path in the form.
+   * Uploads one file with a live percentage.
    *
-   * The old flow inlined images as base64 and had to cap them at 180 KB. The
-   * server now stores the bytes on disk (5 MB images, 50 MB fonts), so the form
-   * payload stays small and a 4K logo or a full font family works.
+   * The previous flow awaited a bare `fetch` with no feedback: the page looked
+   * frozen for the whole upload (a 4 MB logo over a slow uplink), and a second
+   * click started another request. Now the panel shows the percentage, offers a
+   * cancel button, and keeps the save button disabled until the file lands.
    */
-  async function uploadFile(file: File, kind: "image" | "font") {
+  async function uploadFile(
+    file: File,
+    slot: "logo" | "favicon" | "font",
+  ): Promise<string | null> {
+    const kind = slot === "font" ? "font" : "image";
     const limit = kind === "font" ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
     if (file.size > limit) {
       toast.error(kind === "font" ? t("x.font-en-fazla-50-mb-olabilir") : t("x.gorsel-en-fazla-5-mb-olabilir"));
       return null;
     }
-    const formData = new FormData();
-    formData.set("kind", kind);
-    formData.set("file", file);
-    try {
-      // Route handler, not a server action: action bodies are capped at 1 MB.
-      const response = await fetch("/api/store/upload", { method: "POST", body: formData });
-      const payload = (await response.json()) as { ok?: boolean; path?: string; reason?: string };
-      if (!response.ok || !payload.ok || !payload.path) {
-        const reason = payload.reason;
-        if (reason === "size") {
-          toast.error(kind === "font" ? t("x.font-en-fazla-50-mb-olabilir") : t("x.gorsel-en-fazla-5-mb-olabilir"));
-        } else if (reason === "type") {
-          toast.error(
-            kind === "font"
-              ? t("x.desteklenmeyen-font-dosyas-ttf-otf-woff-woff2")
-              : t("x.desteklenmeyen-gorsel-format"),
-          );
-        } else {
-          toast.error(t("x.yuklenemedi"));
-        }
-        return null;
-      }
-      return payload.path;
-    } catch {
-      toast.error(t("x.yuklenemedi"));
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setUpload({ slot, percent: 0, name: file.name });
+
+    const result = await uploadWithProgress(file, {
+      kind,
+      variant: slot === "font" ? "image" : slot,
+      signal: controller.signal,
+      onProgress: ({ percent }: UploadProgress) => setUpload({ slot, percent, name: file.name }),
+    });
+
+    abortRef.current = null;
+    setUpload(null);
+
+    if (result.aborted) {
+      toast.info(t("x.iptal-edildi"));
       return null;
     }
+    if (!result.ok || !result.path) {
+      if (result.reason === "size") {
+        toast.error(kind === "font" ? t("x.font-en-fazla-50-mb-olabilir") : t("x.gorsel-en-fazla-5-mb-olabilir"));
+      } else if (result.reason === "type") {
+        toast.error(
+          kind === "font"
+            ? t("x.desteklenmeyen-font-dosyas-ttf-otf-woff-woff2")
+            : t("x.desteklenmeyen-gorsel-format"),
+        );
+      } else {
+        toast.error(t("x.yuklenemedi"));
+      }
+      return null;
+    }
+
+    unsaved.current.add(result.path);
+    if (result.saved && result.saved > 0 && result.originalBytes) {
+      toast.success(
+        t("x.gorsel-optimize-edildi", {
+          from: sizeLabel(result.originalBytes),
+          to: sizeLabel(result.bytes ?? 0),
+        }),
+      );
+    } else {
+      toast.success(t("x.dosya-yuklendi"));
+    }
+    return result.path;
+  }
+
+  function cancelUpload() {
+    abortRef.current?.abort();
   }
 
   async function onImage(event: ChangeEvent<HTMLInputElement>, target: "logo" | "favicon") {
     const file = event.target.files?.[0];
-    if (!file) return;
-    setUploading(target);
-    const path = await uploadFile(file, "image");
-    setUploading(null);
     event.target.value = "";
+    if (!file || upload) return;
+    const path = await uploadFile(file, target);
     if (!path) return;
-    if (target === "logo") setLogoUrl(path);
-    else setFaviconUrl(path);
-    toast.success(t("x.dosya-yuklendi"));
+    if (target === "logo") {
+      if (logoUrl.startsWith("/media/")) unsaved.current.add(logoUrl);
+      setLogoUrl(path);
+    } else {
+      if (faviconUrl.startsWith("/media/")) unsaved.current.add(faviconUrl);
+      setFaviconUrl(path);
+    }
   }
 
   async function onFontFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    if (!file) return;
-    if (!/\.(ttf|otf|woff2?|TTF|OTF|WOFF2?)$/.test(file.name)) {
+    event.target.value = "";
+    if (!file || upload) return;
+    if (!/\.(ttf|otf|woff2?)$/i.test(file.name)) {
       toast.error(t("x.desteklenmeyen-font-dosyas-ttf-otf-woff-woff2"));
       return;
     }
-    setUploading("font");
     const path = await uploadFile(file, "font");
-    setUploading(null);
-    event.target.value = "";
     if (!path) return;
+    if (fontUrl.startsWith("/media/")) unsaved.current.add(fontUrl);
     setFontUrl(path);
     setFontLabel(file.name.replace(/\.[^.]+$/, "").slice(0, 60));
-    toast.success(t("x.dosya-yuklendi"));
+  }
+
+  function clearUploadedFont() {
+    if (fontUrl.startsWith("/media/")) discardUpload(fontUrl);
+    unsaved.current.delete(fontUrl);
+    setFontUrl("");
+    setFontLabel("");
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
     setError(null);
+    if (upload) {
+      // A save issued mid-upload would persist the previous path.
+      toast.error(t("x.yukleme-tamamlanmadan-kaydedilemez"));
+      return;
+    }
     const formData = new FormData(event.currentTarget);
     formData.set("slug", store.slug);
     formData.set("newSlug", slug);
@@ -174,7 +205,6 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
     formData.set("fontFamily", fontFamily);
     formData.set("fontUrl", fontUrl);
     formData.set("fontLabel", fontLabel);
-    formData.set("renewalUrl", renewalUrl);
     formData.set(
       "contactLinks",
       JSON.stringify(contacts.filter((contact) => contact.label.trim() && contact.url.trim())),
@@ -186,6 +216,8 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
       return;
     }
     toast.success(result.message ?? t("x.ayarlar-kaydedildi"));
+    // Everything uploaded during this visit is now referenced by the store.
+    unsaved.current.clear();
     if (result.data?.slug && result.data.slug !== store.slug) {
       // Always use the prefixed path: on a custom domain the server's domain cache
       // may still point at the previous slug for a few seconds.
@@ -236,9 +268,22 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                 )}
               </span>
               <div className="flex-1">
-                <label className="btn btn-outline btn-sm cursor-pointer">
-                  <Upload size={12} />{t("x.gorsel-yukle")}<input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(event) => onImage(event, "logo")} />
+                <label
+                  className={`btn btn-outline btn-sm cursor-pointer ${upload ? "pointer-events-none opacity-60" : ""}`}
+                >
+                  {upload?.slot === "logo" ? <Loader2 size={12} className="animate-spin" /> : <ImagePlus size={12} />}
+                  {upload?.slot === "logo" ? `%${upload.percent}` : t("x.gorsel-yukle")}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/avif"
+                    className="hidden"
+                    disabled={Boolean(upload)}
+                    onChange={(event) => onImage(event, "logo")}
+                  />
                 </label>
+                {upload?.slot === "logo" ? (
+                  <ProgressBar percent={upload.percent} label={upload.name} onCancel={cancelUpload} compact />
+                ) : null}
                 <input
                   value={logoUrl.startsWith("data:") ? "" : logoUrl}
                   onChange={(event) => setLogoUrl(event.target.value)}
@@ -262,9 +307,22 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                 )}
               </span>
               <div className="flex-1">
-                <label className="btn btn-outline btn-sm cursor-pointer">
-                  <Upload size={12} />{t("x.gorsel-yukle")}<input type="file" accept="image/png,image/x-icon,image/svg+xml" className="hidden" onChange={(event) => onImage(event, "favicon")} />
+                <label
+                  className={`btn btn-outline btn-sm cursor-pointer ${upload ? "pointer-events-none opacity-60" : ""}`}
+                >
+                  {upload?.slot === "favicon" ? <Loader2 size={12} className="animate-spin" /> : <ImagePlus size={12} />}
+                  {upload?.slot === "favicon" ? `%${upload.percent}` : t("x.gorsel-yukle")}
+                  <input
+                    type="file"
+                    accept="image/png,image/x-icon,image/svg+xml,image/webp"
+                    className="hidden"
+                    disabled={Boolean(upload)}
+                    onChange={(event) => onImage(event, "favicon")}
+                  />
                 </label>
+                {upload?.slot === "favicon" ? (
+                  <ProgressBar percent={upload.percent} label={upload.name} onCancel={cancelUpload} compact />
+                ) : null}
                 <input
                   value={faviconUrl.startsWith("data:") ? "" : faviconUrl}
                   onChange={(event) => setFaviconUrl(event.target.value)}
@@ -316,75 +374,25 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
         </div>
 
         <div className="mt-4">
-          <p className="label">{" "}{t("x.yaz-tipi-google-fonts")}</p>
-          <button
-            type="button"
-            onClick={() => setFontOpen((value) => !value)}
-            className="flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-left hairline"
-          >
-            <span className="text-[13px]" style={{ fontFamily: `"${fontFamily}", sans-serif` }}>
-              {fontUrl ? `${fontLabel || "Custom"} · ${fontFamily}` : fontFamily}
-            </span>
-            <span className="text-[11px] muted">{FONT_OPTIONS.length} font</span>
-          </button>
-          {fontOpen ? (
-            <div className="mt-2 rounded-xl border p-2.5 hairline" style={{ background: "var(--bg)" }}>
-              <div className="relative">
-                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 muted" />
-                <input
-                  value={fontSearch}
-                  onChange={(event) => setFontSearch(event.target.value)}
-                  placeholder={t("x.font-ara")}
-                  className="input h-9 pl-8 text-[12px]"
-                  autoFocus
-                />
-              </div>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {["all", ...FONT_CATEGORIES].map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setFontCategory(category)}
-                    className="rounded-full border px-2.5 py-1 text-[10.5px] hairline"
-                    style={{
-                      background: fontCategory === category ? "var(--fg)" : "transparent",
-                      color: fontCategory === category ? "var(--bg)" : "inherit",
-                    }}
-                  >
-                    {category === "all" ? t("x.tumu") : category}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-2 max-h-64 overflow-y-auto rounded-lg scroll-thin">
-                {filteredFonts.map((font) => (
-                  <button
-                    key={font.family}
-                    type="button"
-                    onClick={() => {
-                      setFontFamily(font.family);
-                      setFontOpen(false);
-                    }}
-                    className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-2 text-left hover:opacity-70"
-                    style={{ background: font.family === fontFamily ? "color-mix(in srgb, var(--fg) 6%, transparent)" : "transparent" }}
-                  >
-                    <span className="text-[14px]" style={{ fontFamily: `"${font.family}", sans-serif` }}>
-                      {font.family}
-                    </span>
-                    <span className="flex items-center gap-2 text-[10px] muted">
-                      {font.category}
-                      {font.family === fontFamily ? <Check size={12} /> : null}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          <p className="label">{t("x.yaz-tipi-google-fonts")}</p>
+          <FontPicker
+            value={fontFamily}
+            onChange={(family) => {
+              setFontFamily(family);
+              // Picking a catalogue family wins over the uploaded file.
+              if (fontUrl) clearUploadedFont();
+            }}
+            sample={t("x.dijital-hesap-teslimat")}
+          />
 
-          {/* Self-hosted typeface: takes precedence over the Google family. */}
+          {/* Self-hosted typeface: takes precedence over the catalogue family. */}
           <div className="mt-2 rounded-lg border px-3 py-2.5 hairline">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-[11.5px] font-medium">{t("x.ozel-font-dosyas")}</p>
+                <p className="flex items-center gap-1.5 text-[11.5px] font-medium">
+                  <Type size={12} />
+                  {t("x.ozel-font-dosyas")}
+                </p>
                 <p className="mt-0.5 text-[10.5px] muted">
                   {fontUrl ? (
                     <span className="mono">{fontLabel || fontUrl}</span>
@@ -394,13 +402,16 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="btn btn-outline btn-sm cursor-pointer">
-                  {uploading === "font" ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
-                  {t("x.font-yukle")}
+                <label
+                  className={`btn btn-outline btn-sm cursor-pointer ${upload ? "pointer-events-none opacity-60" : ""}`}
+                >
+                  {upload?.slot === "font" ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                  {upload?.slot === "font" ? `%${upload.percent}` : t("x.font-yukle")}
                   <input
                     type="file"
                     accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
                     className="hidden"
+                    disabled={Boolean(upload)}
                     onChange={onFontFile}
                   />
                 </label>
@@ -409,16 +420,16 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
                     type="button"
                     className="btn btn-ghost btn-sm"
                     aria-label={t("common.delete")}
-                    onClick={() => {
-                      setFontUrl("");
-                      setFontLabel("");
-                    }}
+                    onClick={clearUploadedFont}
                   >
                     <Trash2 size={12} />
                   </button>
                 ) : null}
               </div>
             </div>
+            {upload?.slot === "font" ? (
+              <ProgressBar percent={upload.percent} label={upload.name} onCancel={cancelUpload} />
+            ) : null}
           </div>
 
           {fontUrl ? (
@@ -430,7 +441,7 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
           ) : null}
 
           <div className="mt-2 rounded-lg border px-3 py-2.5 hairline">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] muted">{" "}{t("x.canl-onizleme")}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] muted">{t("x.canl-onizleme")}</p>
             <p
               className="mt-1 text-[17px] font-semibold"
               style={{ fontFamily: fontUrl ? `"StoreCustomFont", sans-serif` : `"${fontFamily}", sans-serif` }}
@@ -447,18 +458,34 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
         </div>
       </section>
 
+      {/*
+        Renewal link is a platform-level setting: letting a store owner rewrite it
+        would let them redirect their own customers' renewals anywhere. The panel
+        only shows the effective value, with a lock badge, and `saveStoreSettings`
+        no longer writes the column at all.
+      */}
       <section className="card p-5">
-        <h2 className="text-[14px] font-semibold">{t("x.sure-uzatma-linki")}</h2>
-        <p className="mt-0.5 text-[11.5px] muted">{t("x.bos-birakirsaniz-platformun-varsayilan-linki-kullanlr")}</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="flex items-center gap-1.5 text-[14px] font-semibold">
+              {t("x.sure-uzatma-linki")}
+              <Lock size={12} className="muted" />
+            </h2>
+            <p className="mt-0.5 text-[11.5px] muted">{t("x.sure-uzatma-linki-platform-tarafndan-belirlenir")}</p>
+          </div>
+        </div>
         <div className="mt-3">
-          <Field label={t("x.sure-uzatma-linki")} hint={t("x.desteklenen-bicim-https-ornek-com-yenile")}>
-            <input
-              value={renewalUrl}
-              onChange={(event) => setRenewalUrl(event.target.value)}
-              className="input mono text-[12px]"
-              placeholder="https://..."
-              inputMode="url"
-            />
+          <Field label={t("x.sure-uzatma-linki")} hint={t("x.degistirmek-icin-platform-destegine-basvurun")}>
+            <div className="flex items-center gap-2">
+              <input
+                value={renewalUrl}
+                placeholder="—"
+                readOnly
+                disabled
+                aria-readonly="true"
+                className="input mono cursor-not-allowed text-[12px] opacity-70"
+              />
+            </div>
           </Field>
         </div>
       </section>
@@ -517,9 +544,25 @@ export function StoreSettingsForm({ store }: { store: StoreBranding }) {
         </p>
       ) : null}
 
-      <div className="flex justify-end">
-        <button type="submit" className="btn btn-dark" disabled={pending}>
-          {pending ? <Loader2 size={14} className="animate-spin" /> : null}
+      {/*
+        Sticky action bar: the settings form is long, and the save button used to
+        live at the very bottom — owners edited the font block at the top and
+        then scrolled three screens to save. Now it follows the viewport and
+        doubles as the upload-status line.
+      */}
+      <div className="sticky bottom-3 z-10 flex flex-wrap items-center justify-end gap-2 rounded-xl border bg-[var(--bg-elevated)]/95 px-3 py-2.5 shadow-sm backdrop-blur hairline">
+        {upload ? (
+          <span className="text-[11px] muted">
+            {t("x.yukleniyor-yuzde", { percent: upload.percent })}
+          </span>
+        ) : null}
+        <button
+          type="submit"
+          className="btn btn-dark"
+          disabled={pending || Boolean(upload)}
+          title={upload ? t("x.yukleme-tamamlanmadan-kaydedilemez") : undefined}
+        >
+          {pending || upload ? <Loader2 size={14} className="animate-spin" /> : null}
           {t("x.tum-ayarlar-kaydet")}
         </button>
       </div>
@@ -768,5 +811,47 @@ export function StoreCredentialsForm({
         </button>
       </div>
     </form>
+  );
+}
+
+/**
+ * Determinate upload bar.
+ *
+ * `percent` comes from `XMLHttpRequest.upload.onprogress`, so the owner sees the
+ * bytes actually leaving their machine instead of a spinner that looks stuck.
+ */
+export function ProgressBar({
+  percent,
+  label,
+  onCancel,
+  compact = false,
+}: {
+  percent: number;
+  label?: string;
+  onCancel?: () => void;
+  compact?: boolean;
+}) {
+  const t = useT();
+  return (
+    <div className={compact ? "mt-1.5" : "mt-2"} role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
+      <div className="flex items-center justify-between gap-2 text-[10.5px] muted">
+        <span className="truncate">
+          {t("x.yukleniyor-yuzde", { percent })}
+          {label ? ` · ${label}` : ""}
+        </span>
+        {onCancel ? (
+          <button type="button" onClick={onCancel} className="flex shrink-0 items-center gap-1 hover:opacity-70">
+            <X size={10} />
+            {t("x.iptal")}
+          </button>
+        ) : null}
+      </div>
+      <div className="mt-1 h-1.5 overflow-hidden rounded-full" style={{ background: "var(--border)" }}>
+        <div
+          className="h-full rounded-full transition-[width] duration-200"
+          style={{ width: `${percent}%`, background: "var(--fg)" }}
+        />
+      </div>
+    </div>
   );
 }

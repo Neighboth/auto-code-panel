@@ -10,6 +10,14 @@
  */
 
 export const EXTRA_TR: Record<string, string> = {
+  "x.font-sayisi": "{count} font",
+  "x.daha-fazla-goster": "{count} tane daha göster",
+  "x.yaz-tipi": "Yazı tipi",
+  "x.yukleniyor-yuzde": "Yükleniyor %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Yükleme bitmeden kaydedilemez",
+  "x.gorsel-optimize-edildi": "Görsel optimize edildi: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "Süre uzatma linki platform tarafından yönetilir; mağaza panelinden değiştirilemez.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Değiştirmek için platform desteğine başvurun",
   "x.uzerinden-yonetilir": ") üzerinden\n        yönetilir.",
   "x.21-gun-4-saat": "21 gün 4 saat",
   "x.2fa-sfrla": "2FA sıfırla",
@@ -1475,6 +1483,14 @@ export const EXTRA_TR: Record<string, string> = {
 };
 
 export const EXTRA_EN: Record<string, string> = {
+  "x.font-sayisi": "{count} fonts",
+  "x.daha-fazla-goster": "Show {count} more",
+  "x.yaz-tipi": "Typeface",
+  "x.yukleniyor-yuzde": "Uploading {percent}%",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "Cannot save before the upload finishes",
+  "x.gorsel-optimize-edildi": "Image optimised: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "The renewal link is managed by the platform and cannot be changed from the store panel.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "Contact platform support to change it",
   "x.uzerinden-yonetilir": " (RENEWAL_URL, SUPPORT_EMAIL) settings.",
   "x.21-gun-4-saat": "21 days 4 hours",
   "x.2fa-sfrla": "Reset 2FA",

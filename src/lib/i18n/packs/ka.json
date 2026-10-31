@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "მენეჯერის {user} პაროლი განახლდა",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "მენეჯერისა და მომხმარებლის პაროლები ხილულია მხოლოდ პლატფორმის მფლობელისთვის",
   "x.yuklenemedi": "ატვირთვა ვერ მოხერხდა",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "თქვენმა ბრაუზერმა დაბლოკა სესიის ქუქი. გახსენით აპი ახალ ჩანართში ან დაუშვით ქუქიები ამ საიტისთვის."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "თქვენმა ბრაუზერმა დაბლოკა სესიის ქუქი. გახსენით აპი ახალ ჩანართში ან დაუშვით ქუქიები ამ საიტისთვის.",
+  "x.font-sayisi": "{count} შრიფტი",
+  "x.daha-fazla-goster": "კიდევ {count}-ის ჩვენება",
+  "x.yaz-tipi": "შრიფტი",
+  "x.yukleniyor-yuzde": "იტვირთება %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "შენახვა შეუძლებელია ატვირთვის დასრულებამდე",
+  "x.gorsel-optimize-edildi": "სურათი ოპტიმიზებულია: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "განახლების ბმულს პლატფორმა მართავს.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "შეცვლისთვის დაუკავშირდით პლატფორმის მხარდაჭერას"
 }

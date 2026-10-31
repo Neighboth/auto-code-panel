@@ -1625,5 +1625,13 @@
   "x.yonetici-sifresi-guncellendi-user": "મેનેજર {user} નો પાસવર્ડ અપડેટ કર્યો",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "મેનેજર અને ગ્રાહકના પાસવર્ડ માત્ર પ્લેટફોર્મ માલિકને જ દેખાય છે",
   "x.yuklenemedi": "અપલોડ નિષ્ફળ થયું",
-  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "તમારા બ્રાઉઝરએ સત્ર કૂકીને અવરોધિત કરી છે. નવી ટેબમાં એપ્લિકેશન ખોલો અથવા આ સાઇટ માટે કૂકીઝને મંજૂરી આપો."
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "તમારા બ્રાઉઝરએ સત્ર કૂકીને અવરોધિત કરી છે. નવી ટેબમાં એપ્લિકેશન ખોલો અથવા આ સાઇટ માટે કૂકીઝને મંજૂરી આપો.",
+  "x.font-sayisi": "{count} ફોન્ટ",
+  "x.daha-fazla-goster": "વધુ {count} બતાવો",
+  "x.yaz-tipi": "ફોન્ટ",
+  "x.yukleniyor-yuzde": "અપલોડ થઈ રહ્યું છે %{percent}",
+  "x.yukleme-tamamlanmadan-kaydedilemez": "અપલોડ પૂર્ણ થાય ત્યાં સુધી સાચવી શકાતું નથી",
+  "x.gorsel-optimize-edildi": "છબી ઑપ્ટિમાઇઝ થઈ: {from} → {to}",
+  "x.sure-uzatma-linki-platform-tarafndan-belirlenir": "રિન્યુઅલ લિંક પ્લેટફોર્મ દ્વારા સંચાલિત થાય છે.",
+  "x.degistirmek-icin-platform-destegine-basvurun": "તેને બદલવા માટે પ્લેટફોર્મ સપોર્ટનો સંપર્ક કરો"
 }
