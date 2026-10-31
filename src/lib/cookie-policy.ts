@@ -27,9 +27,19 @@ function firstHeader(value: string | null): string {
   return (value ?? "").split(",")[0].trim().toLowerCase();
 }
 
-/** True when the browser reached us over https (direct or via a proxy). */
+/**
+ * True when the browser reached us over https (direct or via a proxy).
+ *
+ * `Origin` wins over the proxy headers: a form/action POST carries the real
+ * browser origin, so `http://…` there means the cookie must not be `Secure` even
+ * if a proxy mistakenly reports `x-forwarded-proto: https` — the browser would
+ * drop it and sign-in would silently fail.
+ */
 export async function isSecureRequest(): Promise<boolean> {
   const store = await headers();
+  const origin = (store.get("origin") ?? "").toLowerCase();
+  if (origin.startsWith("http://")) return false;
+  if (origin.startsWith("https://")) return true;
   const proto = firstHeader(store.get("x-forwarded-proto"));
   if (proto) return proto === "https";
   if (store.get("x-forwarded-ssl") === "on") return true;
