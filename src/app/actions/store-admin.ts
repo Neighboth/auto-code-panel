@@ -16,6 +16,8 @@ import {
 } from "@/db/schema";
 import { generateRedeemCode, verifyPassword, hashPassword } from "@/lib/crypto";
 import { decryptData, encryptData } from "@/lib/secret-crypto";
+import { rememberPassword } from "@/lib/password-vault";
+import { UPLOAD_LIMIT, isLocalMedia, localizeCover, releaseMedia } from "@/lib/media";
 import {
   domainTxtRecordName,
   domainVerificationToken,
@@ -165,6 +167,22 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
     return { ok: false, message: t("x.steam-linki-http-s-ile-baslamaldr") };
   }
 
+  /*
+   * Covers live on our own disk: Steam's CDN is slow (or blocked) in some
+   * regions, and the same game is often sold by several stores — the download is
+   * deduplicated by source URL and only removed once nobody references it.
+   */
+  const previous = id
+    ? (
+        await db
+          .select({ coverImage: games.coverImage })
+          .from(games)
+          .where(and(eq(games.id, id), eq(games.storeId, store.id)))
+          .limit(1)
+      )[0]?.coverImage ?? ""
+    : "";
+  coverImage = await localizeCover(coverImage);
+
   const payload = {
     title,
     description,
@@ -187,6 +205,7 @@ export async function saveGame(formData: FormData): Promise<ActionResult<{ id: n
       .where(and(eq(games.id, id), eq(games.storeId, store.id)))
       .returning({ id: games.id });
     if (updated.length === 0) return { ok: false, message: t("x.urun-bulunamad") };
+    if (previous && previous !== coverImage) await releaseMedia(previous);
     refreshStore(slug);
     await logAudit({
       action: "store.product.update",
@@ -239,7 +258,14 @@ export async function deleteGame(formData: FormData): Promise<ActionResult> {
     };
   }
 
+  const [removed] = await db
+    .select({ coverImage: games.coverImage })
+    .from(games)
+    .where(and(eq(games.id, id), eq(games.storeId, guard.state.store.id)))
+    .limit(1);
   await db.delete(games).where(and(eq(games.id, id), eq(games.storeId, guard.state.store.id)));
+  // The file survives while another store still sells the same game.
+  await releaseMedia(removed?.coverImage ?? "");
   refreshStore(slug);
   await logAudit({
     action: "store.product.delete",
@@ -772,8 +798,13 @@ export async function deleteCode(formData: FormData): Promise<ActionResult> {
  */
 function isLogoSrc(value: string): boolean {
   if (/^https?:\/\//i.test(value)) return true;
-  return /^data:image\/(png|jpeg|jpg|webp|svg\+xml|x-icon|vnd\.microsoft\.icon);base64,[a-z0-9+/=]+$/i.test(value)
-    && value.length <= 400_000;
+  // Uploaded files live in the local media library (`/media/<sha1>.png`).
+  if (isLocalMedia(value)) return true;
+  // Legacy inline uploads are still accepted, now up to the 5 MB ceiling.
+  return (
+    /^data:image\/(png|jpeg|jpg|webp|svg\+xml|x-icon|vnd\.microsoft\.icon);base64,[a-z0-9+/=]+$/i.test(value) &&
+    value.length <= Math.ceil((UPLOAD_LIMIT.image * 4) / 3) + 128
+  );
 }
 
 export async function saveStoreSettings(formData: FormData): Promise<ActionResult<{ slug: string }>> {
@@ -804,6 +835,8 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   const primaryColor = str(formData, "primaryColor") || store.primaryColor;
   const accentColor = str(formData, "accentColor") || store.accentColor;
   const fontFamily = str(formData, "fontFamily") || store.fontFamily;
+  const fontUrl = str(formData, "fontUrl") ?? "";
+  const fontLabel = str(formData, "fontLabel").slice(0, 60);
   const renewalUrl = str(formData, "renewalUrl");
 
   if (logoUrl && !isLogoSrc(logoUrl)) {
@@ -814,6 +847,13 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
   }
   if (!FONT_OPTIONS.some((option) => option.family === fontFamily)) {
     return { ok: false, message: t("x.desteklenmeyen-font-secimi") };
+  }
+  if (fontUrl && !isLocalMedia(fontUrl) && !/^https?:\/\//i.test(fontUrl)) {
+    return { ok: false, message: t("x.desteklenmeyen-font-dosyas-ttf-otf-woff-woff2") };
+  }
+  if (store.fontUrl && store.fontUrl !== fontUrl) {
+    // The previous typeface is only deleted when no store still points at it.
+    await releaseMedia(store.fontUrl);
   }
   if (renewalUrl && !/^https?:\/\//i.test(renewalUrl)) {
     return { ok: false, message: t("x.sure-uzatma-linki-http-s-ile-baslamaldr") };
@@ -839,6 +879,9 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
     contactLinks = store.contactLinks;
   }
 
+  if (store.logoUrl && store.logoUrl !== logoUrl) await releaseMedia(store.logoUrl);
+  if (store.faviconUrl && store.faviconUrl !== faviconUrl) await releaseMedia(store.faviconUrl);
+
   await db
     .update(stores)
     .set({
@@ -852,6 +895,8 @@ export async function saveStoreSettings(formData: FormData): Promise<ActionResul
       primaryColor,
       accentColor,
       fontFamily,
+      fontUrl,
+      fontLabel,
       contactLinks,
       renewalUrl: renewalUrl || null,
       updatedAt: new Date(),
@@ -1116,7 +1161,7 @@ export async function saveStoreCredentials(formData: FormData): Promise<ActionRe
 
   await db
     .update(storeAdmins)
-    .set({ username, email, passwordHash })
+    .set({ username, email, passwordHash, ...(newPassword ? { passwordEnc: rememberPassword(newPassword) } : {}) })
     .where(eq(storeAdmins.id, admin.id));
 
   await logAudit({
@@ -1331,6 +1376,9 @@ export async function importProductsCsv(
       errors.push(t("x.satr-row-steam-linki-http-s-ile-baslamal", { row: index + 2 }));
       continue;
     }
+    // Imported rows may carry a plain image URL; cache it like the modal does.
+    const coverImage = await localizeCover(record.coverimage ?? record.image ?? "");
+
     await db.insert(games).values({
       storeId: store.id,
       title,
@@ -1342,7 +1390,7 @@ export async function importProductsCsv(
       originalCurrency: currency,
       ourPrice,
       currency,
-      coverImage: "",
+      coverImage,
       autoSync: false,
     });
     created += 1;

@@ -10,27 +10,170 @@
  * keeps working offline. Rates are expressed "per 1 USD".
  */
 
-export const CURRENCY_OPTIONS = [
-  { code: "TRY", label: "x.turk-liras", symbol: "₺" },
-  { code: "USD", label: "US Dollar", symbol: "$" },
-  { code: "EUR", label: "Euro", symbol: "€" },
-  { code: "GBP", label: "British Pound", symbol: "£" },
-  { code: "RUB", label: "Russian Ruble", symbol: "₽" },
-  { code: "AED", label: "UAE Dirham", symbol: "د.إ" },
-  { code: "SAR", label: "Saudi Riyal", symbol: "﷼" },
-  { code: "AZN", label: "Azerbaijani Manat", symbol: "₼" },
-  { code: "PLN", label: "Polish Złoty", symbol: "zł" },
-  { code: "CHF", label: "Swiss Franc", symbol: "CHF" },
-  { code: "CAD", label: "Canadian Dollar", symbol: "C$" },
-  { code: "AUD", label: "Australian Dollar", symbol: "A$" },
-  { code: "JPY", label: "Japanese Yen", symbol: "¥" },
-  { code: "INR", label: "Indian Rupee", symbol: "₹" },
-  { code: "BRL", label: "Brazilian Real", symbol: "R$" },
-  { code: "UAH", label: "Ukrainian Hryvnia", symbol: "₴" },
-  { code: "KZT", label: "Kazakhstani Tenge", symbol: "₸" },
+/**
+ * Every currency the payment world actually uses.
+ *
+ * The ISO-4217 active list is kept as codes only: the English name, the narrow
+ * symbol and the number of decimals are derived from `Intl` at runtime, so the
+ * list is always internally consistent (JPY has 0 decimals, KWD 3, and the
+ * symbol for an obscure currency is still the one the CLDR ships). When `Intl`
+ * cannot answer (very old runtime) the code itself is shown — never a wrong
+ * symbol.
+ */
+export const CURRENCY_CODES = [
+  "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
+  "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL",
+  "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY",
+  "COP", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP",
+  "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD",
+  "GNF", "GTQ", "GYD", "HKD", "HNL", "HTG", "HUF", "IDR", "ILS", "INR",
+  "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF",
+  "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL",
+  "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR",
+  "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR",
+  "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR",
+  "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD",
+  "SHP", "SLE", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB",
+  "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX",
+  "USD", "UYU", "UZS", "VES", "VND", "VUV", "WST", "XAF", "XCD", "XOF",
+  "XPF", "YER", "ZAR", "ZMW", "ZWL",
 ] as const;
 
-export type CurrencyCode = (typeof CURRENCY_OPTIONS)[number]["code"] | string;
+/** Symbols CLDR renders as the bare code; a spoken form reads better in a select. */
+const SYMBOL_OVERRIDES: Record<string, string> = {
+  TRY: "₺",
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  RUB: "₽",
+  AZN: "₼",
+  KZT: "₸",
+  UAH: "₴",
+  INR: "₹",
+  BRL: "R$",
+  JPY: "¥",
+  CNY: "¥",
+  KRW: "₩",
+  PLN: "zł",
+  CZK: "Kč",
+  HUF: "Ft",
+  RON: "lei",
+  BGN: "лв",
+  GEL: "₾",
+  ILS: "₪",
+  SAR: "﷼",
+  AED: "د.إ",
+  QAR: "ر.ق",
+  KWD: "د.ك",
+  EGP: "E£",
+  NGN: "₦",
+  ZAR: "R",
+  MXN: "MX$",
+  ARS: "AR$",
+  CLP: "CLP$",
+  COP: "COL$",
+  PHP: "₱",
+  THB: "฿",
+  VND: "₫",
+  IDR: "Rp",
+  MYR: "RM",
+  SGD: "S$",
+  HKD: "HK$",
+  TWD: "NT$",
+  PKR: "₨",
+  BDT: "৳",
+  LKR: "Rs",
+  NPR: "₨",
+  IRR: "﷼",
+  IQD: "ع.د",
+  JOD: "د.ا",
+  LBP: "ل.ل",
+  MAD: "د.م.",
+  TND: "د.ت",
+  DZD: "دج",
+  BHD: "د.ب",
+  OMR: "ر.ع.",
+  KES: "KSh",
+  UGX: "USh",
+  TZS: "TSh",
+  GHS: "₵",
+  XOF: "CFA",
+  XAF: "FCFA",
+  XPF: "₣",
+};
+
+export type CurrencyOption = {
+  code: string;
+  /** English display name (`Intl.DisplayNames`), e.g. "Turkish Lira". */
+  label: string;
+  symbol: string;
+  /** Fraction digits used by the currency (0 for JPY, 3 for KWD…). */
+  decimals: number;
+};
+
+function currencyDecimals(code: string): number {
+  try {
+    return new Intl.NumberFormat("en", { style: "currency", currency: code }).resolvedOptions()
+      .maximumFractionDigits ?? 2;
+  } catch {
+    return 2;
+  }
+}
+
+function currencySymbol(code: string): string {
+  if (SYMBOL_OVERRIDES[code]) return SYMBOL_OVERRIDES[code];
+  try {
+    const parts = new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+      currencyDisplay: "narrowSymbol",
+    }).formatToParts(0);
+    return parts.find((part) => part.type === "currency")?.value ?? code;
+  } catch {
+    return code;
+  }
+}
+
+function currencyName(code: string): string {
+  try {
+    const names = new Intl.DisplayNames(["en"], { type: "currency" });
+    return names.of(code) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+/** Full, `Intl`-derived currency table (codes stay in ISO order). */
+export const CURRENCY_OPTIONS: CurrencyOption[] = CURRENCY_CODES.map((code) => ({
+  code,
+  label: currencyName(code),
+  symbol: currencySymbol(code),
+  decimals: currencyDecimals(code),
+}));
+
+/** Symbols that need a space before the number (e.g. "CHF 12.00"). */
+export function currencyFormat(code: string, value: number, locale = "en"): string {
+  try {
+    /*
+     * `narrowSymbol` collapses ambiguous currencies (KWD, SAR, IRR…) to the bare
+     * code, so the explicit symbol is written the way the currency's own
+     * convention does it, with CLDR handling the number part.
+     */
+    const upper = code.toUpperCase();
+    const number = new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: upper,
+      currencyDisplay: "narrowSymbol",
+    }).format(value);
+    const override = SYMBOL_OVERRIDES[upper];
+    if (!override) return number;
+    return number.replace(/[A-Z]{3}|\p{Sc}/u, override).replace(/\s{2,}/g, " ").trim();
+  } catch {
+    return `${value} ${code}`;
+  }
+}
+
+export type CurrencyCode = (typeof CURRENCY_CODES)[number] | (string & {});
 
 /** Fallback snapshot (per 1 USD). Only used when the FX API is unreachable. */
 const FALLBACK_RATES: Record<string, number> = {
@@ -125,9 +268,14 @@ export function convertWithRates(
   const fromCode = (from || "USD").toUpperCase();
   const toCode = (to || "USD").toUpperCase();
   if (fromCode === toCode) return num.toFixed(2);
-  const fromRate = rates[fromCode] ?? FALLBACK_RATES[fromCode] ?? 1;
-  const toRate = rates[toCode] ?? FALLBACK_RATES[toCode] ?? 1;
-  if (!fromRate || !toRate) return num.toFixed(2);
+  const fromRate = rates[fromCode] ?? FALLBACK_RATES[fromCode];
+  const toRate = rates[toCode] ?? FALLBACK_RATES[toCode];
+  /*
+   * A missing rate used to be treated as 1, which silently produced a price off
+   * by a factor of 30 (a 60 USD game stored as 60 TRY). Returning null lets the
+   * caller keep the original value instead of writing a wrong price.
+   */
+  if (!fromRate || !toRate) return null;
   const converted = (num / fromRate) * toRate;
   // Guard against absurd results when a currency is unknown.
   if (!Number.isFinite(converted) || converted < 0) return num.toFixed(2);
@@ -143,6 +291,8 @@ export async function convertAmount(
   return convertWithRates(value, from, to, rates);
 }
 
-export function currencySymbol(code: string): string {
-  return CURRENCY_OPTIONS.find((item) => item.code === code.toUpperCase())?.symbol ?? `${code} `;
+/** Narrow symbol for `code` (falls back to the code itself). */
+export function currencySymbolOf(code: string): string {
+  const upper = (code || "USD").toUpperCase();
+  return CURRENCY_OPTIONS.find((item) => item.code === upper)?.symbol ?? upper;
 }

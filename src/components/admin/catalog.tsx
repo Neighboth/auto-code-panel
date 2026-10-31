@@ -955,7 +955,7 @@ export function AccountManager({
                   <optgroup key={group} label={t(group)}>
                     {PLATFORM_PRESETS.filter((item) => item.group === group).map((item) => (
                       <option key={item.id} value={item.id}>
-                        {item.label}
+                        {t(item.label)}
                       </option>
                     ))}
                   </optgroup>

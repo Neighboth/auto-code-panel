@@ -132,6 +132,12 @@ export function negotiateLocale(acceptLanguage: string | null | undefined): Loca
   return findLocale(DEFAULT_LOCALE)!;
 }
 
+/**
+ * Flags ship as bundled SVGs (`scripts/flags.mjs` copies them into
+ * `public/flags`): crisp on every display density and no third-party request.
+ * `size` is kept for call sites that only want the natural aspect ratio.
+ */
 export function flagUrl(flag: string, size: "w20" | "w40" | "w80" = "w40"): string {
-  return `https://flagcdn.com/${size}/${flag}.png`;
+  void size;
+  return `/flags/${flag.toLowerCase()}.svg`;
 }

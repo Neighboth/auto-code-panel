@@ -5,9 +5,10 @@ import { getTranslator } from "@/lib/i18n/server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
-import { accounts, platformPosts, platformSettings, resellerKeys, storeAdmins, stores } from "@/db/schema";
-import { generateResellerKey } from "@/lib/crypto";
-import { decryptData } from "@/lib/secret-crypto";
+import { accounts, customers, plans, platformPosts, platformSettings, resellerKeys, storeAdmins, stores } from "@/db/schema";
+import { generateResellerKey, hashPassword } from "@/lib/crypto";
+import { revealPassword } from "@/lib/password-vault";
+import { decryptData, encryptData } from "@/lib/secret-crypto";
 import { getSuperSession } from "@/lib/session";
 import { env } from "@/lib/env";
 import { managerIdentifierError } from "@/lib/admin-guard";
@@ -425,4 +426,254 @@ export async function updatePlatformSettings(formData: FormData): Promise<Action
   revalidatePath("/super-admin/ayarlar");
   revalidatePath("/", "layout");
   return { ok: true, message: t("x.sistem-ayarlar-kaydedildi-sure-uzatma-linki-ve-destek-e") };
+}
+
+/* --------------------------------------------------------------- pricing */
+
+const PLAN_LOCALE_RE = /^[a-z]{2,3}$/;
+
+/**
+ * Creates or updates a pricing tier.
+ *
+ * Everything the marketing page shows is editable here: price + currency,
+ * duration, account limit, feature bullets, an optional purchase link and — via
+ * the `translations` field — per-language overrides. `translations` arrives as
+ * JSON text from the editor: `{ "en": { "name": "...", "features": ["…"] } }`.
+ */
+export async function savePlan(formData: FormData): Promise<ActionResult<{ id: number }>> {
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
+
+  const id = Number(formData.get("id") ?? 0) || null;
+  const name = String(formData.get("name") ?? "").trim().slice(0, 80);
+  const description = String(formData.get("description") ?? "").trim().slice(0, 280);
+  const price = String(formData.get("price") ?? "").trim().replace(",", ".").slice(0, 20);
+  const currency = String(formData.get("currency") ?? "TRY").trim().toUpperCase().slice(0, 3);
+  const durationRaw = String(formData.get("durationDays") ?? "").trim();
+  const limitRaw = String(formData.get("accountLimit") ?? "").trim();
+  const purchaseUrl = String(formData.get("purchaseUrl") ?? "").trim().slice(0, 500);
+  const highlight = formData.get("highlight") === "on" || formData.get("highlight") === "true";
+  const active = formData.get("active") !== "false";
+  const sortOrder = Math.trunc(Number(formData.get("sortOrder") ?? 0) || 0);
+  const features = String(formData.get("features") ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 12);
+  const translationsRaw = String(formData.get("translations") ?? "").trim();
+
+  if (!name) return { ok: false, message: t("x.paket-adi-zorunludur") };
+  if (!/^\d{1,9}(\.\d{1,3})?$/.test(price)) return { ok: false, message: t("x.gecersiz-fiyat") };
+  if (!/^[A-Z]{3}$/.test(currency)) return { ok: false, message: t("x.gecersiz-para-birimi") };
+  if (purchaseUrl && !/^(https?:\/\/|\/)/i.test(purchaseUrl)) {
+    return { ok: false, message: t("x.satin-alma-linki-http-s-veya-ile-baslamaldr") };
+  }
+
+  let translations: Record<string, { name?: string; description?: string; features?: string[] }> = {};
+  if (translationsRaw) {
+    try {
+      const parsed = JSON.parse(translationsRaw) as Record<string, unknown>;
+      for (const [locale, value] of Object.entries(parsed)) {
+        if (!PLAN_LOCALE_RE.test(locale) || !value || typeof value !== "object") continue;
+        const entry = value as { name?: unknown; description?: unknown; features?: unknown };
+        translations[locale] = {
+          name: typeof entry.name === "string" ? entry.name.slice(0, 80) : undefined,
+          description: typeof entry.description === "string" ? entry.description.slice(0, 280) : undefined,
+          features: Array.isArray(entry.features)
+            ? entry.features.filter((item): item is string => typeof item === "string").slice(0, 12)
+            : undefined,
+        };
+      }
+    } catch {
+      return { ok: false, message: t("x.ceviri-verisi-gecersiz-json") };
+    }
+  }
+
+  const durationDays = durationRaw === "" || durationRaw === "unlimited" ? null : Math.trunc(Number(durationRaw));
+  if (durationDays !== null && (!Number.isFinite(durationDays) || durationDays < 1 || durationDays > 3650)) {
+    return { ok: false, message: t("x.gun-sayisi-gecersiz") };
+  }
+  const accountLimit = limitRaw === "" || limitRaw === "unlimited" ? null : Math.trunc(Number(limitRaw));
+  if (accountLimit !== null && (!Number.isFinite(accountLimit) || accountLimit < 1)) {
+    return { ok: false, message: t("x.hesap-limiti-gecersiz") };
+  }
+
+  const payload = {
+    name,
+    description,
+    price: Number(price).toFixed(2),
+    currency,
+    durationDays,
+    accountLimit,
+    features,
+    purchaseUrl,
+    highlight,
+    active,
+    sortOrder,
+    translations,
+    updatedAt: new Date(),
+  };
+
+  if (id) {
+    const updated = await db.update(plans).set(payload).where(eq(plans.id, id)).returning({ id: plans.id });
+    if (updated.length === 0) return { ok: false, message: t("x.paket-bulunamad") };
+    revalidatePath("/");
+    revalidatePath("/super-admin/fiyatlar");
+    await logAudit({
+      action: "super.plan.update",
+      entity: "plan",
+      entityId: String(id),
+      summaryKey: "x.paket-guncellendi-name",
+      summaryParams: { name },
+      metadata: { name, price: payload.price, currency, active },
+    });
+    return { ok: true, message: t("x.paket-guncellendi"), data: { id } };
+  }
+
+  const [created] = await db.insert(plans).values(payload).returning({ id: plans.id });
+  revalidatePath("/");
+  revalidatePath("/super-admin/fiyatlar");
+  await logAudit({
+    action: "super.plan.create",
+    entity: "plan",
+    entityId: String(created.id),
+    summaryKey: "x.paket-eklendi-name",
+    summaryParams: { name },
+    metadata: { name, price: payload.price, currency },
+  });
+  return { ok: true, message: t("x.paket-eklendi"), data: { id: created.id } };
+}
+
+export async function deletePlan(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
+  const id = Number(formData.get("id") ?? 0);
+  if (!id) return { ok: false, message: t("x.paket-bulunamad") };
+  await db.delete(plans).where(eq(plans.id, id));
+  revalidatePath("/");
+  revalidatePath("/super-admin/fiyatlar");
+  await logAudit({
+    action: "super.plan.delete",
+    entity: "plan",
+    entityId: String(id),
+    summaryKey: "x.paket-silindi",
+    metadata: { id },
+  });
+  return { ok: true, message: t("x.paket-silindi") };
+}
+
+/* ------------------------------------------------------------ credentials */
+
+export type LoginView = {
+  kind: "admin" | "customer";
+  id: number;
+  username: string;
+  email: string;
+  status: string;
+  /** Decrypted recovery copy, or null for accounts created before the vault. */
+  password: string | null;
+};
+
+/**
+ * Platform owner only: store manager and customer passwords for one store.
+ *
+ * These are the recovery copies written by `rememberPassword` (AES-256-GCM).
+ * Accounts that predate the vault return `password: null` and the panel offers
+ * "set a new password" instead — a bcrypt hash genuinely cannot be reversed.
+ */
+export async function viewStoreLogins(storeId: number): Promise<ActionResult<LoginView[]>> {
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
+  const adminRows = await db
+    .select()
+    .from(storeAdmins)
+    .where(eq(storeAdmins.storeId, storeId));
+  const customerRows = await db
+    .select()
+    .from(customers)
+    .where(eq(customers.storeId, storeId));
+  const rows: LoginView[] = [
+    ...adminRows.map((row) => ({
+      kind: "admin" as const,
+      id: row.id,
+      username: row.username,
+      email: row.email,
+      status: row.status,
+      password: revealPassword(row.passwordEnc),
+    })),
+    ...customerRows.map((row) => ({
+      kind: "customer" as const,
+      id: row.id,
+      username: row.username,
+      email: row.email ?? "",
+      status: row.status,
+      password: revealPassword(row.passwordEnc),
+    })),
+  ];
+  await logAudit({
+    action: "super.logins.view",
+    entity: "store",
+    entityId: String(storeId),
+    summaryKey: "x.count-hesap-sifresi-goruntulendi",
+    summaryParams: { count: rows.length },
+    storeId,
+    metadata: { admins: adminRows.length, customers: customerRows.length },
+  });
+  return { ok: true, message: "", data: rows };
+}
+
+/**
+ * Sets a new password for a store manager or customer.
+ *
+ * Used both to reset a forgotten password and to replace one that never had a
+ * recovery copy. The hash is updated for sign-in and the vault keeps the
+ * readable copy so the owner can be told the new password later.
+ */
+export async function setStoreLoginPassword(formData: FormData): Promise<ActionResult> {
+  const { t } = await getTranslator();
+  if (!(await guard())) return { ok: false, message: t("x.yetkiniz-yok") };
+  const kind = String(formData.get("kind") ?? "admin") === "customer" ? "customer" : "admin";
+  const id = Number(formData.get("id") ?? 0);
+  const password = String(formData.get("password") ?? "");
+  if (!id) return { ok: false, message: t("x.hesap-bulunamad") };
+  if (password.length < 8) return { ok: false, message: t("x.sifre-en-az-8-karakter-olmaldr") };
+
+  const hash = hashPassword(password);
+  const enc = encryptData(password);
+
+  if (kind === "admin") {
+    const [row] = await db
+      .update(storeAdmins)
+      .set({ passwordHash: hash, passwordEnc: enc })
+      .where(eq(storeAdmins.id, id))
+      .returning({ id: storeAdmins.id, storeId: storeAdmins.storeId, username: storeAdmins.username });
+    if (!row) return { ok: false, message: t("x.yonetici-bulunamad") };
+    await logAudit({
+      action: "super.login.password",
+      entity: "store_admin",
+      entityId: String(row.id),
+      summaryKey: "x.yonetici-sifresi-guncellendi-user",
+      summaryParams: { user: row.username },
+      storeId: row.storeId,
+      severity: "warn",
+    });
+    return { ok: true, message: t("x.sifre-guncellendi") };
+  }
+
+  const [row] = await db
+    .update(customers)
+    .set({ passwordHash: hash, passwordEnc: enc })
+    .where(eq(customers.id, id))
+    .returning({ id: customers.id, storeId: customers.storeId, username: customers.username });
+  if (!row) return { ok: false, message: t("x.hesap-bulunamad") };
+  await logAudit({
+    action: "super.login.password",
+    entity: "customer",
+    entityId: String(row.id),
+    summaryKey: "x.musteri-sifresi-guncellendi-user",
+    summaryParams: { user: row.username },
+    storeId: row.storeId,
+    severity: "warn",
+  });
+  return { ok: true, message: t("x.sifre-guncellendi") };
 }

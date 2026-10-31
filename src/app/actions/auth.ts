@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { db, ensureDatabase } from "@/db";
 import { customers, resellerKeys, securityFactors, storeAdmins, stores } from "@/db/schema";
 import { hashPassword, safeEqual, verifyPassword } from "@/lib/crypto";
+import { rememberPassword } from "@/lib/password-vault";
 import { env } from "@/lib/env";
 import { RESERVED_SLUGS, slugify } from "@/lib/format";
 import { managerIdentifierError } from "@/lib/admin-guard";
@@ -306,6 +307,7 @@ export async function activateReseller(formData: FormData): Promise<ActionResult
         username: adminUsername,
         email: adminEmail,
         passwordHash: hashPassword(adminPassword),
+        passwordEnc: rememberPassword(adminPassword),
       });
 
       await tx
@@ -491,6 +493,7 @@ export async function customerRegister(
       displayName,
       email: email || null,
       passwordHash: hashPassword(password),
+      passwordEnc: rememberPassword(password),
       emailVerifiedAt: verificationOn ? null : new Date(),
     })
     .returning();
@@ -777,6 +780,7 @@ export async function updateCustomerProfile(
       email: email || null,
       avatarUrl,
       passwordHash,
+      ...(newPassword ? { passwordEnc: rememberPassword(newPassword) } : {}),
     })
     .where(eq(customers.id, current.id));
 

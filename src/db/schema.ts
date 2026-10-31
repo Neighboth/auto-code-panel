@@ -14,6 +14,36 @@ export const platformSettings = sqliteTable("platform_settings", {
   updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
 });
 
+/**
+ * Pricing tiers shown on the marketing site.
+ *
+ * They used to be a hardcoded array in `app/page.tsx`, which meant changing a
+ * price required a deploy. The platform owner now edits price, duration,
+ * features and the purchase link from the super-admin panel; `purchaseUrl` is
+ * the "buy" button target (e.g. a payment provider or a Telegram chat).
+ */
+export const plans = sqliteTable("plans", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slotKey: text("slot_key").notNull().default(""),
+  name: text("name").notNull(),
+  description: text("description").notNull().default(""),
+  price: text("price").notNull().default("0"),
+  currency: text("currency").notNull().default("TRY"),
+  durationDays: integer("duration_days"),
+  accountLimit: integer("account_limit"),
+  features: text("features", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+  purchaseUrl: text("purchase_url").notNull().default(""),
+  highlight: bool("highlight"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  translations: text("translations", { mode: "json" })
+    .$type<Record<string, { name?: string; description?: string; features?: string[] }>>()
+    .notNull()
+    .default(sql`'{}'`),
+  createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
+  updatedAt: timestamp("updated_at").notNull().$defaultFn(() => new Date()),
+});
+
 export const resellerKeys = sqliteTable(
   "reseller_keys",
   {
@@ -48,6 +78,13 @@ export const stores = sqliteTable(
     primaryColor: text("primary_color").notNull().default("#111827"),
     accentColor: text("accent_color").notNull().default("#2563eb"),
     fontFamily: text("font_family").notNull().default("Inter"),
+    /**
+     * Self-hosted font uploaded by the store owner (TTF/OTF/WOFF2, served from
+     * `/media/…`). When set it takes precedence over `fontFamily`, so a shop can
+     * use a licensed typeface that is not in the Google Fonts catalogue.
+     */
+    fontUrl: text("font_url").notNull().default(""),
+    fontLabel: text("font_label").notNull().default(""),
     contactLinks: text("contact_links", { mode: "json" })
       .$type<{ label: string; url: string }[]>()
       .notNull()
@@ -94,6 +131,13 @@ export const storeAdmins = sqliteTable(
     username: text("username").notNull(),
     email: text("email").notNull(),
     passwordHash: text("password_hash").notNull(),
+    /**
+     * Recovery copy of the password, AES-256-GCM encrypted, readable only by the
+     * platform owner (support desk). The hash stays the source of truth for
+     * sign-in; this column exists because a bcrypt hash cannot be shown back to
+     * a store owner who lost their manager password.
+     */
+    passwordEnc: text("password_enc").notNull().default(""),
     status: text("status").notNull().default("active"),
     createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
     lastLoginAt: timestamp("last_login_at"),
@@ -112,6 +156,7 @@ export const customers = sqliteTable(
     avatarUrl: text("avatar_url").notNull().default(""),
     emailVerifiedAt: timestamp("email_verified_at"),
     passwordHash: text("password_hash").notNull(),
+    passwordEnc: text("password_enc").notNull().default(""),
     status: text("status").notNull().default("active"),
     createdAt: timestamp("created_at").notNull().$defaultFn(() => new Date()),
   },

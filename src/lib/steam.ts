@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { games } from "@/db/schema";
 import { convertAmount } from "@/lib/currency";
+import { cacheRemoteImage, releaseMedia } from "@/lib/media";
 
 export type SteamPriceInfo = {
   currency: string;
@@ -109,11 +110,16 @@ export async function syncSteamGames(storeId?: number, limit = 40): Promise<Stea
       details.originalPrice !== null
         ? await convertAmount(details.originalPrice, details.currency, game.currency)
         : null;
+    /*
+     * Covers are mirrored locally (deduplicated across stores); the old file is
+     * released only after the row stops pointing at it.
+     */
+    const coverImage = await cacheRemoteImage(details.headerImage || game.coverImage, { prefix: "cover" });
     await db
       .update(games)
       .set({
         title: details.title || game.title,
-        coverImage: details.headerImage || game.coverImage,
+        coverImage,
         steamAppId: appId,
         originalPrice:
           details.originalPrice !== null
@@ -128,6 +134,7 @@ export async function syncSteamGames(storeId?: number, limit = 40): Promise<Stea
         updatedAt: new Date(),
       })
       .where(and(eq(games.id, game.id), eq(games.storeId, game.storeId)));
+    if (game.coverImage && game.coverImage !== coverImage) await releaseMedia(game.coverImage);
     result.updated += 1;
   }
   return result;

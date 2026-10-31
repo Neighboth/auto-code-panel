@@ -10,6 +10,7 @@ import { formatDate, remainingLabel } from "@/lib/format";
 import { ManagerLoginForm } from "@/components/auth-forms";
 import { ResellerKeyGenerator, RevokeKeyButton, StoreActions } from "@/components/super-admin/panels";
 import { StoreAccountsButton } from "@/components/super-admin/store-accounts";
+import { StoreLoginsButton } from "@/components/super-admin/store-logins";
 import { BrandLogo } from "@/components/brand";
 import { Stat } from "@/components/ui";
 import { getTranslator } from "@/lib/i18n/server";
@@ -225,6 +226,7 @@ export default async function SuperAdminPage() {
                       <td>
                         <div className="flex items-center justify-end gap-1.5">
                           <StoreAccountsButton storeId={store.id} storeName={store.name} />
+                          <StoreLoginsButton storeId={store.id} storeName={store.name} />
                           <StoreActions
                             storeId={store.id}
                             storeName={store.name}

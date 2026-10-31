@@ -19,6 +19,8 @@ import { SiteHeader } from "@/components/site-header";
 import { brand } from "@/lib/brand";
 import { BrandLogo, BrandMark } from "@/components/brand";
 import { getTranslator } from "@/lib/i18n/server";
+import { listPlans, resolvePlan } from "@/lib/plans";
+import { formatMoney } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -81,43 +83,7 @@ const steps = [
   },
 ];
 
-const plans = [
-  {
-    name: "x.baslangc",
-    duration: "x.1-ay",
-    price: "₺249",
-    limit: "x.40-hesap-limiti",
-    features: ["x.tek-magaza", "x.steam-auto-sync", "x.2fa-steam-guard-kodu", "x.kod-sihirbaz"],
-    highlight: false,
-  },
-  {
-    name: "x.profesyonel",
-    duration: "x.3-ay",
-    price: "₺599",
-    limit: "x.150-hesap-limiti",
-    features: [
-      "x.tek-magaza-ozel-slug",
-      "x.steam-auto-sync-ve-cron",
-      "x.musteri-kutuphanesi",
-      "x.font-ve-tema-ozellestirme",
-      "x.sure-uzatma-onceligi",
-    ],
-    highlight: true,
-  },
-  {
-    name: "x.olcek",
-    duration: "x.1-yl",
-    price: "₺1.899",
-    limit: "x.snrsz-hesap",
-    features: [
-      "x.snrsz-envanter",
-      "x.500-luk-toplu-kod-uretimi",
-      "x.kullanlms-kod-detay-raporu",
-      "x.oncelikli-destek",
-    ],
-    highlight: false,
-  },
-];
+
 
 const faqs = [
   {
@@ -144,6 +110,34 @@ const faqs = [
 
 export default async function LandingPage() {
   const { t, locale } = await getTranslator();
+  const dbPlans = await listPlans();
+  const planCards = dbPlans.map((plan) => {
+    const copy = resolvePlan(plan, locale.code);
+    // Common durations reuse the presets that already exist in every pack, so
+    // no locale needs a new plural rule just to say "3 months".
+    const durationLabel =
+      plan.durationDays === null
+        ? t("x.snrsz")
+        : plan.durationDays === 30
+          ? t("x.1-ay")
+          : plan.durationDays === 90
+            ? t("x.3-ay")
+            : plan.durationDays === 180
+              ? t("x.6-ay")
+              : `${plan.durationDays} ${t("x.gun")}`;
+    return {
+      id: plan.id,
+      name: copy.name,
+      description: copy.description,
+      price: plan.price,
+      currency: plan.currency,
+      features: copy.features,
+      purchaseUrl: plan.purchaseUrl,
+      highlight: plan.highlight,
+      accountLimit: plan.accountLimit,
+      durationLabel,
+    };
+  });
   return (
     <div className="min-h-dvh">
       <SiteHeader name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} locale={locale.code} />
@@ -372,10 +366,10 @@ export default async function LandingPage() {
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed muted">{t("x.her-paket-tek-magaza-icindir-bayilik-kodu-satn-alma-sonr")}</p>
           </div>
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {plans.map((plan) => (
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {planCards.map((plan) => (
               <div
-                key={t(plan.name)}
+                key={plan.id}
                 className="card relative flex flex-col p-6"
                 style={
                   plan.highlight
@@ -384,27 +378,33 @@ export default async function LandingPage() {
                 }
               >
                 {plan.highlight ? (
-                  <span className="absolute right-5 top-5 badge badge-blue">{" "}{t("x.en-cok-tercih-edilen")}</span>
+                  <span className="absolute right-5 top-5 badge badge-blue">{t("x.en-cok-tercih-edilen")}</span>
                 ) : null}
-                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] muted">{t(plan.name)}</p>
-                <div className="mt-3 flex items-baseline gap-1.5">
-                  <span className="text-[30px] font-semibold tracking-[-0.03em]">{t(plan.price)}</span>
-                  <span className="text-[12px] muted">/ {t(plan.duration)}</span>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] muted">{plan.name}</p>
+                <div className="mt-3 flex flex-wrap items-baseline gap-1.5">
+                  <span className="text-[30px] font-semibold tracking-[-0.03em]">
+                    {formatMoney(plan.price, plan.currency, locale.code)}
+                  </span>
+                  <span className="text-[12px] muted">/ {plan.durationLabel}</span>
                 </div>
-                <p className="mt-2 text-[12px] muted">{t(plan.limit)}</p>
+                {plan.description ? <p className="mt-2 text-[12px] muted">{plan.description}</p> : null}
+                <p className="mt-2 text-[12px] muted">
+                  {t("x.hesap-limiti")}: {plan.accountLimit ?? t("x.snrsz")}
+                </p>
                 <ul className="mt-5 flex-1 space-y-2.5">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-[12.8px]">
+                  {plan.features.map((feature, index) => (
+                    <li key={`${plan.id}-${index}`} className="flex items-start gap-2 text-[12.8px]">
                       <Check size={14} className="mt-0.5 shrink-0" />
-                      <span>{t(feature)}</span>
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
-                  href="/bayi"
+                  href={plan.purchaseUrl || "/bayi"}
                   className={`btn mt-6 w-full ${plan.highlight ? "btn-dark" : "btn-outline"}`}
+                  {...(plan.purchaseUrl.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
                 >
-                  Bayilik kodunu kullan
+                  {t("x.bayilik-kodunu-aktiflestir")}
                 </Link>
               </div>
             ))}

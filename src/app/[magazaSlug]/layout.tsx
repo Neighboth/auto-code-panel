@@ -51,17 +51,28 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     }
   }
 
-  const fontHref = googleFontHref([store.fontFamily]);
+  /*
+   * Two font sources: an uploaded typeface (`fontUrl`, self-hosted in the media
+   * library) or a Google Fonts family from the catalogue. The uploaded file wins
+   * because it is what the owner explicitly uploaded.
+   */
+  const uploaded = store.fontUrl?.trim() ?? "";
+  const familyName = uploaded ? store.fontLabel || "StoreFont" : store.fontFamily;
+  const fontHref = uploaded ? "" : googleFontHref([store.fontFamily]);
+  const fontFace = uploaded
+    ? `@font-face{font-family:"${familyName.replace(/"/g, "")}";src:url("${uploaded}");font-display:swap;font-weight:100 900;}`
+    : "";
 
   const style = {
     "--store-primary": store.primaryColor,
     "--store-accent": store.accentColor,
-    "--store-font": `"${store.fontFamily}"`,
-    fontFamily: `"${store.fontFamily}", ui-sans-serif, system-ui, -apple-system, sans-serif`,
+    "--store-font": `"${familyName}"`,
+    fontFamily: `"${familyName}", ui-sans-serif, system-ui, -apple-system, sans-serif`,
   } as CSSProperties;
 
   return (
     <div className="min-h-dvh" style={style}>
+      {fontFace ? <style dangerouslySetInnerHTML={{ __html: fontFace }} /> : null}
       {fontHref ? <link rel="stylesheet" href={fontHref} /> : null}
       {children}
     </div>

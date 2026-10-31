@@ -93,6 +93,8 @@ export default async function AdminSettingsPage({ params }: { params: Promise<{ 
           primaryColor: store.primaryColor,
           accentColor: store.accentColor,
           fontFamily: store.fontFamily,
+          fontUrl: store.fontUrl,
+          fontLabel: store.fontLabel,
           contactLinks: store.contactLinks,
           renewalUrl: store.renewalUrl ?? "",
         }}

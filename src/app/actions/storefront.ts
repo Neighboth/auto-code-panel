@@ -16,6 +16,7 @@ import {
 } from "@/db/schema";
 import { hashPassword, randomToken, verifyPassword } from "@/lib/crypto";
 import { decryptData } from "@/lib/secret-crypto";
+import { rememberPassword } from "@/lib/password-vault";
 import {
   accessExpired,
   formatDuration,
@@ -220,6 +221,7 @@ export async function redeemCode(payload: RedeemPayload): Promise<ActionResult<R
           username,
           displayName: payload.auth.displayName?.trim() || username,
           passwordHash: hashPassword(payload.auth.password),
+          passwordEnc: rememberPassword(payload.auth.password),
         })
         .returning();
       customerId = created.id;

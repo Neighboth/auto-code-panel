@@ -4,7 +4,7 @@ import { useT } from "@/components/i18n-provider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { Activity, ExternalLink, Mail, Megaphone, Menu, Settings2, Store, Users, X } from "lucide-react";
+import { Activity, ExternalLink, Mail, Megaphone, Menu, Settings2, Store, Tag, Users, X } from "lucide-react";
 import { LogoutButton } from "@/components/auth-forms";
 import { BrandLogo } from "@/components/brand";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -47,6 +47,7 @@ export function SuperAdminShell({
     { href: "/super-admin/duyurular", label: t("super.navPosts"), icon: Megaphone },
     { href: "/super-admin/loglar", label: t("super.navLogs"), icon: Activity },
     { href: "/super-admin/postalar", label: t("super.navMail"), icon: Mail },
+    { href: "/super-admin/fiyatlar", label: t("nav.pricingPlans"), icon: Tag },
     { href: "/super-admin/ayarlar", label: t("super.navSettings"), icon: Settings2 },
   ];
 

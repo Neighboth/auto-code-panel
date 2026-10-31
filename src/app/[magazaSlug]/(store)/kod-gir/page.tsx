@@ -32,6 +32,7 @@ export default async function RedeemPage({
       basePath={basePath}
       initialCode={(code ?? "").slice(0, 40)}
       customerName={customerName}
+      storeName={state.store.name}
     />
   );
 }
