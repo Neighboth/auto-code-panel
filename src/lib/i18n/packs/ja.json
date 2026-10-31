@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "マネージャーアカウント",
   "x.yonetici-sifresi-guncellendi-user": "マネージャー {user} のパスワードが更新されました",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "マネージャーと顧客のパスワードはプラットフォーム所有者のみに表示されます",
-  "x.yuklenemedi": "アップロードに失敗しました"
+  "x.yuklenemedi": "アップロードに失敗しました",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "ブラウザがセッション Cookie をブロックしました。新しいタブでアプリを開くか、このサイトの Cookie を許可してください。"
 }
