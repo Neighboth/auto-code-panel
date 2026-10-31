@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Valdytojo paskyros",
   "x.yonetici-sifresi-guncellendi-user": "Atnaujintas valdytojo {user} slaptažodis",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Valdytojo ir klientų slaptažodžius mato tik platformos savininkas",
-  "x.yuklenemedi": "Įkelti nepavyko"
+  "x.yuklenemedi": "Įkelti nepavyko",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Jūsų naršyklė užblokavo seanso slapuką. Atidarykite programą naujame skirtuke arba leiskite šios svetainės slapukus."
 }
