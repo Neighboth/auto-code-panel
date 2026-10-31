@@ -1624,5 +1624,6 @@
   "x.yonetici-hesaplar": "Manažerské účty",
   "x.yonetici-sifresi-guncellendi-user": "Heslo správce {user} bylo aktualizováno",
   "x.yonetici-ve-musteri-sifreleri-yalnzca-platform-sahibine-acktr": "Manažerská a zákaznická hesla jsou viditelná pouze pro vlastníka platformy",
-  "x.yuklenemedi": "Nahrání se nezdařilo"
+  "x.yuklenemedi": "Nahrání se nezdařilo",
+  "x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn": "Váš prohlížeč zablokoval soubor cookie relace. Otevřete aplikaci na nové kartě nebo povolte soubory cookie pro tento web."
 }
