@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import { env } from "@/lib/env";
+import { SESSION_MAX_AGE, sessionCookieOptions } from "@/lib/cookie-policy";
 
 export const SUPER_COOKIE = "kr_super";
 export const STORE_COOKIE = "kr_store";
@@ -50,22 +51,38 @@ async function verify<T extends SessionPayload>(token: string | undefined, kind:
   }
 }
 
-const cookieOptions = {
-  httpOnly: true,
-  sameSite: "lax" as const,
-  path: "/",
-  secure: process.env.NODE_ENV === "production",
-  maxAge: 60 * 60 * 24 * 7,
-};
+/**
+ * Cookie attributes are decided per request (https? embedded frame?) — see
+ * `lib/cookie-policy.ts`. A build-time flag made sign-in impossible over plain
+ * http and inside an embedded preview.
+ */
+async function cookieOptions(maxAge = SESSION_MAX_AGE) {
+  return { ...(await sessionCookieOptions()), httpOnly: true, maxAge };
+}
 
 export async function setSessionCookie(name: string, payload: SessionPayload) {
   const jar = await cookies();
-  jar.set(name, await sign(payload), cookieOptions);
+  jar.set(name, await sign(payload), await cookieOptions());
 }
 
 export async function clearSessionCookie(name: string) {
   const jar = await cookies();
-  jar.set(name, "", { ...cookieOptions, maxAge: 0 });
+  jar.set(name, "", await cookieOptions(0));
+}
+
+/**
+ * Whether the browser actually kept the cookie we just set.
+ *
+ * Login flows call this after a successful credential check: when the cookie is
+ * refused (third-party cookie blocking, `Secure` over http, an aggressive
+ * privacy extension) the user would otherwise be sent to the panel only to be
+ * bounced back to the login form. Reporting it turns a mystery loop into a
+ * message with a fix.
+ */
+export async function sessionVisible(kind: "super" | "store" | "customer"): Promise<boolean> {
+  const jar = await cookies();
+  const name = kind === "super" ? SUPER_COOKIE : kind === "store" ? STORE_COOKIE : CUSTOMER_COOKIE;
+  return Boolean(jar.get(name)?.value);
 }
 
 /** Short-lived ticket issued after the password step when 2FA is required. */
@@ -76,12 +93,12 @@ export async function setPendingSubject(subject: PendingSubject) {
     .setIssuedAt()
     .setExpirationTime("10m")
     .sign(secretKey);
-  jar.set(PENDING_COOKIE, token, { ...cookieOptions, maxAge: 600 });
+  jar.set(PENDING_COOKIE, token, await cookieOptions(600));
 }
 
 export async function clearPendingSubject() {
   const jar = await cookies();
-  jar.set(PENDING_COOKIE, "", { ...cookieOptions, maxAge: 0 });
+  jar.set(PENDING_COOKIE, "", await cookieOptions(0));
 }
 
 export async function getPendingSubject(): Promise<PendingSubject | null> {

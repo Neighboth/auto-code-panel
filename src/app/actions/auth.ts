@@ -17,6 +17,7 @@ import {
   STORE_COOKIE,
   SUPER_COOKIE,
   clearSessionCookie,
+  sessionVisible,
   setPendingSubject,
   setSessionCookie,
 } from "@/lib/session";
@@ -107,6 +108,29 @@ async function startPendingOrSession(subject: PendingInput, redirectTo: string):
     methods,
     redirectTo,
     message: t("x.hesabnz-2fa-korumal-ikinci-admda-dogrulama-yapn"),
+  };
+}
+
+/* ------------------------------- Session check ------------------------------ */
+
+/**
+ * Confirms that the session cookie survived the round-trip.
+ *
+ * A login can look successful on the client and still be pointless: the browser
+ * may drop the cookie (third-party cookie blocking inside a preview iframe, a
+ * `Secure` cookie on an http origin, a privacy extension) and every following
+ * request is anonymous — the panel appears and immediately bounces back to the
+ * form. Checking server-side lets the form explain the real problem instead.
+ */
+export async function sessionReady(
+  kind: "super" | "store" | "customer",
+): Promise<ActionResult<{ kept: boolean }>> {
+  const { t } = await getTranslator();
+  const kept = await sessionVisible(kind);
+  return {
+    ok: true,
+    message: kept ? "" : t("x.tarayc-oturum-cerezini-engelledi-uygulamay-yeni-sekmede-acn"),
+    data: { kept },
   };
 }
 
